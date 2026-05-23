@@ -1264,6 +1264,117 @@
       flex-shrink: 0;
     }
 
+    /* 公众号关注 Modal */
+    .mp-modal {
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,0.55);
+      backdrop-filter: blur(6px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 70;
+      padding: 18px;
+    }
+    .mp-modal.show { display: flex; }
+    .mp-box {
+      background: var(--surface);
+      border-radius: 20px;
+      width: 100%;
+      max-width: 320px;
+      padding: 24px 22px 20px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.35);
+    }
+    .mp-head { text-align: center; margin-bottom: 16px; }
+    .mp-icon {
+      width: 56px; height: 56px;
+      background: linear-gradient(135deg, var(--mint-soft), var(--mint));
+      color: white;
+      border-radius: 16px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 28px;
+      margin: 0 auto 12px;
+      box-shadow: 0 6px 16px rgba(91,184,159,0.3);
+    }
+    .mp-title {
+      font-size: 17px;
+      font-weight: 700;
+      letter-spacing: -0.005em;
+    }
+    .mp-sub {
+      font-size: 11.5px;
+      color: var(--ink-3);
+      margin-top: 4px;
+      font-family: var(--font-en);
+      letter-spacing: 0.04em;
+    }
+    .mp-qrcode {
+      width: 140px; height: 140px;
+      margin: 0 auto 16px;
+      background: white;
+      border: 3px solid var(--mint-soft);
+      border-radius: 14px;
+      padding: 8px;
+    }
+    .mp-qrcode svg { width: 100%; height: 100%; display: block; }
+    .mp-benefits {
+      background: var(--bg);
+      border-radius: var(--radius-md);
+      padding: 12px 14px;
+      margin-bottom: 16px;
+    }
+    .mp-benefit {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 4px 0;
+      font-size: 12.5px;
+      color: var(--ink-2);
+    }
+    .mp-benefit b { font-weight: 700; color: var(--ink-1); }
+    .mp-b-ic { font-size: 16px; flex-shrink: 0; width: 22px; text-align: center; }
+    .mp-actions { display: flex; gap: 8px; }
+    .mp-btn-secondary {
+      flex: 1; padding: 12px;
+      background: var(--bg);
+      border-radius: 12px;
+      text-align: center;
+      font-size: 13.5px;
+      font-weight: 700;
+      cursor: pointer;
+      color: var(--ink-2);
+    }
+    .mp-btn-primary {
+      flex: 1.4; padding: 12px;
+      background: linear-gradient(135deg, var(--mint), var(--mint-deep));
+      border-radius: 12px;
+      text-align: center;
+      font-size: 13.5px;
+      font-weight: 700;
+      cursor: pointer;
+      color: white;
+      box-shadow: 0 4px 12px rgba(91,184,159,0.3);
+    }
+
+    /* 公众号风格的消息头像 */
+    .msg-avatar.mp {
+      background: linear-gradient(135deg, var(--mint), var(--mint-deep));
+      color: white;
+      font-size: 20px;
+      font-weight: 700;
+    }
+    .msg-mp-tag {
+      display: inline-block;
+      font-size: 10px;
+      padding: 1px 6px;
+      background: var(--mint-soft);
+      color: var(--mint-deep);
+      border-radius: var(--radius-pill);
+      font-weight: 700;
+      margin-left: 4px;
+      vertical-align: middle;
+    }
+
     /* Privacy Modal */
     .privacy-modal { position: absolute; inset: 44px 0 0 0; background: rgba(31,31,31,0.55); backdrop-filter: blur(8px); z-index: 1000; display: flex; align-items: center; justify-content: center; padding: 24px; }
     .privacy-modal.hidden { display: none; }
@@ -1336,6 +1447,7 @@
   <div class="stage-actions">
     <div class="head-btn" onclick="showScreen('feed', true)">⌂ 回首页</div>
     <div class="head-btn" onclick="showPrivacyModal()">🛡 隐私 Modal</div>
+    <div class="head-btn" onclick="openMPModal()">📣 关注公众号</div>
   </div>
 </div>
 
@@ -2001,6 +2113,15 @@
         <div class="sub-icon">⚙</div>
       </div>
       <div class="msg-list">
+        <div class="msg-row" onclick="alert('打开公众号通知\n（真实场景下点击会跳到公众号文章页）')">
+          <div class="msg-avatar mp">📣</div>
+          <div class="msg-body">
+            <div class="msg-row-head"><span class="msg-name">寻宠 · 大理<span class="msg-mp-tag">服务号</span></span><span class="msg-time">18:02</span></div>
+            <div class="msg-preview">📍 古城北门附近有人捡到一只蓝猫，是你家胖丁吗？</div>
+            <div class="msg-context">关键消息推送</div>
+          </div>
+          <div class="msg-unread">1</div>
+        </div>
         <div class="msg-row" onclick="showScreen('chat')">
           <div class="msg-avatar ph-orange">🐱</div>
           <div class="msg-body">
@@ -2137,6 +2258,7 @@
             <div class="menu-row" onclick="showScreen('points-history')"><span class="menu-icon">🐾</span><span class="menu-label">善行值流水</span><span class="menu-meta">最近 +6</span><span class="menu-arrow">›</span></div>
             <div class="menu-row"><span class="menu-icon">🏠</span><span class="menu-label">我可以临时照料</span><span class="menu-meta ok">已开启</span><span class="menu-arrow">›</span></div>
             <div class="menu-row"><span class="menu-icon">🔔</span><span class="menu-label">订阅消息设置</span><span class="menu-arrow">›</span></div>
+            <div class="menu-row" onclick="openMPModal()"><span class="menu-icon">📣</span><span class="menu-label">关注公众号</span><span class="menu-meta" style="color:var(--mint-deep)">推送更及时</span><span class="menu-arrow">›</span></div>
           </div>
           <div class="menu-section">
             <div class="menu-row"><span class="menu-icon">🛡</span><span class="menu-label">安全交接指南</span><span class="menu-arrow">›</span></div>
@@ -2661,6 +2783,73 @@
       </div>
     </div>
 
+    <!-- ===== 公众号关注 Modal · 关键消息推送入口 ===== -->
+    <div class="mp-modal" id="mp-modal" onclick="if(event.target===this) closeMPModal()">
+      <div class="mp-box">
+        <div class="mp-head">
+          <div class="mp-icon">📣</div>
+          <div class="mp-title">关注公众号 · 关键消息不错过</div>
+          <div class="mp-sub">「寻宠 · 大理」服务号</div>
+        </div>
+
+        <div class="mp-qrcode">
+          <svg viewBox="0 0 30 30" fill="#1F1F1F">
+            <rect x="0" y="0" width="9" height="9"/>
+            <rect x="2" y="2" width="5" height="5" fill="white"/>
+            <rect x="3" y="3" width="3" height="3" fill="#1F1F1F"/>
+            <rect x="21" y="0" width="9" height="9"/>
+            <rect x="23" y="2" width="5" height="5" fill="white"/>
+            <rect x="24" y="3" width="3" height="3" fill="#1F1F1F"/>
+            <rect x="0" y="21" width="9" height="9"/>
+            <rect x="2" y="23" width="5" height="5" fill="white"/>
+            <rect x="3" y="24" width="3" height="3" fill="#1F1F1F"/>
+            <rect x="11" y="2" width="2" height="2"/>
+            <rect x="15" y="0" width="2" height="2"/>
+            <rect x="17" y="4" width="2" height="2"/>
+            <rect x="13" y="6" width="2" height="2"/>
+            <rect x="11" y="11" width="2" height="2"/>
+            <rect x="15" y="13" width="2" height="2"/>
+            <rect x="19" y="11" width="2" height="2"/>
+            <rect x="17" y="9" width="2" height="2"/>
+            <rect x="13" y="17" width="2" height="2"/>
+            <rect x="17" y="19" width="2" height="2"/>
+            <rect x="21" y="15" width="2" height="2"/>
+            <rect x="25" y="13" width="2" height="2"/>
+            <rect x="19" y="17" width="2" height="2"/>
+            <rect x="23" y="19" width="2" height="2"/>
+            <rect x="11" y="22" width="2" height="2"/>
+            <rect x="15" y="24" width="2" height="2"/>
+            <rect x="19" y="22" width="2" height="2"/>
+            <rect x="23" y="25" width="2" height="2"/>
+            <rect x="27" y="22" width="2" height="2"/>
+            <rect x="25" y="27" width="2" height="2"/>
+            <rect x="13" y="13" width="2" height="2" fill="#5BB89F"/>
+            <rect x="14" y="14" width="2" height="2" fill="#5BB89F"/>
+          </svg>
+        </div>
+
+        <div class="mp-benefits">
+          <div class="mp-benefit">
+            <span class="mp-b-ic">📍</span>
+            <span><b>附近有匹配</b>立刻提醒你</span>
+          </div>
+          <div class="mp-benefit">
+            <span class="mp-b-ic">📌</span>
+            <span><b>新线索</b>来了第一时间收到</span>
+          </div>
+          <div class="mp-benefit">
+            <span class="mp-b-ic">🎉</span>
+            <span><b>归还成功 / 申诉处理</b>关键节点通知</span>
+          </div>
+        </div>
+
+        <div class="mp-actions">
+          <div class="mp-btn-secondary" onclick="closeMPModal()">稍后再说</div>
+          <div class="mp-btn-primary" onclick="alert('💬 已唤起微信\n请前往「订阅号 / 我」找服务号关注');closeMPModal()">长按识别 / 一键关注</div>
+        </div>
+      </div>
+    </div>
+
     <!-- ===== 隐私 Modal（覆盖在 feed 屏上，默认显示） ===== -->
     <div class="privacy-modal" id="privacy-modal">
       <div class="privacy-box">
@@ -2766,12 +2955,25 @@
     if (t) t.classList.add('active');
   }
 
+  let _firstPrivacyClose = true;
   function closePrivacyModal() {
     document.getElementById('privacy-modal').classList.add('hidden');
+    // 首次同意隐私协议后，引导关注公众号
+    if (_firstPrivacyClose) {
+      _firstPrivacyClose = false;
+      setTimeout(() => openMPModal(), 250);
+    }
   }
 
   function showPrivacyModal() {
     document.getElementById('privacy-modal').classList.remove('hidden');
+  }
+
+  function openMPModal() {
+    document.getElementById('mp-modal').classList.add('show');
+  }
+  function closeMPModal() {
+    document.getElementById('mp-modal').classList.remove('show');
   }
 
   /* ============== 首页数据 + 瀑布流渲染 ============== */
