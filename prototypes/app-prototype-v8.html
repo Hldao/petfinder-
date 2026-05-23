@@ -219,6 +219,141 @@
     .pc-action.clue { color: var(--apricot-deep); background: var(--apricot-soft); padding: 4px 10px; border-radius: var(--radius-pill); font-family: var(--font-cn); font-weight: 700; }
     .feed-list { padding: 0 16px; display: flex; flex-direction: column; gap: 12px; }
 
+    /* 瀑布流（两列） */
+    .feed-waterfall {
+      padding: 0 12px;
+      column-count: 2;
+      column-gap: 8px;
+    }
+    .wf-card {
+      break-inside: avoid;
+      margin-bottom: 8px;
+      display: inline-block;
+      width: 100%;
+      background: var(--surface);
+      border-radius: 14px;
+      overflow: hidden;
+      box-shadow: var(--shadow-card);
+      cursor: pointer;
+    }
+    .wf-card.expired { opacity: 0.55; }
+    .wf-photo {
+      width: 100%;
+      aspect-ratio: 4/3;
+      position: relative;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 54px;
+    }
+    .wf-photo.tall { aspect-ratio: 3/4; }
+    .wf-status {
+      position: absolute;
+      top: 8px; left: 8px;
+      padding: 2px 8px;
+      font-size: 10px;
+      font-weight: 700;
+      color: white;
+      border-radius: var(--radius-pill);
+      backdrop-filter: blur(4px);
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .wf-status.lost { background: rgba(255,133,82,0.95); }
+    .wf-status.found { background: rgba(91,184,159,0.95); }
+    .wf-status.care { background: rgba(166,114,212,0.95); }
+    .wf-status.expired { background: rgba(176,172,158,0.95); }
+    .wf-body { padding: 10px 12px 6px; }
+    .wf-name {
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: -0.005em;
+      margin-bottom: 2px;
+    }
+    .wf-breed {
+      font-size: 10.5px;
+      color: var(--ink-3);
+      margin-bottom: 6px;
+      font-weight: 500;
+    }
+    .wf-meta {
+      font-size: 10.5px;
+      color: var(--ink-3);
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .wf-meta .urgent {
+      color: var(--apricot-deep);
+      font-family: var(--font-en);
+      font-weight: 700;
+    }
+    .wf-meta .time-only {
+      font-family: var(--font-en);
+      font-weight: 600;
+      color: var(--ink-4);
+      margin-left: auto;
+    }
+    .wf-desc {
+      font-size: 11.5px;
+      line-height: 1.55;
+      color: var(--ink-2);
+      margin-bottom: 8px;
+      overflow: hidden;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+    }
+    .wf-footer {
+      padding: 6px 12px 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-top: 1px solid var(--divider-soft);
+    }
+    .wf-distance {
+      font-family: var(--font-en);
+      font-size: 10.5px;
+      font-weight: 700;
+      color: var(--apricot-deep);
+    }
+    .wf-actions {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      font-size: 10.5px;
+      color: var(--ink-3);
+      font-family: var(--font-en);
+      font-weight: 600;
+    }
+    .wf-actions .share {
+      color: var(--apricot-deep);
+      background: var(--apricot-soft);
+      padding: 2px 8px;
+      border-radius: var(--radius-pill);
+      font-family: var(--font-cn);
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .wf-actions .share:hover { background: var(--apricot); color: white; }
+
+    .feed-empty-state {
+      padding: 70px 30px 40px;
+      text-align: center;
+    }
+    .feed-empty-state .fe-icon { font-size: 48px; opacity: 0.4; line-height: 1; }
+    .feed-empty-state .fe-title {
+      margin-top: 14px;
+      font-size: 13.5px;
+      color: var(--ink-2);
+      font-weight: 600;
+    }
+    .feed-empty-state .fe-cta {
+      margin-top: 10px;
+      color: var(--apricot-deep);
+      font-weight: 700;
+      cursor: pointer;
+      font-size: 12.5px;
+    }
+
     /* FAB & Tab */
     /* 中央嵌入式发布按钮（替代右下角 FAB） */
     .fab-tab {
@@ -1172,78 +1307,14 @@
       <div class="scroll-area">
         <div class="section-header">
           <span class="title">附近的小朋友</span>
-          <span class="count">· 4</span>
+          <span class="count">· <span id="feed-count">14</span></span>
           <span class="right">查看全部 →</span>
         </div>
-        <div class="feed-list" id="feed-list">
-          <div class="pet-card" data-idx="0" onclick="showScreen('detail-found')">
-            <div class="pc-body">
-              <div class="pc-photo ph-orange"><span>🐱</span><div class="status-bubble found">招领</div></div>
-              <div class="pc-info">
-                <div class="pc-name-row"><span class="pc-name">小橘子</span><span class="breed">· 约 2 岁 · ♀</span></div>
-                <div class="pc-meta"><span>📍 人民路三月街</span><span class="urgent">⚡ 30 min 前</span></div>
-                <div class="pc-desc">在咖啡馆门口蹲了一下午，看着像走丢的。亲人，会撒娇，目前在我店里 ☕️</div>
-              </div>
-            </div>
-            <div class="pc-footer">
-              <div class="distance-tag">📍 1.2 km</div>
-              <div class="pc-actions"><span class="pc-action">💬 3</span><span class="pc-action">👀 47</span><span class="pc-action share" onclick="event.stopPropagation();openShare(0)">⤴ 转发</span></div>
-            </div>
-          </div>
-
-          <div class="pet-card" data-idx="1" onclick="showScreen('detail-lost')">
-            <div class="pc-body">
-              <div class="pc-photo ph-blue"><span>🐱</span><div class="status-bubble lost">寻宠</div></div>
-              <div class="pc-info">
-                <div class="pc-name-row"><span class="pc-name">胖丁</span><span class="breed">· 英短蓝猫 · ♂ 3 岁</span></div>
-                <div class="pc-meta"><span>📍 古城北门</span><span class="urgent">⚡ 10 min 前</span></div>
-                <div class="pc-desc">穿粉色项圈，左耳缺一小块。妈妈非常着急，看到请拍照或留言 🙏</div>
-              </div>
-            </div>
-            <div class="pc-footer">
-              <div class="distance-tag">📍 0.8 km</div>
-              <div class="pc-actions"><span class="pc-action">💬 12</span><span class="pc-action">👀 89</span><span class="pc-action share" onclick="event.stopPropagation();openShare(1)">⤴ 转发</span></div>
-            </div>
-          </div>
-
-          <div class="pet-card" data-idx="2" onclick="showScreen('detail-found')">
-            <div class="pc-body">
-              <div class="pc-photo ph-cream"><span>🐶</span><div class="status-bubble care">照料</div></div>
-              <div class="pc-info">
-                <div class="pc-name-row"><span class="pc-name">小白</span><span class="breed">· 比熊 · ♂ 5kg</span></div>
-                <div class="pc-meta"><span>📍 下关泰安路</span><span class="time">2 hr 前</span></div>
-                <div class="pc-desc">在小区门口捡到，毛色干净有人养过。我家可以临时照看 2-3 天 🏠</div>
-              </div>
-            </div>
-            <div class="pc-footer">
-              <div class="distance-tag">📍 4.2 km</div>
-              <div class="pc-actions"><span class="pc-action">💬 5</span><span class="pc-action">👀 28</span><span class="pc-action share" onclick="event.stopPropagation();openShare(2)">⤴ 转发</span></div>
-            </div>
-          </div>
-
-          <div class="pet-card" data-idx="3" style="opacity:0.55" onclick="showScreen('detail-found')">
-            <div class="pc-body">
-              <div class="pc-photo ph-pink"><span>🐶</span><div class="status-bubble expired">9 天前</div></div>
-              <div class="pc-info">
-                <div class="pc-name-row"><span class="pc-name">小棕</span><span class="breed">· 棕白色 · 约 6kg</span></div>
-                <div class="pc-meta"><span>📍 苍山门</span><span class="time">9 days 前</span></div>
-                <div class="pc-desc">在山脚捡到，比较瘦，已带去打疫苗。希望主人快点出现 💛</div>
-              </div>
-            </div>
-            <div class="pc-footer">
-              <div class="distance-tag" style="background:var(--bg-deeper);color:var(--ink-3)">📍 3.4 km</div>
-              <div class="pc-actions"><span class="pc-action">💬 2</span><span class="pc-action">👀 19</span><span class="pc-action share" onclick="event.stopPropagation();openShare(3)">⤴ 转发</span></div>
-            </div>
-          </div>
-
-          <!-- 空状态：筛选后无结果 -->
-          <div class="feed-empty" id="feed-empty" style="display:none;padding:60px 30px;text-align:center">
-            <div style="font-size:48px;opacity:0.4;line-height:1">🐾</div>
-            <div style="margin-top:14px;font-size:13.5px;color:var(--ink-3);line-height:1.65">
-              附近暂时没有这类信息<br>
-              <span style="color:var(--apricot-deep);font-weight:700;cursor:pointer" onclick="resetFilter()">查看全部 →</span>
-            </div>
-          </div>
+        <div class="feed-waterfall" id="feed-list"></div>
+        <div class="feed-empty-state" id="feed-empty" style="display:none">
+          <div class="fe-icon">🐾</div>
+          <div class="fe-title">附近暂时没有这类信息</div>
+          <div class="fe-cta" onclick="resetFilter()">查看全部 →</div>
         </div>
 
         <!-- 排序 Action Sheet -->
@@ -2355,14 +2426,81 @@
     document.getElementById('privacy-modal').classList.remove('hidden');
   }
 
-  /* ============== 首页筛选 + 排序 ============== */
-  // 卡片元数据（与 data-idx 对应）
-  const FEED_META = [
-    { status: 'found', distanceKm: 1.2, timeMins: 30 },          // 0 小橘子
-    { status: 'lost',  distanceKm: 0.8, timeMins: 10 },          // 1 胖丁
-    { status: 'care',  distanceKm: 4.2, timeMins: 120 },         // 2 小白
-    { status: 'found', distanceKm: 3.4, timeMins: 9 * 24 * 60 }  // 3 小棕（9 天）
+  /* ============== 首页数据 + 瀑布流渲染 ============== */
+  // 14 张大理本地化数据（id 与 SHARE 同源）
+  const FEED_DATA = [
+    { id: 0, emoji:'🐱', photoClass:'ph-orange', status:'found', statusLabel:'招领',
+      name:'小橘子', breed:'约 2 岁 · ♀', loc:'人民路三月街',
+      time:'30 min 前', timeMins:30, distanceKm:1.2, urgent:true,
+      comments:3, tall:false,
+      desc:'在咖啡馆门口蹲了一下午，看着像走丢的。亲人，会撒娇 ☕️' },
+    { id: 1, emoji:'🐱', photoClass:'ph-blue', status:'lost', statusLabel:'寻宠',
+      name:'胖丁', breed:'英短蓝猫 · ♂ 3 岁', loc:'古城北门',
+      time:'10 min 前', timeMins:10, distanceKm:0.8, urgent:true,
+      comments:12, tall:true,
+      desc:'穿粉色项圈，左耳缺一小块。胆小，听到名字会喵叫。看到请拍照不要追 🙏' },
+    { id: 2, emoji:'🐶', photoClass:'ph-cream', status:'care', statusLabel:'照料',
+      name:'小白', breed:'比熊 · ♂ 5kg', loc:'下关泰安路',
+      time:'2 hr 前', timeMins:120, distanceKm:4.2, urgent:false,
+      comments:5, tall:false,
+      desc:'在小区门口捡到，毛色干净有人养过。我家可以临时照看 2-3 天 🏠' },
+    { id: 3, emoji:'🐈', photoClass:'ph-mint', status:'lost', statusLabel:'寻宠',
+      name:'咖啡', breed:'美短 · ♀ 1 岁半', loc:'洋人街',
+      time:'1 hr 前', timeMins:60, distanceKm:1.5, urgent:false,
+      comments:8, tall:true,
+      desc:'咖啡色虎斑，右后腿有疤。胆小，可能躲在车底下，看到请轻声呼唤' },
+    { id: 4, emoji:'🐕', photoClass:'ph-dark', status:'lost', statusLabel:'寻宠',
+      name:'黑豆', breed:'中华田园犬 · ♂', loc:'才村码头',
+      time:'3 hr 前', timeMins:180, distanceKm:6.8, urgent:false,
+      comments:7, tall:false,
+      desc:'全身黑色，颈部白毛。在洱海边走丢，主人正在沿环海路找' },
+    { id: 5, emoji:'🐱', photoClass:'ph-pink', status:'found', statusLabel:'招领',
+      name:'布偶宝宝', breed:'布偶猫 · ♀ 6 个月', loc:'人民路民宿区',
+      time:'45 min 前', timeMins:45, distanceKm:2.1, urgent:false,
+      comments:6, tall:true,
+      desc:'蓝眼睛，长毛，戴金色铃铛项圈。在客栈大堂被发现 🛋️' },
+    { id: 6, emoji:'🐶', photoClass:'ph-cream', status:'lost', statusLabel:'寻宠',
+      name:'柯基屁屁', breed:'柯基 · ♀ 4 岁', loc:'苍山门',
+      time:'昨天', timeMins:1440, distanceKm:3.6, urgent:false,
+      comments:22, tall:false,
+      desc:'短腿圆屁股的小可爱，戴红色背带。容易认出来' },
+    { id: 7, emoji:'🐶', photoClass:'ph-pink', status:'care', statusLabel:'照料',
+      name:'雪球', breed:'比熊串 · ♂', loc:'喜洲古镇',
+      time:'5 hr 前', timeMins:300, distanceKm:18.5, urgent:false,
+      comments:4, tall:true,
+      desc:'在喜洲扎染店门口流浪，店主可临时照看' },
+    { id: 8, emoji:'🐱', photoClass:'ph-orange', status:'found', statusLabel:'招领',
+      name:'虎子', breed:'橘猫 · ♂ 估 4 岁', loc:'叶榆路',
+      time:'2 hr 前', timeMins:130, distanceKm:1.9, urgent:false,
+      comments:2, tall:false,
+      desc:'在饭店后厨发现，胖胖的看起来不缺吃喝，应该有主' },
+    { id: 9, emoji:'🐕', photoClass:'ph-brown', status:'lost', statusLabel:'寻宠',
+      name:'土豆', breed:'杂交犬 · ♂ 中型', loc:'双廊镇',
+      time:'昨天', timeMins:1500, distanceKm:32, urgent:false,
+      comments:9, tall:true,
+      desc:'在双廊客栈附近走丢，戴蓝色项圈，胆子比较小' },
+    { id: 10, emoji:'🐱', photoClass:'ph-blue', status:'lost', statusLabel:'寻宠',
+      name:'小灰', breed:'蓝白英短 · ♀ 2 岁', loc:'海东',
+      time:'4 hr 前', timeMins:240, distanceKm:12, urgent:false,
+      comments:11, tall:false,
+      desc:'从海东民宿跑出，怕生。可能在芦苇地或山脚' },
+    { id: 11, emoji:'🐱', photoClass:'ph-cream', status:'lost', statusLabel:'寻宠',
+      name:'奶糖', breed:'金渐层 · ♀ 3 岁', loc:'塔顶玉局公园',
+      time:'6 hr 前', timeMins:360, distanceKm:2.8, urgent:false,
+      comments:14, tall:true,
+      desc:'体型偏小，毛色奶白带浅金。爱叫，听到罐头声会出现' },
+    { id: 12, emoji:'🐶', photoClass:'ph-dark', status:'care', statusLabel:'照料',
+      name:'小鸭', breed:'阿拉斯加幼犬 · ♂', loc:'凤仪镇',
+      time:'3 天前', timeMins:4320, distanceKm:22, urgent:false,
+      comments:38, tall:false,
+      desc:'在凤仪镇捡到的小奶狗，需要一个长期家庭 🥺' },
+    { id: 13, emoji:'🐶', photoClass:'ph-pink', status:'found', statusLabel:'招领',
+      name:'小棕', breed:'棕白色 · 约 6kg', loc:'苍山门',
+      time:'9 days', timeMins:12960, distanceKm:3.4, urgent:false,
+      comments:2, tall:false, expired:true,
+      desc:'在山脚捡到，比较瘦，已带去打疫苗。希望主人快点出现 💛' }
   ];
+
   let currentFilter = 'all';
   let currentSort = 'time';
 
@@ -2370,7 +2508,7 @@
     currentFilter = filter;
     document.querySelectorAll('[data-screen="feed"] .chip[data-filter]').forEach(c => c.classList.remove('active'));
     el.classList.add('active');
-    rerenderFeed();
+    renderFeed();
   }
 
   function resetFilter() {
@@ -2378,12 +2516,8 @@
     if (allChip) applyFilter('all', allChip);
   }
 
-  function openSortSheet() {
-    document.getElementById('sort-sheet').classList.add('show');
-  }
-  function closeSortSheet() {
-    document.getElementById('sort-sheet').classList.remove('show');
-  }
+  function openSortSheet() { document.getElementById('sort-sheet').classList.add('show'); }
+  function closeSortSheet() { document.getElementById('sort-sheet').classList.remove('show'); }
   function applySort(method) {
     currentSort = method;
     document.querySelectorAll('#sort-sheet .as-option').forEach(o => o.classList.remove('selected'));
@@ -2391,79 +2525,84 @@
     if (sel) sel.classList.add('selected');
     const chip = document.getElementById('sort-chip');
     if (chip) chip.innerHTML = method === 'time' ? '⏱ 最新' : '📍 最近';
-    rerenderFeed();
+    renderFeed();
     closeSortSheet();
   }
 
-  function rerenderFeed() {
+  function renderFeed() {
     const container = document.getElementById('feed-list');
-    if (!container) return;
-    const cards = Array.from(container.querySelectorAll('.pet-card'));
     const empty = document.getElementById('feed-empty');
+    const countLabel = document.getElementById('feed-count');
+    if (!container) return;
 
-    // 排序（DOM reorder）
-    cards.sort((a, b) => {
-      const ai = parseInt(a.dataset.idx), bi = parseInt(b.dataset.idx);
-      const aData = FEED_META[ai], bData = FEED_META[bi];
-      if (currentSort === 'distance') return aData.distanceKm - bData.distanceKm;
-      return aData.timeMins - bData.timeMins;
-    });
-    cards.forEach(c => container.insertBefore(c, empty));
-
-    // 筛选
-    let visibleCount = 0;
-    cards.forEach(c => {
-      const meta = FEED_META[parseInt(c.dataset.idx)];
-      const show = (currentFilter === 'all') || (currentFilter === meta.status);
-      c.style.display = show ? '' : 'none';
-      if (show) visibleCount++;
+    // 过滤
+    let items = FEED_DATA.filter(d => currentFilter === 'all' || currentFilter === d.status);
+    // 排序
+    items.sort((a, b) => {
+      if (currentSort === 'distance') return a.distanceKm - b.distanceKm;
+      return a.timeMins - b.timeMins;
     });
 
-    if (empty) empty.style.display = visibleCount === 0 ? 'block' : 'none';
+    if (countLabel) countLabel.textContent = items.length;
+
+    if (items.length === 0) {
+      container.innerHTML = '';
+      container.style.display = 'none';
+      if (empty) empty.style.display = 'block';
+      return;
+    }
+    container.style.display = '';
+    if (empty) empty.style.display = 'none';
+
+    container.innerHTML = items.map(d => {
+      const detailScreen = d.status === 'lost' ? 'detail-lost' : 'detail-found';
+      const distanceStr = d.distanceKm < 10 ? d.distanceKm.toFixed(1) : d.distanceKm.toFixed(0);
+      return `
+        <div class="wf-card ${d.expired ? 'expired' : ''}" onclick="showScreen('${detailScreen}')">
+          <div class="wf-photo ${d.photoClass}${d.tall ? ' tall' : ''}">
+            <span>${d.emoji}</span>
+            <div class="wf-status ${d.expired ? 'expired' : d.status}">${d.expired ? '已过期' : d.statusLabel}</div>
+          </div>
+          <div class="wf-body">
+            <div class="wf-name">${d.name}</div>
+            <div class="wf-breed">${d.breed}</div>
+            <div class="wf-meta">
+              <span>📍 ${d.loc}</span>
+              <span class="${d.urgent ? 'urgent' : 'time-only'}">${d.urgent ? '⚡ ' + d.time : d.time}</span>
+            </div>
+            <div class="wf-desc">${d.desc}</div>
+          </div>
+          <div class="wf-footer">
+            <div class="wf-distance">📍 ${distanceStr} km</div>
+            <div class="wf-actions">
+              <span>💬 ${d.comments}</span>
+              <span class="share" onclick="event.stopPropagation();openShare(${d.id})">⤴</span>
+            </div>
+          </div>
+        </div>
+      `;
+    }).join('');
   }
 
-  /* ============== 帮忙转发 ============== */
-  const SHARE_DATA = [
-    {
-      emoji: '🐱', photoClass: 'ph-orange',
-      status: '招领中', statusClass: 'status-found',
-      name: '小橘子', breed: '· 约 2 岁 · ♀',
-      meta: '📍 人民路三月街 · 30 min 前',
-      desc: '在咖啡馆门口蹲了一下午，看着像走丢的。亲人，会撒娇，目前在我店里 ☕️'
-    },
-    {
-      emoji: '🐱', photoClass: 'ph-blue',
-      status: '寻宠中', statusClass: 'status-lost',
-      name: '胖丁', breed: '· 英短蓝猫 · ♂ 3 岁',
-      meta: '📍 古城北门 · 10 min 前',
-      desc: '穿粉色项圈，左耳缺一小块。胆小，听到名字会喵叫。看到请尽量拍照不要追 🙏'
-    },
-    {
-      emoji: '🐶', photoClass: 'ph-cream',
-      status: '临时照料中', statusClass: 'status-care',
-      name: '小白', breed: '· 比熊 · ♂ 5kg',
-      meta: '📍 下关泰安路 · 2 hr 前',
-      desc: '在小区门口捡到，毛色干净有人养过。我家可以临时照看 2-3 天 🏠'
-    },
-    {
-      emoji: '🐶', photoClass: 'ph-pink',
-      status: '招领中', statusClass: 'status-found',
-      name: '小棕', breed: '· 棕白色 · 约 6kg',
-      meta: '📍 苍山门 · 9 days 前',
-      desc: '在山脚捡到，比较瘦，已带去打疫苗。希望主人快点出现 💛'
-    }
-  ];
+  // 初次渲染
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', renderFeed);
+  } else {
+    renderFeed();
+  }
 
-  function openShare(idx) {
-    const d = SHARE_DATA[idx];
+  /* ============== 帮忙转发（数据从 FEED_DATA 取） ============== */
+  function openShare(id) {
+    const d = FEED_DATA.find(x => x.id === id);
     if (!d) return;
+    const statusFull = { lost: '寻宠中', found: '招领中', care: '临时照料中' };
     document.getElementById('scp-photo').className = 'scp-photo ' + d.photoClass;
     document.getElementById('scp-emoji').textContent = d.emoji;
-    document.getElementById('scp-status').textContent = d.status;
-    document.getElementById('scp-status').className = 'scp-status ' + d.statusClass;
+    document.getElementById('scp-status').textContent = statusFull[d.status] || d.statusLabel;
+    document.getElementById('scp-status').className = 'scp-status status-' + d.status;
     document.getElementById('scp-pet-name').textContent = d.name;
-    document.getElementById('scp-pet-breed').textContent = d.breed;
-    document.getElementById('scp-meta').textContent = d.meta;
+    document.getElementById('scp-pet-breed').textContent = '· ' + d.breed;
+    document.getElementById('scp-meta').textContent = '📍 ' + d.loc + ' · ' + d.time;
     document.getElementById('scp-desc').textContent = d.desc;
     document.getElementById('share-modal').classList.add('show');
   }
