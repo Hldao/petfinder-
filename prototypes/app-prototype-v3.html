@@ -1,0 +1,1085 @@
+<style>
+  :root {
+    --primary: #FF6B35;
+    --primary-soft: #FFF1E9;
+    --primary-border: #FFDCC8;
+    --ink-1: #0F172A;
+    --ink-2: #334155;
+    --ink-3: #64748B;
+    --ink-4: #94A3B8;
+    --bg: #FAFAF7;
+    --surface: #FFFFFF;
+    --border: #E2E8F0;
+    --border-soft: #F1F5F9;
+    --status-lost: #DC2626;
+    --status-lost-bg: #FEF2F2;
+    --status-found: #059669;
+    --status-found-bg: #ECFDF5;
+    --status-care: #D97706;
+    --status-care-bg: #FFFBEB;
+    --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.04);
+    --shadow-md: 0 4px 12px rgba(15, 23, 42, 0.06), 0 2px 4px rgba(15, 23, 42, 0.04);
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
+    --radius-full: 9999px;
+  }
+
+  .stage { display: flex; justify-content: center; padding: 20px 0 40px; }
+  .device {
+    width: 390px; height: 800px;
+    background: var(--bg);
+    border-radius: 48px;
+    border: 12px solid #1a1a1a;
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 40px 80px rgba(0,0,0,0.25), 0 16px 32px rgba(0,0,0,0.15);
+    font-family: -apple-system, "PingFang SC", "SF Pro Display", "Helvetica Neue", system-ui, sans-serif;
+    color: var(--ink-1);
+    font-size: 14px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+  .device::before {
+    content: ''; position: absolute;
+    top: 0; left: 50%;
+    transform: translateX(-50%);
+    width: 130px; height: 30px;
+    background: #1a1a1a;
+    border-bottom-left-radius: 18px;
+    border-bottom-right-radius: 18px;
+    z-index: 100;
+  }
+  .status-bar {
+    height: 44px;
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 0 28px;
+    font-size: 14px; font-weight: 600;
+  }
+  .screen {
+    position: absolute;
+    top: 44px; left: 0; right: 0; bottom: 0;
+    overflow: hidden;
+    background: var(--bg);
+    display: flex; flex-direction: column;
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.2s ease;
+  }
+  .screen.active { opacity: 1; pointer-events: auto; z-index: 1; }
+
+  /* Top nav */
+  .top-nav { padding: 8px 16px 12px; display: flex; align-items: center; gap: 10px; }
+  .city-tag {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 15px; font-weight: 600;
+    padding: 6px 12px 6px 10px;
+    border-radius: var(--radius-full);
+    background: var(--surface);
+    box-shadow: var(--shadow-sm);
+  }
+  .city-tag .pulse {
+    width: 8px; height: 8px;
+    background: var(--primary);
+    border-radius: 50%;
+    box-shadow: 0 0 0 4px var(--primary-soft);
+  }
+  .search {
+    flex: 1; height: 36px;
+    background: var(--surface);
+    border-radius: var(--radius-full);
+    border: 1px solid var(--border);
+    display: flex; align-items: center;
+    padding: 0 14px;
+    font-size: 13px; color: var(--ink-4);
+    gap: 6px;
+  }
+  .notif-btn {
+    width: 36px; height: 36px;
+    display: flex; align-items: center; justify-content: center;
+    background: var(--surface);
+    border-radius: 50%;
+    box-shadow: var(--shadow-sm);
+    position: relative;
+    font-size: 16px;
+  }
+  .notif-btn .dot {
+    position: absolute; top: 8px; right: 9px;
+    width: 8px; height: 8px;
+    background: var(--primary);
+    border-radius: 50%;
+    border: 2px solid var(--surface);
+  }
+  .filter-strip {
+    padding: 0 16px 12px;
+    display: flex; gap: 8px;
+    overflow-x: auto; scrollbar-width: none;
+    align-items: center;
+  }
+  .filter-strip::-webkit-scrollbar { display: none; }
+  .chip {
+    padding: 7px 14px;
+    border-radius: var(--radius-full);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    font-size: 13px; white-space: nowrap;
+    color: var(--ink-3); font-weight: 500;
+    display: flex; align-items: center; gap: 5px;
+    cursor: pointer;
+  }
+  .chip.active { background: var(--ink-1); color: white; border-color: var(--ink-1); }
+  .chip-dot { width: 6px; height: 6px; border-radius: 50%; }
+  .sort-chip {
+    background: var(--primary-soft);
+    border-color: var(--primary-border);
+    color: var(--primary);
+    font-weight: 600;
+    margin-left: auto;
+    margin-right: 4px;
+  }
+  .filter-divider { width: 1px; height: 20px; background: var(--border); margin: 0 2px; }
+
+  .feed { flex: 1; overflow-y: auto; padding: 4px 14px 100px; }
+  .card {
+    background: var(--surface);
+    border-radius: var(--radius-lg);
+    margin-bottom: 12px;
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--border-soft);
+    cursor: pointer;
+    transition: transform 0.15s, box-shadow 0.15s;
+  }
+  .card:hover { transform: translateY(-1px); box-shadow: var(--shadow-md); }
+  .card.expired { opacity: 0.55; filter: saturate(0.6); }
+  .card-row { display: flex; padding: 12px; gap: 12px; }
+  .photo {
+    width: 92px; height: 92px;
+    border-radius: var(--radius-md);
+    flex-shrink: 0;
+    position: relative;
+    overflow: hidden;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 38px;
+  }
+  .photo::after {
+    content: ''; position: absolute; inset: 0;
+    box-shadow: inset 0 0 0 1px rgba(15,23,42,0.06);
+    border-radius: var(--radius-md);
+    pointer-events: none;
+  }
+  .ph-blue { background: linear-gradient(135deg, #93B5E1, #6B8FC7); }
+  .ph-orange { background: linear-gradient(135deg, #FFD58A, #F5A623); }
+  .ph-cream { background: linear-gradient(135deg, #F5E9D2, #E5C99A); }
+  .ph-dark { background: linear-gradient(135deg, #4A5568, #2D3748); }
+  .ph-brown { background: linear-gradient(135deg, #C8956A, #9C6B3F); }
+
+  .status-badge {
+    position: absolute; top: 6px; left: 6px;
+    padding: 3px 8px;
+    border-radius: 6px;
+    font-size: 10.5px; color: #fff; font-weight: 600;
+    backdrop-filter: blur(8px); z-index: 2;
+  }
+  .status-badge.lost { background: rgba(220, 38, 38, 0.94); }
+  .status-badge.found { background: rgba(5, 150, 105, 0.94); }
+  .status-badge.care { background: rgba(217, 119, 6, 0.94); }
+
+  .info { flex: 1; min-width: 0; }
+  .pet-title {
+    font-size: 15px; font-weight: 600; margin-bottom: 3px;
+    display: flex; align-items: baseline; gap: 6px;
+  }
+  .pet-title .breed { font-size: 12px; color: var(--ink-3); font-weight: 400; }
+  .pet-meta {
+    font-size: 12px; color: var(--ink-3); margin-bottom: 5px;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .time-tag { font-weight: 600; }
+  .time-tag.urgent { color: var(--primary); }
+  .time-tag.recent { color: var(--ink-2); }
+  .time-tag.stale { color: var(--ink-4); }
+  .pet-desc {
+    font-size: 12.5px; color: var(--ink-2); line-height: 1.45;
+    overflow: hidden;
+    display: -webkit-box; -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+  }
+  .card-footer {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 8px 14px 10px;
+    border-top: 1px solid var(--border-soft);
+    font-size: 12px;
+  }
+  .distance-pill { color: var(--primary); font-weight: 600; font-size: 12px; }
+  .footer-actions { display: flex; gap: 14px; }
+  .footer-action { color: var(--ink-3); }
+
+  .fab {
+    position: absolute;
+    bottom: 84px; left: 50%;
+    transform: translateX(-50%);
+    width: 62px; height: 62px;
+    background: linear-gradient(135deg, var(--primary), #FF4A12);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    color: #fff;
+    font-size: 30px; font-weight: 300; line-height: 1;
+    box-shadow: 0 6px 16px rgba(255,107,53,0.4), 0 2px 4px rgba(255,107,53,0.3);
+    z-index: 20; cursor: pointer;
+  }
+  .fab::before {
+    content: ''; position: absolute; inset: -4px;
+    border-radius: 50%;
+    border: 2px solid var(--bg);
+  }
+
+  .tab-bar {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 78px;
+    background: rgba(255,255,255,0.94);
+    backdrop-filter: blur(20px);
+    border-top: 1px solid var(--border-soft);
+    display: flex;
+    padding-bottom: 18px;
+    z-index: 10;
+  }
+  .tab {
+    flex: 1;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    font-size: 11px; color: var(--ink-4); gap: 3px;
+    cursor: pointer;
+  }
+  .tab.active { color: var(--primary); font-weight: 600; }
+  .tab .icon { font-size: 22px; }
+  .tab.spacer { pointer-events: none; visibility: hidden; }
+
+  /* Detail */
+  .detail-header {
+    height: 56px;
+    display: flex; align-items: center;
+    padding: 0 16px; gap: 12px;
+  }
+  .back-btn, .share-btn {
+    width: 36px; height: 36px;
+    display: flex; align-items: center; justify-content: center;
+    background: var(--surface);
+    border-radius: 50%;
+    box-shadow: var(--shadow-sm);
+    font-size: 18px; cursor: pointer;
+  }
+  .detail-title { font-size: 16px; font-weight: 600; }
+  .detail-spacer { flex: 1; }
+  .detail-scroll {
+    flex: 1; overflow-y: auto;
+    padding-bottom: 110px;
+  }
+  .hero-photo {
+    width: 100%; height: 240px;
+    position: relative;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 110px;
+  }
+  .hero-status {
+    position: absolute; top: 16px; left: 16px;
+    padding: 6px 14px;
+    border-radius: var(--radius-full);
+    font-size: 12px; color: white; font-weight: 600;
+    backdrop-filter: blur(12px);
+  }
+  .hero-status.lost { background: rgba(220, 38, 38, 0.92); }
+  .hero-status.found { background: rgba(5, 150, 105, 0.92); }
+  .detail-body { padding: 20px 18px; }
+  .detail-name { font-size: 22px; font-weight: 700; margin-bottom: 4px; }
+  .detail-subtitle { font-size: 14px; color: var(--ink-3); margin-bottom: 16px; }
+  .detail-stats {
+    display: flex; gap: 14px;
+    padding: 14px;
+    background: var(--surface);
+    border-radius: var(--radius-md);
+    margin-bottom: 18px;
+    border: 1px solid var(--border-soft);
+  }
+  .stat { flex: 1; display: flex; align-items: center; gap: 10px; }
+  .stat-icon {
+    width: 34px; height: 34px;
+    background: var(--primary-soft);
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 17px;
+  }
+  .stat-label { font-size: 11px; color: var(--ink-3); margin-bottom: 2px; }
+  .stat-value { font-size: 13px; font-weight: 600; }
+  .stat-divider { width: 1px; background: var(--border-soft); margin: 4px 0; }
+  .section-label {
+    font-size: 11px; font-weight: 600;
+    color: var(--ink-3);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 8px;
+  }
+  .desc-block {
+    background: var(--surface);
+    border-radius: var(--radius-md);
+    padding: 14px 16px;
+    margin-bottom: 18px;
+    font-size: 14px; color: var(--ink-2); line-height: 1.6;
+    border: 1px solid var(--border-soft);
+  }
+  .feature-lock {
+    background: linear-gradient(135deg, #FFF7ED, #FFEDD5);
+    border-radius: var(--radius-md);
+    padding: 14px; margin-bottom: 18px;
+    border: 1px dashed #FED7AA;
+    display: flex; gap: 10px; align-items: flex-start;
+    font-size: 12.5px; color: #9A3412; line-height: 1.55;
+  }
+  .feature-lock.green {
+    background: linear-gradient(135deg, #ECFDF5, #D1FAE5);
+    border-color: #6EE7B7; color: #065F46;
+  }
+  .feature-lock-icon { font-size: 18px; flex-shrink: 0; }
+
+  .action-bar {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    background: rgba(255,255,255,0.96);
+    backdrop-filter: blur(20px);
+    border-top: 1px solid var(--border-soft);
+    padding: 12px 16px 24px;
+    display: flex; gap: 10px;
+    z-index: 10;
+  }
+  .btn-secondary, .btn-primary {
+    height: 48px;
+    border-radius: var(--radius-lg);
+    font-size: 14.5px; font-weight: 600;
+    display: flex; align-items: center; justify-content: center;
+    gap: 6px; cursor: pointer;
+  }
+  .btn-secondary {
+    flex: 1;
+    background: var(--surface);
+    color: var(--ink-1);
+    border: 1px solid var(--border);
+  }
+  .btn-primary {
+    flex: 1.4;
+    background: linear-gradient(135deg, var(--primary), #FF4A12);
+    color: white;
+    box-shadow: 0 4px 12px rgba(255,107,53,0.3);
+  }
+
+  /* === Contact Guide (Screen 5 NEW) === */
+  .guide-screen { flex: 1; overflow-y: auto; padding: 20px 18px 120px; }
+  .guide-hero { text-align: center; padding: 8px 0 20px; }
+  .guide-icon {
+    width: 64px; height: 64px;
+    background: linear-gradient(135deg, var(--primary-soft), #FFE4D4);
+    border: 1px solid var(--primary-border);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 28px;
+    margin: 0 auto 12px;
+  }
+  .guide-title { font-size: 18px; font-weight: 700; margin-bottom: 6px; }
+  .guide-sub { font-size: 13px; color: var(--ink-3); line-height: 1.55; padding: 0 16px; }
+
+  .pet-summary-card {
+    background: var(--surface);
+    border-radius: var(--radius-md);
+    padding: 14px;
+    border: 1px solid var(--border-soft);
+    display: flex; gap: 12px;
+    margin-bottom: 18px;
+  }
+  .pet-summary-thumb {
+    width: 60px; height: 60px;
+    border-radius: 10px;
+    flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 32px;
+  }
+
+  .info-card-soft {
+    background: linear-gradient(135deg, #FFF7ED, #FFEDD5);
+    border: 1px dashed #FED7AA;
+    border-radius: var(--radius-md);
+    padding: 14px;
+    color: #9A3412;
+    margin-bottom: 18px;
+  }
+  .info-card-soft b { font-size: 13.5px; }
+  .info-card-soft .info-body {
+    font-size: 12.5px;
+    line-height: 1.55;
+    margin-top: 8px;
+  }
+
+  /* Message template */
+  .message-template {
+    background: var(--surface);
+    border: 1px solid var(--border-soft);
+    border-radius: var(--radius-md);
+    padding: 12px 14px;
+    margin-bottom: 10px;
+  }
+  .msg-text {
+    font-size: 13.5px;
+    color: var(--ink-2);
+    line-height: 1.55;
+    margin-bottom: 10px;
+  }
+  .msg-text b { color: var(--ink-1); }
+  .msg-actions { display: flex; gap: 8px; }
+  .template-btn {
+    font-size: 11.5px;
+    padding: 5px 12px;
+    border-radius: var(--radius-full);
+    border: 1px solid var(--border);
+    background: white;
+    color: var(--ink-3);
+    cursor: pointer;
+  }
+  .template-btn.primary {
+    background: var(--primary-soft);
+    color: var(--primary);
+    border-color: var(--primary-border);
+    font-weight: 600;
+  }
+
+  /* Offline checks (numbered) */
+  .offline-block {
+    background: var(--surface);
+    border: 1px solid var(--border-soft);
+    border-radius: var(--radius-md);
+    padding: 4px 0;
+    margin-bottom: 14px;
+  }
+  .offline-row {
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--border-soft);
+    display: flex; gap: 12px; align-items: flex-start;
+  }
+  .offline-row:last-child { border-bottom: none; }
+  .offline-num {
+    width: 24px; height: 24px;
+    border-radius: 50%;
+    background: var(--primary-soft);
+    color: var(--primary);
+    font-weight: 600;
+    font-size: 12px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .offline-row b { font-size: 13.5px; }
+  .offline-sub { font-size: 11.5px; color: var(--ink-3); margin-top: 2px; line-height: 1.5; }
+
+  .warn-block {
+    background: #FEF2F2;
+    border: 1px solid #FECACA;
+    border-radius: var(--radius-md);
+    padding: 12px 14px;
+    font-size: 11.5px;
+    color: #991B1B;
+    line-height: 1.6;
+    margin-top: 14px;
+  }
+
+  /* === Return Checklist (Screen 6 REVISED) === */
+  .checklist-screen { flex: 1; overflow-y: auto; padding: 18px 18px 120px; }
+
+  .self-check-hint {
+    background: var(--primary-soft);
+    border: 1px solid var(--primary-border);
+    border-radius: var(--radius-md);
+    padding: 12px 14px;
+    font-size: 12.5px;
+    color: #9A3412;
+    line-height: 1.6;
+    margin-bottom: 14px;
+  }
+
+  .checklist-item {
+    background: var(--surface);
+    border: 1px solid var(--border-soft);
+    border-radius: var(--radius-md);
+    padding: 13px 16px;
+    margin-bottom: 8px;
+    display: flex; align-items: flex-start; gap: 12px;
+    cursor: pointer;
+  }
+  .checklist-item.done {
+    background: var(--status-found-bg);
+    border-color: #A7F3D0;
+  }
+  .checklist-check {
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    border: 2px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    font-size: 12px;
+    margin-top: 1px;
+  }
+  .checklist-item.done .checklist-check {
+    background: var(--status-found);
+    border-color: var(--status-found);
+    color: white;
+  }
+  .checklist-content { flex: 1; }
+  .checklist-title { font-size: 14px; font-weight: 600; margin-bottom: 3px; }
+  .checklist-sub { font-size: 12px; color: var(--ink-3); line-height: 1.5; }
+
+  /* === Return Success === */
+  .success-confetti { text-align: center; padding: 36px 20px 20px; }
+  .success-circle {
+    width: 100px; height: 100px;
+    background: linear-gradient(135deg, var(--status-found), #10B981);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 50px; color: white;
+    margin: 0 auto 22px;
+    box-shadow: 0 8px 24px rgba(5,150,105,0.3);
+    position: relative;
+  }
+  .success-circle::after {
+    content: ''; position: absolute; inset: -10px;
+    border-radius: 50%;
+    border: 2px solid var(--status-found);
+    opacity: 0.3;
+  }
+  .success-title { font-size: 22px; font-weight: 700; margin-bottom: 8px; }
+  .success-sub { font-size: 14px; color: var(--ink-3); line-height: 1.5; padding: 0 16px; }
+  .reward-card {
+    margin: 22px 18px 14px;
+    background: linear-gradient(135deg, var(--primary), #FF8E5C);
+    border-radius: var(--radius-lg);
+    padding: 18px;
+    color: white;
+    position: relative;
+    overflow: hidden;
+  }
+  .reward-card::before {
+    content: '🪷';
+    position: absolute;
+    top: -10px; right: -10px;
+    font-size: 100px; opacity: 0.15;
+  }
+  .reward-label { font-size: 12px; opacity: 0.9; }
+  .reward-value { font-size: 32px; font-weight: 700; margin: 4px 0 8px; }
+  .reward-detail { font-size: 12.5px; opacity: 0.95; line-height: 1.5; }
+  .thanks-cta-card {
+    margin: 0 18px 14px;
+    background: var(--surface);
+    border-radius: var(--radius-md);
+    padding: 16px;
+    border: 1px solid var(--border-soft);
+    display: flex; gap: 12px; align-items: center;
+    cursor: pointer;
+  }
+  .thanks-cta-icon {
+    width: 44px; height: 44px;
+    background: var(--primary-soft);
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px;
+  }
+  .thanks-cta-content { flex: 1; }
+  .thanks-cta-title { font-size: 14px; font-weight: 600; }
+  .thanks-cta-sub { font-size: 11.5px; color: var(--ink-3); margin-top: 2px; }
+
+  .annotations {
+    max-width: 720px;
+    margin: 24px auto 0;
+    padding: 24px;
+    background: var(--surface);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border);
+  }
+  .annotations h4 { margin: 0 0 12px; font-size: 14px; }
+  .annotations h4:not(:first-child) { margin-top: 22px; }
+  .annotations ul { margin: 0; padding-left: 20px; font-size: 13px; line-height: 1.75; color: var(--ink-2); }
+  .nav-hint {
+    margin-top: 18px;
+    padding: 12px 14px;
+    background: var(--primary-soft);
+    border-radius: var(--radius-md);
+    font-size: 12.5px;
+    color: #9A3412;
+    line-height: 1.65;
+    border: 1px solid var(--primary-border);
+  }
+  .philosophy-card {
+    background: linear-gradient(135deg, #FAFAF7, #F5F5F0);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 16px 18px;
+    margin-bottom: 18px;
+  }
+  .philosophy-card h5 { margin: 0 0 8px; font-size: 13px; color: var(--ink-3); }
+  .philosophy-card .quote { font-size: 14px; color: var(--ink-1); line-height: 1.55; font-style: italic; }
+</style>
+
+<h2>寻宠 · 大理 — 高保真原型 v3</h2>
+<p class="subtitle">归还核对从"强制验证"改为"沟通建议 + 自检清单" · 小程序定位调整为辅助工具</p>
+
+<div class="philosophy-card" style="max-width:720px;margin:0 auto 20px">
+  <h5>这一版的核心理念调整</h5>
+  <div class="quote">"小程序在背后默默提供撮合 + 工具 + 留痕，但不挡用户的路。物理交付必须线下发生，信任建立在线下，紧急情况下用户会跳过任何冗余步骤。"</div>
+</div>
+
+<div class="stage">
+  <div class="device">
+    <div class="status-bar">
+      <span>9:41</span>
+      <span style="font-size:11px">📶 📡 🔋</span>
+    </div>
+
+    <!-- ============ Feed ============ -->
+    <div class="screen active" data-screen="feed">
+      <div class="top-nav">
+        <div class="city-tag">
+          <span class="pulse"></span>
+          大理 ▾
+        </div>
+        <div class="search">
+          <span>🔍</span>
+          <span>搜品种、地点、特征</span>
+        </div>
+        <div class="notif-btn">🔔<div class="dot"></div></div>
+      </div>
+
+      <div class="filter-strip">
+        <div class="chip active">全部</div>
+        <div class="chip"><span class="chip-dot" style="background:#DC2626"></span>寻宠</div>
+        <div class="chip"><span class="chip-dot" style="background:#059669"></span>招领</div>
+        <div class="chip"><span class="chip-dot" style="background:#D97706"></span>临时照料</div>
+        <div class="filter-divider"></div>
+        <div class="chip sort-chip">⏱ 最新 ▾</div>
+      </div>
+
+      <div class="feed">
+        <div class="card" onclick="showScreen('detail-found')">
+          <div class="card-row">
+            <div class="photo ph-orange"><span>🐱</span>
+              <div class="status-badge found">● 招领</div>
+            </div>
+            <div class="info">
+              <div class="pet-title">橘猫 <span class="breed">· 约 2 岁 · ♀</span></div>
+              <div class="pet-meta">📍 人民路三月街 · <span class="time-tag urgent">⚡ 30 分钟前</span></div>
+              <div class="pet-desc">在咖啡馆门口蹲了一下午，看着像走丢的。亲人，会撒娇，目前在我店里。</div>
+            </div>
+          </div>
+          <div class="card-footer">
+            <span class="distance-pill">📍 1.2 km</span>
+            <div class="footer-actions">
+              <span class="footer-action">💬 3</span>
+              <span class="footer-action">👀 47</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-row">
+            <div class="photo ph-blue"><span>🐱</span>
+              <div class="status-badge lost">● 寻找</div>
+            </div>
+            <div class="info">
+              <div class="pet-title">胖丁 <span class="breed">· 英短蓝猫 · ♂ 3 岁</span></div>
+              <div class="pet-meta">📍 古城北门 · <span class="time-tag urgent">⚡ 10 分钟前</span></div>
+              <div class="pet-desc">穿粉色项圈，左耳缺一小块。主人非常着急，看到请联系或留言 🙏</div>
+            </div>
+          </div>
+          <div class="card-footer">
+            <span class="distance-pill">📍 0.8 km</span>
+            <div class="footer-actions">
+              <span class="footer-action">💬 12</span>
+              <span class="footer-action" style="color:var(--primary);font-weight:600">📌 我有线索</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-row">
+            <div class="photo ph-cream"><span>🐶</span>
+              <div class="status-badge care">● 照料中</div>
+            </div>
+            <div class="info">
+              <div class="pet-title">白色比熊 <span class="breed">· 约 5kg · ♂</span></div>
+              <div class="pet-meta">📍 下关泰安路 · <span class="time-tag recent">2 小时前</span></div>
+              <div class="pet-desc">在小区门口捡到，毛色干净有人养过。我家可以临时照看 2-3 天。</div>
+            </div>
+          </div>
+          <div class="card-footer">
+            <span class="distance-pill">📍 4.2 km</span>
+            <div class="footer-actions">
+              <span class="footer-action">💬 5</span>
+              <span class="footer-action">👀 28</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="card expired">
+          <div class="card-row">
+            <div class="photo ph-brown"><span>🐶</span>
+              <div class="status-badge found">● 招领</div>
+            </div>
+            <div class="info">
+              <div class="pet-title">小型犬 <span class="breed">· 棕白色 · 约 6kg</span></div>
+              <div class="pet-meta">📍 苍山门 · <span class="time-tag stale">9 天前 · 信息可能过期</span></div>
+              <div class="pet-desc">在山脚捡到，比较瘦，已带去打疫苗。希望主人快点出现。</div>
+            </div>
+          </div>
+          <div class="card-footer">
+            <span class="distance-pill">📍 3.4 km</span>
+            <div class="footer-actions">
+              <span class="footer-action">💬 2</span>
+              <span class="footer-action">👀 19</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="fab">+</div>
+
+      <div class="tab-bar">
+        <div class="tab active"><span class="icon">🏠</span><span>首页</span></div>
+        <div class="tab"><span class="icon">🗺️</span><span>地图</span></div>
+        <div class="tab spacer">·</div>
+        <div class="tab"><span class="icon">💬</span><span>消息</span></div>
+        <div class="tab"><span class="icon">👤</span><span>我的</span></div>
+      </div>
+    </div>
+
+    <!-- ============ Detail Found ============ -->
+    <div class="screen" data-screen="detail-found">
+      <div class="detail-header">
+        <div class="back-btn" onclick="showScreen('feed')">←</div>
+        <div class="detail-title">招领详情</div>
+        <div class="detail-spacer"></div>
+        <div class="share-btn">⤴</div>
+      </div>
+      <div class="detail-scroll">
+        <div class="hero-photo ph-orange">
+          <span>🐱</span>
+          <div class="hero-status found">● 招领中 · 第 1 小时</div>
+        </div>
+        <div class="detail-body">
+          <div class="detail-name">橘猫，约 2 岁</div>
+          <div class="detail-subtitle">公开特征：橘色 · ♀ · 戴红色项圈 · 亲人</div>
+
+          <div class="detail-stats">
+            <div class="stat">
+              <div class="stat-icon">📍</div>
+              <div>
+                <div class="stat-label">发现地点</div>
+                <div class="stat-value">人民路三月街</div>
+              </div>
+            </div>
+            <div class="stat-divider"></div>
+            <div class="stat">
+              <div class="stat-icon">🕐</div>
+              <div>
+                <div class="stat-label">发现时间</div>
+                <div class="stat-value">今天 09:00</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="section-label">发现者描述</div>
+          <div class="desc-block">
+            我在人民路开咖啡馆，今早开店时这只橘猫蹲在门口不走，看起来很饿。喂了它一点猫粮，目前在店里看店 😺 不像流浪猫，毛色干净，会撒娇。
+          </div>
+
+          <div class="feature-lock green">
+            <span class="feature-lock-icon">💬</span>
+            <div>
+              <b>认领前会拿到一份「沟通建议」</b><br>
+              小程序会给你提供与失主沟通的话术模板，以及见面时的核对建议。<b>核对的实际过程发生在你们之间</b>——平台只提供工具和留痕。
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="action-bar">
+        <div class="btn-secondary">💬 直接联系</div>
+        <div class="btn-primary" onclick="showScreen('contact-guide')">🏠 这是我家的猫</div>
+      </div>
+    </div>
+
+    <!-- ============ Screen 5 NEW: Contact Guide ============ -->
+    <div class="screen" data-screen="contact-guide">
+      <div class="detail-header">
+        <div class="back-btn" onclick="showScreen('detail-found')">←</div>
+        <div class="detail-title">联系失主</div>
+        <div class="detail-spacer"></div>
+        <div style="font-size:12px;color:var(--ink-3);padding:0 4px">1 / 2</div>
+      </div>
+
+      <div class="guide-screen">
+        <div class="guide-hero">
+          <div class="guide-icon">💬</div>
+          <div class="guide-title">联系前的几个建议</div>
+          <div class="guide-sub">小程序提供工具，但归还的实际核对发生在线下。下面是帮你和失主顺利完成沟通的建议。</div>
+        </div>
+
+        <div class="pet-summary-card">
+          <div class="pet-summary-thumb ph-orange">🐱</div>
+          <div>
+            <div style="font-weight:600;font-size:14.5px;margin-bottom:2px">橘猫，约 2 岁</div>
+            <div style="font-size:12px;color:var(--ink-3)">招领中 · 人民路三月街 · 30 分钟前</div>
+          </div>
+        </div>
+
+        <div class="info-card-soft">
+          <div style="display:flex;align-items:center;gap:8px">
+            <span style="font-size:16px">🔒</span>
+            <b>失主已设置 3 条「私有特征」</b>
+          </div>
+          <div class="info-body">
+            见面前在对话里让对方主动描述他知道的细节，作为线上初步核对。<br>
+            <b>你不需要填任何东西</b>——平台只是帮失主想清楚"该问什么"，最终是否是 ta 的猫由失主自己判断。
+          </div>
+        </div>
+
+        <div class="section-label" style="margin-top:6px">建议的沟通话术 · 点击复制</div>
+
+        <div class="message-template">
+          <div class="msg-text">
+            你好，我可能在<b>人民路三月街</b>捡到了你家的猫。方便描述一下 ta 身上的<b>特别之处</b>吗？比如毛色细节、性格反应等。
+          </div>
+          <div class="msg-actions">
+            <div class="template-btn primary">📋 复制</div>
+            <div class="template-btn">发送到平台对话</div>
+          </div>
+        </div>
+
+        <div class="message-template">
+          <div class="msg-text">
+            你能<b>视频展示一下</b> ta 听到名字的反应吗？我想再确认一下是同一只。
+          </div>
+          <div class="msg-actions">
+            <div class="template-btn primary">📋 复制</div>
+            <div class="template-btn">发送到平台对话</div>
+          </div>
+        </div>
+
+        <div class="message-template">
+          <div class="msg-text">
+            我们约个安全的地点见面吧。<b>派出所 / 宠物医院 / 繁忙的咖啡馆门口</b>都可以，方便你带<b>疫苗本和旧照片</b>过来吗？
+          </div>
+          <div class="msg-actions">
+            <div class="template-btn primary">📋 复制</div>
+            <div class="template-btn">发送到平台对话</div>
+          </div>
+        </div>
+
+        <div class="section-label" style="margin-top:18px">见面时建议你这样核对</div>
+        <div class="offline-block">
+          <div class="offline-row">
+            <div class="offline-num">1</div>
+            <div>
+              <b>看宠物对失主的反应</b>
+              <div class="offline-sub">真正的失主，宠物通常会立刻识别——听到名字、看到对方时的反应是最直接的证据</div>
+            </div>
+          </div>
+          <div class="offline-row">
+            <div class="offline-num">2</div>
+            <div>
+              <b>核对疫苗本 / 旧照片</b>
+              <div class="offline-sub">让对方出示宠物的疫苗本、与宠物的合影、家里其他场景的旧照片</div>
+            </div>
+          </div>
+          <div class="offline-row">
+            <div class="offline-num">3</div>
+            <div>
+              <b>公共安全地点 · 不要私下转账</b>
+              <div class="offline-sub">不要约去对方家中或偏僻地点；避免任何"押金 / 验证费 / 路费"等金钱往来</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="warn-block">
+          <b>⚠️ 如果对方拒绝视频/核对，或反复推脱：</b><br>
+          请立即停止交接，回小程序点击"⚠️ 争议申诉"。冒领核实后将永久封号 + 善行值清零 + 公示。
+        </div>
+      </div>
+
+      <div class="action-bar">
+        <div class="btn-secondary" onclick="showScreen('detail-found')">取消</div>
+        <div class="btn-primary" onclick="showScreen('return-checklist')">💬 发起对话</div>
+      </div>
+    </div>
+
+    <!-- ============ Screen 6 REVISED: Return Checklist (Lightweight) ============ -->
+    <div class="screen" data-screen="return-checklist">
+      <div class="detail-header">
+        <div class="back-btn" onclick="showScreen('contact-guide')">←</div>
+        <div class="detail-title">归还确认</div>
+        <div class="detail-spacer"></div>
+        <div style="font-size:12px;color:var(--ink-3);padding:0 4px">2 / 2</div>
+      </div>
+
+      <div class="checklist-screen">
+        <div class="pet-summary-card">
+          <div class="pet-summary-thumb ph-orange">🐱</div>
+          <div>
+            <div style="font-weight:600;font-size:14.5px;margin-bottom:2px">橘猫，约 2 岁</div>
+            <div style="font-size:12px;color:var(--ink-3)">即将完成归还</div>
+          </div>
+        </div>
+
+        <div class="self-check-hint">
+          <b>💡 这是自检清单，不是验证条件</b><br>
+          勾选下面的项目是为了帮你回顾，<b>平台信任你的判断</b>。即使一项不勾，也可以确认归还。
+        </div>
+
+        <div class="section-label">建议在确认归还前完成</div>
+
+        <div class="checklist-item done" onclick="this.classList.toggle('done')">
+          <div class="checklist-check">✓</div>
+          <div class="checklist-content">
+            <div class="checklist-title">已在小程序里沟通过</div>
+            <div class="checklist-sub">使用平台留言能留下记录，方便发生争议时仲裁</div>
+          </div>
+        </div>
+
+        <div class="checklist-item done" onclick="this.classList.toggle('done')">
+          <div class="checklist-check">✓</div>
+          <div class="checklist-content">
+            <div class="checklist-title">已核对宠物对失主的反应或私有特征</div>
+            <div class="checklist-sub">线上让对方提供匹配项，或见面时观察宠物反应</div>
+          </div>
+        </div>
+
+        <div class="checklist-item done" onclick="this.classList.toggle('done')">
+          <div class="checklist-check">✓</div>
+          <div class="checklist-content">
+            <div class="checklist-title">已看过疫苗本 / 旧照片</div>
+            <div class="checklist-sub">真正的失主通常能轻松出示这些可信资料</div>
+          </div>
+        </div>
+
+        <div class="checklist-item" onclick="this.classList.toggle('done')">
+          <div class="checklist-check"></div>
+          <div class="checklist-content">
+            <div class="checklist-title">在安全的公共地点交接</div>
+            <div class="checklist-sub">派出所 / 宠物医院 / 咖啡馆 等</div>
+          </div>
+        </div>
+
+        <div class="checklist-item" onclick="this.classList.toggle('done')">
+          <div class="checklist-check"></div>
+          <div class="checklist-content">
+            <div class="checklist-title">已亲手交付 / 接回宠物本人</div>
+            <div class="checklist-sub">归还的最终标志</div>
+          </div>
+        </div>
+
+        <div style="background:#FFF7ED;border:1px dashed #FED7AA;border-radius:var(--radius-md);padding:12px 14px;font-size:11.5px;color:#9A3412;line-height:1.6;margin-top:16px">
+          <b>⚠️ 如果发生冒领或纠纷</b>：请暂不点击"确认归还"，先到"我的 → 争议申诉"。我们将基于双方对话记录介入。
+        </div>
+      </div>
+
+      <div class="action-bar">
+        <div class="btn-secondary">争议申诉</div>
+        <div class="btn-primary" onclick="showScreen('return-success')">✅ 确认归还</div>
+      </div>
+    </div>
+
+    <!-- ============ Return Success ============ -->
+    <div class="screen" data-screen="return-success">
+      <div style="flex:1;overflow-y:auto;padding-bottom:100px">
+        <div class="success-confetti">
+          <div class="success-circle">✓</div>
+          <div class="success-title">归还成功 🎉</div>
+          <div class="success-sub">橘猫已平安回家。<br>感谢大理的善意，让这个故事有了结局。</div>
+        </div>
+
+        <div class="reward-card">
+          <div class="reward-label">🪷 发现者「客栈老板娘」获得</div>
+          <div class="reward-value">+ 6 善行值</div>
+          <div class="reward-detail">累计 48 善行值 · 距下一徽章还差 2 · 这是你第 3 次成功归还</div>
+        </div>
+
+        <div class="thanks-cta-card">
+          <div class="thanks-cta-icon">💌</div>
+          <div class="thanks-cta-content">
+            <div class="thanks-cta-title">写一封感谢信</div>
+            <div class="thanks-cta-sub">可以点名感谢提供线索的人，他们会各 +1 善行值</div>
+          </div>
+          <div style="color:var(--ink-4);font-size:16px">›</div>
+        </div>
+
+        <div class="thanks-cta-card" style="cursor:default">
+          <div class="thanks-cta-icon" style="background:#F3E8FF">⭐</div>
+          <div class="thanks-cta-content">
+            <div class="thanks-cta-title">为这次救助打分</div>
+            <div class="thanks-cta-sub">帮我们改进流程；评分仅对管理员可见</div>
+          </div>
+          <div style="color:var(--ink-4);font-size:16px">›</div>
+        </div>
+      </div>
+
+      <div class="action-bar">
+        <div class="btn-secondary" onclick="showScreen('feed')">回首页</div>
+        <div class="btn-primary" onclick="showScreen('feed')">💌 写感谢信</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  function showScreen(name) {
+    document.querySelectorAll('.screen').forEach(el => el.classList.remove('active'));
+    const t = document.querySelector(`[data-screen="${name}"]`);
+    if (t) t.classList.add('active');
+  }
+</script>
+
+<div class="annotations">
+  <h4>🧭 v3 的核心改动</h4>
+  <ul>
+    <li><b>屏 5 "认领核对" → "联系失主 · 沟通建议"</b>
+      <br>· 取消强制 input "你的核对描述"
+      <br>· 改为提供 3 个可复制的沟通话术模板（询问特征、要求视频、约见面地点）
+      <br>· 提供见面时的 3 步核对建议（看反应、核对疫苗本、安全地点）
+      <br>· 保留对冒领的红色警告
+      <br>· 主按钮从"提交核对"改为"💬 发起对话"
+    </li>
+    <li><b>屏 6 "归还 checklist" 改为轻量自检</b>
+      <br>· 顶部明确说明"这是自检清单，不是验证条件 · 平台信任你的判断"
+      <br>· 5 项 checklist 全部可由用户自由勾选/取消（点击切换）
+      <br>· "确认归还"按钮始终可点（不再有 disabled 状态）
+      <br>· 不再有"等待双方确认 (3/5)" 的卡顿提示
+    </li>
+    <li><b>招领详情页的提示卡文案调整</b>
+      <br>· 旧版本是"必须走完线上核对流程"
+      <br>· 新版本是"核对的实际过程发生在你们之间——平台只提供工具和留痕"
+    </li>
+  </ul>
+
+  <h4>📌 这版本的产品哲学</h4>
+  <ul>
+    <li><b>小程序的角色 = 辅助 + 留痕 + 激励</b>，不是流程管控者</li>
+    <li><b>"私有特征"字段的作用重新定位</b>：认知工具（帮失主想"该问什么"）+ 留痕（争议时仲裁依据）+ 心理威慑（冒领者知道平台有记录），不是物理阻断</li>
+    <li><b>反冒领的物理基础放回线下</b>：宠物对失主的反应、疫苗本、旧照片、公共安全地点</li>
+    <li><b>用户自主性优先</b>：5 项 checklist 全是建议；用户即使不勾任何一项也能确认归还。我们尊重用户对自己情况的判断</li>
+  </ul>
+
+  <div class="nav-hint">
+    <b>📲 完整可点击路径</b>：<br>
+    · 首页 → 点橙猫卡片 → <b>招领详情</b> → 点"这是我家的猫"<br>
+    · → <b>联系失主 · 沟通建议</b>（看话术模板、3 步核对建议）<br>
+    · → 点"💬 发起对话" → <b>归还 checklist</b>（试着点 checklist 项切换勾选状态）<br>
+    · → 点"✅ 确认归还" → <b>归还成功</b>
+  </div>
+
+  <p style="margin-top: 20px; font-size: 13px; color: var(--ink-2)"><b>💬 看完告诉我</b>：
+  <br>· 屏 5 的"沟通话术 + 见面建议"形态对吗？要不要加/减话术模板？
+  <br>· 屏 6 的"自由勾选 + 信任用户"基调合适吗？
+  <br>· 整体节奏感对了之后，是不是可以锁定设计、回到 §2 文字定稿（组件/数据表/数据流）准备写 design doc？</p>
+</div>

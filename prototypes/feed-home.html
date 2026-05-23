@@ -1,0 +1,395 @@
+<h2>首页信息流 — 第一版 mockup</h2>
+<p class="subtitle">大理本地场景 · 寻宠 / 招领 / 临时照料 三类卡片混排 · 距离优先排序</p>
+
+<style>
+  .phone-wrap {
+    display: flex;
+    justify-content: center;
+    margin: 24px 0;
+  }
+  .phone {
+    width: 360px;
+    height: 760px;
+    background: #FAFAF7;
+    border-radius: 36px;
+    border: 10px solid #1a1a1a;
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+    font-family: -apple-system, "PingFang SC", "Helvetica Neue", sans-serif;
+    color: #1F2937;
+  }
+  .status-bar {
+    height: 28px;
+    background: transparent;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 18px;
+    font-size: 12px;
+    font-weight: 600;
+  }
+  .top-bar {
+    padding: 8px 16px 12px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: #FAFAF7;
+  }
+  .city-chip {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 15px;
+    font-weight: 600;
+  }
+  .city-chip .dot {
+    width: 8px;
+    height: 8px;
+    background: #FF7A3D;
+    border-radius: 50%;
+  }
+  .search-bar {
+    flex: 1;
+    height: 32px;
+    background: #fff;
+    border-radius: 18px;
+    border: 1px solid #E5E7EB;
+    display: flex;
+    align-items: center;
+    padding: 0 12px;
+    font-size: 13px;
+    color: #9CA3AF;
+    gap: 6px;
+  }
+  .icon-btn {
+    width: 32px; height: 32px;
+    display: flex; align-items: center; justify-content: center;
+    background: #fff;
+    border-radius: 50%;
+    font-size: 16px;
+  }
+  .filter-row {
+    padding: 6px 16px 12px;
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    background: #FAFAF7;
+  }
+  .chip {
+    padding: 6px 14px;
+    border-radius: 16px;
+    background: #fff;
+    border: 1px solid #E5E7EB;
+    font-size: 13px;
+    white-space: nowrap;
+    color: #4B5563;
+  }
+  .chip.active {
+    background: #1F2937;
+    color: #fff;
+    border-color: #1F2937;
+  }
+  .feed {
+    height: calc(100% - 28px - 64px - 56px - 70px);
+    overflow-y: auto;
+    padding: 8px 14px 80px;
+  }
+  .card {
+    background: #fff;
+    border-radius: 16px;
+    margin-bottom: 12px;
+    overflow: hidden;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+  }
+  .card-row {
+    display: flex;
+    padding: 12px;
+    gap: 12px;
+  }
+  .pet-photo {
+    width: 84px;
+    height: 84px;
+    border-radius: 12px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 36px;
+    position: relative;
+  }
+  .photo-1 { background: linear-gradient(135deg, #C7D7F0, #93B5E1); }
+  .photo-2 { background: linear-gradient(135deg, #F5C77A, #E89B3D); }
+  .photo-3 { background: linear-gradient(135deg, #F0E6D2, #D9C9A8); }
+  .photo-4 { background: linear-gradient(135deg, #2C2C2C, #5A5A5A); }
+  .photo-5 { background: linear-gradient(135deg, #FBD0D0, #F09898); }
+  .badge {
+    position: absolute;
+    top: -4px;
+    left: -4px;
+    padding: 2px 6px;
+    border-radius: 6px;
+    font-size: 10px;
+    color: #fff;
+    font-weight: 600;
+  }
+  .badge-lost { background: #E63946; }
+  .badge-found { background: #2A9D8F; }
+  .badge-care { background: #F5A623; }
+  .card-info {
+    flex: 1;
+    min-width: 0;
+  }
+  .pet-name {
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 2px;
+  }
+  .pet-meta {
+    font-size: 12px;
+    color: #6B7280;
+    margin-bottom: 4px;
+  }
+  .pet-desc {
+    font-size: 12px;
+    color: #374151;
+    line-height: 1.4;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+  }
+  .card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 12px;
+    border-top: 1px solid #F3F4F6;
+    font-size: 11px;
+    color: #9CA3AF;
+  }
+  .distance { color: #FF7A3D; font-weight: 600; }
+  .actions { display: flex; gap: 8px; }
+  .action-link { color: #6B7280; }
+  .tab-bar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 70px;
+    background: #fff;
+    border-top: 1px solid #F3F4F6;
+    display: flex;
+    padding-bottom: 12px;
+  }
+  .tab {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    color: #9CA3AF;
+    gap: 2px;
+  }
+  .tab.active { color: #FF7A3D; }
+  .tab-icon {
+    font-size: 20px;
+  }
+  .fab-publish {
+    position: absolute;
+    bottom: 22px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 56px; height: 56px;
+    background: linear-gradient(135deg, #FF7A3D, #FF5A1F);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    color: #fff;
+    font-size: 26px;
+    box-shadow: 0 4px 16px rgba(255,122,61,0.4);
+    z-index: 10;
+  }
+  .annotations {
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 20px;
+    background: #fff;
+    border-radius: 12px;
+    border: 1px solid #E5E7EB;
+  }
+  .annotations h4 { margin: 0 0 12px; font-size: 14px; }
+  .annotations ul { margin: 0; padding-left: 18px; font-size: 13px; line-height: 1.7; color: #4B5563; }
+  .annotations code { background: #F3F4F6; padding: 1px 6px; border-radius: 4px; font-size: 12px; }
+</style>
+
+<div class="phone-wrap">
+  <div class="phone">
+    <div class="status-bar">
+      <span>9:41</span>
+      <span>● ● ●</span>
+    </div>
+
+    <div class="top-bar">
+      <div class="city-chip">
+        <span class="dot"></span>
+        大理 ▾
+      </div>
+      <div class="search-bar">
+        <span>🔍</span>
+        <span>搜品种、地点、特征</span>
+      </div>
+      <div class="icon-btn">🔔</div>
+    </div>
+
+    <div class="filter-row">
+      <div class="chip active">全部</div>
+      <div class="chip">🔴 寻宠</div>
+      <div class="chip">🟢 招领</div>
+      <div class="chip">🟡 临时照料</div>
+      <div class="chip">3km 内</div>
+    </div>
+
+    <div class="feed">
+
+      <div class="card">
+        <div class="card-row">
+          <div class="pet-photo photo-1">
+            <span class="badge badge-lost">寻找</span>
+            🐱
+          </div>
+          <div class="card-info">
+            <div class="pet-name">胖丁 · 英短蓝猫</div>
+            <div class="pet-meta">古城北门 · 1 小时前 · 失主 李*</div>
+            <div class="pet-desc">穿粉色项圈，左耳缺一小块。看到请联系，主人非常着急 🙏</div>
+          </div>
+        </div>
+        <div class="card-footer">
+          <span class="distance">📍 0.8 km</span>
+          <div class="actions">
+            <span class="action-link">💬 留言</span>
+            <span class="action-link">📌 我有线索</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-row">
+          <div class="pet-photo photo-2">
+            <span class="badge badge-found">招领</span>
+            🐱
+          </div>
+          <div class="card-info">
+            <div class="pet-name">橘猫 · 约 2 岁</div>
+            <div class="pet-meta">人民路三月街 · 30 分钟前</div>
+            <div class="pet-desc">在咖啡馆门口蹲了一下午，看着像走丢的。亲人，会撒娇。</div>
+          </div>
+        </div>
+        <div class="card-footer">
+          <span class="distance">📍 1.2 km</span>
+          <div class="actions">
+            <span class="action-link">💬 联系发现者</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-row">
+          <div class="pet-photo photo-3">
+            <span class="badge badge-care">临时照料中</span>
+            🐶
+          </div>
+          <div class="card-info">
+            <div class="pet-name">白色比熊 · 约 5kg</div>
+            <div class="pet-meta">下关泰安路 · 2 小时前</div>
+            <div class="pet-desc">在小区门口捡到，毛色干净有人养过。我家可以临时照看 2-3 天。</div>
+          </div>
+        </div>
+        <div class="card-footer">
+          <span class="distance">📍 4.2 km</span>
+          <div class="actions">
+            <span class="action-link">💬 联系</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-row">
+          <div class="pet-photo photo-4">
+            <span class="badge badge-lost">寻找</span>
+            🐶
+          </div>
+          <div class="card-info">
+            <div class="pet-name">小黑 · 黑色拉布拉多</div>
+            <div class="pet-meta">洱海月湿地 · 昨天 · 失主 王*</div>
+            <div class="pet-desc">8 岁老狗，听力不好。脖子有旧伤疤。家人非常担心。</div>
+          </div>
+        </div>
+        <div class="card-footer">
+          <span class="distance">📍 6.8 km</span>
+          <div class="actions">
+            <span class="action-link">💬 留言</span>
+            <span class="action-link">📌 我有线索</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-row">
+          <div class="pet-photo photo-5">
+            <span class="badge badge-found">招领</span>
+            🐶
+          </div>
+          <div class="card-info">
+            <div class="pet-name">小型犬 · 棕白色</div>
+            <div class="pet-meta">苍山门 · 2 天前</div>
+            <div class="pet-desc">在山脚捡到，比较瘦，已带去打疫苗。希望主人快点出现。</div>
+          </div>
+        </div>
+        <div class="card-footer">
+          <span class="distance">📍 3.4 km</span>
+          <div class="actions">
+            <span class="action-link">💬 联系</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="fab-publish">+</div>
+
+    <div class="tab-bar">
+      <div class="tab active">
+        <div class="tab-icon">🏠</div>
+        首页
+      </div>
+      <div class="tab">
+        <div class="tab-icon">🗺️</div>
+        地图
+      </div>
+      <div class="tab" style="visibility:hidden">.</div>
+      <div class="tab">
+        <div class="tab-icon">💬</div>
+        消息
+      </div>
+      <div class="tab">
+        <div class="tab-icon">👤</div>
+        我的
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="annotations">
+  <h4>📐 这一版的几个设计决策（请你评判）</h4>
+  <ul>
+    <li><b>底部 5 个 tab 改成"首页 / 地图 / + / 消息 / 我的"</b>，把"发布"从底栏拎出来变成中间凸起的橙色悬浮按钮（FAB）—— 这是寻宠平台最关键的动作，要让它视觉上无法忽视</li>
+    <li>新增 <b>"地图"</b> tab：大理范围小、地点高度地标化（古城北门、人民路、洱海月），地图视图比纯列表更直观</li>
+    <li>卡片左上角的 <b>状态徽章</b> 用三色区分：🔴 寻找 / 🟢 招领 / 🟡 临时照料中</li>
+    <li>卡片底栏的"我有线索"按钮：对应你 V2.0 里的线索提交流程，作为最显眼的二级动作</li>
+    <li>距离用橙色突出（<code>0.8km</code> 这种）—— 大理用户能瞬间判断是否离自己近</li>
+    <li>暂时<b>不展示</b>失主头像 / 善行值徽章 / 转发数等"装饰性"信息，把屏幕给真正影响判断的字段</li>
+    <li>顶部"大理 ▾"是城市切换入口（M0 只有大理，但保留切换控件给后续扩展）</li>
+  </ul>
+  <p style="margin-top: 16px; font-size: 13px; color: #4B5563"><b>💬 接下来想听你的反馈：</b>整体感觉对吗？哪里需要改？或者你想先看其他页面（发布表单 / 详情页 / 个人中心 / 地图视图）？</p>
+</div>

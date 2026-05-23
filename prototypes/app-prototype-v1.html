@@ -1,0 +1,1308 @@
+<style>
+  :root {
+    --primary: #FF6B35;
+    --primary-soft: #FFF1E9;
+    --primary-border: #FFDCC8;
+    --ink-1: #0F172A;
+    --ink-2: #334155;
+    --ink-3: #64748B;
+    --ink-4: #94A3B8;
+    --bg: #FAFAF7;
+    --surface: #FFFFFF;
+    --border: #E2E8F0;
+    --border-soft: #F1F5F9;
+    --status-lost: #DC2626;
+    --status-lost-bg: #FEF2F2;
+    --status-found: #059669;
+    --status-found-bg: #ECFDF5;
+    --status-care: #D97706;
+    --status-care-bg: #FFFBEB;
+    --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.04);
+    --shadow-md: 0 4px 12px rgba(15, 23, 42, 0.06), 0 2px 4px rgba(15, 23, 42, 0.04);
+    --shadow-lg: 0 12px 32px rgba(15, 23, 42, 0.08), 0 4px 12px rgba(15, 23, 42, 0.06);
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
+    --radius-xl: 20px;
+    --radius-full: 9999px;
+  }
+
+  .stage {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 20px 0 40px;
+  }
+  .device {
+    width: 390px;
+    height: 800px;
+    background: var(--bg);
+    border-radius: 48px;
+    border: 12px solid #1a1a1a;
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 40px 80px rgba(0, 0, 0, 0.25), 0 16px 32px rgba(0, 0, 0, 0.15);
+    font-family: -apple-system, "PingFang SC", "SF Pro Display", "Helvetica Neue", system-ui, sans-serif;
+    color: var(--ink-1);
+    font-size: 14px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+  .device::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 130px;
+    height: 30px;
+    background: #1a1a1a;
+    border-bottom-left-radius: 18px;
+    border-bottom-right-radius: 18px;
+    z-index: 100;
+  }
+  .status-bar {
+    height: 44px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 28px;
+    font-size: 14px;
+    font-weight: 600;
+  }
+  .screen {
+    position: absolute;
+    top: 44px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    overflow: hidden;
+    background: var(--bg);
+    display: flex;
+    flex-direction: column;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+  }
+  .screen.active {
+    opacity: 1;
+    pointer-events: auto;
+    z-index: 1;
+  }
+
+  .top-nav {
+    padding: 8px 16px 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .city-tag {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 15px;
+    font-weight: 600;
+    padding: 6px 12px 6px 10px;
+    border-radius: var(--radius-full);
+    background: var(--surface);
+    box-shadow: var(--shadow-sm);
+  }
+  .city-tag .pulse {
+    width: 8px;
+    height: 8px;
+    background: var(--primary);
+    border-radius: 50%;
+    box-shadow: 0 0 0 4px var(--primary-soft);
+  }
+  .search {
+    flex: 1;
+    height: 36px;
+    background: var(--surface);
+    border-radius: var(--radius-full);
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    padding: 0 14px;
+    font-size: 13px;
+    color: var(--ink-4);
+    gap: 6px;
+  }
+  .notif-btn {
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--surface);
+    border-radius: 50%;
+    box-shadow: var(--shadow-sm);
+    position: relative;
+    font-size: 16px;
+  }
+  .notif-btn .dot {
+    position: absolute;
+    top: 8px;
+    right: 9px;
+    width: 8px;
+    height: 8px;
+    background: var(--primary);
+    border-radius: 50%;
+    border: 2px solid var(--surface);
+  }
+
+  .filter-strip {
+    padding: 0 16px 12px;
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .filter-strip::-webkit-scrollbar { display: none; }
+  .chip {
+    padding: 7px 14px;
+    border-radius: var(--radius-full);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    font-size: 13px;
+    white-space: nowrap;
+    color: var(--ink-3);
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    cursor: pointer;
+  }
+  .chip.active {
+    background: var(--ink-1);
+    color: white;
+    border-color: var(--ink-1);
+  }
+  .chip-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+  }
+
+  .feed {
+    flex: 1;
+    overflow-y: auto;
+    padding: 4px 14px 100px;
+    -webkit-overflow-scrolling: touch;
+  }
+  .card {
+    background: var(--surface);
+    border-radius: var(--radius-lg);
+    margin-bottom: 12px;
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--border-soft);
+    cursor: pointer;
+    transition: transform 0.15s, box-shadow 0.15s;
+  }
+  .card:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+  }
+  .card-row {
+    display: flex;
+    padding: 12px;
+    gap: 12px;
+  }
+  .photo {
+    width: 92px;
+    height: 92px;
+    border-radius: var(--radius-md);
+    flex-shrink: 0;
+    background-size: cover;
+    background-position: center;
+    background-color: #CBD5E1;
+    background-image: linear-gradient(135deg, #E2E8F0, #CBD5E1);
+    position: relative;
+    overflow: hidden;
+  }
+  .photo::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    box-shadow: inset 0 0 0 1px rgba(15,23,42,0.06);
+    border-radius: var(--radius-md);
+  }
+  .status-badge {
+    position: absolute;
+    top: 6px;
+    left: 6px;
+    padding: 3px 8px;
+    border-radius: 6px;
+    font-size: 10.5px;
+    color: #fff;
+    font-weight: 600;
+    backdrop-filter: blur(8px);
+    z-index: 2;
+  }
+  .status-badge.lost { background: rgba(220, 38, 38, 0.94); }
+  .status-badge.found { background: rgba(5, 150, 105, 0.94); }
+  .status-badge.care { background: rgba(217, 119, 6, 0.94); }
+
+  .info { flex: 1; min-width: 0; }
+  .pet-title {
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 3px;
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+  }
+  .pet-title .breed {
+    font-size: 12px;
+    color: var(--ink-3);
+    font-weight: 400;
+  }
+  .pet-meta {
+    font-size: 12px;
+    color: var(--ink-3);
+    margin-bottom: 5px;
+  }
+  .pet-desc {
+    font-size: 12.5px;
+    color: var(--ink-2);
+    line-height: 1.45;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+  }
+  .card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 14px 10px;
+    border-top: 1px solid var(--border-soft);
+    font-size: 12px;
+  }
+  .distance-pill {
+    color: var(--primary);
+    font-weight: 600;
+    font-size: 12px;
+  }
+  .footer-actions { display: flex; gap: 14px; }
+  .footer-action { color: var(--ink-3); }
+
+  .fab {
+    position: absolute;
+    bottom: 84px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 62px;
+    height: 62px;
+    background: linear-gradient(135deg, var(--primary), #FF4A12);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 30px;
+    font-weight: 300;
+    line-height: 1;
+    box-shadow: 0 6px 16px rgba(255, 107, 53, 0.4), 0 2px 4px rgba(255, 107, 53, 0.3);
+    z-index: 20;
+    cursor: pointer;
+    transition: transform 0.15s;
+  }
+  .fab:active { transform: translateX(-50%) scale(0.92); }
+  .fab::before {
+    content: '';
+    position: absolute;
+    inset: -4px;
+    border-radius: 50%;
+    border: 2px solid var(--bg);
+  }
+
+  .tab-bar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 78px;
+    background: rgba(255, 255, 255, 0.94);
+    backdrop-filter: blur(20px);
+    border-top: 1px solid var(--border-soft);
+    display: flex;
+    padding-bottom: 18px;
+    z-index: 10;
+  }
+  .tab {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    color: var(--ink-4);
+    gap: 3px;
+    cursor: pointer;
+  }
+  .tab.active { color: var(--primary); font-weight: 600; }
+  .tab .icon { font-size: 22px; }
+  .tab.spacer { pointer-events: none; visibility: hidden; }
+
+  /* Detail */
+  .detail-header {
+    height: 56px;
+    display: flex;
+    align-items: center;
+    padding: 0 16px;
+    gap: 12px;
+  }
+  .back-btn, .share-btn {
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--surface);
+    border-radius: 50%;
+    box-shadow: var(--shadow-sm);
+    font-size: 18px;
+    cursor: pointer;
+  }
+  .detail-title { font-size: 16px; font-weight: 600; }
+  .detail-spacer { flex: 1; }
+  .detail-scroll {
+    flex: 1;
+    overflow-y: auto;
+    padding-bottom: 110px;
+  }
+  .hero-photo {
+    width: 100%;
+    height: 280px;
+    background-size: cover;
+    background-position: center;
+    background-color: #CBD5E1;
+    background-image: linear-gradient(135deg, #E2E8F0, #94A3B8);
+    position: relative;
+  }
+  .hero-status {
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    padding: 6px 14px;
+    border-radius: var(--radius-full);
+    font-size: 12px;
+    color: white;
+    font-weight: 600;
+    backdrop-filter: blur(12px);
+  }
+  .hero-status.lost { background: rgba(220, 38, 38, 0.92); }
+  .hero-status.found { background: rgba(5, 150, 105, 0.92); }
+  .hero-thumb {
+    position: absolute;
+    bottom: 12px;
+    right: 12px;
+    background: rgba(15, 23, 42, 0.55);
+    padding: 4px 10px;
+    border-radius: var(--radius-full);
+    color: white;
+    font-size: 11px;
+    backdrop-filter: blur(8px);
+  }
+  .detail-body { padding: 20px 18px; }
+  .detail-name {
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .detail-subtitle {
+    font-size: 14px;
+    color: var(--ink-3);
+    margin-bottom: 16px;
+  }
+  .detail-stats {
+    display: flex;
+    gap: 14px;
+    padding: 14px;
+    background: var(--surface);
+    border-radius: var(--radius-md);
+    margin-bottom: 18px;
+    border: 1px solid var(--border-soft);
+  }
+  .stat {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .stat-icon {
+    width: 34px;
+    height: 34px;
+    background: var(--primary-soft);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 17px;
+  }
+  .stat-label {
+    font-size: 11px;
+    color: var(--ink-3);
+    margin-bottom: 2px;
+  }
+  .stat-value {
+    font-size: 13px;
+    font-weight: 600;
+  }
+  .stat-divider {
+    width: 1px;
+    background: var(--border-soft);
+    margin: 4px 0;
+  }
+  .section-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--ink-3);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 8px;
+  }
+  .desc-block {
+    background: var(--surface);
+    border-radius: var(--radius-md);
+    padding: 14px 16px;
+    margin-bottom: 18px;
+    font-size: 14px;
+    color: var(--ink-2);
+    line-height: 1.6;
+    border: 1px solid var(--border-soft);
+  }
+  .feature-lock {
+    background: linear-gradient(135deg, #FFF7ED, #FFEDD5);
+    border-radius: var(--radius-md);
+    padding: 14px;
+    margin-bottom: 18px;
+    border: 1px dashed #FED7AA;
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    font-size: 12.5px;
+    color: #9A3412;
+    line-height: 1.55;
+  }
+  .feature-lock.green {
+    background: linear-gradient(135deg, #ECFDF5, #D1FAE5);
+    border-color: #6EE7B7;
+    color: #065F46;
+  }
+  .feature-lock-icon { font-size: 18px; flex-shrink: 0; }
+
+  .clue-list {
+    background: var(--surface);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-soft);
+    margin-bottom: 18px;
+    overflow: hidden;
+  }
+  .clue-item {
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--border-soft);
+    display: flex;
+    gap: 10px;
+    cursor: pointer;
+  }
+  .clue-item:last-child { border-bottom: none; }
+  .clue-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #94A3B8, #64748B);
+    color: white;
+    font-size: 12px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .clue-content { flex: 1; }
+  .clue-author {
+    font-size: 12.5px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 2px;
+  }
+  .clue-badge {
+    font-size: 10px;
+    padding: 1px 6px;
+    border-radius: 4px;
+    background: var(--primary-soft);
+    color: var(--primary);
+    font-weight: 600;
+  }
+  .clue-meta {
+    font-size: 11px;
+    color: var(--ink-4);
+    margin-bottom: 4px;
+  }
+  .clue-text {
+    font-size: 13px;
+    color: var(--ink-2);
+    line-height: 1.5;
+  }
+  .clue-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 6px;
+  }
+  .clue-btn {
+    font-size: 11px;
+    padding: 4px 10px;
+    border-radius: var(--radius-full);
+    border: 1px solid var(--border);
+    color: var(--ink-3);
+    background: white;
+  }
+  .clue-btn.useful {
+    border-color: var(--primary);
+    color: var(--primary);
+    background: var(--primary-soft);
+  }
+
+  .action-bar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(255, 255, 255, 0.96);
+    backdrop-filter: blur(20px);
+    border-top: 1px solid var(--border-soft);
+    padding: 12px 16px 24px;
+    display: flex;
+    gap: 10px;
+    z-index: 10;
+  }
+  .btn-secondary, .btn-primary {
+    height: 48px;
+    border-radius: var(--radius-lg);
+    font-size: 14.5px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    cursor: pointer;
+    transition: transform 0.15s;
+  }
+  .btn-secondary:active, .btn-primary:active { transform: scale(0.98); }
+  .btn-secondary {
+    flex: 1;
+    background: var(--surface);
+    color: var(--ink-1);
+    border: 1px solid var(--border);
+  }
+  .btn-primary {
+    flex: 1.4;
+    background: linear-gradient(135deg, var(--primary), #FF4A12);
+    color: white;
+    box-shadow: 0 4px 12px rgba(255, 107, 53, 0.3);
+  }
+
+  /* Profile */
+  .profile-scroll {
+    flex: 1;
+    overflow-y: auto;
+    padding-bottom: 100px;
+  }
+  .profile-hero {
+    background: linear-gradient(135deg, #FF6B35, #FF8E5C);
+    padding: 20px 18px 60px;
+    color: white;
+  }
+  .profile-user {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 18px;
+  }
+  .profile-avatar {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #FED7AA, #FDBA74);
+    border: 3px solid rgba(255, 255, 255, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+  }
+  .profile-name {
+    font-size: 17px;
+    font-weight: 600;
+    margin-bottom: 3px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .profile-handle {
+    font-size: 12px;
+    opacity: 0.85;
+  }
+  .level-badge {
+    background: rgba(255, 255, 255, 0.2);
+    padding: 2px 8px;
+    border-radius: var(--radius-full);
+    font-size: 11px;
+    backdrop-filter: blur(8px);
+  }
+  .points-card {
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    border-radius: var(--radius-lg);
+    padding: 16px;
+  }
+  .points-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+  .points-label {
+    font-size: 12px;
+    opacity: 0.9;
+  }
+  .points-detail-link {
+    font-size: 12px;
+    opacity: 0.85;
+  }
+  .points-value {
+    font-size: 36px;
+    font-weight: 700;
+    line-height: 1;
+    margin-bottom: 6px;
+    letter-spacing: -1px;
+  }
+  .points-meta {
+    font-size: 11.5px;
+    opacity: 0.85;
+  }
+  .points-divider {
+    height: 1px;
+    background: rgba(255, 255, 255, 0.2);
+    margin: 14px 0;
+  }
+  .points-stats {
+    display: flex;
+    justify-content: space-between;
+  }
+  .points-stat-item {
+    text-align: center;
+    flex: 1;
+  }
+  .points-stat-num {
+    font-size: 17px;
+    font-weight: 600;
+  }
+  .points-stat-label {
+    font-size: 10.5px;
+    opacity: 0.8;
+    margin-top: 2px;
+  }
+
+  .profile-content {
+    margin-top: -40px;
+    padding: 0 16px;
+  }
+  .quick-actions {
+    background: var(--surface);
+    border-radius: var(--radius-lg);
+    padding: 16px;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    box-shadow: var(--shadow-md);
+    margin-bottom: 14px;
+  }
+  .quick-action {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    padding: 6px;
+    cursor: pointer;
+  }
+  .qa-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+  }
+  .qa-icon.orange { background: var(--primary-soft); }
+  .qa-icon.green { background: var(--status-found-bg); }
+  .qa-icon.blue { background: #E0F2FE; }
+  .qa-icon.purple { background: #F3E8FF; }
+  .qa-label {
+    font-size: 11.5px;
+    color: var(--ink-2);
+  }
+
+  .menu-section {
+    background: var(--surface);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    margin-bottom: 14px;
+    box-shadow: var(--shadow-sm);
+  }
+  .menu-row {
+    padding: 14px 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border-bottom: 1px solid var(--border-soft);
+    cursor: pointer;
+  }
+  .menu-row:last-child { border-bottom: none; }
+  .menu-icon {
+    font-size: 18px;
+    width: 24px;
+    text-align: center;
+  }
+  .menu-label {
+    flex: 1;
+    font-size: 14px;
+  }
+  .menu-meta {
+    font-size: 12px;
+    color: var(--ink-4);
+  }
+  .menu-arrow {
+    color: var(--ink-4);
+    font-size: 14px;
+  }
+
+  .annotations {
+    max-width: 720px;
+    margin: 24px auto 0;
+    padding: 24px;
+    background: var(--surface);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border);
+  }
+  .annotations h4 {
+    margin: 0 0 12px;
+    font-size: 14px;
+  }
+  .annotations h4:not(:first-child) { margin-top: 22px; }
+  .annotations ul {
+    margin: 0;
+    padding-left: 20px;
+    font-size: 13px;
+    line-height: 1.75;
+    color: var(--ink-2);
+  }
+  .nav-hint {
+    margin-top: 18px;
+    padding: 12px 14px;
+    background: var(--primary-soft);
+    border-radius: var(--radius-md);
+    font-size: 12.5px;
+    color: #9A3412;
+    line-height: 1.65;
+    border: 1px solid var(--primary-border);
+  }
+</style>
+
+<h2>寻宠 · 大理 — 高保真原型 v1</h2>
+<p class="subtitle">三屏可点击：首页 → 详情 → 个人中心。直接点击手机里的卡片、Tab、按钮试试</p>
+
+<div class="stage">
+  <div class="device">
+    <div class="status-bar">
+      <span>9:41</span>
+      <span style="font-size:11px">📶 📡 🔋</span>
+    </div>
+
+    <!-- ============ Screen 1: Feed ============ -->
+    <div class="screen active" data-screen="feed">
+      <div class="top-nav">
+        <div class="city-tag">
+          <span class="pulse"></span>
+          大理 ▾
+        </div>
+        <div class="search">
+          <span>🔍</span>
+          <span>搜品种、地点、特征</span>
+        </div>
+        <div class="notif-btn">
+          🔔
+          <div class="dot"></div>
+        </div>
+      </div>
+
+      <div class="filter-strip">
+        <div class="chip active">全部</div>
+        <div class="chip"><span class="chip-dot" style="background:#DC2626"></span>寻宠</div>
+        <div class="chip"><span class="chip-dot" style="background:#059669"></span>招领</div>
+        <div class="chip"><span class="chip-dot" style="background:#D97706"></span>临时照料</div>
+        <div class="chip">📍 3km 内</div>
+        <div class="chip">⏱ 24小时内</div>
+      </div>
+
+      <div class="feed">
+        <div class="card" onclick="showScreen('detail-lost')">
+          <div class="card-row">
+            <div class="photo" style="background-image: url('https://images.unsplash.com/photo-1592194996308-7b43878e84a6?w=300&q=80')">
+              <div class="status-badge lost">● 寻找</div>
+            </div>
+            <div class="info">
+              <div class="pet-title">胖丁 <span class="breed">· 英短蓝猫 · ♂ 3 岁</span></div>
+              <div class="pet-meta">📍 古城北门 · 1 小时前 · 失主 李*</div>
+              <div class="pet-desc">穿粉色项圈，左耳缺一小块。主人非常着急，看到请联系或留言 🙏</div>
+            </div>
+          </div>
+          <div class="card-footer">
+            <span class="distance-pill">📍 0.8 km</span>
+            <div class="footer-actions">
+              <span class="footer-action">💬 12</span>
+              <span class="footer-action" style="color:var(--primary);font-weight:600">📌 我有线索</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="card" onclick="showScreen('detail-found')">
+          <div class="card-row">
+            <div class="photo" style="background-image: url('https://images.unsplash.com/photo-1573865526739-10659fec78a5?w=300&q=80')">
+              <div class="status-badge found">● 招领</div>
+            </div>
+            <div class="info">
+              <div class="pet-title">橘猫 <span class="breed">· 约 2 岁 · ♀</span></div>
+              <div class="pet-meta">📍 人民路三月街 · 30 分钟前</div>
+              <div class="pet-desc">在咖啡馆门口蹲了一下午，看着像走丢的。亲人，会撒娇，目前在我店里。</div>
+            </div>
+          </div>
+          <div class="card-footer">
+            <span class="distance-pill">📍 1.2 km</span>
+            <div class="footer-actions">
+              <span class="footer-action">💬 3</span>
+              <span class="footer-action">👀 47</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-row">
+            <div class="photo" style="background-image: url('https://images.unsplash.com/photo-1546527540-4f99683c1e5b?w=300&q=80')">
+              <div class="status-badge care">● 照料中</div>
+            </div>
+            <div class="info">
+              <div class="pet-title">白色比熊 <span class="breed">· 约 5kg · ♂</span></div>
+              <div class="pet-meta">📍 下关泰安路 · 2 小时前</div>
+              <div class="pet-desc">在小区门口捡到，毛色干净有人养过。我家可以临时照看 2-3 天，期间已喂食。</div>
+            </div>
+          </div>
+          <div class="card-footer">
+            <span class="distance-pill">📍 4.2 km</span>
+            <div class="footer-actions">
+              <span class="footer-action">💬 5</span>
+              <span class="footer-action">👀 28</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-row">
+            <div class="photo" style="background-image: url('https://images.unsplash.com/photo-1605044905146-09acf28ad931?w=300&q=80')">
+              <div class="status-badge lost">● 寻找</div>
+            </div>
+            <div class="info">
+              <div class="pet-title">小黑 <span class="breed">· 黑色拉布拉多 · ♂ 8 岁</span></div>
+              <div class="pet-meta">📍 洱海月湿地 · 昨天 · 失主 王*</div>
+              <div class="pet-desc">老狗，听力不好，脖子有旧伤疤。家人非常担心，怕它在外面遇到危险。</div>
+            </div>
+          </div>
+          <div class="card-footer">
+            <span class="distance-pill">📍 6.8 km</span>
+            <div class="footer-actions">
+              <span class="footer-action">💬 8</span>
+              <span class="footer-action" style="color:var(--primary);font-weight:600">📌 我有线索</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-row">
+            <div class="photo" style="background-image: url('https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?w=300&q=80')">
+              <div class="status-badge found">● 招领</div>
+            </div>
+            <div class="info">
+              <div class="pet-title">小型犬 <span class="breed">· 棕白色 · 约 6kg</span></div>
+              <div class="pet-meta">📍 苍山门 · 2 天前</div>
+              <div class="pet-desc">在山脚捡到，比较瘦，已带去打疫苗。希望主人快点出现。</div>
+            </div>
+          </div>
+          <div class="card-footer">
+            <span class="distance-pill">📍 3.4 km</span>
+            <div class="footer-actions">
+              <span class="footer-action">💬 2</span>
+              <span class="footer-action">👀 19</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="fab" onclick="alert('发布表单（下一屏待设计）')">+</div>
+
+      <div class="tab-bar">
+        <div class="tab active" onclick="showScreen('feed')">
+          <span class="icon">🏠</span><span>首页</span>
+        </div>
+        <div class="tab">
+          <span class="icon">🗺️</span><span>地图</span>
+        </div>
+        <div class="tab spacer">·</div>
+        <div class="tab">
+          <span class="icon">💬</span><span>消息</span>
+        </div>
+        <div class="tab" onclick="showScreen('profile')">
+          <span class="icon">👤</span><span>我的</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ Screen 2: Detail Lost ============ -->
+    <div class="screen" data-screen="detail-lost">
+      <div class="detail-header">
+        <div class="back-btn" onclick="showScreen('feed')">←</div>
+        <div class="detail-title">寻宠详情</div>
+        <div class="detail-spacer"></div>
+        <div class="share-btn">⤴</div>
+      </div>
+      <div class="detail-scroll">
+        <div class="hero-photo" style="background-image: url('https://images.unsplash.com/photo-1592194996308-7b43878e84a6?w=800&q=85')">
+          <div class="hero-status lost">● 寻找中 · 第 6 小时</div>
+          <div class="hero-thumb">📷 1 / 4</div>
+        </div>
+        <div class="detail-body">
+          <div class="detail-name">胖丁</div>
+          <div class="detail-subtitle">英短蓝猫 · 公 · 3 岁 · 戴粉色项圈</div>
+
+          <div class="detail-stats">
+            <div class="stat">
+              <div class="stat-icon">📍</div>
+              <div>
+                <div class="stat-label">走失地点</div>
+                <div class="stat-value">古城北门</div>
+              </div>
+            </div>
+            <div class="stat-divider"></div>
+            <div class="stat">
+              <div class="stat-icon">🕐</div>
+              <div>
+                <div class="stat-label">走失时间</div>
+                <div class="stat-value">今天 14:30</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="section-label">详细描述</div>
+          <div class="desc-block">
+            今天下午带胖丁去人民路咖啡馆，吃完饭出门时它窜出去就不见了。穿粉色项圈、左耳有一个小缺口。胆小、不会让陌生人碰，听到名字会喵叫一声。如果看到它请尽量拍照发我，不要追，避免它跑得更远 🙏
+          </div>
+
+          <div class="feature-lock">
+            <span class="feature-lock-icon">🔒</span>
+            <div>
+              <b>失主已设置「私有特征」用于认领核对</b><br>
+              如果你捡到了与照片相似的猫，请点击"我捡到了"，失主会询问只有他知道的特征来核对。请勿在公开评论里暴露猫的所有特征。
+            </div>
+          </div>
+
+          <div class="section-label">线索 · 3 条</div>
+          <div class="clue-list">
+            <div class="clue-item">
+              <div class="clue-avatar">陈</div>
+              <div class="clue-content">
+                <div class="clue-author">
+                  陈*
+                  <span class="clue-badge">✓ 有用</span>
+                </div>
+                <div class="clue-meta">📍 古城北门 · 2 小时前</div>
+                <div class="clue-text">下午 4 点左右在洋人街看到一只蓝灰色英短，戴着粉项圈，往复兴路方向跑了。当时没在意，看到这条想到了。</div>
+                <div class="clue-actions">
+                  <span class="clue-btn useful">✓ 失主已标记有用 · +1</span>
+                </div>
+              </div>
+            </div>
+            <div class="clue-item">
+              <div class="clue-avatar">林</div>
+              <div class="clue-content">
+                <div class="clue-author">林*</div>
+                <div class="clue-meta">📍 复兴路 · 1 小时前</div>
+                <div class="clue-text">我家就在复兴路开客栈，让前台留意一下，今晚监控我看看。有发现马上联系。</div>
+                <div class="clue-actions">
+                  <span class="clue-btn">👍 有用</span>
+                  <span class="clue-btn">👎 无用</span>
+                </div>
+              </div>
+            </div>
+            <div class="clue-item">
+              <div class="clue-avatar">匿</div>
+              <div class="clue-content">
+                <div class="clue-author">匿名用户</div>
+                <div class="clue-meta">📍 苍山门 · 30 分钟前</div>
+                <div class="clue-text">看到一只蓝猫在苍山门附近，不太确定是不是。已私信失主。</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="action-bar">
+        <div class="btn-secondary">💬 留言</div>
+        <div class="btn-primary">📌 我捡到了 · 核对特征</div>
+      </div>
+    </div>
+
+    <!-- ============ Screen 3: Detail Found ============ -->
+    <div class="screen" data-screen="detail-found">
+      <div class="detail-header">
+        <div class="back-btn" onclick="showScreen('feed')">←</div>
+        <div class="detail-title">招领详情</div>
+        <div class="detail-spacer"></div>
+        <div class="share-btn">⤴</div>
+      </div>
+      <div class="detail-scroll">
+        <div class="hero-photo" style="background-image: url('https://images.unsplash.com/photo-1573865526739-10659fec78a5?w=800&q=85')">
+          <div class="hero-status found">● 招领中 · 第 1 小时</div>
+          <div class="hero-thumb">📷 1 / 3</div>
+        </div>
+        <div class="detail-body">
+          <div class="detail-name">橘猫，约 2 岁</div>
+          <div class="detail-subtitle">公开特征：橘色 · ♀ · 戴红色项圈 · 亲人</div>
+
+          <div class="detail-stats">
+            <div class="stat">
+              <div class="stat-icon">📍</div>
+              <div>
+                <div class="stat-label">发现地点</div>
+                <div class="stat-value">人民路三月街</div>
+              </div>
+            </div>
+            <div class="stat-divider"></div>
+            <div class="stat">
+              <div class="stat-icon">🕐</div>
+              <div>
+                <div class="stat-label">发现时间</div>
+                <div class="stat-value">今天 09:00</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="section-label">发现者描述</div>
+          <div class="desc-block">
+            我在人民路开咖啡馆，今早开店时这只橘猫蹲在门口不走，看起来很饿。喂了它一点猫粮，目前在店里看店 😺 不像流浪猫，毛色干净，会撒娇。如果是你的猫，请联系我，我们可以约个时间在派出所或店里交接。
+          </div>
+
+          <div class="feature-lock green">
+            <span class="feature-lock-icon">✅</span>
+            <div>
+              <b>认领核对流程：</b><br>
+              点击"这是我家的猫"后，发现者会询问只有失主知道的"私有特征"。验证通过后双方可以约见面，并在小程序里完成<b>归还确认</b>。
+            </div>
+          </div>
+
+          <div class="section-label">同片区寻宠 · 自动匹配</div>
+          <div class="clue-list">
+            <div class="clue-item" onclick="showScreen('detail-lost')">
+              <div class="clue-avatar" style="background:linear-gradient(135deg,#DC2626,#F87171)">!</div>
+              <div class="clue-content">
+                <div class="clue-author">
+                  胖丁 · 英短蓝猫
+                  <span class="clue-badge" style="background:#FEF2F2;color:#DC2626">🔴 寻找中</span>
+                </div>
+                <div class="clue-meta">📍 古城北门 · 1.2km · 1 小时前发布</div>
+                <div class="clue-text" style="color:var(--ink-3)">⚠️ 品种/颜色不太一致，但地点接近，可以点进去核对一下</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="action-bar">
+        <div class="btn-secondary">💬 联系</div>
+        <div class="btn-primary">🏠 这是我家的猫</div>
+      </div>
+    </div>
+
+    <!-- ============ Screen 4: Profile ============ -->
+    <div class="screen" data-screen="profile">
+      <div class="profile-scroll">
+        <div class="profile-hero">
+          <div class="profile-user">
+            <div class="profile-avatar">😊</div>
+            <div style="flex:1">
+              <div class="profile-name">
+                客栈老板娘 <span class="level-badge">⭐ 守护者</span>
+              </div>
+              <div class="profile-handle">大理古城 · 加入 23 天</div>
+            </div>
+          </div>
+
+          <div class="points-card">
+            <div class="points-header">
+              <span class="points-label">🪷 当前善行值</span>
+              <span class="points-detail-link">详情 ›</span>
+            </div>
+            <div class="points-value">42</div>
+            <div class="points-meta">累计获得 47 · 距下一徽章还差 8</div>
+            <div class="points-divider"></div>
+            <div class="points-stats">
+              <div class="points-stat-item">
+                <div class="points-stat-num">2</div>
+                <div class="points-stat-label">成功归还</div>
+              </div>
+              <div class="points-stat-item">
+                <div class="points-stat-num">8</div>
+                <div class="points-stat-label">有效线索</div>
+              </div>
+              <div class="points-stat-item">
+                <div class="points-stat-num">3</div>
+                <div class="points-stat-label">临时照料</div>
+              </div>
+              <div class="points-stat-item">
+                <div class="points-stat-num">5</div>
+                <div class="points-stat-label">收到感谢</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="profile-content">
+          <div class="quick-actions">
+            <div class="quick-action">
+              <div class="qa-icon orange">📝</div>
+              <div class="qa-label">我的发布</div>
+            </div>
+            <div class="quick-action">
+              <div class="qa-icon green">📌</div>
+              <div class="qa-label">我的线索</div>
+            </div>
+            <div class="quick-action">
+              <div class="qa-icon blue">💌</div>
+              <div class="qa-label">感谢信</div>
+            </div>
+            <div class="quick-action">
+              <div class="qa-icon purple">🏅</div>
+              <div class="qa-label">徽章墙</div>
+            </div>
+          </div>
+
+          <div class="menu-section">
+            <div class="menu-row">
+              <span class="menu-icon">📊</span>
+              <span class="menu-label">善行值流水</span>
+              <span class="menu-meta">最近 +1</span>
+              <span class="menu-arrow">›</span>
+            </div>
+            <div class="menu-row">
+              <span class="menu-icon">🏠</span>
+              <span class="menu-label">我可以临时照料</span>
+              <span class="menu-meta" style="color:var(--status-found)">已开启</span>
+              <span class="menu-arrow">›</span>
+            </div>
+            <div class="menu-row">
+              <span class="menu-icon">🔔</span>
+              <span class="menu-label">订阅消息设置</span>
+              <span class="menu-arrow">›</span>
+            </div>
+          </div>
+
+          <div class="menu-section">
+            <div class="menu-row">
+              <span class="menu-icon">🛡️</span>
+              <span class="menu-label">安全交接指南</span>
+              <span class="menu-arrow">›</span>
+            </div>
+            <div class="menu-row">
+              <span class="menu-icon">⚠️</span>
+              <span class="menu-label">争议申诉</span>
+              <span class="menu-arrow">›</span>
+            </div>
+            <div class="menu-row">
+              <span class="menu-icon">💡</span>
+              <span class="menu-label">建议反馈</span>
+              <span class="menu-arrow">›</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="tab-bar">
+        <div class="tab" onclick="showScreen('feed')">
+          <span class="icon">🏠</span><span>首页</span>
+        </div>
+        <div class="tab">
+          <span class="icon">🗺️</span><span>地图</span>
+        </div>
+        <div class="tab spacer">·</div>
+        <div class="tab">
+          <span class="icon">💬</span><span>消息</span>
+        </div>
+        <div class="tab active">
+          <span class="icon">👤</span><span>我的</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  function showScreen(name) {
+    document.querySelectorAll('.screen').forEach(el => el.classList.remove('active'));
+    const target = document.querySelector(`[data-screen="${name}"]`);
+    if (target) target.classList.add('active');
+    document.querySelector('.device').scrollTop = 0;
+  }
+</script>
+
+<div class="annotations">
+  <h4>🎨 设计语言</h4>
+  <ul>
+    <li><b>主色</b>：暖橙 #FF6B35 + 米白 #FAFAF7 —— 暖、安全、能在朋友圈截图传播不出戏</li>
+    <li><b>状态色</b>：寻宠红 / 招领绿 / 照料黄，全程统一，扫一眼就能识别</li>
+    <li><b>字体</b>：PingFang SC + SF Pro Display 后备，11–22px 渐进字号</li>
+    <li><b>圆角</b>：4 层（8/12/16/20）—— 卡片 16、按钮 12、徽章 6</li>
+    <li><b>阴影</b>：3 层（标识层级 / 卡片浮起 / 模态强调），不滥用</li>
+  </ul>
+
+  <h4>🆕 详情页关键设计</h4>
+  <ul>
+    <li><b>"私有特征已设置" 黄色提示卡</b>：把 V2.0 的安全策略从文字提示变成可见 UI，发现者一眼知道该走哪条流程</li>
+    <li><b>线索列表 "失主已标记有用" 徽章</b>：让用户看到"自己的努力被认可"——社区氛围的关键一笔</li>
+    <li><b>招领详情嵌入"同片区寻宠 · 自动匹配"</b>：你最在意的 C 问题（招领→丢失反向入口）的具体形态，发现者能直接看到附近的寻宠贴并跳过去核对</li>
+    <li><b>底栏行动按钮二选一</b>：减少决策负担——寻宠页用「留言 / 我捡到了」；招领页用「联系 / 这是我家的猫」</li>
+  </ul>
+
+  <h4>🆕 个人中心关键设计</h4>
+  <ul>
+    <li><b>善行值橙色 Hero 区 + 玻璃拟态卡</b>：让"42"这个数字成为视觉焦点，承接你 V2.0 里"荣誉记录"的精神</li>
+    <li><b>子项分四类</b>：归还 / 线索 / 照料 / 感谢 —— 比单一总分更立体，让用户知道贡献的是哪类</li>
+    <li><b>"我可以临时照料" 常驻开关</b>：让"愿意收留"的人挂在线、被需要时被推送 —— V2.0 没明说但很关键</li>
+    <li><b>守护者徽章紧贴用户名</b>：30 善行值=守护者 的视觉荣誉</li>
+  </ul>
+
+  <div class="nav-hint">
+    <b>📲 可点击的交互</b>：<br>
+    · 点首页第 1、2 张卡片 → 进入对应详情页<br>
+    · 点详情页 ← 按钮 → 回首页<br>
+    · 点底栏 "我的" → 进入个人中心<br>
+    · 点个人中心底栏 "首页" → 回信息流<br>
+    · 招领详情里"同片区寻宠"那条 → 跳到寻宠详情（演示反向匹配）
+  </div>
+
+  <p style="margin-top: 20px; font-size: 13px; color: var(--ink-2)"><b>💬 接下来反馈：</b>
+  整体设计语言对路吗？有哪些具体细节想改？接下来想看哪几屏（发布表单 / 地图视图 / 留言对话 / 归还确认 / 感谢信编辑 / 后台审核）？</p>
+</div>
