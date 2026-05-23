@@ -695,6 +695,69 @@
     .dispute-type { padding: 14px 10px; background: var(--surface); color: var(--ink-2); font-size: 13px; font-weight: 600; border-radius: var(--radius-md); text-align: center; cursor: pointer; box-shadow: var(--shadow-card); }
     .dispute-type.selected { background: var(--warn-soft); color: var(--warn-deep); box-shadow: 0 0 0 2px var(--warn); }
 
+    /* Action Sheet (排序选择) */
+    .as-mask {
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,0.4);
+      backdrop-filter: blur(2px);
+      display: none;
+      z-index: 40;
+    }
+    .as-mask.show { display: block; }
+    .action-sheet {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      background: var(--surface);
+      border-radius: 18px 18px 0 0;
+      padding: 0 0 24px;
+      box-shadow: 0 -8px 24px rgba(0,0,0,0.15);
+      animation: asUp 0.2s ease-out;
+    }
+    @keyframes asUp {
+      from { transform: translateY(100%); }
+      to { transform: translateY(0); }
+    }
+    .as-handle {
+      width: 36px; height: 4px;
+      background: var(--ink-5); border-radius: 2px;
+      margin: 8px auto 12px;
+    }
+    .as-title {
+      padding: 4px 20px 14px;
+      font-size: 13px; font-weight: 700;
+      color: var(--ink-3);
+      border-bottom: 1px solid var(--divider-soft);
+    }
+    .as-option {
+      padding: 14px 20px;
+      display: flex; align-items: center; gap: 12px;
+      cursor: pointer;
+      border-bottom: 1px solid var(--divider-soft);
+    }
+    .as-option:last-of-type { border-bottom: none; }
+    .as-option .as-ic {
+      width: 38px; height: 38px;
+      background: var(--bg); border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 17px;
+    }
+    .as-option.selected .as-ic { background: var(--apricot-soft); color: var(--apricot-deep); }
+    .as-option .as-text { flex: 1; }
+    .as-option .as-label { font-size: 14px; font-weight: 700; color: var(--ink-1); }
+    .as-option .as-sub { font-size: 11.5px; color: var(--ink-3); margin-top: 2px; }
+    .as-option .as-check { font-size: 18px; color: var(--apricot); opacity: 0; font-weight: 800; }
+    .as-option.selected .as-check { opacity: 1; }
+    .as-cancel {
+      margin: 8px 16px 0;
+      padding: 13px;
+      background: var(--bg);
+      border-radius: 14px;
+      font-size: 14px; font-weight: 700;
+      color: var(--ink-1);
+      text-align: center; cursor: pointer;
+    }
+
     /* Search */
     .search-input-header { padding: 8px 14px; gap: 10px; }
     .search-input-wrap {
@@ -859,11 +922,11 @@
       </div>
       <div class="filter-region">
         <div class="filter-row">
-          <div class="chip active">全部</div>
-          <div class="chip"><span class="chip-dot" style="background:var(--apricot)"></span>寻宠</div>
-          <div class="chip"><span class="chip-dot" style="background:var(--mint)"></span>招领</div>
-          <div class="chip"><span class="chip-dot" style="background:var(--plum)"></span>临时照料</div>
-          <div class="chip chip-sort">⏱ 最新</div>
+          <div class="chip active" data-filter="all" onclick="applyFilter('all', this)">全部</div>
+          <div class="chip" data-filter="lost" onclick="applyFilter('lost', this)"><span class="chip-dot" style="background:var(--apricot)"></span>寻宠</div>
+          <div class="chip" data-filter="found" onclick="applyFilter('found', this)"><span class="chip-dot" style="background:var(--mint)"></span>招领</div>
+          <div class="chip" data-filter="care" onclick="applyFilter('care', this)"><span class="chip-dot" style="background:var(--plum)"></span>临时照料</div>
+          <div class="chip chip-sort" id="sort-chip" onclick="openSortSheet()">⏱ 最新</div>
         </div>
       </div>
       <div class="scroll-area">
@@ -872,8 +935,8 @@
           <span class="count">· 4</span>
           <span class="right">查看全部 →</span>
         </div>
-        <div class="feed-list">
-          <div class="pet-card" onclick="showScreen('detail-found')">
+        <div class="feed-list" id="feed-list">
+          <div class="pet-card" data-idx="0" onclick="showScreen('detail-found')">
             <div class="pc-body">
               <div class="pc-photo ph-orange"><span>🐱</span><div class="status-bubble found">招领</div></div>
               <div class="pc-info">
@@ -888,7 +951,7 @@
             </div>
           </div>
 
-          <div class="pet-card" onclick="showScreen('detail-lost')">
+          <div class="pet-card" data-idx="1" onclick="showScreen('detail-lost')">
             <div class="pc-body">
               <div class="pc-photo ph-blue"><span>🐱</span><div class="status-bubble lost">寻宠</div></div>
               <div class="pc-info">
@@ -903,7 +966,7 @@
             </div>
           </div>
 
-          <div class="pet-card" onclick="showScreen('detail-found')">
+          <div class="pet-card" data-idx="2" onclick="showScreen('detail-found')">
             <div class="pc-body">
               <div class="pc-photo ph-cream"><span>🐶</span><div class="status-bubble care">照料</div></div>
               <div class="pc-info">
@@ -918,7 +981,7 @@
             </div>
           </div>
 
-          <div class="pet-card" style="opacity:0.55" onclick="showScreen('detail-found')">
+          <div class="pet-card" data-idx="3" style="opacity:0.55" onclick="showScreen('detail-found')">
             <div class="pc-body">
               <div class="pc-photo ph-pink"><span>🐶</span><div class="status-bubble expired">9 天前</div></div>
               <div class="pc-info">
@@ -931,6 +994,40 @@
               <div class="distance-tag" style="background:var(--bg-deeper);color:var(--ink-3)">📍 3.4 km</div>
               <div class="pc-actions"><span class="pc-action">💬 2</span><span class="pc-action">👀 19</span></div>
             </div>
+          </div>
+
+          <!-- 空状态：筛选后无结果 -->
+          <div class="feed-empty" id="feed-empty" style="display:none;padding:60px 30px;text-align:center">
+            <div style="font-size:48px;opacity:0.4;line-height:1">🐾</div>
+            <div style="margin-top:14px;font-size:13.5px;color:var(--ink-3);line-height:1.65">
+              附近暂时没有这类信息<br>
+              <span style="color:var(--apricot-deep);font-weight:700;cursor:pointer" onclick="resetFilter()">查看全部 →</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 排序 Action Sheet -->
+        <div class="as-mask" id="sort-sheet" onclick="if(event.target===this) closeSortSheet()">
+          <div class="action-sheet">
+            <div class="as-handle"></div>
+            <div class="as-title">选择排序方式</div>
+            <div class="as-option selected" data-sort="time" onclick="applySort('time')">
+              <div class="as-ic">⏱</div>
+              <div class="as-text">
+                <div class="as-label">最新发布</div>
+                <div class="as-sub">按发布时间从新到旧</div>
+              </div>
+              <div class="as-check">✓</div>
+            </div>
+            <div class="as-option" data-sort="distance" onclick="applySort('distance')">
+              <div class="as-ic">📍</div>
+              <div class="as-text">
+                <div class="as-label">距离最近</div>
+                <div class="as-sub">从当前位置由近到远</div>
+              </div>
+              <div class="as-check">✓</div>
+            </div>
+            <div class="as-cancel" onclick="closeSortSheet()">取消</div>
           </div>
         </div>
       </div>
@@ -1934,6 +2031,73 @@
 
   function showPrivacyModal() {
     document.getElementById('privacy-modal').classList.remove('hidden');
+  }
+
+  /* ============== 首页筛选 + 排序 ============== */
+  // 卡片元数据（与 data-idx 对应）
+  const FEED_META = [
+    { status: 'found', distanceKm: 1.2, timeMins: 30 },          // 0 小橘子
+    { status: 'lost',  distanceKm: 0.8, timeMins: 10 },          // 1 胖丁
+    { status: 'care',  distanceKm: 4.2, timeMins: 120 },         // 2 小白
+    { status: 'found', distanceKm: 3.4, timeMins: 9 * 24 * 60 }  // 3 小棕（9 天）
+  ];
+  let currentFilter = 'all';
+  let currentSort = 'time';
+
+  function applyFilter(filter, el) {
+    currentFilter = filter;
+    document.querySelectorAll('[data-screen="feed"] .chip[data-filter]').forEach(c => c.classList.remove('active'));
+    el.classList.add('active');
+    rerenderFeed();
+  }
+
+  function resetFilter() {
+    const allChip = document.querySelector('[data-screen="feed"] .chip[data-filter="all"]');
+    if (allChip) applyFilter('all', allChip);
+  }
+
+  function openSortSheet() {
+    document.getElementById('sort-sheet').classList.add('show');
+  }
+  function closeSortSheet() {
+    document.getElementById('sort-sheet').classList.remove('show');
+  }
+  function applySort(method) {
+    currentSort = method;
+    document.querySelectorAll('#sort-sheet .as-option').forEach(o => o.classList.remove('selected'));
+    const sel = document.querySelector(`#sort-sheet .as-option[data-sort="${method}"]`);
+    if (sel) sel.classList.add('selected');
+    const chip = document.getElementById('sort-chip');
+    if (chip) chip.innerHTML = method === 'time' ? '⏱ 最新' : '📍 最近';
+    rerenderFeed();
+    closeSortSheet();
+  }
+
+  function rerenderFeed() {
+    const container = document.getElementById('feed-list');
+    if (!container) return;
+    const cards = Array.from(container.querySelectorAll('.pet-card'));
+    const empty = document.getElementById('feed-empty');
+
+    // 排序（DOM reorder）
+    cards.sort((a, b) => {
+      const ai = parseInt(a.dataset.idx), bi = parseInt(b.dataset.idx);
+      const aData = FEED_META[ai], bData = FEED_META[bi];
+      if (currentSort === 'distance') return aData.distanceKm - bData.distanceKm;
+      return aData.timeMins - bData.timeMins;
+    });
+    cards.forEach(c => container.insertBefore(c, empty));
+
+    // 筛选
+    let visibleCount = 0;
+    cards.forEach(c => {
+      const meta = FEED_META[parseInt(c.dataset.idx)];
+      const show = (currentFilter === 'all') || (currentFilter === meta.status);
+      c.style.display = show ? '' : 'none';
+      if (show) visibleCount++;
+    });
+
+    if (empty) empty.style.display = visibleCount === 0 ? 'block' : 'none';
   }
 
   /* ============== 搜索逻辑 ============== */
