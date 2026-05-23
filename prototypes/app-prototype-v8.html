@@ -220,15 +220,42 @@
     .feed-list { padding: 0 16px; display: flex; flex-direction: column; gap: 12px; }
 
     /* FAB & Tab */
-    .fab {
-      position: absolute; bottom: 100px; right: 22px;
-      width: 56px; height: 56px;
+    /* 中央嵌入式发布按钮（替代右下角 FAB） */
+    .fab-tab {
+      flex: 1;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      cursor: pointer;
+      padding: 0;
+    }
+    .fab-bubble {
+      width: 52px; height: 52px;
+      margin-top: -18px;
       background: linear-gradient(135deg, #FFA378 0%, var(--apricot) 100%);
       border-radius: 50%;
-      display: flex; align-items: center; justify-content: center; color: white;
-      cursor: pointer; z-index: 30; box-shadow: var(--shadow-fab);
+      display: flex; align-items: center; justify-content: center;
+      color: white;
+      box-shadow: 0 6px 16px rgba(255,133,82,0.4),
+                  0 2px 6px rgba(255,133,82,0.2),
+                  0 0 0 4px rgba(255,255,255,0.6);
+      transition: transform 0.15s;
     }
-    .fab::after { content: '+'; font-size: 28px; font-weight: 300; line-height: 1; margin-top: -3px; }
+    .fab-bubble::after {
+      content: '+';
+      font-size: 26px; font-weight: 300; line-height: 1;
+      margin-top: -2px;
+    }
+    .fab-bubble:hover { transform: scale(1.05) rotate(8deg); }
+    .fab-bubble:active { transform: scale(0.95); }
+    .fab-tab .fab-label {
+      position: absolute;
+      bottom: 14px;
+      font-size: 10.5px;
+      color: var(--apricot-deep);
+      font-weight: 700;
+      letter-spacing: 0.04em;
+    }
     .tab-bar {
       position: absolute; bottom: 0; left: 0; right: 0; height: 82px;
       background: rgba(255,255,255,0.95); backdrop-filter: blur(20px);
@@ -1031,11 +1058,10 @@
           </div>
         </div>
       </div>
-      <div class="fab" onclick="showScreen('publish')"></div>
       <div class="tab-bar">
         <div class="tab active"><span class="icon">🏠</span><span>首页</span></div>
         <div class="tab" onclick="showScreen('map')"><span class="icon">🗺️</span><span>地图</span></div>
-        <div class="tab spacer">·</div>
+        <div class="fab-tab" onclick="showScreen('publish')"><div class="fab-bubble"></div></div>
         <div class="tab" onclick="showScreen('messages')"><span class="icon">💬</span><span>消息</span></div>
         <div class="tab" onclick="showScreen('profile')"><span class="icon">🐾</span><span>我的</span></div>
       </div>
@@ -1090,7 +1116,7 @@
       <div class="tab-bar">
         <div class="tab" onclick="showScreen('feed', true)"><span class="icon">🏠</span><span>首页</span></div>
         <div class="tab active"><span class="icon">🗺️</span><span>地图</span></div>
-        <div class="tab spacer">·</div>
+        <div class="fab-tab" onclick="showScreen('publish')"><div class="fab-bubble"></div></div>
         <div class="tab" onclick="showScreen('messages')"><span class="icon">💬</span><span>消息</span></div>
         <div class="tab" onclick="showScreen('profile')"><span class="icon">🐾</span><span>我的</span></div>
       </div>
@@ -1521,7 +1547,7 @@
       <div class="tab-bar">
         <div class="tab" onclick="showScreen('feed', true)"><span class="icon">🏠</span><span>首页</span></div>
         <div class="tab" onclick="showScreen('map')"><span class="icon">🗺️</span><span>地图</span></div>
-        <div class="tab spacer">·</div>
+        <div class="fab-tab" onclick="showScreen('publish')"><div class="fab-bubble"></div></div>
         <div class="tab active"><span class="icon">💬</span><span>消息</span></div>
         <div class="tab" onclick="showScreen('profile')"><span class="icon">🐾</span><span>我的</span></div>
       </div>
@@ -1638,7 +1664,7 @@
       <div class="tab-bar">
         <div class="tab" onclick="showScreen('feed', true)"><span class="icon">🏠</span><span>首页</span></div>
         <div class="tab" onclick="showScreen('map')"><span class="icon">🗺️</span><span>地图</span></div>
-        <div class="tab spacer">·</div>
+        <div class="fab-tab" onclick="showScreen('publish')"><div class="fab-bubble"></div></div>
         <div class="tab" onclick="showScreen('messages')"><span class="icon">💬</span><span>消息</span></div>
         <div class="tab active"><span class="icon">🐾</span><span>我的</span></div>
       </div>
