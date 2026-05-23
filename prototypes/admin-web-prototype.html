@@ -3,324 +3,743 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>寻宠 · 大理 — 后台管理（独立 web 后台）</title>
+  <title>寻宠 · 大理慢递 — 后台审核台（独立 web 后台）</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Noto+Serif+SC:wght@400;500;600;700;900&family=Noto+Sans+SC:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      --primary: #FF6B35;
-      --primary-soft: #FFF1E9;
-      --primary-border: #FFDCC8;
-      --ink-1: #0F172A;
-      --ink-2: #334155;
-      --ink-3: #64748B;
-      --ink-4: #94A3B8;
-      --bg: #F8FAFC;
-      --surface: #FFFFFF;
-      --border: #E2E8F0;
-      --border-soft: #F1F5F9;
-      --status-lost: #DC2626;
-      --status-found: #059669;
-      --status-care: #D97706;
-      --shadow-sm: 0 1px 2px rgba(15,23,42,0.04);
-      --shadow-md: 0 4px 12px rgba(15,23,42,0.06), 0 2px 4px rgba(15,23,42,0.04);
-    }
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      font-family: -apple-system, "PingFang SC", "SF Pro Display", system-ui, sans-serif;
-      background: var(--bg); color: var(--ink-1);
-      font-size: 14px; line-height: 1.5;
+      --indigo: #1F3D5C;
+      --indigo-deep: #15293F;
+      --indigo-soft: #E8EEF4;
+      --indigo-line: #C8D4E0;
+      --vermilion: #C53030;
+      --vermilion-deep: #8B1F1F;
+      --vermilion-soft: #FBE9E9;
+      --banana: #D4A04A;
+      --banana-soft: #FBF1DC;
+      --pine: #4A7C59;
+      --pine-soft: #E4F0E8;
+      --ochre: #B57A2A;
+      --ochre-soft: #FAEDD3;
+      --paper: #FAF6EC;
+      --paper-deep: #F2EAD3;
+      --paper-light: #FDFBF4;
+      --ink-1: #1A1A1A;
+      --ink-2: #3F3F3F;
+      --ink-3: #6B6B6B;
+      --ink-4: #999999;
+      --ink-5: #C8C0AC;
+      --font-display: 'Noto Serif SC', 'Songti SC', 'STSong', '宋体', serif;
+      --font-body: 'Noto Sans SC', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+      --font-num: 'Cormorant Garamond', 'Songti SC', 'STSong', serif;
+      --shadow-soft: 0 1px 0 rgba(31,61,92,0.05), 0 2px 6px rgba(31,61,92,0.06);
+      --shadow-paper: 0 1px 2px rgba(0,0,0,0.04), 0 8px 24px rgba(31,61,92,0.08);
     }
 
-    /* 顶部合规提示 banner */
-    .compliance-banner {
-      background: linear-gradient(135deg, #FEF2F2, #FEE2E2);
-      border-bottom: 1px solid #FECACA;
-      color: #991B1B;
-      padding: 10px 24px;
-      font-size: 12.5px;
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; }
+    body {
+      font-family: var(--font-body);
+      color: var(--ink-1);
+      background:
+        radial-gradient(at 15% 5%, #EBE0C6 0%, transparent 50%),
+        radial-gradient(at 85% 95%, #E8DDC0 0%, transparent 50%),
+        var(--paper);
+      font-size: 14px;
+      line-height: 1.55;
+      -webkit-font-smoothing: antialiased;
+      min-height: 100%;
+      position: relative;
+    }
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 400'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.3, 0 0 0 0 0.25, 0 0 0 0 0.18, 0 0 0 0.06 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      pointer-events: none;
+      opacity: 0.4;
+      mix-blend-mode: multiply;
+      z-index: 0;
+    }
+
+    /* 合规警告 banner */
+    .alert-banner {
+      position: relative;
+      z-index: 10;
+      background: var(--vermilion);
+      color: var(--paper-light);
+      padding: 11px 32px;
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 14px;
+      font-size: 12.5px;
+      letter-spacing: 0.02em;
+      border-bottom: 1px solid var(--vermilion-deep);
     }
-    .compliance-banner b { font-weight: 700; }
+    .alert-banner .alert-stamp {
+      font-family: var(--font-display);
+      font-weight: 900;
+      font-size: 14px;
+      padding: 2px 10px;
+      border: 1.5px solid var(--paper-light);
+      border-radius: 2px;
+      letter-spacing: 0.1em;
+    }
+    .alert-banner b { font-family: var(--font-display); font-weight: 700; }
 
-    /* 主布局 */
+    /* 布局 */
     .layout {
       display: grid;
-      grid-template-columns: 220px 1fr;
-      min-height: calc(100vh - 40px);
+      grid-template-columns: 240px 1fr;
+      min-height: calc(100vh - 42px);
+      position: relative;
+      z-index: 1;
     }
 
     /* 侧边栏 */
     .sidebar {
-      background: var(--surface);
-      border-right: 1px solid var(--border);
-      padding: 22px 14px;
+      background: var(--indigo);
+      color: var(--paper-light);
+      padding: 28px 20px;
+      position: relative;
+      overflow: hidden;
+    }
+    .sidebar::before {
+      content: '审';
+      position: absolute;
+      top: 20px;
+      right: -30px;
+      font-family: var(--font-display);
+      font-size: 200px;
+      font-weight: 900;
+      opacity: 0.05;
+      color: var(--paper-light);
+      line-height: 1;
+    }
+    .brand {
       display: flex;
-      flex-direction: column;
-      gap: 4px;
+      align-items: center;
+      gap: 12px;
+      padding: 4px 4px 22px;
+      border-bottom: 1px solid rgba(255,255,255,0.12);
+      margin-bottom: 18px;
+      position: relative;
     }
-    .sidebar-brand {
-      display: flex; align-items: center; gap: 10px;
-      padding: 6px 10px 16px;
-      border-bottom: 1px solid var(--border-soft);
-      margin-bottom: 12px;
+    .brand-logo {
+      width: 38px; height: 38px;
+      background: var(--vermilion);
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--paper-light);
+      font-family: var(--font-display);
+      font-weight: 900;
+      font-size: 18px;
+      letter-spacing: 0.04em;
+      transform: rotate(-2deg);
+      box-shadow: 0 3px 8px rgba(197,48,48,0.3);
     }
-    .sidebar-brand .logo {
-      width: 32px; height: 32px;
-      background: linear-gradient(135deg, var(--primary), #FF4A12);
-      border-radius: 8px;
-      display: flex; align-items: center; justify-content: center;
-      color: white; font-size: 16px;
+    .brand-name {
+      font-family: var(--font-display);
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
     }
-    .sidebar-brand .name { font-size: 14px; font-weight: 700; }
-    .sidebar-brand .sub { font-size: 11px; color: var(--ink-4); margin-top: 1px; }
+    .brand-sub {
+      font-family: var(--font-num);
+      font-size: 11px;
+      opacity: 0.7;
+      margin-top: 2px;
+      letter-spacing: 0.08em;
+    }
 
     .nav-section {
-      font-size: 11px;
-      color: var(--ink-4);
+      font-family: var(--font-num);
+      font-size: 10.5px;
+      letter-spacing: 0.16em;
       text-transform: uppercase;
-      letter-spacing: 0.6px;
-      padding: 12px 12px 6px;
-      font-weight: 600;
+      opacity: 0.55;
+      padding: 14px 8px 8px;
+      font-weight: 700;
+      position: relative;
     }
     .nav-item {
       padding: 10px 12px;
-      border-radius: 8px;
+      border-radius: 4px;
       display: flex;
       align-items: center;
       gap: 10px;
       cursor: pointer;
-      color: var(--ink-2);
+      font-family: var(--font-body);
       font-size: 13.5px;
+      color: rgba(255,255,255,0.85);
+      transition: background 0.15s;
+      position: relative;
+      margin-bottom: 2px;
     }
-    .nav-item:hover { background: var(--bg); }
+    .nav-item:hover { background: rgba(255,255,255,0.06); }
     .nav-item.active {
-      background: var(--primary-soft);
-      color: var(--primary);
+      background: var(--paper-light);
+      color: var(--indigo-deep);
       font-weight: 600;
     }
-    .nav-item .icon { font-size: 16px; width: 20px; text-align: center; }
+    .nav-item.active::before {
+      content: '';
+      position: absolute;
+      left: -20px;
+      top: 6px; bottom: 6px;
+      width: 3px;
+      background: var(--vermilion);
+      border-radius: 0 2px 2px 0;
+    }
+    .nav-item .icon { font-size: 15px; width: 20px; text-align: center; }
     .nav-item .badge {
       margin-left: auto;
-      background: var(--primary);
-      color: white;
+      background: var(--vermilion);
+      color: var(--paper-light);
+      font-family: var(--font-num);
       font-size: 11px;
       padding: 1px 7px;
-      border-radius: 10px;
-      font-weight: 600;
+      border-radius: 999px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
     }
-    .nav-item .badge.muted { background: var(--ink-4); }
+    .nav-item .badge.quiet { background: rgba(255,255,255,0.15); color: rgba(255,255,255,0.85); }
+    .nav-item.active .badge.quiet { background: var(--indigo-soft); color: var(--indigo); }
+
+    .sidebar-footer {
+      position: absolute;
+      bottom: 18px;
+      left: 20px; right: 20px;
+      padding: 12px 14px;
+      background: rgba(0,0,0,0.18);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 4px;
+      font-family: var(--font-num);
+      font-size: 11px;
+      letter-spacing: 0.04em;
+      opacity: 0.78;
+      line-height: 1.6;
+    }
 
     /* 主内容 */
-    .main { padding: 24px 28px; overflow-y: auto; }
+    .main { padding: 32px 36px; overflow-y: auto; }
+
     .page-header {
-      display: flex; align-items: center; justify-content: space-between;
-      margin-bottom: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 24px;
+      padding-bottom: 18px;
+      border-bottom: 1px solid var(--indigo-line);
     }
-    .page-title { font-size: 22px; font-weight: 700; }
-    .page-sub { font-size: 13px; color: var(--ink-3); margin-top: 4px; }
+    .page-meta {
+      font-family: var(--font-num);
+      font-size: 12px;
+      color: var(--ink-3);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+    .page-meta::before {
+      content: '';
+      width: 24px; height: 1px;
+      background: var(--vermilion);
+    }
+    .page-title {
+      font-family: var(--font-display);
+      font-size: 32px;
+      font-weight: 900;
+      color: var(--indigo-deep);
+      letter-spacing: 0.01em;
+    }
+    .page-title em {
+      font-family: var(--font-num);
+      font-style: italic;
+      color: var(--vermilion);
+      font-weight: 500;
+    }
+    .page-sub {
+      font-size: 13.5px;
+      color: var(--ink-3);
+      margin-top: 6px;
+    }
     .admin-info {
-      display: flex; align-items: center; gap: 10px;
-      padding: 6px 14px;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 999px;
-      font-size: 12.5px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 8px 16px;
+      background: var(--paper-light);
+      border: 1px solid var(--indigo-line);
+      border-radius: 6px;
+      box-shadow: var(--shadow-soft);
     }
-    .admin-info .avatar {
-      width: 24px; height: 24px;
-      background: linear-gradient(135deg, #94A3B8, #64748B);
+    .admin-avatar {
+      width: 36px; height: 36px;
+      background: var(--indigo);
+      color: var(--banana);
       border-radius: 50%;
-      color: white;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 11px; font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 15px;
+    }
+    .admin-name {
+      font-family: var(--font-display);
+      font-size: 13.5px;
+      font-weight: 700;
+    }
+    .admin-stat {
+      font-family: var(--font-num);
+      font-size: 11px;
+      color: var(--ink-3);
+      margin-top: 2px;
+      letter-spacing: 0.04em;
     }
 
     /* 统计卡片 */
     .stats-grid {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
-      gap: 14px;
-      margin-bottom: 22px;
+      gap: 16px;
+      margin-bottom: 28px;
     }
     .stat-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 16px 18px;
-    }
-    .stat-card .label { font-size: 12px; color: var(--ink-3); }
-    .stat-card .num { font-size: 28px; font-weight: 700; margin: 6px 0 4px; }
-    .stat-card .trend { font-size: 11px; color: var(--ink-4); }
-    .stat-card .trend.up { color: var(--status-found); }
-    .stat-card .trend.down { color: var(--status-lost); }
-
-    /* 内容审核区 */
-    .panel {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 12px;
+      background: var(--paper-light);
+      border: 1px solid var(--indigo-line);
+      border-radius: 6px;
+      padding: 18px 20px;
+      box-shadow: var(--shadow-soft);
+      position: relative;
       overflow: hidden;
     }
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+    }
+    .stat-card:nth-child(1)::before { background: var(--vermilion); }
+    .stat-card:nth-child(2)::before { background: var(--pine); }
+    .stat-card:nth-child(3)::before { background: var(--banana); }
+    .stat-card:nth-child(4)::before { background: var(--indigo); }
+    .stat-card .label {
+      font-family: var(--font-num);
+      font-size: 11px;
+      color: var(--ink-3);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+    .stat-card .num {
+      font-family: var(--font-num);
+      font-size: 38px;
+      font-weight: 700;
+      color: var(--indigo-deep);
+      margin: 8px 0 4px;
+      line-height: 1;
+      letter-spacing: 0.02em;
+    }
+    .stat-card .trend {
+      font-size: 11px;
+      color: var(--ink-3);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .trend.up { color: var(--pine); }
+    .trend.warn { color: var(--vermilion); }
+
+    /* 面板 */
+    .panel {
+      background: var(--paper-light);
+      border: 1px solid var(--indigo-line);
+      border-radius: 6px;
+      overflow: hidden;
+      box-shadow: var(--shadow-paper);
+    }
     .panel-header {
-      padding: 16px 20px;
-      border-bottom: 1px solid var(--border-soft);
-      display: flex; align-items: center; gap: 16px;
+      padding: 18px 22px;
+      border-bottom: 1px solid var(--indigo-line);
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      background: var(--paper);
     }
     .panel-tabs { display: flex; gap: 4px; }
     .panel-tab {
-      padding: 6px 14px;
-      border-radius: 999px;
+      padding: 7px 16px;
+      border-radius: 4px;
+      font-family: var(--font-display);
       font-size: 13px;
+      font-weight: 600;
       color: var(--ink-3);
+      background: var(--paper-light);
+      border: 1px solid var(--indigo-line);
       cursor: pointer;
+      letter-spacing: 0.04em;
     }
-    .panel-tab.active { background: var(--ink-1); color: white; font-weight: 600; }
+    .panel-tab.active {
+      background: var(--indigo);
+      color: var(--paper-light);
+      border-color: var(--indigo);
+    }
+    .panel-tab .badge {
+      font-family: var(--font-num);
+      font-size: 11px;
+      padding: 0 6px;
+      margin-left: 6px;
+      background: var(--vermilion);
+      color: var(--paper-light);
+      border-radius: 999px;
+      font-weight: 700;
+    }
+    .panel-tab.active .badge { background: var(--banana); color: var(--indigo-deep); }
     .panel-filter { margin-left: auto; display: flex; gap: 8px; }
     .filter-btn {
       padding: 6px 12px;
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      background: white;
+      border: 1px solid var(--indigo-line);
+      border-radius: 4px;
+      background: var(--paper-light);
+      font-family: var(--font-body);
       font-size: 12.5px;
       cursor: pointer;
       color: var(--ink-2);
     }
 
-    /* 审核列表 */
-    .review-table { width: 100%; }
+    /* 审核行 */
     .review-row {
       display: grid;
-      grid-template-columns: 80px 1fr 220px 180px 220px;
-      gap: 16px;
-      padding: 14px 20px;
-      border-bottom: 1px solid var(--border-soft);
+      grid-template-columns: 92px 1fr 240px 200px 240px;
+      gap: 20px;
+      padding: 18px 22px;
+      border-bottom: 1px solid var(--indigo-line);
       align-items: center;
     }
     .review-row.header {
-      background: var(--bg);
-      font-size: 12px;
-      color: var(--ink-4);
-      font-weight: 600;
+      background: var(--paper);
+      padding: 12px 22px;
+      font-family: var(--font-num);
+      font-size: 11px;
+      color: var(--ink-3);
+      letter-spacing: 0.12em;
       text-transform: uppercase;
-      letter-spacing: 0.4px;
+      font-weight: 700;
     }
     .photo-cell {
-      width: 64px; height: 64px;
-      border-radius: 10px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 28px;
+      width: 72px; height: 72px;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 32px;
+      position: relative;
+      box-shadow: inset 0 0 0 3px var(--paper-light), inset 0 0 0 4px rgba(0,0,0,0.06);
     }
-    .ph-blue { background: linear-gradient(135deg, #93B5E1, #6B8FC7); }
-    .ph-orange { background: linear-gradient(135deg, #FFD58A, #F5A623); }
-    .ph-brown { background: linear-gradient(135deg, #C8956A, #9C6B3F); }
-    .ph-dark { background: linear-gradient(135deg, #4A5568, #2D3748); }
-    .ph-pink { background: linear-gradient(135deg, #FBD0D0, #F09898); }
+    .ph-blue { background: linear-gradient(135deg, #8EA9C7 0%, #5C7FA3 100%); }
+    .ph-orange { background: linear-gradient(135deg, #E8B888 0%, #C58838 100%); }
+    .ph-brown { background: linear-gradient(135deg, #B58968 0%, #8A5E3E 100%); }
+    .ph-dark { background: linear-gradient(135deg, #4A5468 0%, #2D3445 100%); }
+    .ph-pink { background: linear-gradient(135deg, #E8B8B8 0%, #C58282 100%); }
 
-    .post-title { font-size: 13.5px; font-weight: 600; margin-bottom: 4px; }
+    .post-stamp {
+      position: absolute;
+      top: -6px; left: -6px;
+      width: 28px; height: 28px;
+      background: var(--vermilion);
+      border-radius: 50%;
+      border: 2px solid var(--paper-light);
+      color: var(--paper-light);
+      font-family: var(--font-display);
+      font-size: 11px;
+      font-weight: 900;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transform: rotate(-8deg);
+    }
+    .post-stamp.found { background: var(--pine); }
+    .post-stamp.care { background: var(--ochre); }
+
+    .post-title {
+      font-family: var(--font-display);
+      font-size: 15px;
+      font-weight: 700;
+      margin-bottom: 5px;
+      color: var(--ink-1);
+    }
     .post-excerpt {
-      font-size: 12px;
+      font-size: 12.5px;
       color: var(--ink-3);
-      line-height: 1.5;
+      line-height: 1.6;
       overflow: hidden;
       display: -webkit-box;
       -webkit-line-clamp: 2;
       -webkit-box-orient: vertical;
     }
-    .post-meta { font-size: 11.5px; color: var(--ink-4); margin-top: 6px; }
+    .post-excerpt .flag {
+      background: var(--vermilion-soft);
+      color: var(--vermilion-deep);
+      padding: 0 4px;
+      border-radius: 2px;
+      font-weight: 600;
+    }
+    .post-meta {
+      font-family: var(--font-num);
+      font-size: 11px;
+      color: var(--ink-4);
+      margin-top: 8px;
+      letter-spacing: 0.04em;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
 
     .auto-check {
       font-size: 11.5px;
-      line-height: 1.5;
-      padding: 8px 10px;
-      border-radius: 8px;
+      line-height: 1.6;
+      padding: 10px 12px;
+      border-radius: 4px;
+      font-family: var(--font-body);
     }
-    .auto-check.ok { background: #ECFDF5; color: #065F46; border: 1px solid #A7F3D0; }
-    .auto-check.warn { background: #FFFBEB; color: #92400E; border: 1px solid #FCD34D; }
-    .auto-check.danger { background: #FEF2F2; color: #991B1B; border: 1px solid #FECACA; }
+    .auto-check.ok {
+      background: var(--pine-soft);
+      color: var(--pine);
+      border: 1px solid var(--pine);
+    }
+    .auto-check.warn {
+      background: var(--banana-soft);
+      color: var(--ochre);
+      border: 1px solid var(--banana);
+    }
+    .auto-check.danger {
+      background: var(--vermilion-soft);
+      color: var(--vermilion-deep);
+      border: 1px solid var(--vermilion);
+    }
+    .auto-check b {
+      font-family: var(--font-display);
+      font-weight: 700;
+    }
 
     .submitter {
-      display: flex; align-items: center; gap: 10px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
     }
     .submitter-avatar {
-      width: 32px; height: 32px;
+      width: 36px; height: 36px;
       border-radius: 50%;
-      background: linear-gradient(135deg, #94A3B8, #64748B);
-      color: white;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 12px; font-weight: 600;
+      background: var(--indigo);
+      color: var(--paper-light);
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
     }
-    .submitter-info { font-size: 12.5px; }
-    .submitter-name { font-weight: 600; }
-    .submitter-stats { font-size: 11px; color: var(--ink-4); margin-top: 1px; }
+    .submitter-avatar.danger { background: var(--vermilion); }
+    .submitter-name {
+      font-family: var(--font-display);
+      font-size: 13px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .submitter-flag {
+      font-family: var(--font-num);
+      font-size: 10px;
+      padding: 1px 6px;
+      background: var(--vermilion-soft);
+      color: var(--vermilion);
+      border: 1px solid var(--vermilion);
+      border-radius: 2px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+    }
+    .submitter-meta {
+      font-family: var(--font-num);
+      font-size: 10.5px;
+      color: var(--ink-4);
+      margin-top: 2px;
+      letter-spacing: 0.04em;
+    }
 
-    .action-group { display: flex; gap: 6px; }
+    .action-group {
+      display: flex;
+      gap: 6px;
+    }
     .action-btn {
       flex: 1;
-      padding: 7px 0;
-      border-radius: 7px;
+      padding: 8px 0;
+      border-radius: 4px;
+      font-family: var(--font-display);
       font-size: 12px;
-      font-weight: 600;
+      font-weight: 700;
       cursor: pointer;
       text-align: center;
-      border: 1px solid transparent;
+      border: 1px solid;
+      letter-spacing: 0.04em;
+      transition: transform 0.1s;
     }
-    .action-btn.pass { background: var(--status-found); color: white; }
-    .action-btn.modify { background: white; color: var(--ink-2); border-color: var(--border); }
-    .action-btn.del { background: #FEF2F2; color: var(--status-lost); border-color: #FECACA; }
-    .action-btn.ban { background: var(--status-lost); color: white; }
+    .action-btn:hover { transform: translateY(-1px); }
+    .action-btn.pass {
+      background: var(--pine);
+      color: var(--paper-light);
+      border-color: var(--pine);
+    }
+    .action-btn.modify {
+      background: var(--paper-light);
+      color: var(--ink-2);
+      border-color: var(--indigo-line);
+    }
+    .action-btn.modify-prim {
+      background: var(--paper-light);
+      color: var(--indigo);
+      border-color: var(--indigo);
+    }
+    .action-btn.del {
+      background: var(--vermilion-soft);
+      color: var(--vermilion);
+      border-color: var(--vermilion);
+    }
+    .action-btn.ban {
+      background: var(--vermilion);
+      color: var(--paper-light);
+      border-color: var(--vermilion);
+    }
+
+    /* 底部说明 */
+    .compliance-card {
+      margin-top: 28px;
+      padding: 22px 26px;
+      background: var(--indigo-soft);
+      border: 1px solid var(--indigo-line);
+      border-left: 4px solid var(--vermilion);
+      border-radius: 4px;
+      font-family: var(--font-body);
+      font-size: 12.5px;
+      color: var(--ink-2);
+      line-height: 1.85;
+      position: relative;
+    }
+    .compliance-card .seal-icon {
+      position: absolute;
+      top: 18px; right: 22px;
+      width: 70px; height: 70px;
+      border: 2.5px solid var(--vermilion);
+      border-radius: 50%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: var(--vermilion);
+      transform: rotate(-8deg);
+      background: rgba(255,255,255,0.6);
+    }
+    .compliance-card .seal-icon::after {
+      content: '';
+      position: absolute;
+      inset: 5px;
+      border: 1px solid var(--vermilion);
+      border-radius: 50%;
+    }
+    .compliance-card .seal-char {
+      font-family: var(--font-display);
+      font-weight: 900;
+      font-size: 16px;
+      letter-spacing: 0.04em;
+    }
+    .compliance-card .seal-sub {
+      font-family: var(--font-num);
+      font-size: 8.5px;
+      letter-spacing: 0.12em;
+      margin-top: 1px;
+    }
+    .compliance-card b {
+      font-family: var(--font-display);
+      font-weight: 700;
+      color: var(--ink-1);
+    }
+    .compliance-card .ref {
+      font-family: var(--font-num);
+      font-size: 11.5px;
+      color: var(--vermilion);
+      padding: 1px 6px;
+      background: var(--vermilion-soft);
+      border-radius: 2px;
+      letter-spacing: 0.02em;
+    }
+
   </style>
 </head>
 <body>
 
-<div class="compliance-banner">
-  <span style="font-size:16px">⚠️</span>
+<!-- ============== 顶部合规警告 ============== -->
+<div class="alert-banner">
+  <span class="alert-stamp">独 立 后 台</span>
   <div>
-    <b>独立 web 后台 · 不在小程序内</b>　|　管理后台必须独立部署，禁止内嵌于小程序客户端代码。详见 <code style="background:rgba(0,0,0,0.05);padding:1px 6px;border-radius:4px">docs/05-risks.md § P0-2</code>
+    <b>本系统不可内嵌于小程序代码</b> — 微信审核员发现"管理后台藏在用户端"立即驳回。详见
+    <code style="font-family:var(--font-num);background:rgba(255,255,255,0.15);padding:1px 8px;border-radius:2px;letter-spacing:0.04em">docs/05-risks.md § P0-2</code>
   </div>
 </div>
 
 <div class="layout">
 
-  <!-- 侧边栏 -->
+  <!-- ============== 侧边栏 ============== -->
   <div class="sidebar">
-    <div class="sidebar-brand">
-      <div class="logo">🐾</div>
+    <div class="brand">
+      <div class="brand-logo">寻</div>
       <div>
-        <div class="name">寻宠管理后台</div>
-        <div class="sub">大理 · 内部使用</div>
+        <div class="brand-name">寻宠 · 大理</div>
+        <div class="brand-sub">ADMIN · 后台审核台</div>
       </div>
     </div>
 
-    <div class="nav-section">内容审核</div>
-    <div class="nav-item active"><span class="icon">📋</span>待审核帖子<span class="badge">12</span></div>
-    <div class="nav-item"><span class="icon">🚨</span>用户举报<span class="badge">3</span></div>
-    <div class="nav-item"><span class="icon">⚠️</span>争议申诉<span class="badge muted">1</span></div>
-    <div class="nav-item"><span class="icon">💬</span>聊天审核流水</div>
+    <div class="nav-section">内容审核 · CONTENT</div>
+    <div class="nav-item active"><span class="icon">▦</span>待审核帖子<span class="badge">12</span></div>
+    <div class="nav-item"><span class="icon">⚠</span>用户举报<span class="badge">3</span></div>
+    <div class="nav-item"><span class="icon">⚖</span>争议申诉<span class="badge quiet">1</span></div>
+    <div class="nav-item"><span class="icon">✉</span>聊天审核流水</div>
 
-    <div class="nav-section">数据 / 用户</div>
-    <div class="nav-item"><span class="icon">👥</span>用户管理</div>
-    <div class="nav-item"><span class="icon">📊</span>数据看板</div>
-    <div class="nav-item"><span class="icon">🪷</span>善行值流水</div>
+    <div class="nav-section">数据 / 用户 · DATA</div>
+    <div class="nav-item"><span class="icon">◐</span>用户管理</div>
+    <div class="nav-item"><span class="icon">▲</span>数据看板</div>
+    <div class="nav-item"><span class="icon">✦</span>善行值流水</div>
 
-    <div class="nav-section">系统</div>
-    <div class="nav-item"><span class="icon">📜</span>审核日志</div>
-    <div class="nav-item"><span class="icon">⚙️</span>设置</div>
+    <div class="nav-section">系统 · SYSTEM</div>
+    <div class="nav-item"><span class="icon">⊞</span>审核日志</div>
+    <div class="nav-item"><span class="icon">⚙</span>设置</div>
+
+    <div class="sidebar-footer">
+      v 1.0.0 · admin.example.com<br>
+      内部 SSO 已登录 · 大理志愿团
+    </div>
   </div>
 
-  <!-- 主内容 -->
+  <!-- ============== 主内容 ============== -->
   <div class="main">
 
     <div class="page-header">
       <div>
-        <div class="page-title">内容审核</div>
-        <div class="page-sub">待审核帖子 · 12 条 · 平均处理时长 38 秒</div>
+        <div class="page-meta">CONTENT REVIEW · 内容审核</div>
+        <div class="page-title">待审核帖子 <em>·</em> 12</div>
+        <div class="page-sub">最久等待 8 分钟 · 平均处理时长 38 秒 · 今日已审 24 条</div>
       </div>
       <div class="admin-info">
-        <div class="avatar">管</div>
+        <div class="admin-avatar">王</div>
         <div>
-          <div style="font-weight:600">管理员 · 老王</div>
-          <div style="font-size:11px;color:var(--ink-4)">今日已审 24 条</div>
+          <div class="admin-name">管理员 · 老王</div>
+          <div class="admin-stat">SHIFT · 09:00-18:00 · 24 reviewed</div>
         </div>
       </div>
     </div>
@@ -340,7 +759,7 @@
       <div class="stat-card">
         <div class="label">今日删除</div>
         <div class="num">5</div>
-        <div class="trend down">违规率 5.4%</div>
+        <div class="trend warn">违规率 5.4%</div>
       </div>
       <div class="stat-card">
         <div class="label">机审误判</div>
@@ -353,10 +772,10 @@
     <div class="panel">
       <div class="panel-header">
         <div class="panel-tabs">
-          <div class="panel-tab active">待审核 · 12</div>
-          <div class="panel-tab">机审拦截 · 3</div>
-          <div class="panel-tab">已通过 · 87</div>
-          <div class="panel-tab">已删除 · 5</div>
+          <div class="panel-tab active">待审核<span class="badge">12</span></div>
+          <div class="panel-tab">机审拦截<span class="badge">3</span></div>
+          <div class="panel-tab">已通过<span class="badge">87</span></div>
+          <div class="panel-tab">已删除<span class="badge">5</span></div>
         </div>
         <div class="panel-filter">
           <div class="filter-btn">全部类型 ▾</div>
@@ -364,99 +783,104 @@
         </div>
       </div>
 
-      <div class="review-table">
-        <div class="review-row header">
-          <div>照片</div>
-          <div>内容</div>
-          <div>机审结果</div>
-          <div>发布者</div>
-          <div>操作</div>
-        </div>
-
-        <div class="review-row">
-          <div class="photo-cell ph-pink">🐱</div>
-          <div>
-            <div class="post-title">寻宠 · 三花猫 · 古城东门</div>
-            <div class="post-excerpt">"我家三花昨晚出门没回，叫'花花'会回头。橙白黑三色，左耳尖有缺口，戴红色项圈..."</div>
-            <div class="post-meta">📍 古城东门 · 发布于 12 分钟前</div>
-          </div>
-          <div class="auto-check ok">
-            ✓ 图片合规<br>
-            ✓ 文字合规<br>
-            ✓ 地点真实
-          </div>
-          <div class="submitter">
-            <div class="submitter-avatar">林</div>
-            <div class="submitter-info">
-              <div class="submitter-name">林*</div>
-              <div class="submitter-stats">注册 8 天 · 0 违规</div>
-            </div>
-          </div>
-          <div class="action-group">
-            <div class="action-btn pass">✓ 通过</div>
-            <div class="action-btn modify">让用户修改</div>
-            <div class="action-btn del">删除</div>
-          </div>
-        </div>
-
-        <div class="review-row">
-          <div class="photo-cell ph-brown">🐶</div>
-          <div>
-            <div class="post-title">招领 · 中华田园犬 · 海东</div>
-            <div class="post-excerpt">"已带去打疫苗，急寻主人。<span style="background:#FEF2F2;color:#991B1B;padding:0 2px;border-radius:2px">悬赏 500 元</span>，加微信..."</div>
-            <div class="post-meta">📍 海东 · 发布于 28 分钟前</div>
-          </div>
-          <div class="auto-check warn">
-            ⚠️ 检测到「悬赏」「加微信」<br>
-            建议让用户修改
-          </div>
-          <div class="submitter">
-            <div class="submitter-avatar">张</div>
-            <div class="submitter-info">
-              <div class="submitter-name">张*</div>
-              <div class="submitter-stats">注册 3 个月 · 1 次违规</div>
-            </div>
-          </div>
-          <div class="action-group">
-            <div class="action-btn modify" style="flex:2;background:var(--primary-soft);color:var(--primary);border-color:var(--primary-border)">📝 让用户修改</div>
-            <div class="action-btn del">删除</div>
-          </div>
-        </div>
-
-        <div class="review-row">
-          <div class="photo-cell ph-dark">🐶</div>
-          <div>
-            <div class="post-title">寻宠 · 哈士奇 · 大理</div>
-            <div class="post-excerpt">"急寻：哈士奇'雪球'走失，公，2 岁。脖子戴蓝色项圈..."</div>
-            <div class="post-meta">📍 大理 · 发布于 1 小时前</div>
-          </div>
-          <div class="auto-check danger">
-            🚨 同手机号 24h 内第 4 次发布<br>
-            疑似营销 / 测试账号
-          </div>
-          <div class="submitter">
-            <div class="submitter-avatar" style="background:#DC2626">王</div>
-            <div class="submitter-info">
-              <div class="submitter-name">王* <span style="color:var(--status-lost);font-size:10px;padding:1px 5px;background:#FEF2F2;border:1px solid #FECACA;border-radius:4px;margin-left:4px">高频</span></div>
-              <div class="submitter-stats">注册 2 天 · 已发 4 帖</div>
-            </div>
-          </div>
-          <div class="action-group">
-            <div class="action-btn modify">查看历史</div>
-            <div class="action-btn del">删除</div>
-            <div class="action-btn ban">封号</div>
-          </div>
-        </div>
-
+      <div class="review-row header">
+        <div>照片</div>
+        <div>内容</div>
+        <div>机审结果</div>
+        <div>发布者</div>
+        <div>操作</div>
       </div>
+
+      <div class="review-row">
+        <div class="photo-cell ph-pink">🐱<div class="post-stamp">寻</div></div>
+        <div>
+          <div class="post-title">寻宠 · 三花猫 · 古城东门</div>
+          <div class="post-excerpt">"我家三花昨晚出门没回，叫'花花'会回头。橙白黑三色，左耳尖有缺口，戴红色项圈..."</div>
+          <div class="post-meta">📍 古城东门 · 12 分钟前</div>
+        </div>
+        <div class="auto-check ok">
+          <b>✓ 全部合规</b><br>
+          图片 OK · 文字 OK<br>
+          地点真实
+        </div>
+        <div class="submitter">
+          <div class="submitter-avatar">林</div>
+          <div>
+            <div class="submitter-name">林*</div>
+            <div class="submitter-meta">注册 8 天 · 0 违规</div>
+          </div>
+        </div>
+        <div class="action-group">
+          <div class="action-btn pass">✓ 通过</div>
+          <div class="action-btn modify">让用户修改</div>
+          <div class="action-btn del">删除</div>
+        </div>
+      </div>
+
+      <div class="review-row">
+        <div class="photo-cell ph-brown">🐶<div class="post-stamp found">招</div></div>
+        <div>
+          <div class="post-title">招领 · 中华田园犬 · 海东</div>
+          <div class="post-excerpt">"已带去打疫苗，急寻主人。<span class="flag">悬赏 500 元</span>，加微信..."</div>
+          <div class="post-meta">📍 海东 · 28 分钟前</div>
+        </div>
+        <div class="auto-check warn">
+          <b>⚠ 检测到敏感词</b><br>
+          「悬赏」「加微信」<br>
+          建议让用户修改
+        </div>
+        <div class="submitter">
+          <div class="submitter-avatar">张</div>
+          <div>
+            <div class="submitter-name">张*</div>
+            <div class="submitter-meta">注册 3 个月 · 1 次违规</div>
+          </div>
+        </div>
+        <div class="action-group">
+          <div class="action-btn modify-prim" style="flex:1.6">📝 让用户修改</div>
+          <div class="action-btn del">删除</div>
+        </div>
+      </div>
+
+      <div class="review-row">
+        <div class="photo-cell ph-dark">🐶<div class="post-stamp">寻</div></div>
+        <div>
+          <div class="post-title">寻宠 · 哈士奇 · 大理</div>
+          <div class="post-excerpt">"急寻：哈士奇'雪球'走失，公，2 岁。脖子戴蓝色项圈..."</div>
+          <div class="post-meta">📍 大理 · 1 小时前</div>
+        </div>
+        <div class="auto-check danger">
+          <b>🚨 异常行为</b><br>
+          同手机号 24h 内第 4 次<br>
+          疑似营销账号
+        </div>
+        <div class="submitter">
+          <div class="submitter-avatar danger">王</div>
+          <div>
+            <div class="submitter-name">王* <span class="submitter-flag">高频</span></div>
+            <div class="submitter-meta">注册 2 天 · 已发 4 帖</div>
+          </div>
+        </div>
+        <div class="action-group">
+          <div class="action-btn modify">查看历史</div>
+          <div class="action-btn del">删除</div>
+          <div class="action-btn ban">封号</div>
+        </div>
+      </div>
+
     </div>
 
-    <div style="margin-top: 28px; padding: 18px 20px; background: white; border: 1px solid var(--border); border-radius: 12px; font-size: 12.5px; color: var(--ink-3); line-height: 1.7;">
-      <b style="color:var(--ink-1)">🛡 合规说明</b><br>
+    <!-- 合规说明 -->
+    <div class="compliance-card">
+      <div class="seal-icon">
+        <div class="seal-char">合规</div>
+        <div class="seal-sub">VERIFIED</div>
+      </div>
+      <b>🛡 系统架构合规说明</b><br>
       本管理后台为<b>独立 web 后台</b>（部署在 admin.example.com，与小程序客户端代码完全隔离）。<br>
       所有审核操作将记录至「审核日志」并留存 ≥ 6 个月以满足监管要求。<br>
       管理员账号通过独立的内部 SSO 系统授权，与微信小程序用户体系不互通。<br>
-      <span style="color:var(--ink-4);font-size:11.5px">— 此设计避免小程序审核时被驳回（详见 docs/05-risks.md § P0-2）</span>
+      <span style="color:var(--ink-4);font-size:11.5px;font-family:var(--font-num);letter-spacing:0.04em">— 此设计避免小程序审核时被驳回（详见 <span class="ref">docs/05-risks.md § P0-2</span>）</span>
     </div>
 
   </div>
