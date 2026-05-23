@@ -858,6 +858,219 @@
       text-underline-offset: 3px;
     }
 
+    /* 转发按钮（卡片底部） */
+    .pc-action.share {
+      color: var(--apricot-deep);
+      background: var(--apricot-soft);
+      padding: 4px 10px;
+      border-radius: var(--radius-pill);
+      font-family: var(--font-cn);
+      font-weight: 700;
+      transition: background 0.15s;
+    }
+    .pc-action.share:hover { background: var(--apricot); color: white; }
+
+    /* Share Modal · 帮忙转发 */
+    .share-modal {
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,0.55);
+      backdrop-filter: blur(6px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 60;
+      padding: 18px;
+    }
+    .share-modal.show { display: flex; }
+    .share-box {
+      background: var(--surface);
+      border-radius: 20px;
+      width: 100%;
+      overflow: hidden;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.35);
+      max-height: 95%;
+      display: flex; flex-direction: column;
+    }
+    .share-head {
+      padding: 14px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--divider-soft);
+      flex-shrink: 0;
+    }
+    .share-head-title { font-size: 15px; font-weight: 700; }
+    .share-head-sub {
+      font-size: 11px;
+      color: var(--ink-3);
+      margin-top: 2px;
+      font-family: var(--font-en);
+      letter-spacing: 0.04em;
+    }
+    .share-close {
+      font-size: 22px;
+      color: var(--ink-3);
+      cursor: pointer;
+      width: 28px; height: 28px;
+      display: flex; align-items: center; justify-content: center;
+      border-radius: 50%;
+    }
+    .share-close:hover { background: var(--bg); }
+
+    .share-card-wrap {
+      padding: 14px 14px 0;
+      overflow-y: auto;
+    }
+    .share-card-wrap::-webkit-scrollbar { display: none; }
+
+    .share-card {
+      border-radius: 14px;
+      overflow: hidden;
+      background: var(--surface);
+      box-shadow: 0 4px 14px rgba(31,31,31,0.08),
+                  0 0 0 1px var(--divider-soft);
+    }
+    .scp-brand {
+      padding: 10px 14px;
+      background: linear-gradient(135deg, #FFA378 0%, var(--apricot) 100%);
+      color: white;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+    .scp-logo { font-size: 16px; }
+    .scp-brand-name {
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+    }
+    .scp-brand-sub {
+      margin-left: auto;
+      font-family: var(--font-en);
+      font-size: 10.5px;
+      opacity: 0.85;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+    }
+    .scp-photo {
+      height: 140px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 64px;
+      position: relative;
+    }
+    .scp-status {
+      position: absolute;
+      bottom: 10px; left: 10px;
+      padding: 4px 12px;
+      color: white;
+      font-size: 11px;
+      font-weight: 700;
+      border-radius: var(--radius-pill);
+      backdrop-filter: blur(8px);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.12);
+    }
+    .scp-status.status-lost { background: rgba(255,133,82,0.95); }
+    .scp-status.status-found { background: rgba(91,184,159,0.95); }
+    .scp-status.status-care { background: rgba(166,114,212,0.95); }
+
+    .scp-body { padding: 14px 16px 16px; }
+    .scp-name-line {
+      display: flex;
+      align-items: baseline;
+      gap: 6px;
+      margin-bottom: 4px;
+    }
+    .scp-pet-name {
+      font-size: 17px;
+      font-weight: 700;
+      letter-spacing: -0.005em;
+    }
+    .scp-pet-breed {
+      font-size: 11.5px;
+      color: var(--ink-3);
+      font-weight: 500;
+    }
+    .scp-meta {
+      font-size: 11.5px;
+      color: var(--ink-3);
+      margin-bottom: 10px;
+    }
+    .scp-desc {
+      font-size: 12.5px;
+      line-height: 1.7;
+      color: var(--ink-2);
+      margin-bottom: 12px;
+    }
+    .scp-divider {
+      height: 1px;
+      background: var(--divider-soft);
+      margin-bottom: 12px;
+    }
+    .scp-footer {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .scp-qrcode {
+      width: 56px; height: 56px;
+      background: white;
+      border: 1px solid var(--divider);
+      border-radius: 8px;
+      padding: 4px;
+      flex-shrink: 0;
+    }
+    .scp-cta { flex: 1; min-width: 0; }
+    .scp-cta-title {
+      font-size: 12.5px;
+      font-weight: 700;
+      color: var(--ink-1);
+    }
+    .scp-cta-sub {
+      font-size: 10.5px;
+      color: var(--ink-3);
+      margin-top: 2px;
+      font-family: var(--font-en);
+      letter-spacing: 0.04em;
+    }
+
+    .share-actions {
+      display: flex;
+      gap: 8px;
+      padding: 12px 14px 4px;
+      flex-shrink: 0;
+    }
+    .share-act {
+      flex: 1;
+      padding: 12px;
+      background: var(--bg);
+      border-radius: 12px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      cursor: pointer;
+      color: var(--ink-1);
+    }
+    .share-act.primary {
+      background: linear-gradient(135deg, #FFA378 0%, var(--apricot) 100%);
+      color: white;
+      box-shadow: 0 4px 12px rgba(255,133,82,0.25);
+    }
+    .share-act-ic { font-size: 20px; }
+    .share-act-text { font-size: 12px; font-weight: 700; }
+
+    .share-tip {
+      padding: 12px 18px 18px;
+      text-align: center;
+      font-size: 11.5px;
+      color: var(--ink-3);
+      font-weight: 500;
+      flex-shrink: 0;
+    }
+
     /* Privacy Modal */
     .privacy-modal { position: absolute; inset: 44px 0 0 0; background: rgba(31,31,31,0.55); backdrop-filter: blur(8px); z-index: 1000; display: flex; align-items: center; justify-content: center; padding: 24px; }
     .privacy-modal.hidden { display: none; }
@@ -974,7 +1187,7 @@
             </div>
             <div class="pc-footer">
               <div class="distance-tag">📍 1.2 km</div>
-              <div class="pc-actions"><span class="pc-action">💬 3</span><span class="pc-action">👀 47</span></div>
+              <div class="pc-actions"><span class="pc-action">💬 3</span><span class="pc-action">👀 47</span><span class="pc-action share" onclick="event.stopPropagation();openShare(0)">⤴ 转发</span></div>
             </div>
           </div>
 
@@ -989,7 +1202,7 @@
             </div>
             <div class="pc-footer">
               <div class="distance-tag">📍 0.8 km</div>
-              <div class="pc-actions"><span class="pc-action">💬 12</span><span class="pc-action clue">📌 我有线索</span></div>
+              <div class="pc-actions"><span class="pc-action">💬 12</span><span class="pc-action">👀 89</span><span class="pc-action share" onclick="event.stopPropagation();openShare(1)">⤴ 转发</span></div>
             </div>
           </div>
 
@@ -1004,7 +1217,7 @@
             </div>
             <div class="pc-footer">
               <div class="distance-tag">📍 4.2 km</div>
-              <div class="pc-actions"><span class="pc-action">💬 5</span><span class="pc-action">👀 28</span></div>
+              <div class="pc-actions"><span class="pc-action">💬 5</span><span class="pc-action">👀 28</span><span class="pc-action share" onclick="event.stopPropagation();openShare(2)">⤴ 转发</span></div>
             </div>
           </div>
 
@@ -1019,7 +1232,7 @@
             </div>
             <div class="pc-footer">
               <div class="distance-tag" style="background:var(--bg-deeper);color:var(--ink-3)">📍 3.4 km</div>
-              <div class="pc-actions"><span class="pc-action">💬 2</span><span class="pc-action">👀 19</span></div>
+              <div class="pc-actions"><span class="pc-action">💬 2</span><span class="pc-action">👀 19</span><span class="pc-action share" onclick="event.stopPropagation();openShare(3)">⤴ 转发</span></div>
             </div>
           </div>
 
@@ -1946,6 +2159,89 @@
       </div>
     </div>
 
+    <!-- ===== Share Modal · 帮忙转发 ===== -->
+    <div class="share-modal" id="share-modal" onclick="if(event.target===this) closeShareModal()">
+      <div class="share-box">
+        <div class="share-head">
+          <div>
+            <div class="share-head-title">帮忙转发</div>
+            <div class="share-head-sub">SHARE TO HELP</div>
+          </div>
+          <div class="share-close" onclick="closeShareModal()">×</div>
+        </div>
+
+        <div class="share-card-wrap">
+          <div class="share-card">
+            <div class="scp-brand">
+              <span class="scp-logo">🐾</span>
+              <span class="scp-brand-name">寻宠 · 大理</span>
+              <span class="scp-brand-sub">DALI · PETFINDER</span>
+            </div>
+            <div class="scp-photo" id="scp-photo">
+              <span id="scp-emoji">🐱</span>
+              <div class="scp-status status-lost" id="scp-status">寻宠中</div>
+            </div>
+            <div class="scp-body">
+              <div class="scp-name-line">
+                <span class="scp-pet-name" id="scp-pet-name">胖丁</span>
+                <span class="scp-pet-breed" id="scp-pet-breed">· 英短蓝猫 · ♂ 3 岁</span>
+              </div>
+              <div class="scp-meta" id="scp-meta">📍 古城北门 · 10 min 前</div>
+              <div class="scp-desc" id="scp-desc">穿粉色项圈，左耳缺一小块。胆小，听到名字会喵叫。看到请尽量拍照不要追 🙏</div>
+              <div class="scp-divider"></div>
+              <div class="scp-footer">
+                <div class="scp-qrcode">
+                  <svg viewBox="0 0 30 30" width="100%" height="100%" fill="#1F1F1F">
+                    <rect x="0" y="0" width="9" height="9"/>
+                    <rect x="2" y="2" width="5" height="5" fill="white"/>
+                    <rect x="3" y="3" width="3" height="3" fill="#1F1F1F"/>
+                    <rect x="21" y="0" width="9" height="9"/>
+                    <rect x="23" y="2" width="5" height="5" fill="white"/>
+                    <rect x="24" y="3" width="3" height="3" fill="#1F1F1F"/>
+                    <rect x="0" y="21" width="9" height="9"/>
+                    <rect x="2" y="23" width="5" height="5" fill="white"/>
+                    <rect x="3" y="24" width="3" height="3" fill="#1F1F1F"/>
+                    <rect x="11" y="2" width="2" height="2"/>
+                    <rect x="15" y="0" width="2" height="2"/>
+                    <rect x="17" y="4" width="2" height="2"/>
+                    <rect x="11" y="11" width="2" height="2"/>
+                    <rect x="15" y="13" width="2" height="2"/>
+                    <rect x="19" y="11" width="2" height="2"/>
+                    <rect x="13" y="17" width="2" height="2"/>
+                    <rect x="17" y="19" width="2" height="2"/>
+                    <rect x="21" y="15" width="2" height="2"/>
+                    <rect x="25" y="13" width="2" height="2"/>
+                    <rect x="11" y="22" width="2" height="2"/>
+                    <rect x="15" y="24" width="2" height="2"/>
+                    <rect x="19" y="22" width="2" height="2"/>
+                    <rect x="23" y="25" width="2" height="2"/>
+                    <rect x="27" y="22" width="2" height="2"/>
+                  </svg>
+                </div>
+                <div class="scp-cta">
+                  <div class="scp-cta-title">扫码查看详情 / 提供线索</div>
+                  <div class="scp-cta-sub">微信扫一扫</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="share-actions">
+          <div class="share-act" onclick="alert('✅ 卡片已保存到相册\n可手动转发到朋友圈')">
+            <div class="share-act-ic">📷</div>
+            <div class="share-act-text">保存图片</div>
+          </div>
+          <div class="share-act primary" onclick="alert('💬 已唤起微信分享\n选择「朋友圈」即可发布')">
+            <div class="share-act-ic">💬</div>
+            <div class="share-act-text">分享到微信</div>
+          </div>
+        </div>
+
+        <div class="share-tip">💛 你的一次转发，可能让一只小朋友更快回家</div>
+      </div>
+    </div>
+
     <!-- ===== 隐私 Modal（覆盖在 feed 屏上，默认显示） ===== -->
     <div class="privacy-modal" id="privacy-modal">
       <div class="privacy-box">
@@ -2124,6 +2420,56 @@
     });
 
     if (empty) empty.style.display = visibleCount === 0 ? 'block' : 'none';
+  }
+
+  /* ============== 帮忙转发 ============== */
+  const SHARE_DATA = [
+    {
+      emoji: '🐱', photoClass: 'ph-orange',
+      status: '招领中', statusClass: 'status-found',
+      name: '小橘子', breed: '· 约 2 岁 · ♀',
+      meta: '📍 人民路三月街 · 30 min 前',
+      desc: '在咖啡馆门口蹲了一下午，看着像走丢的。亲人，会撒娇，目前在我店里 ☕️'
+    },
+    {
+      emoji: '🐱', photoClass: 'ph-blue',
+      status: '寻宠中', statusClass: 'status-lost',
+      name: '胖丁', breed: '· 英短蓝猫 · ♂ 3 岁',
+      meta: '📍 古城北门 · 10 min 前',
+      desc: '穿粉色项圈，左耳缺一小块。胆小，听到名字会喵叫。看到请尽量拍照不要追 🙏'
+    },
+    {
+      emoji: '🐶', photoClass: 'ph-cream',
+      status: '临时照料中', statusClass: 'status-care',
+      name: '小白', breed: '· 比熊 · ♂ 5kg',
+      meta: '📍 下关泰安路 · 2 hr 前',
+      desc: '在小区门口捡到，毛色干净有人养过。我家可以临时照看 2-3 天 🏠'
+    },
+    {
+      emoji: '🐶', photoClass: 'ph-pink',
+      status: '招领中', statusClass: 'status-found',
+      name: '小棕', breed: '· 棕白色 · 约 6kg',
+      meta: '📍 苍山门 · 9 days 前',
+      desc: '在山脚捡到，比较瘦，已带去打疫苗。希望主人快点出现 💛'
+    }
+  ];
+
+  function openShare(idx) {
+    const d = SHARE_DATA[idx];
+    if (!d) return;
+    document.getElementById('scp-photo').className = 'scp-photo ' + d.photoClass;
+    document.getElementById('scp-emoji').textContent = d.emoji;
+    document.getElementById('scp-status').textContent = d.status;
+    document.getElementById('scp-status').className = 'scp-status ' + d.statusClass;
+    document.getElementById('scp-pet-name').textContent = d.name;
+    document.getElementById('scp-pet-breed').textContent = d.breed;
+    document.getElementById('scp-meta').textContent = d.meta;
+    document.getElementById('scp-desc').textContent = d.desc;
+    document.getElementById('share-modal').classList.add('show');
+  }
+
+  function closeShareModal() {
+    document.getElementById('share-modal').classList.remove('show');
   }
 
   /* ============== 搜索逻辑 ============== */
