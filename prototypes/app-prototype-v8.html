@@ -591,6 +591,39 @@
     .terms-note { padding: 8px 20px 14px; font-size: 11px; color: var(--ink-4); line-height: 1.6; }
     .terms-note .link { color: var(--apricot-deep); font-weight: 600; }
 
+    /* 品种快选 chips */
+    .breed-chips {
+      display: flex; flex-wrap: wrap; gap: 5px;
+      margin-top: 8px;
+    }
+    .breed-chip {
+      font-size: 11px;
+      padding: 3px 9px;
+      background: var(--bg);
+      color: var(--ink-3);
+      border-radius: var(--radius-pill);
+      cursor: pointer;
+      font-weight: 500;
+    }
+    .breed-chip:hover { background: var(--apricot); color: white; }
+
+    /* 私有特征示例 chips */
+    .pf-examples {
+      display: flex; flex-wrap: wrap; gap: 5px;
+      margin-top: 8px;
+    }
+    .pf-example {
+      font-size: 11px;
+      padding: 3px 9px;
+      background: white;
+      color: var(--honey-deep);
+      border: 1px solid var(--honey);
+      border-radius: var(--radius-pill);
+      cursor: pointer;
+      font-weight: 500;
+    }
+    .pf-example:hover { background: var(--honey); color: white; }
+
     /* Contact Guide */
     .guide-scroll { flex: 1; overflow-y: auto; padding: 16px 18px 110px; }
     .guide-hero { text-align: center; padding: 6px 0 18px; }
@@ -1577,64 +1610,167 @@
     <div class="screen" data-screen="publish">
       <div class="sub-header">
         <div class="back-btn" onclick="goBack()">✕</div>
-        <div class="sub-title">发布信息</div>
-        <span class="sub-action">草稿</span>
+        <div class="sub-title" id="publish-title">发布寻宠信息</div>
+        <span class="sub-action" onclick="alert('草稿已保存')">草稿</span>
       </div>
+
       <div class="seg">
-        <div class="seg-item active">🥺 我丢了宠物</div>
-        <div class="seg-item">🤗 我捡到了</div>
+        <div class="seg-item active" data-mode="lost" onclick="switchPublishMode('lost', this)">🥺 我丢了宠物</div>
+        <div class="seg-item" data-mode="found" onclick="switchPublishMode('found', this)">🤗 我捡到了</div>
       </div>
+
       <div class="scroll-area" style="padding-top:0">
+
+        <!-- 发布须知（前置告知） -->
+        <div class="compliance-note">
+          <b>🛡 发布前请知悉</b><br>
+          · 内容将经平台审核（约 1 分钟）<br>
+          · <b>禁止悬赏金 / 感谢金 / 微信号引导</b>，违规将删除
+        </div>
+
+        <!-- 照片 -->
         <div class="form-section">
           <div class="form-row" style="padding-bottom:6px">
-            <div class="form-label"><span><span class="req">*</span> 上传照片</span><span style="font-family:var(--font-en)">2 / 9</span></div>
+            <div class="form-label">
+              <span><span class="req">*</span> 上传照片（至少 1 张）</span>
+              <span style="font-family:var(--font-en)"><span id="photo-count">2</span> / 9</span>
+            </div>
           </div>
-          <div class="photo-row">
-            <div class="photo-slot filled ph-blue"><span style="font-size:32px">🐱</span><div class="x">×</div></div>
-            <div class="photo-slot filled" style="background:linear-gradient(135deg,#C5D5E6,#94AECF)"><span style="font-size:32px">🐱</span><div class="x">×</div></div>
-            <div class="photo-slot"><span style="font-size:18px">+</span><span>添加</span></div>
+          <div class="photo-row" id="photo-row">
+            <div class="photo-slot filled ph-blue" onclick="removePhoto(this)"><span style="font-size:32px">🐱</span><div class="x">×</div></div>
+            <div class="photo-slot filled" style="background:linear-gradient(135deg,#C5D5E6,#94AECF)" onclick="removePhoto(this)"><span style="font-size:32px">🐱</span><div class="x">×</div></div>
+            <div class="photo-slot" id="photo-add" onclick="addPhoto()"><span style="font-size:18px">+</span><span>添加</span></div>
           </div>
         </div>
+
+        <!-- 宠物类型 + 名字 + 品种 + 性别年龄 -->
         <div class="form-section">
           <div class="form-row">
             <div class="form-label"><span class="req">*</span> 宠物类型</div>
             <div class="pet-types">
-              <div class="pet-type active">🐱 猫</div>
-              <div class="pet-type">🐶 狗</div>
-              <div class="pet-type">🐰 其他</div>
+              <div class="pet-type active" data-type="cat" onclick="selectPetType('cat', this)">🐱 猫</div>
+              <div class="pet-type" data-type="dog" onclick="selectPetType('dog', this)">🐶 狗</div>
+              <div class="pet-type" data-type="other" onclick="selectPetType('other', this)">🐰 其他</div>
             </div>
           </div>
-          <div class="form-row"><div class="form-label">名字 / 昵称</div><input class="form-input" value="胖丁"></div>
-          <div class="form-row"><div class="form-label">品种 / 外观</div><input class="form-input" value="英短蓝猫"></div>
-          <div class="form-row"><div class="form-label">性别 / 年龄</div><div class="form-value"><span>♂ 公 · 3 岁</span><span class="form-arrow">›</span></div></div>
-        </div>
-        <div class="form-section">
-          <div class="form-row"><div class="form-label"><span class="req">*</span> 走失地点</div><div class="form-value"><span>📍 古城北门 · 大理</span><span class="form-arrow">地图选 ›</span></div></div>
-          <div class="form-row"><div class="form-label">详细地址</div><input class="form-input" value="北门人民路咖啡馆门口"></div>
-          <div class="form-row"><div class="form-label"><span class="req">*</span> 走失时间</div><div class="form-value"><span>今天 14:30</span><span class="form-arrow">›</span></div></div>
-        </div>
-        <div class="form-section">
+          <div class="form-row" id="name-row">
+            <div class="form-label">名字 / 昵称</div>
+            <input class="form-input" id="publish-name" value="胖丁" placeholder="比如：胖丁">
+          </div>
           <div class="form-row">
-            <div class="form-label"><span><span class="req">*</span> 公开描述</span><span style="font-family:var(--font-en)">82 / 500</span></div>
-            <textarea class="form-textarea">穿粉色项圈，左耳缺一小块。胆小，不会让陌生人碰，听到名字会喵叫。看到请尽量拍照不要追。</textarea>
+            <div class="form-label">品种 / 外观</div>
+            <input class="form-input" id="publish-breed" value="英短蓝猫" placeholder="比如：英短蓝猫">
+            <div class="breed-chips" id="breed-chips">
+              <span class="breed-chip" onclick="fillBreed('英短')">英短</span>
+              <span class="breed-chip" onclick="fillBreed('美短')">美短</span>
+              <span class="breed-chip" onclick="fillBreed('橘猫')">橘猫</span>
+              <span class="breed-chip" onclick="fillBreed('布偶')">布偶</span>
+              <span class="breed-chip" onclick="fillBreed('田园猫')">田园猫</span>
+              <span class="breed-chip" onclick="fillBreed('加菲')">加菲</span>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-label">性别 / 年龄</div>
+            <div class="form-value" onclick="openGenderAgeSheet()">
+              <span id="publish-gender-age">♂ 公 · 3 岁</span>
+              <span class="form-arrow">›</span>
+            </div>
           </div>
         </div>
-        <div class="private-card">
+
+        <!-- 地点 / 时间（我丢了） -->
+        <div class="form-section" id="fields-lost">
+          <div class="form-row">
+            <div class="form-label"><span class="req">*</span> 走失地点</div>
+            <div class="form-value" onclick="openLocationPicker()">
+              <span id="publish-location">📍 古城北门 · 大理</span>
+              <span class="form-arrow">›</span>
+            </div>
+          </div>
+          <div class="form-row"><div class="form-label">详细地址</div><input class="form-input" value="北门人民路咖啡馆门口" placeholder="比如：XX 路 XX 号"></div>
+          <div class="form-row">
+            <div class="form-label"><span class="req">*</span> 走失时间</div>
+            <div class="form-value" onclick="openTimePicker()">
+              <span id="publish-time">今天 14:30</span>
+              <span class="form-arrow">›</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 地点 / 时间（我捡到了） -->
+        <div class="form-section" id="fields-found" style="display:none">
+          <div class="form-row">
+            <div class="form-label"><span class="req">*</span> 发现地点</div>
+            <div class="form-value" onclick="openLocationPicker()">
+              <span id="publish-location-found">📍 请选择地点</span>
+              <span class="form-arrow">›</span>
+            </div>
+          </div>
+          <div class="form-row"><div class="form-label">详细地址</div><input class="form-input" placeholder="比如：人民路 39 号咖啡馆门口"></div>
+          <div class="form-row">
+            <div class="form-label"><span class="req">*</span> 发现时间</div>
+            <div class="form-value" onclick="openTimePicker()">
+              <span id="publish-time-found">请选择时间</span>
+              <span class="form-arrow">›</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 招领专属：目前状况 -->
+        <div class="form-section" id="fields-found-extra" style="display:none">
+          <div class="form-row">
+            <div class="form-label"><span class="req">*</span> 目前位置</div>
+            <input class="form-input" placeholder="比如：我家 / 宠物医院 / 小区门卫处">
+          </div>
+          <div class="form-row">
+            <div class="form-label"><span class="req">*</span> 可临时照料</div>
+            <div class="form-value" onclick="openCareDaysSheet()">
+              <span id="publish-care-days">3 天</span>
+              <span class="form-arrow">›</span>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-label">健康状况</div>
+            <input class="form-input" placeholder="比如：已喂食，未发现外伤">
+          </div>
+        </div>
+
+        <!-- 描述 -->
+        <div class="form-section">
+          <div class="form-row">
+            <div class="form-label">
+              <span><span class="req">*</span> 公开描述</span>
+              <span style="font-family:var(--font-en)"><span id="desc-count">82</span> / 500</span>
+            </div>
+            <textarea class="form-textarea" id="publish-desc" oninput="updateDescCount(this)" placeholder="描述外观特征、走失/发现时穿戴、行为习惯等">穿粉色项圈，左耳缺一小块。胆小，不会让陌生人碰，听到名字会喵叫。看到请尽量拍照不要追。</textarea>
+          </div>
+        </div>
+
+        <!-- 私有特征（仅 lost 显示） -->
+        <div class="private-card" id="private-feature-card">
           <div class="private-card-h">🔒 私有特征（不公开 · 用于认领核对）</div>
           <div class="private-card-sub">填只有你知道的特征。捡到的人来认领时，你用这个核对，防止冒领。</div>
-          <textarea placeholder="比如：肚皮左下方有一个心形黑斑；叫'胖丁'会立刻喵两声…"></textarea>
+          <textarea id="publish-private" placeholder="比如：肚皮左下方有一个心形黑斑；叫'胖丁'会立刻喵两声…"></textarea>
+          <div class="pf-examples">
+            <span class="pf-example" onclick="appendPrivateExample('项圈装饰：')">💍 项圈装饰</span>
+            <span class="pf-example" onclick="appendPrivateExample('独特斑纹：')">🐾 独特斑纹</span>
+            <span class="pf-example" onclick="appendPrivateExample('行为习惯：')">😺 行为习惯</span>
+            <span class="pf-example" onclick="appendPrivateExample('隐藏伤疤：')">🩹 隐藏伤疤</span>
+          </div>
         </div>
+
+        <!-- 联系方式 -->
         <div class="form-section">
           <div class="form-row" style="padding-bottom:0"><div class="form-label">联系方式</div></div>
           <div class="radio-list">
-            <div class="radio-item">
+            <div class="radio-item" onclick="selectContact(this)" data-contact="im">
               <div class="radio-circle selected"></div>
               <div>
                 <div class="radio-title">🔒 仅站内消息（推荐）</div>
                 <div class="radio-sub">保护隐私，所有消息经审核后送达</div>
               </div>
             </div>
-            <div class="radio-item">
+            <div class="radio-item" onclick="selectContact(this)" data-contact="virtual">
               <div class="radio-circle"></div>
               <div>
                 <div class="radio-title">📞 虚拟号中转拨打</div>
@@ -1643,20 +1779,15 @@
             </div>
           </div>
         </div>
-        <div class="compliance-note">
-          <b>🛡 发布须知</b><br>
-          · 内容将经平台审核（通常 1 分钟内）<br>
-          · 禁止「悬赏金 / 感谢金 / 押金 / 路费」等金钱往来<br>
-          · 禁止留微信号 / QQ 号 / 二维码引导平台外联系<br>
-          · 违规内容将被删除，多次违规将封禁账号
-        </div>
+
         <div class="terms-note">
           发布即表示你已阅读并同意 <span class="link">《用户协议》</span> 和 <span class="link">《隐私政策》</span>
         </div>
       </div>
+
       <div class="action-bar">
-        <div class="btn-secondary" onclick="alert('草稿已保存')">保存草稿</div>
-        <div class="btn-primary" onclick="alert('✅ 发布成功！\n\n内容已进入审核队列（约 1 分钟内）');showScreen('feed', true)">📮 发布</div>
+        <div class="btn-secondary" onclick="alert('草稿已保存 · 可在「我的发布 → 草稿」中找到')">保存草稿</div>
+        <div class="btn-primary" onclick="submitPublish()">📮 发布</div>
       </div>
     </div>
 
@@ -2312,6 +2443,97 @@
       </div>
     </div>
 
+    <!-- ===== Location Sheet · 选择地点 ===== -->
+    <div class="as-mask" id="location-sheet" onclick="if(event.target===this) closeLocationSheet()">
+      <div class="action-sheet">
+        <div class="as-handle"></div>
+        <div class="as-title">选择大理本地地点</div>
+        <div class="as-option" onclick="selectLocation('我的当前位置')">
+          <div class="as-ic">⊙</div>
+          <div class="as-text"><div class="as-label">使用当前位置</div><div class="as-sub">需授权位置权限</div></div>
+        </div>
+        <div class="as-option" onclick="selectLocation('古城北门 · 大理')">
+          <div class="as-ic">📍</div>
+          <div class="as-text"><div class="as-label">古城北门</div><div class="as-sub">大理古城</div></div>
+        </div>
+        <div class="as-option" onclick="selectLocation('人民路三月街 · 大理')">
+          <div class="as-ic">📍</div>
+          <div class="as-text"><div class="as-label">人民路三月街</div><div class="as-sub">大理古城核心</div></div>
+        </div>
+        <div class="as-option" onclick="selectLocation('下关泰安路 · 大理')">
+          <div class="as-ic">📍</div>
+          <div class="as-text"><div class="as-label">下关泰安路</div><div class="as-sub">下关区</div></div>
+        </div>
+        <div class="as-option" onclick="selectLocation('喜洲古镇 · 大理')">
+          <div class="as-ic">📍</div>
+          <div class="as-text"><div class="as-label">喜洲古镇</div><div class="as-sub">大理北部</div></div>
+        </div>
+        <div class="as-option" onclick="selectLocation('海东 · 大理')">
+          <div class="as-ic">📍</div>
+          <div class="as-text"><div class="as-label">海东</div><div class="as-sub">洱海东岸</div></div>
+        </div>
+        <div class="as-cancel" onclick="closeLocationSheet()">取消（也可在地图上选）</div>
+      </div>
+    </div>
+
+    <!-- ===== Time Sheet · 选择时间 ===== -->
+    <div class="as-mask" id="time-sheet" onclick="if(event.target===this) closeTimeSheet()">
+      <div class="action-sheet">
+        <div class="as-handle"></div>
+        <div class="as-title">选择时间</div>
+        <div class="as-option" onclick="selectTime('刚刚')">
+          <div class="as-ic">⚡</div>
+          <div class="as-text"><div class="as-label">刚刚</div><div class="as-sub">5 分钟内</div></div>
+        </div>
+        <div class="as-option" onclick="selectTime('1 小时前')">
+          <div class="as-ic">🕐</div>
+          <div class="as-text"><div class="as-label">1 小时前</div></div>
+        </div>
+        <div class="as-option" onclick="selectTime('今天上午')">
+          <div class="as-ic">🌅</div>
+          <div class="as-text"><div class="as-label">今天上午</div></div>
+        </div>
+        <div class="as-option" onclick="selectTime('今天下午')">
+          <div class="as-ic">🌇</div>
+          <div class="as-text"><div class="as-label">今天下午</div></div>
+        </div>
+        <div class="as-option" onclick="selectTime('昨天')">
+          <div class="as-ic">📅</div>
+          <div class="as-text"><div class="as-label">昨天</div></div>
+        </div>
+        <div class="as-option" onclick="(function(){const v=prompt('自定义时间','比如 2025-05-23 14:30');if(v)selectTime(v);})()">
+          <div class="as-ic">⋯</div>
+          <div class="as-text"><div class="as-label">自定义</div></div>
+        </div>
+        <div class="as-cancel" onclick="closeTimeSheet()">取消</div>
+      </div>
+    </div>
+
+    <!-- ===== Care Days Sheet · 临时照料天数 ===== -->
+    <div class="as-mask" id="care-days-sheet" onclick="if(event.target===this) closeCareDaysSheet()">
+      <div class="action-sheet">
+        <div class="as-handle"></div>
+        <div class="as-title">你能临时照料多久？</div>
+        <div class="as-option" onclick="selectCareDays('1 天')">
+          <div class="as-ic">1️⃣</div>
+          <div class="as-text"><div class="as-label">1 天</div><div class="as-sub">仅当晚</div></div>
+        </div>
+        <div class="as-option" onclick="selectCareDays('3 天')">
+          <div class="as-ic">3️⃣</div>
+          <div class="as-text"><div class="as-label">3 天</div><div class="as-sub">常见选择</div></div>
+        </div>
+        <div class="as-option" onclick="selectCareDays('一周')">
+          <div class="as-ic">7️⃣</div>
+          <div class="as-text"><div class="as-label">一周</div></div>
+        </div>
+        <div class="as-option" onclick="selectCareDays('长期（直到找到主人）')">
+          <div class="as-ic">♾</div>
+          <div class="as-text"><div class="as-label">长期</div><div class="as-sub">直到找到主人</div></div>
+        </div>
+        <div class="as-cancel" onclick="closeCareDaysSheet()">取消</div>
+      </div>
+    </div>
+
     <!-- ===== Report Sheet · 举报这条信息 ===== -->
     <div class="as-mask" id="report-sheet" onclick="if(event.target===this) closeReportSheet()">
       <div class="action-sheet">
@@ -2749,6 +2971,150 @@
 
   function closeShareModal() {
     document.getElementById('share-modal').classList.remove('show');
+  }
+
+  /* ============== 发布表单 ============== */
+
+  // 模式切换：我丢了 / 我捡到了
+  function switchPublishMode(mode, el) {
+    document.querySelectorAll('[data-screen="publish"] .seg-item').forEach(s => s.classList.remove('active'));
+    el.classList.add('active');
+    const show = (id, visible) => { const e = document.getElementById(id); if (e) e.style.display = visible ? '' : 'none'; };
+    if (mode === 'lost') {
+      show('fields-lost', true);
+      show('fields-found', false);
+      show('fields-found-extra', false);
+      show('private-feature-card', true);
+      show('name-row', true);
+      document.getElementById('publish-title').textContent = '发布寻宠信息';
+    } else {
+      show('fields-lost', false);
+      show('fields-found', true);
+      show('fields-found-extra', true);
+      show('private-feature-card', false);
+      show('name-row', false); // 捡到的不知道名字
+      document.getElementById('publish-title').textContent = '发布招领信息';
+    }
+  }
+
+  // 宠物类型切换（联动品种 chips）
+  function selectPetType(type, el) {
+    document.querySelectorAll('[data-screen="publish"] .pet-type').forEach(p => p.classList.remove('active'));
+    el.classList.add('active');
+    const chips = document.getElementById('breed-chips');
+    if (!chips) return;
+    const data = {
+      cat: ['英短', '美短', '橘猫', '布偶', '田园猫', '加菲'],
+      dog: ['金毛', '柯基', '比熊', '泰迪', '中华田园犬', '拉布拉多'],
+      other: ['兔子', '鸟', '仓鼠', '龙猫']
+    };
+    chips.innerHTML = data[type].map(b => `<span class="breed-chip" onclick="fillBreed('${b}')">${b}</span>`).join('');
+  }
+  function fillBreed(breed) {
+    document.getElementById('publish-breed').value = breed;
+  }
+
+  // 联系方式 radio 切换
+  function selectContact(el) {
+    document.querySelectorAll('[data-screen="publish"] .radio-item').forEach(r => {
+      r.querySelector('.radio-circle').classList.remove('selected');
+    });
+    el.querySelector('.radio-circle').classList.add('selected');
+  }
+
+  // 描述字数计数
+  function updateDescCount(el) {
+    document.getElementById('desc-count').textContent = el.value.length;
+  }
+
+  // 照片增删
+  function addPhoto() {
+    const row = document.getElementById('photo-row');
+    const count = row.querySelectorAll('.photo-slot.filled').length;
+    if (count >= 9) { alert('⚠ 最多上传 9 张照片'); return; }
+    const colors = ['ph-orange', 'ph-blue', 'ph-cream', 'ph-mint', 'ph-pink', 'ph-plum'];
+    const color = colors[count % colors.length];
+    const addBtn = document.getElementById('photo-add');
+    const slot = document.createElement('div');
+    slot.className = 'photo-slot filled ' + color;
+    slot.innerHTML = '<span style="font-size:32px">🐾</span><div class="x">×</div>';
+    slot.onclick = function() { removePhoto(this); };
+    row.insertBefore(slot, addBtn);
+    document.getElementById('photo-count').textContent = count + 1;
+  }
+  function removePhoto(el) {
+    if (!el.classList.contains('filled')) return;
+    el.remove();
+    const count = document.querySelectorAll('#photo-row .photo-slot.filled').length;
+    document.getElementById('photo-count').textContent = count;
+  }
+
+  // 私有特征追加示例前缀
+  function appendPrivateExample(prefix) {
+    const ta = document.getElementById('publish-private');
+    if (!ta) return;
+    const cur = ta.value.trim();
+    ta.value = (cur ? cur + '\n' : '') + prefix;
+    ta.focus();
+  }
+
+  // 地点选择 sheet
+  function openLocationPicker() { document.getElementById('location-sheet').classList.add('show'); }
+  function closeLocationSheet() { document.getElementById('location-sheet').classList.remove('show'); }
+  function selectLocation(loc) {
+    const txt = loc === '我的当前位置' ? '📍 大理市古城（近似）' : '📍 ' + loc;
+    document.getElementById('publish-location').textContent = txt;
+    const foundEl = document.getElementById('publish-location-found');
+    if (foundEl) foundEl.textContent = txt;
+    closeLocationSheet();
+  }
+
+  // 时间选择 sheet
+  function openTimePicker() { document.getElementById('time-sheet').classList.add('show'); }
+  function closeTimeSheet() { document.getElementById('time-sheet').classList.remove('show'); }
+  function selectTime(t) {
+    document.getElementById('publish-time').textContent = t;
+    const foundEl = document.getElementById('publish-time-found');
+    if (foundEl) foundEl.textContent = t;
+    closeTimeSheet();
+  }
+
+  // 临时照料天数 sheet
+  function openCareDaysSheet() { document.getElementById('care-days-sheet').classList.add('show'); }
+  function closeCareDaysSheet() { document.getElementById('care-days-sheet').classList.remove('show'); }
+  function selectCareDays(d) {
+    document.getElementById('publish-care-days').textContent = d;
+    closeCareDaysSheet();
+  }
+
+  // 性别 / 年龄（简单 prompt）
+  function openGenderAgeSheet() {
+    const cur = document.getElementById('publish-gender-age').textContent;
+    const v = prompt('修改性别 / 年龄\n（小程序实际会用 picker 组件）', cur);
+    if (v) document.getElementById('publish-gender-age').textContent = v;
+  }
+
+  // 提交校验
+  function submitPublish() {
+    const isLost = document.querySelector('[data-screen="publish"] .seg-item.active').dataset.mode === 'lost';
+    const photoCount = document.querySelectorAll('#photo-row .photo-slot.filled').length;
+    if (photoCount === 0) { alert('⚠ 请至少上传 1 张照片，帮助大家识别'); return; }
+
+    const locText = (isLost
+      ? document.getElementById('publish-location')
+      : document.getElementById('publish-location-found')).textContent;
+    if (locText.includes('请选择')) { alert('⚠ 请选择地点'); return; }
+
+    const timeText = (isLost
+      ? document.getElementById('publish-time')
+      : document.getElementById('publish-time-found')).textContent;
+    if (timeText.includes('请选择')) { alert('⚠ 请选择时间'); return; }
+
+    const desc = document.getElementById('publish-desc').value.trim();
+    if (desc.length < 10) { alert('⚠ 描述至少 10 字\n详细的描述能帮助匹配成功率提高 3 倍'); return; }
+
+    alert('✅ 发布成功！\n\n内容已进入审核队列（约 1 分钟）\n通过后将出现在「附近的小朋友」');
+    showScreen('feed', true);
   }
 
   /* ============== 举报 ============== */
