@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>寻宠 · 大理 — 后台管理（独立 web 后台）</title>
+  <style>
+    :root {
+      --primary: #FF6B35;
+      --primary-soft: #FFF1E9;
+      --primary-border: #FFDCC8;
+      --ink-1: #0F172A;
+      --ink-2: #334155;
+      --ink-3: #64748B;
+      --ink-4: #94A3B8;
+      --bg: #F8FAFC;
+      --surface: #FFFFFF;
+      --border: #E2E8F0;
+      --border-soft: #F1F5F9;
+      --status-lost: #DC2626;
+      --status-found: #059669;
+      --status-care: #D97706;
+      --shadow-sm: 0 1px 2px rgba(15,23,42,0.04);
+      --shadow-md: 0 4px 12px rgba(15,23,42,0.06), 0 2px 4px rgba(15,23,42,0.04);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, "PingFang SC", "SF Pro Display", system-ui, sans-serif;
+      background: var(--bg); color: var(--ink-1);
+      font-size: 14px; line-height: 1.5;
+    }
+
+    /* 顶部合规提示 banner */
+    .compliance-banner {
+      background: linear-gradient(135deg, #FEF2F2, #FEE2E2);
+      border-bottom: 1px solid #FECACA;
+      color: #991B1B;
+      padding: 10px 24px;
+      font-size: 12.5px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .compliance-banner b { font-weight: 700; }
+
+    /* 主布局 */
+    .layout {
+      display: grid;
+      grid-template-columns: 220px 1fr;
+      min-height: calc(100vh - 40px);
+    }
+
+    /* 侧边栏 */
+    .sidebar {
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      padding: 22px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .sidebar-brand {
+      display: flex; align-items: center; gap: 10px;
+      padding: 6px 10px 16px;
+      border-bottom: 1px solid var(--border-soft);
+      margin-bottom: 12px;
+    }
+    .sidebar-brand .logo {
+      width: 32px; height: 32px;
+      background: linear-gradient(135deg, var(--primary), #FF4A12);
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      color: white; font-size: 16px;
+    }
+    .sidebar-brand .name { font-size: 14px; font-weight: 700; }
+    .sidebar-brand .sub { font-size: 11px; color: var(--ink-4); margin-top: 1px; }
+
+    .nav-section {
+      font-size: 11px;
+      color: var(--ink-4);
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      padding: 12px 12px 6px;
+      font-weight: 600;
+    }
+    .nav-item {
+      padding: 10px 12px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      color: var(--ink-2);
+      font-size: 13.5px;
+    }
+    .nav-item:hover { background: var(--bg); }
+    .nav-item.active {
+      background: var(--primary-soft);
+      color: var(--primary);
+      font-weight: 600;
+    }
+    .nav-item .icon { font-size: 16px; width: 20px; text-align: center; }
+    .nav-item .badge {
+      margin-left: auto;
+      background: var(--primary);
+      color: white;
+      font-size: 11px;
+      padding: 1px 7px;
+      border-radius: 10px;
+      font-weight: 600;
+    }
+    .nav-item .badge.muted { background: var(--ink-4); }
+
+    /* 主内容 */
+    .main { padding: 24px 28px; overflow-y: auto; }
+    .page-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 20px;
+    }
+    .page-title { font-size: 22px; font-weight: 700; }
+    .page-sub { font-size: 13px; color: var(--ink-3); margin-top: 4px; }
+    .admin-info {
+      display: flex; align-items: center; gap: 10px;
+      padding: 6px 14px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      font-size: 12.5px;
+    }
+    .admin-info .avatar {
+      width: 24px; height: 24px;
+      background: linear-gradient(135deg, #94A3B8, #64748B);
+      border-radius: 50%;
+      color: white;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px; font-weight: 600;
+    }
+
+    /* 统计卡片 */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+      margin-bottom: 22px;
+    }
+    .stat-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px 18px;
+    }
+    .stat-card .label { font-size: 12px; color: var(--ink-3); }
+    .stat-card .num { font-size: 28px; font-weight: 700; margin: 6px 0 4px; }
+    .stat-card .trend { font-size: 11px; color: var(--ink-4); }
+    .stat-card .trend.up { color: var(--status-found); }
+    .stat-card .trend.down { color: var(--status-lost); }
+
+    /* 内容审核区 */
+    .panel {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .panel-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border-soft);
+      display: flex; align-items: center; gap: 16px;
+    }
+    .panel-tabs { display: flex; gap: 4px; }
+    .panel-tab {
+      padding: 6px 14px;
+      border-radius: 999px;
+      font-size: 13px;
+      color: var(--ink-3);
+      cursor: pointer;
+    }
+    .panel-tab.active { background: var(--ink-1); color: white; font-weight: 600; }
+    .panel-filter { margin-left: auto; display: flex; gap: 8px; }
+    .filter-btn {
+      padding: 6px 12px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: white;
+      font-size: 12.5px;
+      cursor: pointer;
+      color: var(--ink-2);
+    }
+
+    /* 审核列表 */
+    .review-table { width: 100%; }
+    .review-row {
+      display: grid;
+      grid-template-columns: 80px 1fr 220px 180px 220px;
+      gap: 16px;
+      padding: 14px 20px;
+      border-bottom: 1px solid var(--border-soft);
+      align-items: center;
+    }
+    .review-row.header {
+      background: var(--bg);
+      font-size: 12px;
+      color: var(--ink-4);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+    }
+    .photo-cell {
+      width: 64px; height: 64px;
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 28px;
+    }
+    .ph-blue { background: linear-gradient(135deg, #93B5E1, #6B8FC7); }
+    .ph-orange { background: linear-gradient(135deg, #FFD58A, #F5A623); }
+    .ph-brown { background: linear-gradient(135deg, #C8956A, #9C6B3F); }
+    .ph-dark { background: linear-gradient(135deg, #4A5568, #2D3748); }
+    .ph-pink { background: linear-gradient(135deg, #FBD0D0, #F09898); }
+
+    .post-title { font-size: 13.5px; font-weight: 600; margin-bottom: 4px; }
+    .post-excerpt {
+      font-size: 12px;
+      color: var(--ink-3);
+      line-height: 1.5;
+      overflow: hidden;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+    }
+    .post-meta { font-size: 11.5px; color: var(--ink-4); margin-top: 6px; }
+
+    .auto-check {
+      font-size: 11.5px;
+      line-height: 1.5;
+      padding: 8px 10px;
+      border-radius: 8px;
+    }
+    .auto-check.ok { background: #ECFDF5; color: #065F46; border: 1px solid #A7F3D0; }
+    .auto-check.warn { background: #FFFBEB; color: #92400E; border: 1px solid #FCD34D; }
+    .auto-check.danger { background: #FEF2F2; color: #991B1B; border: 1px solid #FECACA; }
+
+    .submitter {
+      display: flex; align-items: center; gap: 10px;
+    }
+    .submitter-avatar {
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #94A3B8, #64748B);
+      color: white;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px; font-weight: 600;
+    }
+    .submitter-info { font-size: 12.5px; }
+    .submitter-name { font-weight: 600; }
+    .submitter-stats { font-size: 11px; color: var(--ink-4); margin-top: 1px; }
+
+    .action-group { display: flex; gap: 6px; }
+    .action-btn {
+      flex: 1;
+      padding: 7px 0;
+      border-radius: 7px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      text-align: center;
+      border: 1px solid transparent;
+    }
+    .action-btn.pass { background: var(--status-found); color: white; }
+    .action-btn.modify { background: white; color: var(--ink-2); border-color: var(--border); }
+    .action-btn.del { background: #FEF2F2; color: var(--status-lost); border-color: #FECACA; }
+    .action-btn.ban { background: var(--status-lost); color: white; }
+  </style>
+</head>
+<body>
+
+<div class="compliance-banner">
+  <span style="font-size:16px">⚠️</span>
+  <div>
+    <b>独立 web 后台 · 不在小程序内</b>　|　管理后台必须独立部署，禁止内嵌于小程序客户端代码。详见 <code style="background:rgba(0,0,0,0.05);padding:1px 6px;border-radius:4px">docs/05-risks.md § P0-2</code>
+  </div>
+</div>
+
+<div class="layout">
+
+  <!-- 侧边栏 -->
+  <div class="sidebar">
+    <div class="sidebar-brand">
+      <div class="logo">🐾</div>
+      <div>
+        <div class="name">寻宠管理后台</div>
+        <div class="sub">大理 · 内部使用</div>
+      </div>
+    </div>
+
+    <div class="nav-section">内容审核</div>
+    <div class="nav-item active"><span class="icon">📋</span>待审核帖子<span class="badge">12</span></div>
+    <div class="nav-item"><span class="icon">🚨</span>用户举报<span class="badge">3</span></div>
+    <div class="nav-item"><span class="icon">⚠️</span>争议申诉<span class="badge muted">1</span></div>
+    <div class="nav-item"><span class="icon">💬</span>聊天审核流水</div>
+
+    <div class="nav-section">数据 / 用户</div>
+    <div class="nav-item"><span class="icon">👥</span>用户管理</div>
+    <div class="nav-item"><span class="icon">📊</span>数据看板</div>
+    <div class="nav-item"><span class="icon">🪷</span>善行值流水</div>
+
+    <div class="nav-section">系统</div>
+    <div class="nav-item"><span class="icon">📜</span>审核日志</div>
+    <div class="nav-item"><span class="icon">⚙️</span>设置</div>
+  </div>
+
+  <!-- 主内容 -->
+  <div class="main">
+
+    <div class="page-header">
+      <div>
+        <div class="page-title">内容审核</div>
+        <div class="page-sub">待审核帖子 · 12 条 · 平均处理时长 38 秒</div>
+      </div>
+      <div class="admin-info">
+        <div class="avatar">管</div>
+        <div>
+          <div style="font-weight:600">管理员 · 老王</div>
+          <div style="font-size:11px;color:var(--ink-4)">今日已审 24 条</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 统计 -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="label">待审核</div>
+        <div class="num">12</div>
+        <div class="trend">⏱ 最久等待 8 分钟</div>
+      </div>
+      <div class="stat-card">
+        <div class="label">今日已通过</div>
+        <div class="num">87</div>
+        <div class="trend up">↑ 较昨日 +12%</div>
+      </div>
+      <div class="stat-card">
+        <div class="label">今日删除</div>
+        <div class="num">5</div>
+        <div class="trend down">违规率 5.4%</div>
+      </div>
+      <div class="stat-card">
+        <div class="label">机审误判</div>
+        <div class="num">2</div>
+        <div class="trend">需人工复核</div>
+      </div>
+    </div>
+
+    <!-- 审核面板 -->
+    <div class="panel">
+      <div class="panel-header">
+        <div class="panel-tabs">
+          <div class="panel-tab active">待审核 · 12</div>
+          <div class="panel-tab">机审拦截 · 3</div>
+          <div class="panel-tab">已通过 · 87</div>
+          <div class="panel-tab">已删除 · 5</div>
+        </div>
+        <div class="panel-filter">
+          <div class="filter-btn">全部类型 ▾</div>
+          <div class="filter-btn">最早优先 ▾</div>
+        </div>
+      </div>
+
+      <div class="review-table">
+        <div class="review-row header">
+          <div>照片</div>
+          <div>内容</div>
+          <div>机审结果</div>
+          <div>发布者</div>
+          <div>操作</div>
+        </div>
+
+        <div class="review-row">
+          <div class="photo-cell ph-pink">🐱</div>
+          <div>
+            <div class="post-title">寻宠 · 三花猫 · 古城东门</div>
+            <div class="post-excerpt">"我家三花昨晚出门没回，叫'花花'会回头。橙白黑三色，左耳尖有缺口，戴红色项圈..."</div>
+            <div class="post-meta">📍 古城东门 · 发布于 12 分钟前</div>
+          </div>
+          <div class="auto-check ok">
+            ✓ 图片合规<br>
+            ✓ 文字合规<br>
+            ✓ 地点真实
+          </div>
+          <div class="submitter">
+            <div class="submitter-avatar">林</div>
+            <div class="submitter-info">
+              <div class="submitter-name">林*</div>
+              <div class="submitter-stats">注册 8 天 · 0 违规</div>
+            </div>
+          </div>
+          <div class="action-group">
+            <div class="action-btn pass">✓ 通过</div>
+            <div class="action-btn modify">让用户修改</div>
+            <div class="action-btn del">删除</div>
+          </div>
+        </div>
+
+        <div class="review-row">
+          <div class="photo-cell ph-brown">🐶</div>
+          <div>
+            <div class="post-title">招领 · 中华田园犬 · 海东</div>
+            <div class="post-excerpt">"已带去打疫苗，急寻主人。<span style="background:#FEF2F2;color:#991B1B;padding:0 2px;border-radius:2px">悬赏 500 元</span>，加微信..."</div>
+            <div class="post-meta">📍 海东 · 发布于 28 分钟前</div>
+          </div>
+          <div class="auto-check warn">
+            ⚠️ 检测到「悬赏」「加微信」<br>
+            建议让用户修改
+          </div>
+          <div class="submitter">
+            <div class="submitter-avatar">张</div>
+            <div class="submitter-info">
+              <div class="submitter-name">张*</div>
+              <div class="submitter-stats">注册 3 个月 · 1 次违规</div>
+            </div>
+          </div>
+          <div class="action-group">
+            <div class="action-btn modify" style="flex:2;background:var(--primary-soft);color:var(--primary);border-color:var(--primary-border)">📝 让用户修改</div>
+            <div class="action-btn del">删除</div>
+          </div>
+        </div>
+
+        <div class="review-row">
+          <div class="photo-cell ph-dark">🐶</div>
+          <div>
+            <div class="post-title">寻宠 · 哈士奇 · 大理</div>
+            <div class="post-excerpt">"急寻：哈士奇'雪球'走失，公，2 岁。脖子戴蓝色项圈..."</div>
+            <div class="post-meta">📍 大理 · 发布于 1 小时前</div>
+          </div>
+          <div class="auto-check danger">
+            🚨 同手机号 24h 内第 4 次发布<br>
+            疑似营销 / 测试账号
+          </div>
+          <div class="submitter">
+            <div class="submitter-avatar" style="background:#DC2626">王</div>
+            <div class="submitter-info">
+              <div class="submitter-name">王* <span style="color:var(--status-lost);font-size:10px;padding:1px 5px;background:#FEF2F2;border:1px solid #FECACA;border-radius:4px;margin-left:4px">高频</span></div>
+              <div class="submitter-stats">注册 2 天 · 已发 4 帖</div>
+            </div>
+          </div>
+          <div class="action-group">
+            <div class="action-btn modify">查看历史</div>
+            <div class="action-btn del">删除</div>
+            <div class="action-btn ban">封号</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div style="margin-top: 28px; padding: 18px 20px; background: white; border: 1px solid var(--border); border-radius: 12px; font-size: 12.5px; color: var(--ink-3); line-height: 1.7;">
+      <b style="color:var(--ink-1)">🛡 合规说明</b><br>
+      本管理后台为<b>独立 web 后台</b>（部署在 admin.example.com，与小程序客户端代码完全隔离）。<br>
+      所有审核操作将记录至「审核日志」并留存 ≥ 6 个月以满足监管要求。<br>
+      管理员账号通过独立的内部 SSO 系统授权，与微信小程序用户体系不互通。<br>
+      <span style="color:var(--ink-4);font-size:11.5px">— 此设计避免小程序审核时被驳回（详见 docs/05-risks.md § P0-2）</span>
+    </div>
+
+  </div>
+</div>
+
+</body>
+</html>
