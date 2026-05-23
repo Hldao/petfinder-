@@ -1848,13 +1848,6 @@
               <span class="breed-chip" onclick="fillBreed('加菲')">加菲</span>
             </div>
           </div>
-          <div class="form-row">
-            <div class="form-label">性别 / 年龄</div>
-            <div class="form-value" onclick="openGenderAgeSheet()">
-              <span id="publish-gender-age">♂ 公 · 3 岁</span>
-              <span class="form-arrow">›</span>
-            </div>
-          </div>
         </div>
 
         <!-- 地点 / 时间（我丢了） -->
@@ -1866,7 +1859,6 @@
               <span class="form-arrow">›</span>
             </div>
           </div>
-          <div class="form-row"><div class="form-label">详细地址</div><input class="form-input" value="北门人民路咖啡馆门口" placeholder="比如：XX 路 XX 号"></div>
           <div class="form-row">
             <div class="form-label"><span class="req">*</span> 走失时间</div>
             <div class="form-value" onclick="openTimePicker()">
@@ -1885,7 +1877,6 @@
               <span class="form-arrow">›</span>
             </div>
           </div>
-          <div class="form-row"><div class="form-label">详细地址</div><input class="form-input" placeholder="比如：人民路 39 号咖啡馆门口"></div>
           <div class="form-row">
             <div class="form-label"><span class="req">*</span> 发现时间</div>
             <div class="form-value" onclick="openTimePicker()">
@@ -1933,8 +1924,6 @@
           <div class="pf-examples">
             <span class="pf-example" onclick="appendPrivateExample('项圈装饰：')">💍 项圈装饰</span>
             <span class="pf-example" onclick="appendPrivateExample('独特斑纹：')">🐾 独特斑纹</span>
-            <span class="pf-example" onclick="appendPrivateExample('行为习惯：')">😺 行为习惯</span>
-            <span class="pf-example" onclick="appendPrivateExample('隐藏伤疤：')">🩹 隐藏伤疤</span>
           </div>
         </div>
 
@@ -2103,26 +2092,12 @@
           </div>
           <div class="msg-unread">2</div>
         </div>
-        <div class="msg-row">
-          <div class="msg-avatar system">系</div>
-          <div class="msg-body">
-            <div class="msg-row-head"><span class="msg-name">系统通知</span><span class="msg-time">15:10</span></div>
-            <div class="msg-preview">陈* 的线索已被你标记为有用 · ta 收到通知了</div>
-          </div>
-        </div>
         <div class="msg-row" onclick="showScreen('chat')">
           <div class="msg-avatar ph-blue">🐱</div>
           <div class="msg-body">
             <div class="msg-row-head"><span class="msg-name">陈*</span><span class="msg-time">14:50</span></div>
             <div class="msg-preview">在洋人街又看到那只猫了，往复兴路跑了</div>
             <div class="msg-context">关于 · 胖丁 寻宠</div>
-          </div>
-        </div>
-        <div class="msg-row">
-          <div class="msg-avatar system">系</div>
-          <div class="msg-body">
-            <div class="msg-row-head"><span class="msg-name">系统通知</span><span class="msg-time">昨天</span></div>
-            <div class="msg-preview">📬 你有 2 条新的线索回复</div>
           </div>
         </div>
         <div class="msg-row" onclick="showScreen('chat')">
@@ -2188,10 +2163,7 @@
       <div class="quick-replies">
         <span class="qr-label">快捷</span>
         <span class="qr-chip primary" onclick="setQuickReply('📍 我在 ')">📍 我看到了</span>
-        <span class="qr-chip" onclick="setQuickReply('📸 我拍到了一张照片，发你看看')">📸 我拍到了</span>
         <span class="qr-chip action" onclick="setQuickReply('🏠 ta 现在在我这里，方便见面吗？')">🏠 我收着 ta</span>
-        <span class="qr-chip" onclick="setQuickReply('🕐 我们约个时间地点见面吧')">🕐 约时间</span>
-        <span class="qr-chip" onclick="setQuickReply('❓ 能视频先确认一下是不是吗？')">❓ 视频确认</span>
         <span class="qr-chip" onclick="setQuickReply('🙏 谢谢你！')">🙏 谢谢</span>
       </div>
 
@@ -2235,13 +2207,8 @@
           </div>
           <div class="menu-section">
             <div class="menu-row"><span class="menu-icon">🏠</span><span class="menu-label">我可以临时照料</span><span class="menu-meta ok">已开启</span><span class="menu-arrow">›</span></div>
-            <div class="menu-row"><span class="menu-icon">🔔</span><span class="menu-label">订阅消息设置</span><span class="menu-arrow">›</span></div>
             <div class="menu-row" onclick="openMPModal()"><span class="menu-icon">📣</span><span class="menu-label">关注公众号</span><span class="menu-meta" style="color:var(--mint-deep)">推送更及时</span><span class="menu-arrow">›</span></div>
-          </div>
-          <div class="menu-section">
-            <div class="menu-row"><span class="menu-icon">🛡</span><span class="menu-label">安全交接指南</span><span class="menu-arrow">›</span></div>
             <div class="menu-row" onclick="showScreen('dispute')"><span class="menu-icon">⚠</span><span class="menu-label">争议申诉</span><span class="menu-arrow">›</span></div>
-            <div class="menu-row"><span class="menu-icon">💡</span><span class="menu-label">建议反馈</span><span class="menu-arrow">›</span></div>
           </div>
           <div class="menu-section">
             <div class="menu-row" onclick="alert('打开《用户协议》')"><span class="menu-icon">📄</span><span class="menu-label">用户协议</span><span class="menu-arrow">›</span></div>
