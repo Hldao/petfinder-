@@ -1,0 +1,3442 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>寻宠 · 大理 — 原型 v8（轻松治愈版）</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    /* ==================== 设计系统 v8 · 轻松治愈版 ==================== */
+    :root {
+      /* 主色 */
+      --apricot: #FF8552;
+      --apricot-soft: #FFE9DD;
+      --apricot-deep: #E66A38;
+
+      --mint: #5BB89F;
+      --mint-soft: #DDF1EA;
+      --mint-deep: #3F9079;
+
+      --honey: #F0AC32;
+      --honey-soft: #FFF3D6;
+      --honey-deep: #D89020;
+
+      --plum: #A672D4;
+      --plum-soft: #EDE2F8;
+      --plum-deep: #7E4FB5;
+
+      --warn: #E04E4E;
+      --warn-soft: #FCE5E5;
+      --warn-deep: #B83030;
+
+      /* 中性色 — 强对比 */
+      --bg: #F0E9D8;
+      --bg-deeper: #E8DFC8;
+      --surface: #FFFFFF;
+      --surface-warm: #FFFAF2;
+      --divider: #E0D6BD;
+      --divider-soft: #EDE5D0;
+      --ink-1: #1F1F1F;
+      --ink-2: #4A4A4A;
+      --ink-3: #7A7A7A;
+      --ink-4: #B0AC9E;
+      --ink-5: #DDD6C0;
+
+      /* 字体 */
+      --font-cn: 'PingFang SC', 'HarmonyOS Sans SC', 'Misans', 'Hiragino Sans GB', sans-serif;
+      --font-en: 'Manrope', 'PingFang SC', sans-serif;
+
+      /* 阴影 */
+      --shadow-card: 0 1px 2px rgba(31,31,31,0.04), 0 8px 20px rgba(31,31,31,0.06);
+      --shadow-elev: 0 4px 10px rgba(31,31,31,0.08), 0 16px 32px rgba(255,133,82,0.1);
+      --shadow-fab: 0 6px 16px rgba(255,133,82,0.35), 0 2px 6px rgba(255,133,82,0.2);
+      --shadow-pill: 0 1px 2px rgba(31,31,31,0.04);
+
+      --radius-pill: 999px;
+      --radius-lg: 18px;
+      --radius-md: 12px;
+      --radius-sm: 8px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--font-cn);
+      color: var(--ink-1);
+      font-size: 14px;
+      line-height: 1.55;
+      -webkit-font-smoothing: antialiased;
+      background:
+        radial-gradient(at 85% 5%, rgba(240,172,50,0.1) 0%, transparent 40%),
+        radial-gradient(at 10% 95%, rgba(91,184,159,0.08) 0%, transparent 40%),
+        #EDE5D0;
+      min-height: 100vh;
+    }
+
+    /* ============== 顶部头部 ============== */
+    .stage-head {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 48px 32px 28px;
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 32px;
+    }
+    .stage-head h1 {
+      font-size: 34px;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      line-height: 1.2;
+    }
+    .stage-head h1 .accent {
+      font-family: var(--font-en);
+      font-style: italic;
+      font-weight: 800;
+      color: var(--apricot);
+    }
+    .stage-head .sub {
+      font-size: 13.5px;
+      color: var(--ink-3);
+      margin-top: 8px;
+      max-width: 540px;
+      line-height: 1.7;
+    }
+    .v-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 5px 12px 5px 8px;
+      background: var(--apricot-soft);
+      color: var(--apricot-deep);
+      border-radius: var(--radius-pill);
+      font-size: 12px;
+      font-weight: 600;
+      font-family: var(--font-en);
+      letter-spacing: 0.04em;
+    }
+    .v-pill .dot {
+      width: 8px; height: 8px;
+      background: var(--apricot);
+      border-radius: 50%;
+    }
+
+    /* ============== 主舞台（多设备网格） ============== */
+    .stage {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0 32px 60px;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, 390px);
+      gap: 32px;
+      justify-content: center;
+    }
+    .device-wrap { display: flex; flex-direction: column; align-items: center; }
+    .device-label {
+      font-family: var(--font-en);
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--ink-3);
+      letter-spacing: 0.08em;
+      margin-bottom: 12px;
+      padding: 4px 14px;
+      background: var(--surface);
+      border-radius: var(--radius-pill);
+      box-shadow: var(--shadow-pill);
+    }
+    .device-label .num {
+      color: var(--apricot-deep);
+      font-weight: 800;
+      margin-right: 6px;
+    }
+    .device {
+      width: 390px;
+      height: 820px;
+      background: var(--bg);
+      border-radius: 50px;
+      border: 11px solid #18181B;
+      box-shadow:
+        0 0 0 1px rgba(0,0,0,0.4),
+        0 32px 72px rgba(255,133,82,0.12),
+        0 16px 32px rgba(31,31,31,0.1);
+      overflow: hidden;
+      position: relative;
+    }
+    .device::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 50%;
+      transform: translateX(-50%);
+      width: 122px; height: 28px;
+      background: #18181B;
+      border-bottom-left-radius: 16px;
+      border-bottom-right-radius: 16px;
+      z-index: 100;
+    }
+    .status-bar {
+      height: 44px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 28px;
+      font-size: 14px;
+      font-weight: 600;
+      font-family: var(--font-en);
+      background: var(--surface);
+      position: relative;
+      z-index: 5;
+    }
+    .screen {
+      position: absolute;
+      top: 44px; left: 0; right: 0; bottom: 0;
+      display: flex;
+      flex-direction: column;
+      background: var(--bg);
+      overflow: hidden;
+    }
+
+    /* ============== 通用：顶部导航 ============== */
+    .nav-region {
+      background: var(--surface);
+      padding: 12px 18px 14px;
+      border-bottom: 1px solid var(--divider);
+      flex-shrink: 0;
+    }
+    .nav-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .city-tag {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 12px 7px 8px;
+      background: var(--bg);
+      border-radius: var(--radius-pill);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .city-tag .pin {
+      width: 20px; height: 20px;
+      background: var(--apricot);
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+    }
+    .city-tag .arrow { color: var(--ink-3); font-size: 8px; margin-left: 1px; }
+    .search-pill {
+      flex: 1;
+      height: 36px;
+      background: var(--bg);
+      border-radius: var(--radius-pill);
+      padding: 0 14px;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 12.5px;
+      color: var(--ink-4);
+      cursor: pointer;
+    }
+    .icon-btn {
+      width: 36px; height: 36px;
+      background: var(--bg);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 15px;
+      cursor: pointer;
+      position: relative;
+    }
+    .icon-btn .dot {
+      position: absolute;
+      top: 6px; right: 8px;
+      width: 8px; height: 8px;
+      background: var(--apricot);
+      border-radius: 50%;
+      border: 2px solid var(--bg);
+    }
+
+    /* 通用：详情/子页 header */
+    .sub-header {
+      background: var(--surface);
+      padding: 10px 16px;
+      border-bottom: 1px solid var(--divider);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-shrink: 0;
+    }
+    .back-btn {
+      width: 34px; height: 34px;
+      background: var(--bg);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      color: var(--ink-1);
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+    .sub-title {
+      flex: 1;
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--ink-1);
+      letter-spacing: -0.005em;
+    }
+    .sub-action {
+      font-size: 13px;
+      color: var(--ink-3);
+      font-weight: 500;
+      cursor: pointer;
+    }
+    .sub-action.primary { color: var(--apricot-deep); font-weight: 700; }
+    .sub-step {
+      font-family: var(--font-en);
+      font-size: 12px;
+      color: var(--ink-3);
+      font-weight: 700;
+      letter-spacing: 0.06em;
+    }
+    .sub-icon {
+      width: 34px; height: 34px;
+      background: var(--bg);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 15px;
+      cursor: pointer;
+    }
+
+    /* 过滤区 chip */
+    .filter-region {
+      padding: 14px 18px 4px;
+      flex-shrink: 0;
+    }
+    .filter-row {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      scrollbar-width: none;
+      align-items: center;
+      padding-bottom: 4px;
+    }
+    .filter-row::-webkit-scrollbar { display: none; }
+    .chip {
+      padding: 7px 14px;
+      background: var(--surface);
+      color: var(--ink-2);
+      font-size: 13px;
+      font-weight: 500;
+      border-radius: var(--radius-pill);
+      white-space: nowrap;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: var(--shadow-pill);
+    }
+    .chip.active {
+      background: var(--ink-1);
+      color: var(--surface);
+    }
+    .chip-dot { width: 6px; height: 6px; border-radius: 50%; }
+    .chip-sort {
+      margin-left: auto;
+      color: var(--apricot-deep);
+      background: var(--apricot-soft);
+      font-weight: 600;
+      box-shadow: none;
+    }
+
+    /* Section Header */
+    .section-header {
+      padding: 18px 20px 10px;
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+    }
+    .section-header .title {
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: -0.005em;
+    }
+    .section-header .count {
+      font-family: var(--font-en);
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--ink-3);
+      letter-spacing: 0.04em;
+    }
+    .section-header .right {
+      margin-left: auto;
+      font-size: 11.5px;
+      color: var(--apricot-deep);
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .scroll-area {
+      flex: 1;
+      overflow-y: auto;
+      padding: 0 0 100px;
+    }
+    .scroll-area::-webkit-scrollbar { display: none; }
+
+    /* 通用：卡片 */
+    .pet-card {
+      background: var(--surface);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      box-shadow: var(--shadow-card);
+    }
+    .pc-body {
+      display: flex;
+      padding: 14px;
+      gap: 14px;
+      align-items: flex-start;
+    }
+    .pc-photo {
+      width: 74px; height: 74px;
+      flex-shrink: 0;
+      border-radius: 16px;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 36px;
+    }
+    .ph-orange { background: linear-gradient(135deg, #FFE9DD 0%, #FFCDA8 100%); }
+    .ph-blue { background: linear-gradient(135deg, #DDE7F4 0%, #B5C7E0 100%); }
+    .ph-cream { background: linear-gradient(135deg, #FFF3D6 0%, #FFDD9C 100%); }
+    .ph-mint { background: linear-gradient(135deg, #DDF1EA 0%, #ABDDCB 100%); }
+    .ph-pink { background: linear-gradient(135deg, #FCE4E4 0%, #F5BFBF 100%); }
+    .ph-plum { background: linear-gradient(135deg, #EDE2F8 0%, #CFB5E6 100%); }
+    .status-bubble {
+      position: absolute;
+      top: -5px; left: -5px;
+      padding: 3px 9px;
+      border-radius: var(--radius-pill);
+      font-size: 10.5px;
+      font-weight: 700;
+      color: white;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.12);
+      z-index: 2;
+      white-space: nowrap;
+    }
+    .status-bubble.lost { background: var(--apricot); }
+    .status-bubble.found { background: var(--mint); }
+    .status-bubble.care { background: var(--plum); }
+    .status-bubble.expired { background: var(--ink-4); }
+    .status-bubble.returned { background: var(--ink-3); }
+
+    .pc-info { flex: 1; min-width: 0; padding-top: 2px; }
+    .pc-name-row {
+      display: flex;
+      align-items: baseline;
+      gap: 6px;
+      margin-bottom: 4px;
+    }
+    .pc-name {
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: -0.005em;
+    }
+    .pc-name .breed {
+      font-size: 11.5px;
+      color: var(--ink-3);
+      font-weight: 500;
+    }
+    .pc-meta {
+      font-size: 12px;
+      color: var(--ink-3);
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .pc-meta .time { font-family: var(--font-en); font-weight: 600; }
+    .pc-meta .urgent {
+      color: var(--apricot-deep);
+      background: var(--apricot-soft);
+      padding: 1px 7px;
+      border-radius: var(--radius-pill);
+      font-size: 11px;
+      font-weight: 700;
+    }
+    .pc-desc {
+      font-size: 12.5px;
+      color: var(--ink-2);
+      line-height: 1.55;
+      overflow: hidden;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+    }
+    .pc-footer {
+      display: flex;
+      align-items: center;
+      padding: 10px 14px 12px;
+      gap: 8px;
+      border-top: 1px solid var(--divider-soft);
+    }
+    .distance-tag {
+      display: flex;
+      align-items: center;
+      gap: 3px;
+      padding: 4px 10px;
+      background: var(--bg);
+      border-radius: var(--radius-pill);
+      font-family: var(--font-en);
+      font-size: 11.5px;
+      font-weight: 700;
+      color: var(--apricot-deep);
+    }
+    .pc-actions { margin-left: auto; display: flex; gap: 12px; align-items: center; }
+    .pc-action {
+      font-size: 11.5px;
+      color: var(--ink-3);
+      display: flex;
+      align-items: center;
+      gap: 3px;
+      font-family: var(--font-en);
+      font-weight: 600;
+    }
+    .pc-action.clue {
+      color: var(--apricot-deep);
+      background: var(--apricot-soft);
+      padding: 4px 10px;
+      border-radius: var(--radius-pill);
+      font-family: var(--font-cn);
+      font-weight: 700;
+    }
+
+    .feed-list { padding: 0 16px; display: flex; flex-direction: column; gap: 12px; }
+
+    /* FAB & Tab */
+    .fab {
+      position: absolute;
+      bottom: 100px; right: 22px;
+      width: 56px; height: 56px;
+      background: linear-gradient(135deg, #FFA378 0%, var(--apricot) 100%);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      cursor: pointer;
+      z-index: 30;
+      box-shadow: var(--shadow-fab);
+    }
+    .fab::after {
+      content: '+';
+      font-size: 28px;
+      font-weight: 300;
+      line-height: 1;
+      margin-top: -3px;
+    }
+
+    .tab-bar {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 82px;
+      background: rgba(255,255,255,0.95);
+      backdrop-filter: blur(20px);
+      border-top: 1px solid var(--divider);
+      display: flex;
+      padding: 8px 12px 22px;
+      gap: 4px;
+      z-index: 20;
+    }
+    .tab {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 3px;
+      font-size: 10.5px;
+      color: var(--ink-4);
+      cursor: pointer;
+      border-radius: 12px;
+      padding: 5px 0;
+    }
+    .tab .icon { font-size: 18px; line-height: 1; }
+    .tab.active {
+      background: var(--apricot-soft);
+      color: var(--apricot-deep);
+      font-weight: 700;
+    }
+    .tab.spacer { pointer-events: none; visibility: hidden; }
+
+    /* ============== 详情页 ============== */
+    .detail-scroll { flex: 1; overflow-y: auto; padding-bottom: 110px; }
+    .hero-photo {
+      margin: 14px 16px 0;
+      height: 220px;
+      border-radius: 22px;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 100px;
+      overflow: hidden;
+    }
+    .hero-status {
+      position: absolute;
+      top: 14px; left: 14px;
+      padding: 5px 14px;
+      border-radius: var(--radius-pill);
+      font-size: 12px;
+      font-weight: 700;
+      color: white;
+      backdrop-filter: blur(8px);
+      letter-spacing: 0.02em;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.12);
+    }
+    .hero-status.lost { background: rgba(255,133,82,0.95); }
+    .hero-status.found { background: rgba(91,184,159,0.95); }
+    .hero-time {
+      position: absolute;
+      top: 14px; right: 14px;
+      padding: 4px 12px;
+      background: rgba(255,255,255,0.95);
+      border-radius: var(--radius-pill);
+      font-family: var(--font-en);
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--ink-2);
+      letter-spacing: 0.04em;
+    }
+
+    .detail-body { padding: 20px 18px; }
+    .detail-name {
+      font-size: 26px;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      line-height: 1.2;
+      margin-bottom: 4px;
+    }
+    .detail-subtitle {
+      font-size: 13px;
+      color: var(--ink-3);
+      margin-bottom: 16px;
+    }
+    .info-grid {
+      background: var(--surface);
+      border-radius: var(--radius-md);
+      padding: 4px 0;
+      margin-bottom: 16px;
+      box-shadow: var(--shadow-card);
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+    }
+    .info-cell {
+      padding: 12px 16px;
+      position: relative;
+    }
+    .info-cell + .info-cell::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 8px; bottom: 8px;
+      width: 1px;
+      background: var(--divider-soft);
+    }
+    .info-cell .label {
+      font-size: 10.5px;
+      color: var(--ink-3);
+      font-family: var(--font-en);
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+    .info-cell .value { font-size: 14px; font-weight: 700; }
+
+    .section-label {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--ink-3);
+      letter-spacing: 0.04em;
+      margin: 6px 0 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .section-label .count {
+      font-family: var(--font-en);
+      color: var(--apricot-deep);
+    }
+
+    .desc-card {
+      background: var(--surface);
+      border-radius: var(--radius-md);
+      padding: 14px 16px;
+      font-size: 13.5px;
+      color: var(--ink-2);
+      line-height: 1.7;
+      margin-bottom: 16px;
+      box-shadow: var(--shadow-card);
+    }
+    .feature-card {
+      background: var(--honey-soft);
+      border-radius: var(--radius-md);
+      padding: 12px 14px;
+      margin-bottom: 16px;
+      display: flex;
+      gap: 10px;
+      font-size: 12px;
+      color: var(--honey-deep);
+      line-height: 1.65;
+    }
+    .feature-card.green {
+      background: var(--mint-soft);
+      color: var(--mint-deep);
+    }
+    .feature-card .ic {
+      font-size: 16px;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+    .feature-card b { font-weight: 700; }
+
+    .clue-card {
+      background: var(--surface);
+      border-radius: var(--radius-md);
+      padding: 12px 14px;
+      margin-bottom: 8px;
+      display: flex;
+      gap: 12px;
+      box-shadow: var(--shadow-card);
+    }
+    .clue-avatar {
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #B0B7BF, #7A828B);
+      color: white;
+      font-weight: 700;
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .clue-author {
+      font-size: 13px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 2px;
+    }
+    .clue-badge {
+      font-size: 10px;
+      padding: 1px 7px;
+      background: var(--mint-soft);
+      color: var(--mint-deep);
+      border-radius: var(--radius-pill);
+      font-weight: 700;
+    }
+    .clue-meta {
+      font-family: var(--font-en);
+      font-size: 10.5px;
+      color: var(--ink-4);
+      font-weight: 600;
+      margin-bottom: 4px;
+      letter-spacing: 0.02em;
+    }
+    .clue-text { font-size: 12.5px; color: var(--ink-2); line-height: 1.55; }
+
+    /* 底部按钮 */
+    .action-bar {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      background: var(--surface);
+      border-top: 1px solid var(--divider);
+      padding: 12px 16px 24px;
+      display: flex;
+      gap: 10px;
+      z-index: 15;
+    }
+    .btn-secondary, .btn-primary {
+      height: 46px;
+      border-radius: 14px;
+      font-size: 14px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      cursor: pointer;
+    }
+    .btn-secondary {
+      flex: 1;
+      background: var(--bg);
+      color: var(--ink-1);
+    }
+    .btn-primary {
+      flex: 1.4;
+      background: linear-gradient(135deg, #FFA378 0%, var(--apricot) 100%);
+      color: white;
+      box-shadow: var(--shadow-fab);
+    }
+
+    /* ============== Publish ============== */
+    .seg {
+      display: flex;
+      gap: 6px;
+      margin: 12px 18px 14px;
+      background: var(--surface);
+      border-radius: var(--radius-pill);
+      padding: 4px;
+      box-shadow: var(--shadow-pill);
+    }
+    .seg-item {
+      flex: 1;
+      padding: 9px;
+      text-align: center;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--ink-3);
+      cursor: pointer;
+      border-radius: var(--radius-pill);
+    }
+    .seg-item.active {
+      background: var(--ink-1);
+      color: white;
+    }
+    .form-section {
+      background: var(--surface);
+      margin: 0 16px 12px;
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      box-shadow: var(--shadow-card);
+    }
+    .form-row {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--divider-soft);
+    }
+    .form-row:last-child { border-bottom: none; }
+    .form-label {
+      font-size: 11px;
+      color: var(--ink-3);
+      margin-bottom: 6px;
+      font-family: var(--font-en);
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .form-label .req { color: var(--apricot); }
+    .form-input, .form-textarea {
+      width: 100%;
+      border: none;
+      background: transparent;
+      font-family: var(--font-cn);
+      font-size: 14.5px;
+      color: var(--ink-1);
+      outline: none;
+      padding: 0;
+      font-weight: 600;
+    }
+    .form-textarea {
+      resize: none;
+      min-height: 64px;
+      font-weight: 400;
+      line-height: 1.6;
+    }
+    .form-value {
+      font-size: 14.5px;
+      font-weight: 600;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .form-arrow { color: var(--ink-4); font-size: 13px; }
+    .pet-types { display: flex; gap: 8px; }
+    .pet-type {
+      padding: 8px 16px;
+      background: var(--bg);
+      color: var(--ink-2);
+      font-size: 13px;
+      font-weight: 600;
+      border-radius: var(--radius-pill);
+      cursor: pointer;
+    }
+    .pet-type.active {
+      background: var(--apricot);
+      color: white;
+    }
+    .photo-row {
+      padding: 12px 16px;
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .photo-row::-webkit-scrollbar { display: none; }
+    .photo-slot {
+      width: 68px; height: 68px;
+      border-radius: 14px;
+      flex-shrink: 0;
+      background: var(--bg);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: var(--ink-4);
+      font-size: 10.5px;
+      gap: 2px;
+      cursor: pointer;
+    }
+    .photo-slot.filled {
+      position: relative;
+      overflow: hidden;
+      font-size: 32px;
+      color: white;
+    }
+    .photo-slot.filled .x {
+      position: absolute;
+      top: 4px; right: 4px;
+      width: 18px; height: 18px;
+      background: rgba(0,0,0,0.6);
+      border-radius: 50%;
+      color: white;
+      font-size: 11px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .private-card {
+      margin: 0 16px 12px;
+      background: var(--honey-soft);
+      border-radius: var(--radius-md);
+      padding: 14px;
+    }
+    .private-card-h {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--honey-deep);
+      font-size: 13.5px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+    .private-card-sub {
+      font-size: 11.5px;
+      color: var(--honey-deep);
+      line-height: 1.55;
+      margin-bottom: 10px;
+    }
+    .private-card textarea {
+      width: 100%;
+      background: var(--surface);
+      border: none;
+      border-radius: var(--radius-sm);
+      padding: 10px 12px;
+      font-family: var(--font-cn);
+      font-size: 13px;
+      color: var(--ink-1);
+      outline: none;
+      resize: none;
+      min-height: 50px;
+    }
+    .radio-list { padding: 4px 16px 12px; }
+    .radio-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 8px 0;
+      cursor: pointer;
+    }
+    .radio-circle {
+      width: 18px; height: 18px;
+      border-radius: 50%;
+      border: 2px solid var(--ink-5);
+      flex-shrink: 0;
+      margin-top: 1px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .radio-circle.selected { border-color: var(--apricot); }
+    .radio-circle.selected::after {
+      content: '';
+      width: 8px; height: 8px;
+      background: var(--apricot);
+      border-radius: 50%;
+    }
+    .radio-title { font-size: 14px; font-weight: 600; }
+    .radio-sub { font-size: 11.5px; color: var(--ink-3); margin-top: 2px; line-height: 1.5; }
+
+    .compliance-note {
+      margin: 0 16px 12px;
+      padding: 12px 14px;
+      background: var(--warn-soft);
+      border-radius: var(--radius-md);
+      font-size: 11.5px;
+      color: var(--warn-deep);
+      line-height: 1.7;
+    }
+    .compliance-note b { font-weight: 700; }
+    .terms-note {
+      padding: 8px 20px 14px;
+      font-size: 11px;
+      color: var(--ink-4);
+      line-height: 1.6;
+    }
+    .terms-note .link {
+      color: var(--apricot-deep);
+      font-weight: 600;
+    }
+
+    /* ============== Contact Guide ============== */
+    .guide-scroll { flex: 1; overflow-y: auto; padding: 16px 18px 110px; }
+    .guide-hero { text-align: center; padding: 6px 0 18px; }
+    .guide-icon {
+      width: 58px; height: 58px;
+      background: var(--mint-soft);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 26px;
+      margin: 0 auto 10px;
+      color: var(--mint-deep);
+    }
+    .guide-title {
+      font-size: 19px;
+      font-weight: 700;
+      letter-spacing: -0.005em;
+      margin-bottom: 6px;
+    }
+    .guide-sub {
+      font-size: 12.5px;
+      color: var(--ink-3);
+      line-height: 1.7;
+      padding: 0 14px;
+    }
+
+    .pet-summary {
+      background: var(--surface);
+      border-radius: var(--radius-md);
+      padding: 12px;
+      display: flex;
+      gap: 12px;
+      margin-bottom: 14px;
+      align-items: center;
+      box-shadow: var(--shadow-card);
+    }
+    .pet-summary-thumb {
+      width: 50px; height: 50px;
+      border-radius: 12px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 26px;
+    }
+    .pet-summary-info b { font-size: 14.5px; font-weight: 700; }
+    .pet-summary-meta { font-size: 11.5px; color: var(--ink-3); margin-top: 2px; }
+
+    .info-soft {
+      background: var(--honey-soft);
+      border-radius: var(--radius-md);
+      padding: 12px 14px;
+      margin-bottom: 14px;
+      color: var(--honey-deep);
+    }
+    .info-soft b { font-size: 13px; font-weight: 700; }
+    .info-soft .body { font-size: 11.5px; line-height: 1.65; margin-top: 6px; }
+
+    .template {
+      background: var(--surface);
+      border-radius: var(--radius-md);
+      padding: 12px 14px;
+      margin-bottom: 8px;
+      box-shadow: var(--shadow-card);
+    }
+    .template-text {
+      font-size: 13px;
+      color: var(--ink-2);
+      line-height: 1.7;
+      margin-bottom: 10px;
+    }
+    .template-text b { color: var(--ink-1); font-weight: 700; }
+    .copy-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 11.5px;
+      font-weight: 700;
+      padding: 5px 12px;
+      background: var(--bg);
+      color: var(--apricot-deep);
+      border-radius: var(--radius-pill);
+      cursor: pointer;
+    }
+
+    .places-card {
+      background: var(--surface);
+      border-radius: var(--radius-md);
+      padding: 14px;
+      margin-bottom: 12px;
+      box-shadow: var(--shadow-card);
+    }
+    .places-card h5 {
+      font-size: 13.5px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+    .places-card .sub {
+      font-size: 11px;
+      color: var(--ink-3);
+      margin-bottom: 10px;
+    }
+    .place-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+    .place-chip {
+      font-size: 11.5px;
+      padding: 4px 10px;
+      background: var(--bg);
+      color: var(--ink-2);
+      border-radius: var(--radius-pill);
+    }
+
+    .step-block {
+      background: var(--surface);
+      border-radius: var(--radius-md);
+      padding: 4px 0;
+      margin-bottom: 12px;
+      box-shadow: var(--shadow-card);
+    }
+    .step-row {
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--divider-soft);
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+    }
+    .step-row:last-child { border-bottom: none; }
+    .step-num {
+      width: 22px; height: 22px;
+      border-radius: 50%;
+      background: var(--apricot);
+      color: white;
+      font-family: var(--font-en);
+      font-weight: 700;
+      font-size: 11px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .step-row b { font-size: 13.5px; font-weight: 700; }
+    .step-row .sub { font-size: 11.5px; color: var(--ink-3); margin-top: 2px; line-height: 1.5; }
+    .warn-block {
+      background: var(--warn-soft);
+      border-radius: var(--radius-md);
+      padding: 12px 14px;
+      font-size: 11.5px;
+      color: var(--warn-deep);
+      line-height: 1.7;
+      margin-top: 12px;
+    }
+    .warn-block b { font-weight: 700; }
+
+    /* ============== Checklist ============== */
+    .checklist-scroll { flex: 1; overflow-y: auto; padding: 16px 18px 110px; }
+    .check-hint {
+      background: var(--mint-soft);
+      border-radius: var(--radius-md);
+      padding: 12px 14px;
+      font-size: 12px;
+      color: var(--mint-deep);
+      line-height: 1.65;
+      margin-bottom: 14px;
+    }
+    .check-hint b { font-weight: 700; }
+    .check-item {
+      background: var(--surface);
+      border-radius: var(--radius-md);
+      padding: 12px 14px;
+      margin-bottom: 8px;
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      cursor: pointer;
+      box-shadow: var(--shadow-card);
+    }
+    .check-item.done { background: var(--mint-soft); box-shadow: none; }
+    .check-box {
+      width: 22px; height: 22px;
+      border-radius: 8px;
+      border: 2px solid var(--ink-5);
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 1px;
+      font-size: 12px;
+      background: white;
+    }
+    .check-item.done .check-box {
+      background: var(--mint);
+      border-color: var(--mint);
+      color: white;
+    }
+    .check-item b { font-size: 13.5px; font-weight: 700; display: block; margin-bottom: 3px; }
+    .check-item .sub { font-size: 11.5px; color: var(--ink-3); line-height: 1.55; }
+    .check-item.done .sub { color: var(--mint-deep); }
+
+    /* ============== Return Success ============== */
+    .success-scroll { flex: 1; overflow-y: auto; padding-bottom: 100px; }
+    .success-hero { text-align: center; padding: 36px 20px 18px; }
+    .success-circle {
+      width: 104px; height: 104px;
+      margin: 0 auto 20px;
+      background: linear-gradient(135deg, var(--mint), var(--mint-deep));
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow:
+        0 12px 32px rgba(91,184,159,0.4),
+        inset 0 -4px 12px rgba(0,0,0,0.08);
+      position: relative;
+    }
+    .success-circle::before {
+      content: '';
+      position: absolute;
+      inset: -8px;
+      border-radius: 50%;
+      border: 2px dashed var(--mint);
+      opacity: 0.3;
+    }
+    .success-check {
+      width: 48px; height: 48px;
+      background: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--mint);
+      font-size: 28px;
+      font-weight: 700;
+    }
+    .success-title {
+      font-size: 24px;
+      font-weight: 700;
+      letter-spacing: -0.005em;
+      margin-bottom: 8px;
+    }
+    .success-sub {
+      font-size: 13px;
+      color: var(--ink-3);
+      line-height: 1.7;
+      padding: 0 24px;
+    }
+    .reward-card {
+      margin: 22px 18px 14px;
+      background: linear-gradient(135deg, var(--apricot) 0%, #FF6B35 100%);
+      color: white;
+      border-radius: var(--radius-md);
+      padding: 18px 20px;
+      position: relative;
+      overflow: hidden;
+    }
+    .reward-card::before {
+      content: '🐾';
+      position: absolute;
+      bottom: -22px; right: -10px;
+      font-size: 110px;
+      opacity: 0.15;
+      line-height: 1;
+    }
+    .reward-label {
+      font-size: 11px;
+      font-family: var(--font-en);
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      opacity: 0.92;
+    }
+    .reward-value {
+      font-family: var(--font-en);
+      font-size: 38px;
+      font-weight: 800;
+      letter-spacing: 0.02em;
+      margin: 6px 0 6px;
+      line-height: 1;
+      font-style: italic;
+    }
+    .reward-detail { font-size: 12px; opacity: 0.95; line-height: 1.55; }
+    .cta-card {
+      margin: 0 18px 10px;
+      background: var(--surface);
+      border-radius: var(--radius-md);
+      padding: 14px;
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      cursor: pointer;
+      box-shadow: var(--shadow-card);
+    }
+    .cta-icon {
+      width: 40px; height: 40px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+    }
+    .cta-icon.apricot { background: var(--apricot-soft); color: var(--apricot-deep); }
+    .cta-icon.honey { background: var(--honey-soft); color: var(--honey-deep); }
+    .cta-title { font-size: 14px; font-weight: 700; }
+    .cta-sub { font-size: 11px; color: var(--ink-3); margin-top: 2px; }
+
+    /* ============== Thanks Edit ============== */
+    .thanks-scroll { flex: 1; overflow-y: auto; padding: 14px 16px 110px; }
+    .thanks-paper {
+      background: var(--surface);
+      border-radius: var(--radius-md);
+      padding: 18px;
+      margin-bottom: 14px;
+      box-shadow: var(--shadow-card);
+    }
+    .thanks-greeting { font-size: 14.5px; font-weight: 700; margin-bottom: 10px; }
+    .thanks-textarea {
+      width: 100%;
+      min-height: 140px;
+      border: none;
+      background: transparent;
+      font-family: var(--font-cn);
+      font-size: 13.5px;
+      line-height: 1.8;
+      resize: none;
+      outline: none;
+    }
+    .nominee-list {
+      background: var(--surface);
+      border-radius: var(--radius-md);
+      margin-bottom: 12px;
+      overflow: hidden;
+      box-shadow: var(--shadow-card);
+    }
+    .nominee-row {
+      padding: 12px 14px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border-bottom: 1px solid var(--divider-soft);
+      cursor: pointer;
+    }
+    .nominee-row:last-child { border-bottom: none; }
+    .nominee-row.selected { background: var(--apricot-soft); }
+    .nominee-check {
+      width: 20px; height: 20px;
+      border-radius: 6px;
+      border: 2px solid var(--ink-5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      flex-shrink: 0;
+      background: white;
+    }
+    .nominee-row.selected .nominee-check {
+      background: var(--apricot);
+      border-color: var(--apricot);
+      color: white;
+    }
+    .nominee-name { font-size: 13.5px; font-weight: 700; }
+    .nominee-contrib { font-size: 11px; color: var(--ink-3); margin-top: 1px; }
+    .nominee-points {
+      font-family: var(--font-en);
+      font-size: 12px;
+      color: var(--apricot-deep);
+      font-weight: 800;
+      margin-left: auto;
+    }
+    .toggle-row {
+      background: var(--surface);
+      border-radius: var(--radius-md);
+      padding: 12px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: var(--shadow-card);
+    }
+    .toggle-label { font-size: 13.5px; font-weight: 600; }
+    .toggle {
+      width: 40px; height: 22px;
+      background: var(--apricot);
+      border-radius: 11px;
+      position: relative;
+    }
+    .toggle::after {
+      content: '';
+      position: absolute;
+      width: 16px; height: 16px;
+      background: white;
+      border-radius: 50%;
+      top: 3px;
+      right: 3px;
+    }
+
+    /* ============== Map ============== */
+    .map-container {
+      flex: 1;
+      position: relative;
+      overflow: hidden;
+      background:
+        radial-gradient(at 30% 20%, rgba(91,184,159,0.18) 0%, transparent 40%),
+        radial-gradient(at 70% 80%, rgba(255,133,82,0.12) 0%, transparent 40%),
+        var(--bg);
+    }
+    .map-grid {
+      position: absolute; inset: 0;
+      background-image:
+        linear-gradient(rgba(31,31,31,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(31,31,31,0.04) 1px, transparent 1px);
+      background-size: 32px 32px;
+    }
+    .map-road {
+      position: absolute;
+      background: var(--surface);
+      opacity: 0.75;
+      border-radius: 2px;
+    }
+    .map-pin {
+      position: absolute;
+      transform: translate(-50%, -100%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      cursor: pointer;
+      z-index: 3;
+    }
+    .pin-head {
+      width: 32px; height: 32px;
+      border-radius: 50% 50% 50% 0;
+      transform: rotate(-45deg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+      border: 2px solid white;
+    }
+    .pin-head span { transform: rotate(45deg); color: white; font-size: 13px; }
+    .map-pin.lost .pin-head { background: var(--apricot); }
+    .map-pin.found .pin-head { background: var(--mint); }
+    .map-pin.care .pin-head { background: var(--plum); }
+    .map-label {
+      position: absolute;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--ink-2);
+      background: var(--surface);
+      padding: 2px 7px;
+      border-radius: var(--radius-pill);
+      pointer-events: none;
+      box-shadow: var(--shadow-pill);
+    }
+    .map-view-toggle {
+      position: absolute;
+      top: 14px; left: 16px;
+      z-index: 5;
+      background: var(--surface);
+      border-radius: var(--radius-pill);
+      padding: 4px;
+      display: flex;
+      box-shadow: var(--shadow-card);
+    }
+    .vt {
+      font-size: 12px;
+      font-weight: 700;
+      padding: 6px 14px;
+      border-radius: var(--radius-pill);
+      cursor: pointer;
+      color: var(--ink-3);
+    }
+    .vt.active { background: var(--ink-1); color: white; }
+
+    .map-precision-hint {
+      position: absolute;
+      top: 60px; left: 16px; right: 16px;
+      padding: 8px 12px;
+      background: var(--honey-soft);
+      border-radius: var(--radius-pill);
+      font-size: 11px;
+      color: var(--honey-deep);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      z-index: 4;
+      box-shadow: var(--shadow-pill);
+    }
+    .map-fab {
+      position: absolute;
+      right: 14px; bottom: 280px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      z-index: 5;
+    }
+    .map-fab .btn {
+      width: 38px; height: 38px;
+      background: var(--surface);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 15px;
+      color: var(--ink-1);
+      box-shadow: var(--shadow-card);
+      cursor: pointer;
+    }
+    .map-sheet {
+      position: absolute;
+      bottom: 82px; left: 0; right: 0;
+      background: var(--surface);
+      border-radius: 20px 20px 0 0;
+      max-height: 240px;
+      box-shadow: 0 -8px 24px rgba(0,0,0,0.1);
+    }
+    .sheet-handle {
+      width: 36px; height: 4px;
+      background: var(--ink-5);
+      border-radius: 2px;
+      margin: 8px auto;
+    }
+    .sheet-header {
+      padding: 4px 18px 8px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .sheet-title { font-size: 14px; font-weight: 700; }
+    .sheet-meta { font-family: var(--font-en); font-size: 11px; color: var(--ink-3); font-weight: 600; }
+    .sheet-content { padding: 4px 12px 16px; }
+    .sheet-card {
+      display: flex;
+      gap: 10px;
+      padding: 8px;
+      border-radius: var(--radius-sm);
+      margin-bottom: 4px;
+      cursor: pointer;
+    }
+    .sheet-thumb {
+      width: 42px; height: 42px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+    .sheet-pet-name { font-size: 13px; font-weight: 700; }
+    .sheet-pet-meta { font-size: 11px; color: var(--ink-3); margin-top: 1px; }
+
+    /* ============== Messages ============== */
+    .msg-list { flex: 1; overflow-y: auto; padding: 4px 0 100px; }
+    .msg-row {
+      padding: 12px 18px;
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      border-bottom: 1px solid var(--divider-soft);
+      cursor: pointer;
+      background: var(--surface);
+    }
+    .msg-avatar {
+      width: 46px; height: 46px;
+      border-radius: 14px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+    }
+    .msg-avatar.system {
+      background: linear-gradient(135deg, #B0B7BF, #7A828B);
+      color: white;
+      font-weight: 700;
+      font-size: 14px;
+    }
+    .msg-body { flex: 1; min-width: 0; }
+    .msg-row-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 2px;
+    }
+    .msg-name { font-size: 14px; font-weight: 700; }
+    .msg-time {
+      font-family: var(--font-en);
+      font-size: 10.5px;
+      color: var(--ink-4);
+      font-weight: 600;
+    }
+    .msg-preview {
+      font-size: 12px;
+      color: var(--ink-3);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .msg-context {
+      font-size: 10.5px;
+      color: var(--apricot-deep);
+      margin-top: 3px;
+      padding: 1px 7px;
+      background: var(--apricot-soft);
+      border-radius: var(--radius-pill);
+      display: inline-block;
+      font-weight: 600;
+    }
+    .msg-unread {
+      width: 20px; height: 20px;
+      background: var(--apricot);
+      color: white;
+      border-radius: 50%;
+      font-family: var(--font-en);
+      font-size: 11px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-left: 8px;
+      flex-shrink: 0;
+    }
+
+    /* ============== Chat ============== */
+    .chat-pet {
+      background: var(--surface);
+      border-radius: var(--radius-md);
+      margin: 10px 16px;
+      padding: 10px 12px;
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      box-shadow: var(--shadow-card);
+    }
+    .chat-pet-thumb {
+      width: 38px; height: 38px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+    .chat-pet-name { font-size: 13px; font-weight: 700; }
+    .chat-pet-meta { font-size: 11px; color: var(--ink-3); margin-top: 1px; }
+    .chat-pet-status {
+      font-size: 10.5px;
+      padding: 3px 9px;
+      background: var(--mint);
+      color: white;
+      border-radius: var(--radius-pill);
+      font-weight: 700;
+    }
+    .chat-msgs { flex: 1; overflow-y: auto; padding: 8px 16px 0; }
+    .chat-msg { margin-bottom: 12px; display: flex; gap: 8px; }
+    .chat-msg.me { flex-direction: row-reverse; }
+    .chat-bubble {
+      max-width: 70%;
+      padding: 9px 13px;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+    .chat-msg.me .chat-bubble {
+      background: var(--apricot);
+      color: white;
+      border-radius: 16px 16px 4px 16px;
+    }
+    .chat-msg.them .chat-bubble {
+      background: var(--surface);
+      color: var(--ink-1);
+      border-radius: 16px 16px 16px 4px;
+      box-shadow: var(--shadow-card);
+    }
+    .chat-msg b { font-weight: 700; }
+    .chat-avatar {
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 15px;
+    }
+    .chat-time {
+      text-align: center;
+      font-family: var(--font-en);
+      font-size: 10.5px;
+      color: var(--ink-4);
+      margin: 8px 0;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+    }
+    .chat-audit-bar {
+      padding: 6px 16px;
+      background: var(--honey-soft);
+      font-size: 10.5px;
+      color: var(--honey-deep);
+      text-align: center;
+      font-weight: 600;
+    }
+    .chat-input-bar {
+      background: var(--surface);
+      border-top: 1px solid var(--divider);
+      padding: 10px 14px 22px;
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+    .chat-attach {
+      width: 36px; height: 36px;
+      background: var(--bg);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    .chat-input {
+      flex: 1;
+      background: var(--bg);
+      border-radius: var(--radius-pill);
+      padding: 9px 14px;
+      font-size: 13px;
+      color: var(--ink-4);
+    }
+    .chat-send {
+      background: var(--apricot);
+      color: white;
+    }
+
+    /* ============== Profile ============== */
+    .profile-scroll { flex: 1; overflow-y: auto; padding-bottom: 100px; }
+    .profile-hero {
+      background: linear-gradient(135deg, #FFB088 0%, var(--apricot) 100%);
+      color: white;
+      padding: 24px 20px 50px;
+      position: relative;
+      overflow: hidden;
+    }
+    .profile-hero::before {
+      content: '🐾';
+      position: absolute;
+      top: -10px; right: -10px;
+      font-size: 200px;
+      opacity: 0.08;
+      transform: rotate(-12deg);
+      line-height: 1;
+    }
+    .profile-user {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 18px;
+      position: relative;
+    }
+    .profile-avatar {
+      width: 58px; height: 58px;
+      border-radius: 18px;
+      background: var(--surface);
+      color: var(--apricot-deep);
+      font-weight: 700;
+      font-size: 26px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    .profile-name {
+      font-size: 17px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .level-badge {
+      background: rgba(255,255,255,0.25);
+      color: white;
+      padding: 2px 8px;
+      font-size: 10.5px;
+      font-weight: 700;
+      border-radius: var(--radius-pill);
+      backdrop-filter: blur(8px);
+    }
+    .profile-handle {
+      font-size: 11.5px;
+      opacity: 0.85;
+      margin-top: 3px;
+      font-family: var(--font-en);
+      font-weight: 500;
+    }
+    .points-card {
+      background: rgba(255,255,255,0.18);
+      border: 1px solid rgba(255,255,255,0.22);
+      backdrop-filter: blur(12px);
+      border-radius: var(--radius-md);
+      padding: 14px 16px;
+    }
+    .points-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 4px;
+    }
+    .points-label {
+      font-family: var(--font-en);
+      font-size: 10.5px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      opacity: 0.85;
+      font-weight: 700;
+    }
+    .points-link { font-size: 11px; opacity: 0.85; }
+    .points-value {
+      font-family: var(--font-en);
+      font-size: 42px;
+      font-weight: 800;
+      line-height: 1;
+      margin-bottom: 6px;
+      letter-spacing: 0.02em;
+      font-style: italic;
+    }
+    .points-meta { font-size: 11px; opacity: 0.85; }
+    .points-divider { height: 1px; background: rgba(255,255,255,0.18); margin: 12px 0; }
+    .points-stats { display: flex; justify-content: space-between; }
+    .stat-cell { flex: 1; text-align: center; }
+    .stat-num {
+      font-family: var(--font-en);
+      font-size: 18px;
+      font-weight: 800;
+    }
+    .stat-label { font-size: 10px; opacity: 0.8; margin-top: 1px; }
+
+    .profile-content { margin-top: -32px; padding: 0 16px; position: relative; z-index: 1; }
+    .quick-actions {
+      background: var(--surface);
+      border-radius: var(--radius-md);
+      padding: 14px;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 6px;
+      margin-bottom: 12px;
+      box-shadow: var(--shadow-card);
+    }
+    .quick-action {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      padding: 6px;
+      cursor: pointer;
+    }
+    .qa-icon {
+      width: 40px; height: 40px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+    }
+    .qa-icon.apricot { background: var(--apricot-soft); color: var(--apricot-deep); }
+    .qa-icon.mint { background: var(--mint-soft); color: var(--mint-deep); }
+    .qa-icon.honey { background: var(--honey-soft); color: var(--honey-deep); }
+    .qa-icon.plum { background: var(--plum-soft); color: var(--plum-deep); }
+    .qa-label { font-size: 11px; color: var(--ink-2); font-weight: 500; }
+
+    .menu-section {
+      background: var(--surface);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      margin-bottom: 12px;
+      box-shadow: var(--shadow-card);
+    }
+    .menu-row {
+      padding: 13px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border-bottom: 1px solid var(--divider-soft);
+      cursor: pointer;
+    }
+    .menu-row:last-child { border-bottom: none; }
+    .menu-icon { font-size: 16px; width: 22px; text-align: center; }
+    .menu-label { flex: 1; font-size: 13.5px; }
+    .menu-meta { font-size: 11.5px; color: var(--ink-3); font-family: var(--font-en); font-weight: 600; }
+    .menu-meta.ok { color: var(--mint-deep); }
+    .menu-arrow { color: var(--ink-4); font-size: 13px; }
+
+    .footer-info {
+      text-align: center;
+      padding: 16px 0 30px;
+      font-family: var(--font-en);
+      font-size: 10.5px;
+      color: var(--ink-4);
+      line-height: 1.7;
+      font-weight: 500;
+    }
+
+    /* ============== Points History ============== */
+    .points-screen { flex: 1; overflow-y: auto; padding-bottom: 24px; }
+    .points-banner {
+      margin: 14px 14px 0;
+      background: linear-gradient(135deg, var(--apricot) 0%, #FF6B35 100%);
+      color: white;
+      border-radius: var(--radius-md);
+      padding: 18px 20px;
+      position: relative;
+      overflow: hidden;
+    }
+    .points-banner::before {
+      content: '🐾';
+      position: absolute;
+      top: -16px; right: -8px;
+      font-size: 130px;
+      opacity: 0.13;
+      line-height: 1;
+    }
+    .ph-label {
+      font-family: var(--font-en);
+      font-size: 10.5px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      font-weight: 700;
+      opacity: 0.9;
+    }
+    .ph-value {
+      font-family: var(--font-en);
+      font-size: 40px;
+      font-weight: 800;
+      line-height: 1;
+      margin: 6px 0 6px;
+      font-style: italic;
+    }
+    .ph-value .small {
+      font-size: 18px;
+      font-weight: 500;
+      opacity: 0.55;
+    }
+    .ph-meta { font-size: 11px; opacity: 0.9; line-height: 1.6; }
+    .compliance-strip {
+      margin: 12px 14px;
+      padding: 10px 14px;
+      background: var(--honey-soft);
+      border-radius: var(--radius-md);
+      font-size: 11.5px;
+      color: var(--honey-deep);
+      line-height: 1.55;
+    }
+    .compliance-strip b { font-weight: 700; }
+    .points-filter {
+      padding: 0 14px 10px;
+      display: flex;
+      gap: 6px;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .points-filter::-webkit-scrollbar { display: none; }
+    .ph-filter {
+      padding: 5px 12px;
+      border-radius: var(--radius-pill);
+      background: var(--surface);
+      font-size: 11.5px;
+      color: var(--ink-3);
+      white-space: nowrap;
+      cursor: pointer;
+      box-shadow: var(--shadow-pill);
+    }
+    .ph-filter.active {
+      background: var(--ink-1);
+      color: white;
+      box-shadow: none;
+    }
+    .point-tx {
+      background: var(--surface);
+      padding: 13px 18px;
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      border-bottom: 1px solid var(--divider-soft);
+    }
+    .tx-icon {
+      width: 36px; height: 36px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      flex-shrink: 0;
+    }
+    .tx-icon.return { background: var(--mint-soft); color: var(--mint-deep); }
+    .tx-icon.clue { background: var(--apricot-soft); color: var(--apricot-deep); }
+    .tx-icon.care { background: var(--plum-soft); color: var(--plum-deep); }
+    .tx-icon.thanks { background: var(--honey-soft); color: var(--honey-deep); }
+    .tx-body { flex: 1; min-width: 0; }
+    .tx-title { font-size: 13px; font-weight: 600; margin-bottom: 2px; }
+    .tx-meta {
+      font-family: var(--font-en);
+      font-size: 10.5px;
+      color: var(--ink-4);
+      font-weight: 600;
+    }
+    .tx-amount {
+      font-family: var(--font-en);
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--mint-deep);
+      font-style: italic;
+    }
+    .tx-date-label {
+      padding: 12px 18px 4px;
+      font-family: var(--font-en);
+      font-size: 10.5px;
+      color: var(--ink-4);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+
+    /* ============== My Posts ============== */
+    .mp-tabs {
+      display: flex;
+      padding: 10px 16px 12px;
+      gap: 6px;
+    }
+    .mp-tab {
+      padding: 6px 14px;
+      border-radius: var(--radius-pill);
+      font-size: 12.5px;
+      font-weight: 600;
+      background: var(--surface);
+      color: var(--ink-3);
+      cursor: pointer;
+      box-shadow: var(--shadow-pill);
+    }
+    .mp-tab.active {
+      background: var(--ink-1);
+      color: white;
+      box-shadow: none;
+    }
+    .mp-list { flex: 1; overflow-y: auto; padding: 0 16px 30px; }
+    .mp-card {
+      background: var(--surface);
+      border-radius: var(--radius-lg);
+      margin-bottom: 10px;
+      overflow: hidden;
+      box-shadow: var(--shadow-card);
+    }
+    .mp-actions {
+      display: flex;
+      padding: 10px 14px;
+      border-top: 1px solid var(--divider-soft);
+      gap: 6px;
+    }
+    .mp-action {
+      font-size: 12px;
+      padding: 6px 12px;
+      border-radius: var(--radius-pill);
+      background: var(--bg);
+      color: var(--ink-2);
+      cursor: pointer;
+      font-weight: 600;
+    }
+    .mp-action.primary {
+      background: var(--apricot);
+      color: white;
+      font-weight: 700;
+    }
+    .mp-note {
+      padding: 12px;
+      font-size: 11px;
+      color: var(--ink-4);
+      text-align: center;
+      line-height: 1.55;
+    }
+
+    /* ============== Dispute ============== */
+    .dispute-scroll { flex: 1; overflow-y: auto; padding: 14px 16px 110px; }
+    .dispute-hero { text-align: center; padding: 18px 12px 20px; }
+    .dispute-icon {
+      width: 60px; height: 60px;
+      background: var(--warn-soft);
+      color: var(--warn-deep);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 26px;
+      margin: 0 auto 12px;
+    }
+    .dispute-block {
+      background: var(--surface);
+      border-radius: var(--radius-md);
+      padding: 14px 16px;
+      margin-bottom: 10px;
+      box-shadow: var(--shadow-card);
+    }
+    .dispute-types {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    .dispute-type {
+      padding: 14px 10px;
+      background: var(--surface);
+      color: var(--ink-2);
+      font-size: 13px;
+      font-weight: 600;
+      border-radius: var(--radius-md);
+      text-align: center;
+      cursor: pointer;
+      box-shadow: var(--shadow-card);
+    }
+    .dispute-type.selected {
+      background: var(--warn-soft);
+      color: var(--warn-deep);
+      box-shadow: 0 0 0 2px var(--warn);
+    }
+
+    /* ============== Privacy Modal ============== */
+    .privacy-modal {
+      position: absolute;
+      inset: 44px 0 0 0;
+      background: rgba(31,31,31,0.55);
+      backdrop-filter: blur(8px);
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+    .privacy-box {
+      background: var(--surface);
+      border-radius: 20px;
+      padding: 24px 22px 20px;
+      width: 100%;
+      max-height: 90%;
+      overflow-y: auto;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.35);
+    }
+    .privacy-head { text-align: center; margin-bottom: 14px; }
+    .privacy-head-icon {
+      width: 56px; height: 56px;
+      background: var(--apricot-soft);
+      color: var(--apricot-deep);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 26px;
+      margin: 0 auto 10px;
+    }
+    .privacy-title {
+      font-size: 19px;
+      font-weight: 700;
+      letter-spacing: -0.005em;
+    }
+    .privacy-sub { font-size: 11.5px; color: var(--ink-3); margin-top: 4px; }
+    .privacy-list {
+      background: var(--bg);
+      border-radius: var(--radius-md);
+      padding: 14px;
+      font-size: 12.5px;
+      color: var(--ink-2);
+      line-height: 1.75;
+    }
+    .privacy-list b { color: var(--ink-1); font-weight: 700; }
+    .privacy-item {
+      display: flex;
+      gap: 8px;
+      padding: 4px 0;
+    }
+    .privacy-item-ic {
+      width: 18px;
+      flex-shrink: 0;
+      color: var(--apricot);
+      font-weight: 800;
+      font-family: var(--font-en);
+    }
+    .privacy-list-footer {
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px solid var(--ink-5);
+      font-size: 11px;
+      color: var(--ink-3);
+    }
+    .privacy-agree {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      margin: 14px 4px 6px;
+      font-size: 12px;
+      color: var(--ink-2);
+      line-height: 1.5;
+    }
+    .privacy-check {
+      width: 18px; height: 18px;
+      background: var(--apricot);
+      border-radius: 5px;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+    .privacy-link {
+      color: var(--apricot-deep);
+      font-weight: 600;
+    }
+    .privacy-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    /* ============== 底部注释区 ============== */
+    .annotations {
+      max-width: 1200px;
+      margin: 32px auto 60px;
+      padding: 32px 36px;
+      background: var(--surface);
+      border-radius: 20px;
+      box-shadow: var(--shadow-card);
+    }
+    .annot-section {
+      font-family: var(--font-en);
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--apricot-deep);
+      font-weight: 700;
+      margin: 0 0 12px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .annot-section::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--divider);
+    }
+    .annot-section:not(:first-of-type) { margin-top: 28px; }
+    .annotations h3 {
+      font-size: 24px;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      margin-bottom: 6px;
+    }
+    .annotations h3 .accent {
+      font-family: var(--font-en);
+      font-style: italic;
+      font-weight: 800;
+      color: var(--apricot);
+    }
+    .annotations p {
+      font-size: 13px;
+      line-height: 1.75;
+      color: var(--ink-2);
+    }
+    .annotations ul {
+      list-style: none;
+      padding: 0;
+      display: grid;
+      gap: 6px;
+    }
+    .annot-li {
+      padding: 10px 14px;
+      background: var(--bg);
+      border-radius: var(--radius-md);
+      font-size: 12.5px;
+      color: var(--ink-2);
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      line-height: 1.6;
+    }
+    .annot-tag {
+      flex-shrink: 0;
+      padding: 1px 7px;
+      font-family: var(--font-en);
+      font-size: 10px;
+      font-weight: 700;
+      border-radius: var(--radius-pill);
+      background: var(--mint-soft);
+      color: var(--mint-deep);
+      letter-spacing: 0.04em;
+    }
+    .annot-li b { color: var(--ink-1); font-weight: 700; }
+    .nav-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 6px;
+    }
+    .nav-jump {
+      padding: 9px 12px;
+      background: var(--bg);
+      border-radius: var(--radius-sm);
+      font-size: 12px;
+      color: var(--ink-2);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .nav-jump:hover {
+      background: var(--apricot);
+      color: white;
+    }
+  </style>
+</head>
+<body>
+
+<!-- ============== 头部 ============== -->
+<div class="stage-head">
+  <div>
+    <div class="v-pill"><span class="dot"></span>v8 · 轻松治愈版</div>
+    <h1 style="margin-top:12px">让寻宠 <span class="accent">变轻</span> 一点</h1>
+    <div class="sub">15 屏完整覆盖。基于 v7 合规改造保留全部功能，仅替换视觉系统。<br>颜色温柔、板块清晰、字体圆润 —— 让焦虑的人在打开 app 时能松一口气。</div>
+  </div>
+</div>
+
+<!-- ============== 主舞台（多设备网格） ============== -->
+<div class="stage">
+
+  <!-- ========== 屏 1 · Feed 信箱 ========== -->
+  <div class="device-wrap">
+    <div class="device-label"><span class="num">01</span>首页 · Feed</div>
+    <div class="device">
+      <div class="status-bar"><span>9:41</span><span style="font-size:11px">📶 5G 🔋</span></div>
+      <div class="screen">
+
+        <div class="nav-region">
+          <div class="nav-row">
+            <div class="city-tag"><span class="pin">📍</span><span>大理</span><span class="arrow">▼</span></div>
+            <div class="search-pill"><span>🔍</span><span>搜品种、地点、特征...</span></div>
+            <div class="icon-btn">🔔<div class="dot"></div></div>
+          </div>
+        </div>
+
+        <div class="filter-region">
+          <div class="filter-row">
+            <div class="chip active">全部</div>
+            <div class="chip"><span class="chip-dot" style="background:var(--apricot)"></span>寻宠</div>
+            <div class="chip"><span class="chip-dot" style="background:var(--mint)"></span>招领</div>
+            <div class="chip"><span class="chip-dot" style="background:var(--plum)"></span>临时照料</div>
+            <div class="chip chip-sort">⏱ 最新</div>
+          </div>
+        </div>
+
+        <div class="scroll-area">
+          <div class="section-header">
+            <span class="title">附近的小朋友</span>
+            <span class="count">· 4</span>
+            <span class="right">查看全部 →</span>
+          </div>
+          <div class="feed-list">
+            <div class="pet-card">
+              <div class="pc-body">
+                <div class="pc-photo ph-orange"><span>🐱</span><div class="status-bubble found">招领</div></div>
+                <div class="pc-info">
+                  <div class="pc-name-row"><span class="pc-name">小橘子</span><span class="breed">· 约 2 岁 · ♀</span></div>
+                  <div class="pc-meta"><span>📍 人民路三月街</span><span class="urgent">⚡ 30 min 前</span></div>
+                  <div class="pc-desc">在咖啡馆门口蹲了一下午，看着像走丢的。亲人，会撒娇，目前在我店里 ☕️</div>
+                </div>
+              </div>
+              <div class="pc-footer">
+                <div class="distance-tag">📍 1.2 km</div>
+                <div class="pc-actions"><span class="pc-action">💬 3</span><span class="pc-action">👀 47</span></div>
+              </div>
+            </div>
+
+            <div class="pet-card">
+              <div class="pc-body">
+                <div class="pc-photo ph-blue"><span>🐱</span><div class="status-bubble lost">寻宠</div></div>
+                <div class="pc-info">
+                  <div class="pc-name-row"><span class="pc-name">胖丁</span><span class="breed">· 英短蓝猫 · ♂ 3 岁</span></div>
+                  <div class="pc-meta"><span>📍 古城北门</span><span class="urgent">⚡ 10 min 前</span></div>
+                  <div class="pc-desc">穿粉色项圈，左耳缺一小块。妈妈非常着急，看到请拍照或留言 🙏</div>
+                </div>
+              </div>
+              <div class="pc-footer">
+                <div class="distance-tag">📍 0.8 km</div>
+                <div class="pc-actions"><span class="pc-action">💬 12</span><span class="pc-action clue">📌 我有线索</span></div>
+              </div>
+            </div>
+
+            <div class="pet-card">
+              <div class="pc-body">
+                <div class="pc-photo ph-cream"><span>🐶</span><div class="status-bubble care">照料</div></div>
+                <div class="pc-info">
+                  <div class="pc-name-row"><span class="pc-name">小白</span><span class="breed">· 比熊 · ♂ 5kg</span></div>
+                  <div class="pc-meta"><span>📍 下关泰安路</span><span class="time">2 hr 前</span></div>
+                  <div class="pc-desc">在小区门口捡到，毛色干净有人养过。我家可以临时照看 2-3 天 🏠</div>
+                </div>
+              </div>
+              <div class="pc-footer">
+                <div class="distance-tag">📍 4.2 km</div>
+                <div class="pc-actions"><span class="pc-action">💬 5</span><span class="pc-action">👀 28</span></div>
+              </div>
+            </div>
+
+            <div class="pet-card" style="opacity:0.55">
+              <div class="pc-body">
+                <div class="pc-photo ph-pink"><span>🐶</span><div class="status-bubble expired">9 天前</div></div>
+                <div class="pc-info">
+                  <div class="pc-name-row"><span class="pc-name">小棕</span><span class="breed">· 棕白色 · 约 6kg</span></div>
+                  <div class="pc-meta"><span>📍 苍山门</span><span class="time">9 days 前</span></div>
+                  <div class="pc-desc">在山脚捡到，比较瘦，已带去打疫苗。希望主人快点出现 💛</div>
+                </div>
+              </div>
+              <div class="pc-footer">
+                <div class="distance-tag" style="background:var(--bg-deeper);color:var(--ink-3)">📍 3.4 km</div>
+                <div class="pc-actions"><span class="pc-action">💬 2</span><span class="pc-action">👀 19</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="fab"></div>
+        <div class="tab-bar">
+          <div class="tab active"><span class="icon">🏠</span><span>首页</span></div>
+          <div class="tab"><span class="icon">🗺️</span><span>地图</span></div>
+          <div class="tab spacer">·</div>
+          <div class="tab"><span class="icon">💬</span><span>消息</span></div>
+          <div class="tab"><span class="icon">🐾</span><span>我的</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== 屏 2 · Map ========== -->
+  <div class="device-wrap">
+    <div class="device-label"><span class="num">02</span>地图 · Map</div>
+    <div class="device">
+      <div class="status-bar"><span>9:41</span><span style="font-size:11px">📶 5G 🔋</span></div>
+      <div class="screen">
+        <div class="map-container">
+          <div class="map-grid"></div>
+          <div class="map-road" style="top:30%;left:0;right:0;height:8px"></div>
+          <div class="map-road" style="top:60%;left:0;right:0;height:5px"></div>
+          <div class="map-road" style="left:40%;top:0;bottom:0;width:6px"></div>
+          <div class="map-road" style="left:70%;top:0;bottom:0;width:4px"></div>
+
+          <div class="map-view-toggle">
+            <div class="vt">列表</div>
+            <div class="vt active">地图</div>
+          </div>
+          <div class="map-precision-hint">🛡 位置精度模糊处理至 500m 以保护隐私</div>
+
+          <div class="map-label" style="top:21%;left:15%">古城北门</div>
+          <div class="map-pin lost" style="top:30%;left:22%"><div class="pin-head"><span>🐱</span></div></div>
+          <div class="map-label" style="top:38%;left:42%">人民路</div>
+          <div class="map-pin found" style="top:47%;left:46%"><div class="pin-head"><span>🐱</span></div></div>
+          <div class="map-label" style="top:54%;left:62%">下关</div>
+          <div class="map-pin care" style="top:64%;left:68%"><div class="pin-head"><span>🐶</span></div></div>
+          <div class="map-pin lost" style="top:25%;left:78%"><div class="pin-head"><span>🐶</span></div></div>
+          <div class="map-label" style="top:18%;left:74%">洱海月</div>
+          <div class="map-pin found" style="top:75%;left:30%"><div class="pin-head"><span>🐶</span></div></div>
+          <div class="map-label" style="top:78%;left:22%">苍山门</div>
+
+          <div class="map-fab">
+            <div class="btn">⊕</div>
+            <div class="btn">⊙</div>
+            <div class="btn">≡</div>
+          </div>
+
+          <div class="map-sheet">
+            <div class="sheet-handle"></div>
+            <div class="sheet-header">
+              <div class="sheet-title">可见区域 · 5 条</div>
+              <span class="sheet-meta">筛选 ›</span>
+            </div>
+            <div class="sheet-content">
+              <div class="sheet-card">
+                <div class="sheet-thumb ph-orange">🐱</div>
+                <div><div class="sheet-pet-name">小橘子 · 招领</div><div class="sheet-pet-meta">人民路三月街 · 1.2 km</div></div>
+              </div>
+              <div class="sheet-card">
+                <div class="sheet-thumb ph-blue">🐱</div>
+                <div><div class="sheet-pet-name">胖丁 · 寻宠</div><div class="sheet-pet-meta">古城北门 · 0.8 km</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="tab-bar">
+          <div class="tab"><span class="icon">🏠</span><span>首页</span></div>
+          <div class="tab active"><span class="icon">🗺️</span><span>地图</span></div>
+          <div class="tab spacer">·</div>
+          <div class="tab"><span class="icon">💬</span><span>消息</span></div>
+          <div class="tab"><span class="icon">🐾</span><span>我的</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== 屏 3 · Detail Lost ========== -->
+  <div class="device-wrap">
+    <div class="device-label"><span class="num">03</span>寻宠详情 · Detail Lost</div>
+    <div class="device">
+      <div class="status-bar"><span>9:41</span><span style="font-size:11px">📶 5G 🔋</span></div>
+      <div class="screen">
+        <div class="sub-header">
+          <div class="back-btn">←</div>
+          <div class="sub-title">寻宠详情</div>
+          <div class="sub-icon">↗</div>
+        </div>
+        <div class="detail-scroll">
+          <div class="hero-photo ph-blue">
+            <span>🐱</span>
+            <div class="hero-status lost">寻宠中</div>
+            <div class="hero-time">第 6 小时</div>
+          </div>
+          <div class="detail-body">
+            <div class="detail-name">胖丁</div>
+            <div class="detail-subtitle">英短蓝猫 · 公 · 3 岁 · 戴粉色项圈</div>
+            <div class="info-grid">
+              <div class="info-cell">
+                <div class="label">Location</div>
+                <div class="value">古城北门</div>
+              </div>
+              <div class="info-cell">
+                <div class="label">Time</div>
+                <div class="value">今日 14:30</div>
+              </div>
+            </div>
+            <div class="section-label">特征描述</div>
+            <div class="desc-card">今天下午带胖丁去人民路咖啡馆，吃完饭出门时它窜出去就不见了。胆小、不会让陌生人碰，听到名字会喵叫一声。看到请尽量拍照不要追 🙏</div>
+            <div class="feature-card">
+              <span class="ic">🔒</span>
+              <div><b>失主已设置「私有特征」用于认领核对</b><br>如果你捡到了相似的猫，点"我捡到了"进入沟通建议。</div>
+            </div>
+            <div class="section-label">线索 <span class="count">· 2 条</span></div>
+            <div class="clue-card">
+              <div class="clue-avatar">陈</div>
+              <div style="flex:1">
+                <div class="clue-author">陈* <span class="clue-badge">✓ 有用</span></div>
+                <div class="clue-meta">📍 古城北门 · 2 hr ago</div>
+                <div class="clue-text">下午 4 点左右在洋人街看到一只蓝灰色英短，戴着粉项圈，往复兴路方向跑了。</div>
+              </div>
+            </div>
+            <div class="clue-card">
+              <div class="clue-avatar">林</div>
+              <div style="flex:1">
+                <div class="clue-author">林*</div>
+                <div class="clue-meta">📍 复兴路 · 1 hr ago</div>
+                <div class="clue-text">我家就在复兴路开客栈，让前台留意一下，今晚监控我看看。</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="action-bar">
+          <div class="btn-secondary">💬 留言</div>
+          <div class="btn-primary">📌 我捡到了</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== 屏 4 · Detail Found ========== -->
+  <div class="device-wrap">
+    <div class="device-label"><span class="num">04</span>招领详情 · Detail Found</div>
+    <div class="device">
+      <div class="status-bar"><span>9:41</span><span style="font-size:11px">📶 5G 🔋</span></div>
+      <div class="screen">
+        <div class="sub-header">
+          <div class="back-btn">←</div>
+          <div class="sub-title">招领详情</div>
+          <div class="sub-icon">↗</div>
+        </div>
+        <div class="detail-scroll">
+          <div class="hero-photo ph-orange">
+            <span>🐱</span>
+            <div class="hero-status found">招领中</div>
+            <div class="hero-time">第 1 小时</div>
+          </div>
+          <div class="detail-body">
+            <div class="detail-name">橘猫，约 2 岁</div>
+            <div class="detail-subtitle">橘色 · ♀ · 戴红色项圈 · 亲人</div>
+            <div class="info-grid">
+              <div class="info-cell">
+                <div class="label">Found at</div>
+                <div class="value">人民路三月街</div>
+              </div>
+              <div class="info-cell">
+                <div class="label">Time</div>
+                <div class="value">今日 09:00</div>
+              </div>
+            </div>
+            <div class="section-label">发现者描述</div>
+            <div class="desc-card">我在人民路开咖啡馆，今早开店时这只橘猫蹲在门口不走，看起来很饿。喂了它一点猫粮，目前在店里看店 😺</div>
+            <div class="feature-card green">
+              <span class="ic">💬</span>
+              <div><b>认领前会拿到一份「沟通建议」</b><br>平台提供与失主沟通的话术和见面建议。<b>核对怎么走由你们自己决定</b>——确认归还时回来打个卡就行。</div>
+            </div>
+          </div>
+        </div>
+        <div class="action-bar">
+          <div class="btn-secondary">💬 直接联系</div>
+          <div class="btn-primary">🏠 这是我家的猫</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== 屏 5 · Publish ========== -->
+  <div class="device-wrap">
+    <div class="device-label"><span class="num">05</span>发布 · Publish</div>
+    <div class="device">
+      <div class="status-bar"><span>9:41</span><span style="font-size:11px">📶 5G 🔋</span></div>
+      <div class="screen">
+        <div class="sub-header">
+          <div class="back-btn">✕</div>
+          <div class="sub-title">发布信息</div>
+          <span class="sub-action">草稿</span>
+        </div>
+        <div class="seg">
+          <div class="seg-item active">🥺 我丢了宠物</div>
+          <div class="seg-item">🤗 我捡到了</div>
+        </div>
+        <div class="scroll-area" style="padding-top:0">
+          <div class="form-section">
+            <div class="form-row" style="padding-bottom:6px">
+              <div class="form-label"><span><span class="req">*</span> 上传照片</span><span style="font-family:var(--font-en)">2 / 9</span></div>
+            </div>
+            <div class="photo-row">
+              <div class="photo-slot filled ph-blue"><span style="font-size:32px">🐱</span><div class="x">×</div></div>
+              <div class="photo-slot filled" style="background:linear-gradient(135deg,#C5D5E6,#94AECF)"><span style="font-size:32px">🐱</span><div class="x">×</div></div>
+              <div class="photo-slot"><span style="font-size:18px">+</span><span>添加</span></div>
+            </div>
+          </div>
+
+          <div class="form-section">
+            <div class="form-row">
+              <div class="form-label"><span class="req">*</span> 宠物类型</div>
+              <div class="pet-types">
+                <div class="pet-type active">🐱 猫</div>
+                <div class="pet-type">🐶 狗</div>
+                <div class="pet-type">🐰 其他</div>
+              </div>
+            </div>
+            <div class="form-row"><div class="form-label">名字 / 昵称</div><input class="form-input" value="胖丁"></div>
+            <div class="form-row"><div class="form-label">品种 / 外观</div><input class="form-input" value="英短蓝猫"></div>
+            <div class="form-row"><div class="form-label">性别 / 年龄</div><div class="form-value"><span>♂ 公 · 3 岁</span><span class="form-arrow">›</span></div></div>
+          </div>
+
+          <div class="form-section">
+            <div class="form-row"><div class="form-label"><span class="req">*</span> 走失地点</div><div class="form-value"><span>📍 古城北门 · 大理</span><span class="form-arrow">地图选 ›</span></div></div>
+            <div class="form-row"><div class="form-label">详细地址</div><input class="form-input" value="北门人民路咖啡馆门口"></div>
+            <div class="form-row"><div class="form-label"><span class="req">*</span> 走失时间</div><div class="form-value"><span>今天 14:30</span><span class="form-arrow">›</span></div></div>
+          </div>
+
+          <div class="form-section">
+            <div class="form-row">
+              <div class="form-label"><span><span class="req">*</span> 公开描述</span><span style="font-family:var(--font-en)">82 / 500</span></div>
+              <textarea class="form-textarea">穿粉色项圈，左耳缺一小块。胆小，不会让陌生人碰，听到名字会喵叫。看到请尽量拍照不要追。</textarea>
+            </div>
+          </div>
+
+          <div class="private-card">
+            <div class="private-card-h">🔒 私有特征（不公开 · 用于认领核对）</div>
+            <div class="private-card-sub">填只有你知道的特征。捡到的人来认领时，你用这个核对，防止冒领。</div>
+            <textarea placeholder="比如：肚皮左下方有一个心形黑斑；叫'胖丁'会立刻喵两声…"></textarea>
+          </div>
+
+          <div class="form-section">
+            <div class="form-row" style="padding-bottom:0"><div class="form-label">联系方式</div></div>
+            <div class="radio-list">
+              <div class="radio-item">
+                <div class="radio-circle selected"></div>
+                <div>
+                  <div class="radio-title">🔒 仅站内消息（推荐）</div>
+                  <div class="radio-sub">保护隐私，所有消息经审核后送达</div>
+                </div>
+              </div>
+              <div class="radio-item">
+                <div class="radio-circle"></div>
+                <div>
+                  <div class="radio-title">📞 虚拟号中转拨打</div>
+                  <div class="radio-sub">隐藏真实号码 · 平台代接通 · 约 0.3 元/分钟</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="compliance-note">
+            <b>🛡 发布须知</b><br>
+            · 内容将经平台审核（通常 1 分钟内）<br>
+            · 禁止「悬赏金 / 感谢金 / 押金 / 路费」等金钱往来<br>
+            · 禁止留微信号 / QQ 号 / 二维码引导平台外联系<br>
+            · 违规内容将被删除，多次违规将封禁账号
+          </div>
+          <div class="terms-note">
+            发布即表示你已阅读并同意 <span class="link">《用户协议》</span> 和 <span class="link">《隐私政策》</span>
+          </div>
+        </div>
+        <div class="action-bar">
+          <div class="btn-secondary">保存草稿</div>
+          <div class="btn-primary">📮 发布</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== 屏 6 · Contact Guide ========== -->
+  <div class="device-wrap">
+    <div class="device-label"><span class="num">06</span>联系建议 · Contact Guide</div>
+    <div class="device">
+      <div class="status-bar"><span>9:41</span><span style="font-size:11px">📶 5G 🔋</span></div>
+      <div class="screen">
+        <div class="sub-header">
+          <div class="back-btn">←</div>
+          <div class="sub-title">联系失主</div>
+          <span class="sub-step">1 / 2</span>
+        </div>
+        <div class="guide-scroll">
+          <div class="guide-hero">
+            <div class="guide-icon">💬</div>
+            <div class="guide-title">联系前的几个建议</div>
+            <div class="guide-sub">下面是帮你和失主顺利完成归还的参考。<br>怎么沟通由你们自己决定。</div>
+          </div>
+          <div class="pet-summary">
+            <div class="pet-summary-thumb ph-orange">🐱</div>
+            <div class="pet-summary-info">
+              <b>橘猫，约 2 岁</b>
+              <div class="pet-summary-meta">招领中 · 人民路三月街 · 30 min 前</div>
+            </div>
+          </div>
+          <div class="info-soft">
+            <b>🔒 失主已设置 3 条「私有特征」</b>
+            <div class="body">见面前让对方主动描述他知道的细节作为初步核对。<b>你不需要填任何东西</b>。</div>
+          </div>
+          <div class="section-label">参考话术 <span class="count">· 点击复制</span></div>
+          <div class="template">
+            <div class="template-text">你好，我可能在<b>人民路三月街</b>捡到了你家的猫。方便描述一下 ta 身上的<b>特别之处</b>吗？</div>
+            <div class="copy-btn">📋 复制</div>
+          </div>
+          <div class="template">
+            <div class="template-text">你能<b>视频展示一下</b> ta 听到名字的反应吗？</div>
+            <div class="copy-btn">📋 复制</div>
+          </div>
+          <div class="template">
+            <div class="template-text">我们约个安全的地点见面吧。方便你带<b>疫苗本和旧照片</b>过来吗？</div>
+            <div class="copy-btn">📋 复制</div>
+          </div>
+          <div class="places-card">
+            <h5>📍 大理推荐安全见面点</h5>
+            <div class="sub">建议公共场所、人多的地方</div>
+            <div class="place-chips">
+              <span class="place-chip">古城北门派出所</span>
+              <span class="place-chip">人民路宠物医院</span>
+              <span class="place-chip">下关24h诊所</span>
+              <span class="place-chip">洋人街咖啡馆</span>
+              <span class="place-chip">苍山门停车场</span>
+            </div>
+          </div>
+          <div class="section-label">见面时建议这样核对</div>
+          <div class="step-block">
+            <div class="step-row"><div class="step-num">1</div><div><b>看宠物对失主的反应</b><div class="sub">真正的失主，宠物通常立刻识别</div></div></div>
+            <div class="step-row"><div class="step-num">2</div><div><b>核对疫苗本 / 旧照片</b><div class="sub">出示与宠物的合影、家里其他场景的旧照片</div></div></div>
+            <div class="step-row"><div class="step-num">3</div><div><b>公共安全地点 · 不要私下转账</b><div class="sub">避免任何"押金 / 验证费 / 路费"等金钱往来</div></div></div>
+          </div>
+          <div class="warn-block"><b>⚠ 如果对方拒绝视频/核对：</b>请立即停止交接，回小程序「争议申诉」。</div>
+        </div>
+        <div class="action-bar">
+          <div class="btn-secondary">取消</div>
+          <div class="btn-primary">已联系上 · 进入归还</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== 屏 7 · Return Checklist ========== -->
+  <div class="device-wrap">
+    <div class="device-label"><span class="num">07</span>归还自检 · Checklist</div>
+    <div class="device">
+      <div class="status-bar"><span>9:41</span><span style="font-size:11px">📶 5G 🔋</span></div>
+      <div class="screen">
+        <div class="sub-header">
+          <div class="back-btn">←</div>
+          <div class="sub-title">归还确认</div>
+          <span class="sub-step">2 / 2</span>
+        </div>
+        <div class="checklist-scroll">
+          <div class="pet-summary">
+            <div class="pet-summary-thumb ph-orange">🐱</div>
+            <div class="pet-summary-info">
+              <b>橘猫，约 2 岁</b>
+              <div class="pet-summary-meta">即将完成归还</div>
+            </div>
+          </div>
+          <div class="check-hint">
+            <b>💡 这是自检清单，不是验证条件</b><br>
+            勾选这些是为了帮你回顾——平台信任你的判断。即使一项都不勾，也可以确认归还。
+          </div>
+          <div class="section-label">建议在确认归还前完成</div>
+          <div class="check-item done">
+            <div class="check-box">✓</div>
+            <div><b>已和失主核对宠物特征</b><div class="sub">线上让对方提供匹配项，或见面时观察宠物反应</div></div>
+          </div>
+          <div class="check-item done">
+            <div class="check-box">✓</div>
+            <div><b>已看过疫苗本 / 旧照片</b><div class="sub">真正的失主通常能轻松出示这些</div></div>
+          </div>
+          <div class="check-item">
+            <div class="check-box"></div>
+            <div><b>在安全的公共地点交接</b><div class="sub">派出所 / 宠物医院 / 咖啡馆 等</div></div>
+          </div>
+          <div class="check-item">
+            <div class="check-box"></div>
+            <div><b>已亲手交付 / 接回宠物本人</b><div class="sub">归还的最终标志</div></div>
+          </div>
+        </div>
+        <div class="action-bar">
+          <div class="btn-secondary">争议申诉</div>
+          <div class="btn-primary">✓ 确认归还</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== 屏 8 · Return Success ========== -->
+  <div class="device-wrap">
+    <div class="device-label"><span class="num">08</span>归还成功 · Success</div>
+    <div class="device">
+      <div class="status-bar"><span>9:41</span><span style="font-size:11px">📶 5G 🔋</span></div>
+      <div class="screen">
+        <div class="success-scroll">
+          <div class="success-hero">
+            <div class="success-circle">
+              <div class="success-check">✓</div>
+            </div>
+            <div class="success-title">小橘子顺利回家了 🎉</div>
+            <div class="success-sub">感谢大理的善意，<br>让这个故事有了温暖的结局。</div>
+          </div>
+          <div class="reward-card">
+            <div class="reward-label">发现者「客栈老板娘」获得</div>
+            <div class="reward-value">+ 6</div>
+            <div class="reward-detail">累计 48 善行值 · 距下一徽章还差 2<br>这是你第 3 次成功归还</div>
+          </div>
+          <div class="cta-card">
+            <div class="cta-icon apricot">💌</div>
+            <div style="flex:1">
+              <div class="cta-title">写一封感谢信</div>
+              <div class="cta-sub">可以点名感谢提供线索的人</div>
+            </div>
+            <div style="color:var(--ink-4);font-size:14px">›</div>
+          </div>
+          <div class="cta-card">
+            <div class="cta-icon honey">⭐</div>
+            <div style="flex:1">
+              <div class="cta-title">为这次救助打分</div>
+              <div class="cta-sub">帮我们改进流程</div>
+            </div>
+            <div style="color:var(--ink-4);font-size:14px">›</div>
+          </div>
+        </div>
+        <div class="action-bar">
+          <div class="btn-secondary">回首页</div>
+          <div class="btn-primary">💌 写感谢信</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== 屏 9 · Thanks Edit ========== -->
+  <div class="device-wrap">
+    <div class="device-label"><span class="num">09</span>感谢信编辑 · Thanks</div>
+    <div class="device">
+      <div class="status-bar"><span>9:41</span><span style="font-size:11px">📶 5G 🔋</span></div>
+      <div class="screen">
+        <div class="sub-header">
+          <div class="back-btn">←</div>
+          <div class="sub-title">写感谢信</div>
+          <span class="sub-action primary">保存</span>
+        </div>
+        <div class="thanks-scroll">
+          <div class="pet-summary">
+            <div class="pet-summary-thumb ph-orange">🐱</div>
+            <div class="pet-summary-info">
+              <b>小橘子 · 已归还 ✓</b>
+              <div class="pet-summary-meta">人民路三月街 · 今天 19:00</div>
+            </div>
+          </div>
+          <div class="thanks-paper">
+            <div class="thanks-greeting">致大理的善意 ——</div>
+            <textarea class="thanks-textarea">今天下午小橘子走丢了，全家都很慌。没想到 30 分钟后就被人在人民路的咖啡馆里发现，又通过陈姐姐看到的线索一路顺利接回。
+
+感谢大理这座小城里所有善意的人 🙏
+
+—— 来自小橘子的家人</textarea>
+          </div>
+          <div class="section-label">点名感谢 <span class="count">· 最多 3 人</span></div>
+          <div class="nominee-list">
+            <div class="nominee-row selected">
+              <div class="nominee-check">✓</div>
+              <div>
+                <div class="nominee-name">客栈老板娘</div>
+                <div class="nominee-contrib">收留宠物 · 等待主人</div>
+              </div>
+              <div class="nominee-points">+1</div>
+            </div>
+            <div class="nominee-row selected">
+              <div class="nominee-check">✓</div>
+              <div>
+                <div class="nominee-name">陈*</div>
+                <div class="nominee-contrib">提供线索 · 复兴路目击</div>
+              </div>
+              <div class="nominee-points">+1</div>
+            </div>
+            <div class="nominee-row">
+              <div class="nominee-check"></div>
+              <div>
+                <div class="nominee-name">林*</div>
+                <div class="nominee-contrib">客栈监控帮看</div>
+              </div>
+              <div class="nominee-points">+1</div>
+            </div>
+          </div>
+          <div class="toggle-row">
+            <div class="toggle-label">公开发布到「善意月报」</div>
+            <div class="toggle"></div>
+          </div>
+        </div>
+        <div class="action-bar">
+          <div class="btn-secondary">保存草稿</div>
+          <div class="btn-primary">📮 寄出</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== 屏 10 · Messages ========== -->
+  <div class="device-wrap">
+    <div class="device-label"><span class="num">10</span>消息列表 · Messages</div>
+    <div class="device">
+      <div class="status-bar"><span>9:41</span><span style="font-size:11px">📶 5G 🔋</span></div>
+      <div class="screen">
+        <div class="sub-header">
+          <div class="back-btn">←</div>
+          <div class="sub-title">消息</div>
+          <div class="sub-icon">⚙</div>
+        </div>
+        <div class="msg-list">
+          <div class="msg-row">
+            <div class="msg-avatar ph-orange">🐱</div>
+            <div class="msg-body">
+              <div class="msg-row-head">
+                <span class="msg-name">客栈老板娘</span>
+                <span class="msg-time">17:24</span>
+              </div>
+              <div class="msg-preview">好的我现在过来，您能视频先确认一下吗？</div>
+              <div class="msg-context">关于 · 橘猫 招领</div>
+            </div>
+            <div class="msg-unread">2</div>
+          </div>
+          <div class="msg-row">
+            <div class="msg-avatar system">系</div>
+            <div class="msg-body">
+              <div class="msg-row-head">
+                <span class="msg-name">系统通知</span>
+                <span class="msg-time">15:10</span>
+              </div>
+              <div class="msg-preview">陈* 的线索已被标记为有用，ta 获得 +1 善行值</div>
+            </div>
+          </div>
+          <div class="msg-row">
+            <div class="msg-avatar ph-blue">🐱</div>
+            <div class="msg-body">
+              <div class="msg-row-head">
+                <span class="msg-name">陈*</span>
+                <span class="msg-time">14:50</span>
+              </div>
+              <div class="msg-preview">在洋人街又看到那只猫了，往复兴路跑了</div>
+              <div class="msg-context">关于 · 胖丁 寻宠</div>
+            </div>
+          </div>
+          <div class="msg-row">
+            <div class="msg-avatar system">系</div>
+            <div class="msg-body">
+              <div class="msg-row-head">
+                <span class="msg-name">系统通知</span>
+                <span class="msg-time">昨天</span>
+              </div>
+              <div class="msg-preview">📬 你有 2 条新的线索回复</div>
+            </div>
+          </div>
+          <div class="msg-row">
+            <div class="msg-avatar ph-cream">🐶</div>
+            <div class="msg-body">
+              <div class="msg-row-head">
+                <span class="msg-name">王*</span>
+                <span class="msg-time">3 天前</span>
+              </div>
+              <div class="msg-preview">辛苦你了，已经把小黑接回家。回头一定请你喝茶</div>
+              <div class="msg-context">关于 · 小黑 已归还</div>
+            </div>
+          </div>
+        </div>
+        <div class="tab-bar">
+          <div class="tab"><span class="icon">🏠</span><span>首页</span></div>
+          <div class="tab"><span class="icon">🗺️</span><span>地图</span></div>
+          <div class="tab spacer">·</div>
+          <div class="tab active"><span class="icon">💬</span><span>消息</span></div>
+          <div class="tab"><span class="icon">🐾</span><span>我的</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== 屏 11 · Chat ========== -->
+  <div class="device-wrap">
+    <div class="device-label"><span class="num">11</span>聊天 · Chat</div>
+    <div class="device">
+      <div class="status-bar"><span>9:41</span><span style="font-size:11px">📶 5G 🔋</span></div>
+      <div class="screen">
+        <div class="sub-header">
+          <div class="back-btn">←</div>
+          <div class="sub-title">客栈老板娘</div>
+          <div class="sub-icon">⋯</div>
+        </div>
+        <div class="chat-pet">
+          <div class="chat-pet-thumb ph-orange">🐱</div>
+          <div style="flex:1">
+            <div class="chat-pet-name">橘猫，约 2 岁</div>
+            <div class="chat-pet-meta">人民路三月街</div>
+          </div>
+          <div class="chat-pet-status">招领</div>
+        </div>
+        <div class="chat-msgs">
+          <div class="chat-time">今天 17:00</div>
+          <div class="chat-msg them">
+            <div class="chat-avatar ph-orange">🐱</div>
+            <div class="chat-bubble">你好，我可能在<b>人民路三月街</b>捡到了你家的猫。方便描述一下 ta 身上的<b>特别之处</b>吗？</div>
+          </div>
+          <div class="chat-msg me">
+            <div class="chat-avatar" style="background:var(--apricot-soft)">😊</div>
+            <div class="chat-bubble">你好！是橘猫吗？我家果儿脖子右侧有一块白色心形斑点，叫它"果儿"会立刻回头。</div>
+          </div>
+          <div class="chat-time">17:15</div>
+          <div class="chat-msg them">
+            <div class="chat-avatar ph-orange">🐱</div>
+            <div class="chat-bubble">对！是你家的没错。心形斑点完全对上，刚试着叫了"果儿"她立刻看过来了 😺</div>
+          </div>
+          <div class="chat-msg me">
+            <div class="chat-avatar" style="background:var(--apricot-soft)">😊</div>
+            <div class="chat-bubble">是她！我马上过来！您店具体在哪个位置？</div>
+          </div>
+          <div class="chat-time">17:24</div>
+          <div class="chat-msg them">
+            <div class="chat-avatar ph-orange">🐱</div>
+            <div class="chat-bubble">人民路 39 号「白桃」咖啡馆，门口绿色门帘。您能视频先确认一下吗？</div>
+          </div>
+        </div>
+        <div class="chat-audit-bar">🛡 消息经审核后送达 · 含微信号 / 电话 / 二维码将被过滤</div>
+        <div class="chat-input-bar">
+          <div class="chat-attach">📷</div>
+          <div class="chat-attach">📍</div>
+          <div class="chat-input">输入消息...</div>
+          <div class="chat-attach chat-send">↑</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== 屏 12 · Profile ========== -->
+  <div class="device-wrap">
+    <div class="device-label"><span class="num">12</span>个人中心 · Profile</div>
+    <div class="device">
+      <div class="status-bar"><span>9:41</span><span style="font-size:11px">📶 5G 🔋</span></div>
+      <div class="screen">
+        <div class="profile-scroll">
+          <div class="profile-hero">
+            <div class="profile-user">
+              <div class="profile-avatar">客</div>
+              <div style="flex:1">
+                <div class="profile-name">客栈老板娘 <span class="level-badge">⭐ 守护者</span></div>
+                <div class="profile-handle">大理古城 · JOINED 23 days</div>
+              </div>
+            </div>
+            <div class="points-card">
+              <div class="points-header">
+                <span class="points-label">🐾 当前善行值</span>
+                <span class="points-link">详情 ›</span>
+              </div>
+              <div class="points-value">48</div>
+              <div class="points-meta">累计 53 · 距下一徽章还差 2</div>
+              <div class="points-divider"></div>
+              <div class="points-stats">
+                <div class="stat-cell"><div class="stat-num">3</div><div class="stat-label">归还</div></div>
+                <div class="stat-cell"><div class="stat-num">8</div><div class="stat-label">线索</div></div>
+                <div class="stat-cell"><div class="stat-num">3</div><div class="stat-label">照料</div></div>
+                <div class="stat-cell"><div class="stat-num">5</div><div class="stat-label">感谢</div></div>
+              </div>
+            </div>
+          </div>
+          <div class="profile-content">
+            <div class="quick-actions">
+              <div class="quick-action"><div class="qa-icon apricot">📝</div><div class="qa-label">我的发布</div></div>
+              <div class="quick-action"><div class="qa-icon mint">📌</div><div class="qa-label">我的线索</div></div>
+              <div class="quick-action"><div class="qa-icon honey">💌</div><div class="qa-label">感谢信</div></div>
+              <div class="quick-action"><div class="qa-icon plum">🏅</div><div class="qa-label">徽章墙</div></div>
+            </div>
+            <div class="menu-section">
+              <div class="menu-row"><span class="menu-icon">🐾</span><span class="menu-label">善行值流水</span><span class="menu-meta">最近 +6</span><span class="menu-arrow">›</span></div>
+              <div class="menu-row"><span class="menu-icon">🏠</span><span class="menu-label">我可以临时照料</span><span class="menu-meta ok">已开启</span><span class="menu-arrow">›</span></div>
+              <div class="menu-row"><span class="menu-icon">🔔</span><span class="menu-label">订阅消息设置</span><span class="menu-arrow">›</span></div>
+            </div>
+            <div class="menu-section">
+              <div class="menu-row"><span class="menu-icon">🛡</span><span class="menu-label">安全交接指南</span><span class="menu-arrow">›</span></div>
+              <div class="menu-row"><span class="menu-icon">⚠</span><span class="menu-label">争议申诉</span><span class="menu-arrow">›</span></div>
+              <div class="menu-row"><span class="menu-icon">💡</span><span class="menu-label">建议反馈</span><span class="menu-arrow">›</span></div>
+            </div>
+            <div class="menu-section">
+              <div class="menu-row"><span class="menu-icon">📄</span><span class="menu-label">用户协议</span><span class="menu-arrow">›</span></div>
+              <div class="menu-row"><span class="menu-icon">🔐</span><span class="menu-label">隐私政策</span><span class="menu-arrow">›</span></div>
+              <div class="menu-row"><span class="menu-icon">🆘</span><span class="menu-label">联系客服</span><span class="menu-meta">工作日 9-18</span><span class="menu-arrow">›</span></div>
+              <div class="menu-row"><span class="menu-icon">🚪</span><span class="menu-label">注销账号</span><span class="menu-arrow">›</span></div>
+            </div>
+            <div class="menu-section">
+              <div class="menu-row"><span class="menu-icon">ⓘ</span><span class="menu-label">关于</span><span class="menu-meta">v1.0.0</span><span class="menu-arrow">›</span></div>
+            </div>
+            <div class="footer-info">
+              ICP 备案号 XXXXX · 公安备案 XXXXX<br>
+              主体 · XX 个体工商户
+            </div>
+          </div>
+        </div>
+        <div class="tab-bar">
+          <div class="tab"><span class="icon">🏠</span><span>首页</span></div>
+          <div class="tab"><span class="icon">🗺️</span><span>地图</span></div>
+          <div class="tab spacer">·</div>
+          <div class="tab"><span class="icon">💬</span><span>消息</span></div>
+          <div class="tab active"><span class="icon">🐾</span><span>我的</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== 屏 13 · Points History ========== -->
+  <div class="device-wrap">
+    <div class="device-label"><span class="num">13</span>善行值流水 · Points</div>
+    <div class="device">
+      <div class="status-bar"><span>9:41</span><span style="font-size:11px">📶 5G 🔋</span></div>
+      <div class="screen">
+        <div class="sub-header">
+          <div class="back-btn">←</div>
+          <div class="sub-title">善行值流水</div>
+          <div class="sub-icon">ⓘ</div>
+        </div>
+        <div class="points-screen">
+          <div class="points-banner">
+            <div class="ph-label">🐾 当前 / 累计</div>
+            <div class="ph-value">48 <span class="small">/ 53</span></div>
+            <div class="ph-meta">距离下一徽章还差 2 · 已贡献 19 次有效行为</div>
+          </div>
+          <div class="compliance-strip">
+            <b>ℹ 说明</b> 善行值仅为荣誉激励，<b>不可兑换现金、商品或服务</b>。仅用于展示等级与徽章。
+          </div>
+          <div class="points-filter">
+            <div class="ph-filter active">全部</div>
+            <div class="ph-filter">归还</div>
+            <div class="ph-filter">线索</div>
+            <div class="ph-filter">照料</div>
+            <div class="ph-filter">感谢</div>
+          </div>
+          <div class="tx-date-label">今天</div>
+          <div class="point-tx">
+            <div class="tx-icon return">🏠</div>
+            <div class="tx-body">
+              <div class="tx-title">成功归还小橘子</div>
+              <div class="tx-meta">人民路三月街 · 19:00</div>
+            </div>
+            <div class="tx-amount">+6</div>
+          </div>
+          <div class="point-tx">
+            <div class="tx-icon thanks">💌</div>
+            <div class="tx-body">
+              <div class="tx-title">收到「橘猫家」的感谢信</div>
+              <div class="tx-meta">"感谢大理这座小城..." · 19:08</div>
+            </div>
+            <div class="tx-amount">+1</div>
+          </div>
+          <div class="tx-date-label">昨天</div>
+          <div class="point-tx">
+            <div class="tx-icon clue">📌</div>
+            <div class="tx-body">
+              <div class="tx-title">线索被标记为有用 · 寻找小黑</div>
+              <div class="tx-meta">洱海月湿地 · 16:30</div>
+            </div>
+            <div class="tx-amount">+1</div>
+          </div>
+          <div class="tx-date-label">本周</div>
+          <div class="point-tx">
+            <div class="tx-icon care">🏠</div>
+            <div class="tx-body">
+              <div class="tx-title">临时照料完成 · 白色比熊</div>
+              <div class="tx-meta">下关泰安路 · 5 天前</div>
+            </div>
+            <div class="tx-amount">+2</div>
+          </div>
+          <div class="point-tx">
+            <div class="tx-icon return">🏠</div>
+            <div class="tx-body">
+              <div class="tx-title">成功归还黑色拉布拉多</div>
+              <div class="tx-meta">洱海月湿地 · 5 天前</div>
+            </div>
+            <div class="tx-amount">+6</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== 屏 14 · My Posts ========== -->
+  <div class="device-wrap">
+    <div class="device-label"><span class="num">14</span>我的发布 · My Posts</div>
+    <div class="device">
+      <div class="status-bar"><span>9:41</span><span style="font-size:11px">📶 5G 🔋</span></div>
+      <div class="screen">
+        <div class="sub-header">
+          <div class="back-btn">←</div>
+          <div class="sub-title">我的发布</div>
+          <div class="sub-icon">+</div>
+        </div>
+        <div class="mp-tabs">
+          <div class="mp-tab active">进行中 · 2</div>
+          <div class="mp-tab">已完成 · 5</div>
+          <div class="mp-tab">草稿 · 1</div>
+        </div>
+        <div class="mp-list">
+          <div class="mp-card">
+            <div class="pc-body">
+              <div class="pc-photo ph-orange"><span>🐱</span><div class="status-bubble found">招领</div></div>
+              <div class="pc-info">
+                <div class="pc-name-row"><span class="pc-name">小橘子</span><span class="breed">· 约 2 岁</span></div>
+                <div class="pc-meta"><span>📍 人民路三月街</span><span class="time">30 min 前</span></div>
+                <div class="pc-desc">在咖啡馆门口蹲了一下午...</div>
+                <div style="font-family:var(--font-en);font-size:10.5px;color:var(--ink-4);margin-top:5px;font-weight:600">👀 47 · 💬 3</div>
+              </div>
+            </div>
+            <div class="mp-actions">
+              <div class="mp-action primary">✓ 标记已归还</div>
+              <div class="mp-action">编辑</div>
+              <div class="mp-action">分享</div>
+            </div>
+          </div>
+          <div class="mp-card">
+            <div class="pc-body">
+              <div class="pc-photo ph-cream"><span>🐶</span><div class="status-bubble care">照料</div></div>
+              <div class="pc-info">
+                <div class="pc-name-row"><span class="pc-name">小白</span><span class="breed">· 比熊 · ♂</span></div>
+                <div class="pc-meta"><span>📍 下关泰安路</span><span class="time">2 hr 前</span></div>
+                <div class="pc-desc">在小区门口捡到，毛色干净有人养过...</div>
+                <div style="font-family:var(--font-en);font-size:10.5px;color:var(--ink-4);margin-top:5px;font-weight:600">👀 28 · 💬 5 · 临时照料中</div>
+              </div>
+            </div>
+            <div class="mp-actions">
+              <div class="mp-action primary">✓ 标记已归还</div>
+              <div class="mp-action">延长照料</div>
+              <div class="mp-action">编辑</div>
+            </div>
+          </div>
+          <div class="mp-note">🛡 编辑发布内容后，将重新进入审核队列</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== 屏 15 · Dispute ========== -->
+  <div class="device-wrap">
+    <div class="device-label"><span class="num">15</span>争议申诉 · Dispute</div>
+    <div class="device">
+      <div class="status-bar"><span>9:41</span><span style="font-size:11px">📶 5G 🔋</span></div>
+      <div class="screen">
+        <div class="sub-header">
+          <div class="back-btn">←</div>
+          <div class="sub-title">争议申诉</div>
+          <div class="sub-icon">ⓘ</div>
+        </div>
+        <div class="dispute-scroll">
+          <div class="dispute-hero">
+            <div class="dispute-icon">⚠</div>
+            <div class="guide-title">遇到了什么情况？</div>
+            <div class="guide-sub" style="margin-top:6px;color:var(--ink-3)">平台审核员将在 24 小时内回复，请如实描述并附上证据</div>
+          </div>
+          <div class="section-label">争议类型</div>
+          <div class="dispute-types">
+            <div class="dispute-type selected">🚨 怀疑冒领</div>
+            <div class="dispute-type">😞 索要财物</div>
+            <div class="dispute-type">😨 威胁/恐吓</div>
+            <div class="dispute-type">⏱ 对方失联</div>
+          </div>
+          <div class="section-label">相关宠物 / 帖子</div>
+          <div class="dispute-block">
+            <div class="form-value"><span>橘猫 招领 · 人民路三月街</span><span class="form-arrow">›</span></div>
+          </div>
+          <div class="section-label">详细描述</div>
+          <div class="dispute-block">
+            <textarea class="form-textarea" style="min-height:90px" placeholder="请描述对方的可疑行为、沟通过程中的疑点等。平台审核员会基于你的描述 + 对话记录进行调查"></textarea>
+          </div>
+          <div class="section-label">证据（聊天截图 / 现场照片）</div>
+          <div class="dispute-block">
+            <div class="photo-row" style="padding:0">
+              <div class="photo-slot"><span style="font-size:18px">+</span><span>添加</span></div>
+              <div class="photo-slot"><span style="font-size:18px">+</span><span>添加</span></div>
+            </div>
+          </div>
+          <div class="warn-block">
+            <b>🔒 我们承诺：</b>所有申诉将由平台审核员保密处理，证据材料留存 6 个月。冒领核实后将永久封号处理。
+          </div>
+        </div>
+        <div class="action-bar">
+          <div class="btn-secondary">取消</div>
+          <div class="btn-primary">提交申诉</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== 屏 0 · Privacy Modal（启动时） ========== -->
+  <div class="device-wrap">
+    <div class="device-label"><span class="num">00</span>启动 · 隐私协议 Modal</div>
+    <div class="device">
+      <div class="status-bar"><span>9:41</span><span style="font-size:11px">📶 5G 🔋</span></div>
+      <div class="screen">
+
+        <div class="nav-region">
+          <div class="nav-row">
+            <div class="city-tag"><span class="pin">📍</span><span>大理</span><span class="arrow">▼</span></div>
+            <div class="search-pill"><span>🔍</span><span>搜品种、地点、特征...</span></div>
+            <div class="icon-btn">🔔<div class="dot"></div></div>
+          </div>
+        </div>
+        <div class="filter-region">
+          <div class="filter-row">
+            <div class="chip active">全部</div>
+            <div class="chip"><span class="chip-dot" style="background:var(--apricot)"></span>寻宠</div>
+            <div class="chip"><span class="chip-dot" style="background:var(--mint)"></span>招领</div>
+            <div class="chip chip-sort">⏱ 最新</div>
+          </div>
+        </div>
+
+        <div class="privacy-modal">
+          <div class="privacy-box">
+            <div class="privacy-head">
+              <div class="privacy-head-icon">🐾</div>
+              <div class="privacy-title">欢迎使用寻宠 · 大理</div>
+              <div class="privacy-sub">使用前请阅读《用户协议》与《隐私政策》</div>
+            </div>
+            <div class="privacy-list">
+              <b style="display:block;margin-bottom:6px">我们会收集和使用以下信息：</b>
+              <div class="privacy-item"><span class="privacy-item-ic">①</span><span><b>位置</b> · 用于发布走失/招领、附近匹配（精度模糊至 500m）</span></div>
+              <div class="privacy-item"><span class="privacy-item-ic">②</span><span><b>照片</b> · 用于宠物识别匹配，将经平台审核</span></div>
+              <div class="privacy-item"><span class="privacy-item-ic">③</span><span><b>手机号</b> · 加密存储，仅通过虚拟号供他人联系</span></div>
+              <div class="privacy-item"><span class="privacy-item-ic">④</span><span><b>聊天内容</b> · 经审核送达，留存 6 个月以满足监管</span></div>
+              <div class="privacy-list-footer">
+                你可随时在「我的 → 注销账号」中删除所有个人数据。
+              </div>
+            </div>
+            <div class="privacy-agree">
+              <div class="privacy-check">✓</div>
+              <div>我已阅读并同意 <span class="privacy-link">《用户协议》</span> 和 <span class="privacy-link">《隐私政策》</span></div>
+            </div>
+            <div class="privacy-actions">
+              <div class="btn-secondary" style="flex:1">不同意</div>
+              <div class="btn-primary" style="flex:1.6">同意并继续</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ============== 底部注释 ============== -->
+<div class="annotations">
+  <div class="annot-section">总览 · OVERVIEW</div>
+  <h3>v8 <span class="accent">·</span> 15 屏 + 隐私协议 Modal</h3>
+  <p>基于 v8.2 草稿确定的"轻松治愈版"视觉系统，全屏铺开。<br>严格按原型 v5 / v7 功能，仅替换视觉。无动效（本轮聚焦视觉），后续可叠加。</p>
+
+  <div class="annot-section">屏幕清单 · SCREENS</div>
+  <ul>
+    <li class="annot-li"><span class="annot-tag">8 屏</span><span><b>主流程</b> · 首页 / 地图 / 寻宠详情 / 招领详情 / 发布 / 联系建议 / 归还自检 / 归还成功</span></li>
+    <li class="annot-li"><span class="annot-tag">5 屏</span><span><b>用户辅助</b> · 感谢信 / 消息列表 / 聊天 / 个人中心 / 善行值流水</span></li>
+    <li class="annot-li"><span class="annot-tag">2 屏</span><span><b>管理辅助</b> · 我的发布 / 争议申诉</span></li>
+    <li class="annot-li"><span class="annot-tag">+1</span><span><b>启动 Modal</b> · 隐私协议确认</span></li>
+    <li class="annot-li"><span class="annot-tag" style="background:var(--apricot-soft);color:var(--apricot-deep)">独立</span><span><b>admin web 后台</b> · 见 <code style="background:var(--bg);padding:1px 6px;border-radius:4px">admin-web-prototype.html</code>（不在小程序内）</span></li>
+  </ul>
+
+  <div class="annot-section">合规改造（v7 已完成 · v8 全部保留）· COMPLIANCE</div>
+  <ul>
+    <li class="annot-li"><span class="annot-tag">P0</span><span><b>admin 屏剥离</b>到独立 web 后台</span></li>
+    <li class="annot-li"><span class="annot-tag">P0</span><span><b>联系方式</b>仅站内消息 / 虚拟号中转，禁止明文手机号</span></li>
+    <li class="annot-li"><span class="annot-tag">P0</span><span><b>发布须知</b>明示禁止悬赏金 / 感谢金 / 微信号引导</span></li>
+    <li class="annot-li"><span class="annot-tag">P0</span><span><b>UGC 三审接入点</b>publish / chat / thanks / dispute</span></li>
+    <li class="annot-li"><span class="annot-tag">P1</span><span><b>个人中心</b>用户协议 / 隐私政策 / 客服 / 注销 + ICP 备案</span></li>
+    <li class="annot-li"><span class="annot-tag">P1</span><span><b>位置精度</b>模糊至 500m + geohash 加密存储</span></li>
+    <li class="annot-li"><span class="annot-tag">P1</span><span><b>善行值</b>顶部明示不可兑换现金 / 商品</span></li>
+    <li class="annot-li"><span class="annot-tag">P1</span><span><b>启动时</b>隐私协议确认 Modal · 信息收集明示</span></li>
+  </ul>
+
+  <div class="annot-section">设计系统 · DESIGN</div>
+  <ul>
+    <li class="annot-li"><span class="annot-tag">色彩</span><span><b>杏橘 #FF8552</b> + <b>薄荷 #5BB89F</b> + <b>蜜糖 #F0AC32</b> + <b>紫粉 #A672D4</b>（柔和不刺眼，4 色对应 4 种状态）</span></li>
+    <li class="annot-li"><span class="annot-tag">底色</span><span><b>奶米 #F0E9D8</b>（屏幕底）+ <b>纯白 #FFFFFF</b>（卡片）— L0 / L1 / L2 三层视觉层级</span></li>
+    <li class="annot-li"><span class="annot-tag">字体</span><span><b>苹方 / PingFang SC</b>（中文圆润）+ <b>Manrope</b>（英文/数字 italic 高亮）</span></li>
+    <li class="annot-li"><span class="annot-tag">分隔</span><span>顶部白底 + hairline · Section header 锚点 · 卡片双层阴影 · 圆角胶囊 / 大圆角</span></li>
+    <li class="annot-li"><span class="annot-tag">动效</span><span>本轮<b>不做</b>，后续叠加（悬浮 / 加载 / 印章下盖等）</span></li>
+  </ul>
+
+  <div class="annot-section">下次回来调整时 · NEXT ROUND</div>
+  <p>· 动效系统（卡片悬浮、加载骨架、状态切换）<br>· 暗色模式（如需）<br>· 数据真实化 + i18n 文案<br>· 详细页 / 发布页的二级状态（如审核中、待重新发布）<br>· 善行值徽章墙、感谢信集等次级页面</p>
+
+  <div class="annot-section">导航 · DEBUG NAV</div>
+  <div class="nav-grid">
+    <div class="nav-jump" onclick="document.querySelectorAll('.device-wrap')[0]?.scrollIntoView({behavior:'smooth'})">01 首页</div>
+    <div class="nav-jump" onclick="document.querySelectorAll('.device-wrap')[1]?.scrollIntoView({behavior:'smooth'})">02 地图</div>
+    <div class="nav-jump" onclick="document.querySelectorAll('.device-wrap')[2]?.scrollIntoView({behavior:'smooth'})">03 寻宠详情</div>
+    <div class="nav-jump" onclick="document.querySelectorAll('.device-wrap')[3]?.scrollIntoView({behavior:'smooth'})">04 招领详情</div>
+    <div class="nav-jump" onclick="document.querySelectorAll('.device-wrap')[4]?.scrollIntoView({behavior:'smooth'})">05 发布</div>
+    <div class="nav-jump" onclick="document.querySelectorAll('.device-wrap')[5]?.scrollIntoView({behavior:'smooth'})">06 联系建议</div>
+    <div class="nav-jump" onclick="document.querySelectorAll('.device-wrap')[6]?.scrollIntoView({behavior:'smooth'})">07 归还自检</div>
+    <div class="nav-jump" onclick="document.querySelectorAll('.device-wrap')[7]?.scrollIntoView({behavior:'smooth'})">08 归还成功</div>
+    <div class="nav-jump" onclick="document.querySelectorAll('.device-wrap')[8]?.scrollIntoView({behavior:'smooth'})">09 感谢信</div>
+    <div class="nav-jump" onclick="document.querySelectorAll('.device-wrap')[9]?.scrollIntoView({behavior:'smooth'})">10 消息列表</div>
+    <div class="nav-jump" onclick="document.querySelectorAll('.device-wrap')[10]?.scrollIntoView({behavior:'smooth'})">11 聊天</div>
+    <div class="nav-jump" onclick="document.querySelectorAll('.device-wrap')[11]?.scrollIntoView({behavior:'smooth'})">12 个人中心</div>
+    <div class="nav-jump" onclick="document.querySelectorAll('.device-wrap')[12]?.scrollIntoView({behavior:'smooth'})">13 善行值流水</div>
+    <div class="nav-jump" onclick="document.querySelectorAll('.device-wrap')[13]?.scrollIntoView({behavior:'smooth'})">14 我的发布</div>
+    <div class="nav-jump" onclick="document.querySelectorAll('.device-wrap')[14]?.scrollIntoView({behavior:'smooth'})">15 争议申诉</div>
+    <div class="nav-jump" onclick="document.querySelectorAll('.device-wrap')[15]?.scrollIntoView({behavior:'smooth'})">00 隐私 Modal</div>
+  </div>
+</div>
+
+</body>
+</html>
