@@ -2023,57 +2023,19 @@
           <div class="step-row"><div class="step-num">1</div><div><b>看宠物对失主的反应</b><div class="sub">真正的失主，宠物通常立刻识别</div></div></div>
           <div class="step-row"><div class="step-num">2</div><div><b>核对疫苗本 / 旧照片</b><div class="sub">出示与宠物的合影、家里其他场景的旧照片</div></div></div>
           <div class="step-row"><div class="step-num">3</div><div><b>公共安全地点 · 不要私下转账</b><div class="sub">避免任何"押金 / 验证费 / 路费"等金钱往来</div></div></div>
+          <div class="step-row"><div class="step-num">4</div><div><b>亲手交付 / 接回宠物本人</b><div class="sub">归还的最终标志</div></div></div>
         </div>
         <div class="warn-block"><b>⚠ 如果对方拒绝视频/核对：</b>请立即停止交接，回小程序「争议申诉」。</div>
       </div>
       <div class="action-bar">
-        <div class="btn-secondary" onclick="goBack()">取消</div>
-        <div class="btn-primary" onclick="showScreen('return-checklist')">已联系上 · 进入归还</div>
+        <div class="btn-secondary" onclick="showScreen('dispute')">争议申诉</div>
+        <div class="btn-primary" onclick="if(confirm('确认已完成归还？'))showScreen('return-success')">✓ 已完成归还</div>
       </div>
     </div>
 
-    <!-- ===== 屏 7 · Return Checklist ===== -->
-    <div class="screen" data-screen="return-checklist">
-      <div class="sub-header">
-        <div class="back-btn" onclick="goBack()">←</div>
-        <div class="sub-title">归还确认</div>
-        <span class="sub-step">2 / 2</span>
-      </div>
-      <div class="checklist-scroll">
-        <div class="pet-summary">
-          <div class="pet-summary-thumb ph-orange">🐱</div>
-          <div class="pet-summary-info">
-            <b>橘猫，约 2 岁</b>
-            <div class="pet-summary-meta">即将完成归还</div>
-          </div>
-        </div>
-        <div class="check-hint">
-          <b>💡 这是自检清单，不是验证条件</b><br>
-          勾选这些是为了帮你回顾——平台信任你的判断。即使一项都不勾，也可以确认归还。
-        </div>
-        <div class="section-label">建议在确认归还前完成</div>
-        <div class="check-item done" onclick="this.classList.toggle('done')">
-          <div class="check-box">✓</div>
-          <div><b>已和失主核对宠物特征</b><div class="sub">线上让对方提供匹配项，或见面时观察宠物反应</div></div>
-        </div>
-        <div class="check-item done" onclick="this.classList.toggle('done')">
-          <div class="check-box">✓</div>
-          <div><b>已看过疫苗本 / 旧照片</b><div class="sub">真正的失主通常能轻松出示这些</div></div>
-        </div>
-        <div class="check-item" onclick="this.classList.toggle('done')">
-          <div class="check-box"></div>
-          <div><b>在安全的公共地点交接</b><div class="sub">派出所 / 宠物医院 / 咖啡馆 等</div></div>
-        </div>
-        <div class="check-item" onclick="this.classList.toggle('done')">
-          <div class="check-box"></div>
-          <div><b>已亲手交付 / 接回宠物本人</b><div class="sub">归还的最终标志</div></div>
-        </div>
-      </div>
-      <div class="action-bar">
-        <div class="btn-secondary" onclick="showScreen('dispute')">争议申诉</div>
-        <div class="btn-primary" onclick="showScreen('return-success')">✓ 确认归还</div>
-      </div>
-    </div>
+    <!-- 屏 07 · 归还自检（已移除 · MVP 不做）
+         4 条 checklist 已合并到 contact-guide 底部"见面时建议这样核对"区块。
+         从 contact-guide 一步到 return-success，流程缩短一屏。 -->
 
     <!-- ===== 屏 8 · Return Success ===== -->
     <div class="screen" data-screen="return-success">
@@ -2088,15 +2050,15 @@
           <div class="reward-value" style="font-size:24px;font-style:normal">第 3 次成功归还 ✓</div>
           <div class="reward-detail">大理因为你这样的守护者，变得更温暖 💛</div>
         </div>
-        <div class="cta-card" onclick="showScreen('thanks-edit')">
-          <div class="cta-icon apricot">💌</div>
+        <div class="cta-card" onclick="alert('🙏 感谢已自动发送\n\n所有提供线索的人 + 拾主都会收到「失主感谢您」的通知。')">
+          <div class="cta-icon apricot">🙏</div>
           <div style="flex:1">
-            <div class="cta-title">写一封感谢信</div>
-            <div class="cta-sub">可以点名感谢提供线索的人</div>
+            <div class="cta-title">向参与的人致谢</div>
+            <div class="cta-sub">一键通知所有线索提供者 + 拾主</div>
           </div>
           <div style="color:var(--ink-4);font-size:14px">›</div>
         </div>
-        <div class="cta-card">
+        <div class="cta-card" onclick="alert('⭐ 感谢评价\n\n帮我们改进流程')">
           <div class="cta-icon honey">⭐</div>
           <div style="flex:1">
             <div class="cta-title">为这次救助打分</div>
@@ -2107,70 +2069,13 @@
       </div>
       <div class="action-bar">
         <div class="btn-secondary" onclick="showScreen('feed', true)">回首页</div>
-        <div class="btn-primary" onclick="showScreen('thanks-edit')">💌 写感谢信</div>
+        <div class="btn-primary" onclick="alert('🙏 已向所有参与者发送感谢通知');showScreen('feed', true)">🙏 一键致谢 · 回首页</div>
       </div>
     </div>
 
-    <!-- ===== 屏 9 · Thanks Edit ===== -->
-    <div class="screen" data-screen="thanks-edit">
-      <div class="sub-header">
-        <div class="back-btn" onclick="goBack()">←</div>
-        <div class="sub-title">写感谢信</div>
-        <span class="sub-action primary">保存</span>
-      </div>
-      <div class="thanks-scroll">
-        <div class="pet-summary">
-          <div class="pet-summary-thumb ph-orange">🐱</div>
-          <div class="pet-summary-info">
-            <b>小橘子 · 已归还 ✓</b>
-            <div class="pet-summary-meta">人民路三月街 · 今天 19:00</div>
-          </div>
-        </div>
-        <div class="thanks-paper">
-          <div class="thanks-greeting">致大理的善意 ——</div>
-          <textarea class="thanks-textarea">今天下午小橘子走丢了，全家都很慌。没想到 30 分钟后就被人在人民路的咖啡馆里发现，又通过陈姐姐看到的线索一路顺利接回。
-
-感谢大理这座小城里所有善意的人 🙏
-
-—— 来自小橘子的家人</textarea>
-        </div>
-        <div class="section-label">点名感谢 <span class="count">· 最多 3 人</span></div>
-        <div class="nominee-list">
-          <div class="nominee-row selected" onclick="this.classList.toggle('selected')">
-            <div class="nominee-check">✓</div>
-            <div>
-              <div class="nominee-name">客栈老板娘</div>
-              <div class="nominee-contrib">收留宠物 · 等待主人</div>
-            </div>
-            <div class="nominee-points">👍 感谢</div>
-          </div>
-          <div class="nominee-row selected" onclick="this.classList.toggle('selected')">
-            <div class="nominee-check">✓</div>
-            <div>
-              <div class="nominee-name">陈*</div>
-              <div class="nominee-contrib">提供线索 · 复兴路目击</div>
-            </div>
-            <div class="nominee-points">👍 感谢</div>
-          </div>
-          <div class="nominee-row" onclick="this.classList.toggle('selected')">
-            <div class="nominee-check"></div>
-            <div>
-              <div class="nominee-name">林*</div>
-              <div class="nominee-contrib">客栈监控帮看</div>
-            </div>
-            <div class="nominee-points">👍 感谢</div>
-          </div>
-        </div>
-        <div class="toggle-row">
-          <div class="toggle-label">公开发布到「善意月报」</div>
-          <div class="toggle"></div>
-        </div>
-      </div>
-      <div class="action-bar">
-        <div class="btn-secondary" onclick="alert('草稿已保存')">保存草稿</div>
-        <div class="btn-primary" onclick="alert('💌 感谢信已寄出！\n\n所有被点名的小伙伴将收到通知。');showScreen('feed', true)">📮 寄出</div>
-      </div>
-    </div>
+    <!-- 屏 09 · 感谢信编辑（已移除 · MVP 不做）
+         仪式感设计，不在核心闭环。MVP 用「一键致谢」自动通知所有参与者。
+         V2 可加完整的感谢信编辑能力。 -->
 
     <!-- ===== 屏 10 · Messages ===== -->
     <div class="screen" data-screen="messages">
@@ -2324,11 +2229,9 @@
           </div>
         </div>
         <div class="profile-content">
-          <div class="quick-actions">
+          <div class="quick-actions" style="grid-template-columns: repeat(2, 1fr)">
             <div class="quick-action" onclick="showScreen('my-posts')"><div class="qa-icon apricot">📝</div><div class="qa-label">我的发布</div></div>
-            <div class="quick-action"><div class="qa-icon mint">📌</div><div class="qa-label">我的线索</div></div>
-            <div class="quick-action"><div class="qa-icon honey">💌</div><div class="qa-label">感谢信</div></div>
-            <div class="quick-action"><div class="qa-icon plum">🏅</div><div class="qa-label">徽章墙</div></div>
+            <div class="quick-action" onclick="alert('我可临时照料\n（在下方菜单切换开关）')"><div class="qa-icon mint">🏠</div><div class="qa-label">我可照料</div></div>
           </div>
           <div class="menu-section">
             <div class="menu-row"><span class="menu-icon">🏠</span><span class="menu-label">我可以临时照料</span><span class="menu-meta ok">已开启</span><span class="menu-arrow">›</span></div>
@@ -2392,7 +2295,7 @@
             </div>
           </div>
           <div class="mp-actions">
-            <div class="mp-action primary" onclick="showScreen('return-checklist')">✓ 标记已归还</div>
+            <div class="mp-action primary" onclick="if(confirm('确认已归还？'))showScreen('return-success')">✓ 标记已归还</div>
             <div class="mp-action" onclick="showScreen('publish')">编辑</div>
             <div class="mp-action">分享</div>
           </div>
@@ -2408,7 +2311,7 @@
             </div>
           </div>
           <div class="mp-actions">
-            <div class="mp-action primary" onclick="showScreen('return-checklist')">✓ 标记已归还</div>
+            <div class="mp-action primary" onclick="if(confirm('确认已归还？'))showScreen('return-success')">✓ 标记已归还</div>
             <div class="mp-action">延长照料</div>
             <div class="mp-action" onclick="showScreen('publish')">编辑</div>
           </div>
@@ -2492,17 +2395,30 @@
           </div>
 
           <div class="section-header">
-            <span class="title">大理热门搜索</span>
+            <span class="title">按品种快速筛选</span>
+            <span class="count">· 着急时最常用</span>
           </div>
           <div class="search-chips">
             <div class="search-chip hot" onclick="doSearchWith('英短')">🔥 英短</div>
             <div class="search-chip hot" onclick="doSearchWith('橘猫')">🔥 橘猫</div>
+            <div class="search-chip hot" onclick="doSearchWith('布偶')">🔥 布偶</div>
             <div class="search-chip" onclick="doSearchWith('中华田园犬')">中华田园犬</div>
+            <div class="search-chip" onclick="doSearchWith('柯基')">柯基</div>
+            <div class="search-chip" onclick="doSearchWith('比熊')">比熊</div>
+            <div class="search-chip" onclick="doSearchWith('金毛')">金毛</div>
             <div class="search-chip" onclick="doSearchWith('拉布拉多')">拉布拉多</div>
+          </div>
+
+          <div class="section-header" style="padding-top:14px">
+            <span class="title">按地点</span>
+          </div>
+          <div class="search-chips">
+            <div class="search-chip" onclick="doSearchWith('古城')">古城</div>
             <div class="search-chip" onclick="doSearchWith('人民路')">人民路</div>
-            <div class="search-chip" onclick="doSearchWith('洱海月')">洱海月</div>
             <div class="search-chip" onclick="doSearchWith('下关')">下关</div>
+            <div class="search-chip" onclick="doSearchWith('洱海')">洱海月</div>
             <div class="search-chip" onclick="doSearchWith('苍山门')">苍山门</div>
+            <div class="search-chip" onclick="doSearchWith('喜洲')">喜洲</div>
           </div>
         </div>
 
@@ -2527,63 +2443,20 @@
         <!-- 结果列表 -->
         <div id="search-result" style="display:none">
           <div class="section-header">
-            <span class="title">搜索结果</span>
-            <span class="count">· <span id="result-count">2</span> 条</span>
+            <span class="title">附近匹配</span>
+            <span class="count">· <span id="result-count">0</span> 条 · 最近优先</span>
             <span class="right" id="result-keyword"></span>
           </div>
-          <div class="feed-list" id="search-result-list">
-            <div class="pet-card sr-item" onclick="showScreen('detail-lost')">
-              <div class="pc-body">
-                <div class="pc-photo ph-blue"><span>🐱</span><div class="status-bubble lost">寻宠</div></div>
-                <div class="pc-info">
-                  <div class="pc-name-row"><span class="pc-name">胖丁</span><span class="breed">· 英短蓝猫 · ♂ 3 岁</span></div>
-                  <div class="pc-meta"><span>📍 古城北门</span><span class="urgent">⚡ 10 min 前</span></div>
-                  <div class="pc-desc">穿粉色项圈，左耳缺一小块。妈妈非常着急 🙏</div>
-                </div>
-              </div>
-              <div class="pc-footer">
-                <div class="distance-tag">📍 0.8 km</div>
-                <div class="pc-actions"><span class="pc-action">💬 12</span></div>
-              </div>
-            </div>
-            <div class="pet-card sr-item" onclick="showScreen('detail-found')">
-              <div class="pc-body">
-                <div class="pc-photo ph-orange"><span>🐱</span><div class="status-bubble found">招领</div></div>
-                <div class="pc-info">
-                  <div class="pc-name-row"><span class="pc-name">小橘子</span><span class="breed">· 约 2 岁 · ♀</span></div>
-                  <div class="pc-meta"><span>📍 人民路三月街</span><span class="urgent">⚡ 30 min 前</span></div>
-                  <div class="pc-desc">在咖啡馆门口蹲了一下午，看着像走丢的 ☕️</div>
-                </div>
-              </div>
-              <div class="pc-footer">
-                <div class="distance-tag">📍 1.2 km</div>
-                <div class="pc-actions"><span class="pc-action">💬 3</span></div>
-              </div>
-            </div>
-            <div class="pet-card sr-item" onclick="showScreen('detail-found')">
-              <div class="pc-body">
-                <div class="pc-photo ph-cream"><span>🐶</span><div class="status-bubble care">照料</div></div>
-                <div class="pc-info">
-                  <div class="pc-name-row"><span class="pc-name">小白</span><span class="breed">· 比熊 · ♂ 5kg</span></div>
-                  <div class="pc-meta"><span>📍 下关泰安路</span><span class="time">2 hr 前</span></div>
-                  <div class="pc-desc">在小区门口捡到，毛色干净有人养过 🏠</div>
-                </div>
-              </div>
-              <div class="pc-footer">
-                <div class="distance-tag">📍 4.2 km</div>
-                <div class="pc-actions"><span class="pc-action">💬 5</span></div>
-              </div>
-            </div>
-          </div>
+          <div class="feed-list" id="search-result-list"></div>
         </div>
 
         <!-- 空结果 -->
         <div id="search-empty" class="search-empty" style="display:none">
           <div class="search-empty-icon">🔍</div>
-          <div class="search-empty-title">没有找到相关结果</div>
+          <div class="search-empty-title">附近暂时没有匹配</div>
           <div class="search-empty-sub">
             换个关键词试试<br>
-            或者 <span class="search-empty-cta" onclick="showScreen('publish')">发布寻宠信息</span> 让大家帮你找
+            或者 <span class="search-empty-cta" onclick="showScreen('publish')">立刻发布寻宠</span> 让大家帮你找
           </div>
         </div>
 
@@ -2915,7 +2788,7 @@
   <ul class="flow-list">
     <li class="flow-item"><b>发布寻宠流</b><span class="flow-arrow">→</span><span>首页 FAB → 发布 → 发布成功回首页</span></li>
     <li class="flow-item"><b>寻找匹配流</b><span class="flow-arrow">→</span><span>首页卡片 → 寻宠详情 → 留言（聊天）/ 我捡到了（联系建议）</span></li>
-    <li class="flow-item"><b>归还流</b><span class="flow-arrow">→</span><span>招领详情 → 联系建议 → 归还自检 → 归还成功 → 写感谢信 → 回首页</span></li>
+    <li class="flow-item"><b>归还流</b><span class="flow-arrow">→</span><span>招领详情 → 联系建议（含自检步骤）→ 归还成功（一键致谢）→ 回首页</span></li>
     <li class="flow-item"><b>沟通流</b><span class="flow-arrow">→</span><span>消息列表 → 聊天 → 点顶部宠物卡跳详情</span></li>
     <li class="flow-item"><b>我的数据流</b><span class="flow-arrow">→</span><span>我的 → 我的贡献 / 我的发布 / 争议申诉</span></li>
     <li class="flow-item"><b>异常流</b><span class="flow-arrow">→</span><span>归还自检底部「争议申诉」/ 我的 → 争议申诉</span></li>
@@ -2930,9 +2803,7 @@
     <div class="im-jump" onclick="showScreen('detail-found')"><span class="num">04</span>招领详情</div>
     <div class="im-jump" onclick="showScreen('publish')"><span class="num">05</span>发布</div>
     <div class="im-jump" onclick="showScreen('contact-guide')"><span class="num">06</span>联系建议</div>
-    <div class="im-jump" onclick="showScreen('return-checklist')"><span class="num">07</span>归还自检</div>
     <div class="im-jump" onclick="showScreen('return-success')"><span class="num">08</span>归还成功</div>
-    <div class="im-jump" onclick="showScreen('thanks-edit')"><span class="num">09</span>感谢信</div>
     <div class="im-jump" onclick="showScreen('messages')"><span class="num">10</span>消息列表</div>
     <div class="im-jump" onclick="showScreen('chat')"><span class="num">11</span>聊天</div>
     <div class="im-jump" onclick="showScreen('profile')"><span class="num">12</span>个人中心</div>
@@ -3396,21 +3267,16 @@
     alert('✓ 举报已提交\n\n原因：' + reason + '\n平台审核员将在 24 小时内核查\n谢谢你的反馈 💛');
   }
 
-  /* ============== 搜索逻辑 ============== */
-  // mock 数据集（卡片关键词索引）
-  const SEARCH_DATA = [
-    { keywords: ['胖丁','英短','蓝猫','古城','北门','寻宠','♂','3岁','粉色','项圈'], status: '寻宠' },
-    { keywords: ['小橘子','橘猫','招领','人民路','三月街','咖啡','♀','2岁'], status: '招领' },
-    { keywords: ['小白','比熊','照料','下关','泰安','♂','5kg','白色'], status: '照料' },
-    { keywords: ['小棕','棕白','苍山','棕色'], status: '招领' }
-  ];
-
+  /* ============== 搜索逻辑（基于 FEED_DATA） ============== */
   function matchSearch(keyword) {
     const k = keyword.trim().toLowerCase();
     if (!k) return [];
-    return SEARCH_DATA.filter(item =>
-      item.keywords.some(kw => kw.toLowerCase().includes(k) || k.includes(kw.toLowerCase()))
-    );
+    // 从 FEED_DATA 模糊匹配（name/breed/loc/desc/status）
+    return FEED_DATA.filter(d => {
+      const haystack = [d.name, d.breed, d.loc, d.desc, d.statusLabel]
+        .join(' ').toLowerCase();
+      return haystack.includes(k);
+    });
   }
 
   function onSearchInput() {
@@ -3422,26 +3288,20 @@
     else wrap.classList.remove('has-text');
 
     if (!v) {
-      // 回到默认状态
       showSearchState('default');
     } else {
-      // 显示建议（最多 2 条匹配）
       const matches = matchSearch(v);
       const sug1 = document.getElementById('sug-line-1');
       const sug2 = document.getElementById('sug-line-2');
       const sug2Tag = document.getElementById('sug-line-2-tag');
 
-      sug1.innerHTML = `搜 "<mark>${escapeHtml(v)}</mark>" 相关`;
+      sug1.innerHTML = `搜 "<mark>${escapeHtml(v)}</mark>" 相关 · ${matches.length} 条`;
 
       if (matches.length > 0) {
         const first = matches[0];
-        // 找到最匹配的关键词
-        const matched = first.keywords.find(kw =>
-          kw.toLowerCase().includes(v.toLowerCase()) || v.toLowerCase().includes(kw.toLowerCase())
-        ) || v;
-        sug2.innerHTML = `<mark>${escapeHtml(matched)}</mark> · ${first.status}信息`;
-        sug2Tag.textContent = first.status;
-        sug2Tag.className = 'sug-tag ' + (first.status === '招领' ? 'found' : (first.status === '照料' ? 'care' : ''));
+        sug2.innerHTML = `<mark>${escapeHtml(first.name)}</mark> · ${first.loc}`;
+        sug2Tag.textContent = first.statusLabel;
+        sug2Tag.className = 'sug-tag ' + (first.status === 'found' ? 'found' : (first.status === 'care' ? 'care' : ''));
         document.querySelectorAll('#search-suggestion .suggestion-item')[1].style.display = 'flex';
       } else {
         document.querySelectorAll('#search-suggestion .suggestion-item')[1].style.display = 'none';
@@ -3474,18 +3334,53 @@
     document.getElementById('result-keyword').textContent = `关于 "${keyword}"`;
     if (matches.length === 0) {
       showSearchState('empty');
-    } else {
-      document.getElementById('result-count').textContent = matches.length;
-      // 隐藏不匹配的卡片
-      const items = document.querySelectorAll('#search-result-list .sr-item');
-      const statusMap = ['寻宠', '招领', '照料', '招领']; // 与 SEARCH_DATA 顺序对应
-      items.forEach((el, i) => {
-        const item = SEARCH_DATA[i];
-        const hit = matches.includes(item);
-        el.style.display = hit ? 'block' : 'none';
-      });
-      showSearchState('result');
+      return;
     }
+    // 按时间排序：最近发布优先（焦虑用户最需要看到的）
+    matches.sort((a, b) => a.timeMins - b.timeMins);
+    document.getElementById('result-count').textContent = matches.length;
+
+    // 复用首页卡片渲染（同样的样式）
+    const list = document.getElementById('search-result-list');
+    list.innerHTML = matches.map(d => {
+      const detailScreen = d.status === 'lost' ? 'detail-lost' : 'detail-found';
+      const distanceStr = d.distanceKm < 10 ? d.distanceKm.toFixed(1) : d.distanceKm.toFixed(0);
+      const expiredStyle = d.expired ? 'style="opacity:0.55"' : '';
+      const statusCls = d.expired ? 'expired' : d.status;
+      const statusLabel = d.expired ? '已过期' : d.statusLabel;
+      const timeSpan = d.urgent
+        ? `<span class="urgent">⚡ ${d.time}</span>`
+        : `<span class="time">${d.time}</span>`;
+      return `
+        <div class="pet-card" ${expiredStyle} onclick="showScreen('${detailScreen}')">
+          <div class="pc-body">
+            <div class="pc-photo ${d.photoClass}">
+              <span>${d.emoji}</span>
+              <div class="status-bubble ${statusCls}">${statusLabel}</div>
+            </div>
+            <div class="pc-info">
+              <div class="pc-name-row">
+                <span class="pc-name">${d.name}</span>
+                <span class="breed">· ${d.breed}</span>
+              </div>
+              <div class="pc-meta">
+                <span>📍 ${d.loc}</span>
+                ${timeSpan}
+              </div>
+              <div class="pc-desc">${d.desc}</div>
+            </div>
+          </div>
+          <div class="pc-footer">
+            <div class="distance-tag">📍 ${distanceStr} km</div>
+            <div class="pc-actions">
+              <span class="pc-action">💬 ${d.comments}</span>
+              <span class="pc-action share" onclick="event.stopPropagation();openShare(${d.id})">⤴ 转发</span>
+            </div>
+          </div>
+        </div>
+      `;
+    }).join('');
+    showSearchState('result');
   }
 
   function showSearchState(state) {
