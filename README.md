@@ -27,7 +27,7 @@
 | `docs/06-product-philosophy.md` | **★ 产品哲学**：5 条核心判断 + 不做清单 + 决策演进 |
 | `docs/03-mvp-scope.md` | MVP 范围裁剪（必做 / 可选 / V2）— 🚧 待补 |
 | `docs/04-database.md` | 数据库表结构 — 🚧 待补 |
-| `docs/05-risks.md` | 法律/运营/技术风险与应对 — 🚧 待补 |
+| [`docs/05-risks.md`](./docs/05-risks.md) | **★ 合规风险与逐屏标注**（v5 的 16 屏 × 风险等级 + 上线 Checklist） |
 
 ## 原型 / Prototypes
 
