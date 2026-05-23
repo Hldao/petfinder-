@@ -219,122 +219,6 @@
     .pc-action.clue { color: var(--apricot-deep); background: var(--apricot-soft); padding: 4px 10px; border-radius: var(--radius-pill); font-family: var(--font-cn); font-weight: 700; }
     .feed-list { padding: 0 16px; display: flex; flex-direction: column; gap: 12px; }
 
-    /* 瀑布流（两列） */
-    .feed-waterfall {
-      padding: 0 12px;
-      column-count: 2;
-      column-gap: 8px;
-    }
-    .wf-card {
-      break-inside: avoid;
-      margin-bottom: 8px;
-      display: inline-block;
-      width: 100%;
-      background: var(--surface);
-      border-radius: 14px;
-      overflow: hidden;
-      box-shadow: var(--shadow-card);
-      cursor: pointer;
-    }
-    .wf-card.expired { opacity: 0.55; }
-    .wf-photo {
-      width: 100%;
-      aspect-ratio: 4/3;
-      position: relative;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 54px;
-    }
-    .wf-photo.tall { aspect-ratio: 3/4; }
-    .wf-status {
-      position: absolute;
-      top: 8px; left: 8px;
-      padding: 2px 8px;
-      font-size: 10px;
-      font-weight: 700;
-      color: white;
-      border-radius: var(--radius-pill);
-      backdrop-filter: blur(4px);
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    }
-    .wf-status.lost { background: rgba(255,133,82,0.95); }
-    .wf-status.found { background: rgba(91,184,159,0.95); }
-    .wf-status.care { background: rgba(166,114,212,0.95); }
-    .wf-status.expired { background: rgba(176,172,158,0.95); }
-    .wf-body { padding: 10px 12px 6px; }
-    .wf-name {
-      font-size: 14px;
-      font-weight: 700;
-      letter-spacing: -0.005em;
-      margin-bottom: 2px;
-    }
-    .wf-breed {
-      font-size: 10.5px;
-      color: var(--ink-3);
-      margin-bottom: 6px;
-      font-weight: 500;
-    }
-    .wf-meta {
-      font-size: 10.5px;
-      color: var(--ink-3);
-      margin-bottom: 6px;
-      display: flex;
-      align-items: center;
-      gap: 4px;
-    }
-    .wf-meta .urgent {
-      color: var(--apricot-deep);
-      font-family: var(--font-en);
-      font-weight: 700;
-    }
-    .wf-meta .time-only {
-      font-family: var(--font-en);
-      font-weight: 600;
-      color: var(--ink-4);
-      margin-left: auto;
-    }
-    .wf-desc {
-      font-size: 11.5px;
-      line-height: 1.55;
-      color: var(--ink-2);
-      margin-bottom: 8px;
-      overflow: hidden;
-      display: -webkit-box;
-      -webkit-line-clamp: 3;
-      -webkit-box-orient: vertical;
-    }
-    .wf-footer {
-      padding: 6px 12px 10px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      border-top: 1px solid var(--divider-soft);
-    }
-    .wf-distance {
-      font-family: var(--font-en);
-      font-size: 10.5px;
-      font-weight: 700;
-      color: var(--apricot-deep);
-    }
-    .wf-actions {
-      display: flex;
-      gap: 8px;
-      align-items: center;
-      font-size: 10.5px;
-      color: var(--ink-3);
-      font-family: var(--font-en);
-      font-weight: 600;
-    }
-    .wf-actions .share {
-      color: var(--apricot-deep);
-      background: var(--apricot-soft);
-      padding: 2px 8px;
-      border-radius: var(--radius-pill);
-      font-family: var(--font-cn);
-      font-weight: 700;
-      cursor: pointer;
-    }
-    .wf-actions .share:hover { background: var(--apricot); color: white; }
-
     .feed-empty-state {
       padding: 70px 30px 40px;
       text-align: center;
@@ -1310,7 +1194,7 @@
           <span class="count">· <span id="feed-count">14</span></span>
           <span class="right">查看全部 →</span>
         </div>
-        <div class="feed-waterfall" id="feed-list"></div>
+        <div class="feed-list" id="feed-list"></div>
         <div class="feed-empty-state" id="feed-empty" style="display:none">
           <div class="fe-icon">🐾</div>
           <div class="fe-title">附近暂时没有这类信息</div>
@@ -2557,26 +2441,40 @@
     container.innerHTML = items.map(d => {
       const detailScreen = d.status === 'lost' ? 'detail-lost' : 'detail-found';
       const distanceStr = d.distanceKm < 10 ? d.distanceKm.toFixed(1) : d.distanceKm.toFixed(0);
+      const expiredCardStyle = d.expired ? 'style="opacity:0.55"' : '';
+      const expiredDistStyle = d.expired ? 'style="background:var(--bg-deeper);color:var(--ink-3)"' : '';
+      const statusCls = d.expired ? 'expired' : d.status;
+      const statusLabel = d.expired ? '已过期' : d.statusLabel;
+      const timeSpan = d.urgent
+        ? `<span class="urgent">⚡ ${d.time}</span>`
+        : `<span class="time">${d.time}</span>`;
+      // mock views（公式：基础 + 评论加权 + 时间衰减反比）
+      const views = Math.max(15, d.comments * 6 + Math.min(120, Math.round(2880 / Math.max(d.timeMins, 10))));
       return `
-        <div class="wf-card ${d.expired ? 'expired' : ''}" onclick="showScreen('${detailScreen}')">
-          <div class="wf-photo ${d.photoClass}${d.tall ? ' tall' : ''}">
-            <span>${d.emoji}</span>
-            <div class="wf-status ${d.expired ? 'expired' : d.status}">${d.expired ? '已过期' : d.statusLabel}</div>
-          </div>
-          <div class="wf-body">
-            <div class="wf-name">${d.name}</div>
-            <div class="wf-breed">${d.breed}</div>
-            <div class="wf-meta">
-              <span>📍 ${d.loc}</span>
-              <span class="${d.urgent ? 'urgent' : 'time-only'}">${d.urgent ? '⚡ ' + d.time : d.time}</span>
+        <div class="pet-card" ${expiredCardStyle} onclick="showScreen('${detailScreen}')">
+          <div class="pc-body">
+            <div class="pc-photo ${d.photoClass}">
+              <span>${d.emoji}</span>
+              <div class="status-bubble ${statusCls}">${statusLabel}</div>
             </div>
-            <div class="wf-desc">${d.desc}</div>
+            <div class="pc-info">
+              <div class="pc-name-row">
+                <span class="pc-name">${d.name}</span>
+                <span class="breed">· ${d.breed}</span>
+              </div>
+              <div class="pc-meta">
+                <span>📍 ${d.loc}</span>
+                ${timeSpan}
+              </div>
+              <div class="pc-desc">${d.desc}</div>
+            </div>
           </div>
-          <div class="wf-footer">
-            <div class="wf-distance">📍 ${distanceStr} km</div>
-            <div class="wf-actions">
-              <span>💬 ${d.comments}</span>
-              <span class="share" onclick="event.stopPropagation();openShare(${d.id})">⤴</span>
+          <div class="pc-footer">
+            <div class="distance-tag" ${expiredDistStyle}>📍 ${distanceStr} km</div>
+            <div class="pc-actions">
+              <span class="pc-action">💬 ${d.comments}</span>
+              <span class="pc-action">👀 ${views}</span>
+              <span class="pc-action share" onclick="event.stopPropagation();openShare(${d.id})">⤴ 转发</span>
             </div>
           </div>
         </div>
