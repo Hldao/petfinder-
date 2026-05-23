@@ -364,6 +364,147 @@
     .clue-meta { font-family: var(--font-en); font-size: 10.5px; color: var(--ink-4); font-weight: 600; margin-bottom: 4px; letter-spacing: 0.02em; }
     .clue-text { font-size: 12.5px; color: var(--ink-2); line-height: 1.55; }
 
+    /* 发布者信息卡 */
+    .poster-card {
+      background: var(--surface);
+      border-radius: var(--radius-md);
+      padding: 12px 14px;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      box-shadow: var(--shadow-card);
+    }
+    .poster-avatar {
+      width: 42px; height: 42px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, var(--apricot), #FF6B35);
+      color: white;
+      font-weight: 700;
+      font-size: 17px;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .poster-avatar.mint { background: linear-gradient(135deg, var(--mint), var(--mint-deep)); }
+    .poster-info { flex: 1; min-width: 0; }
+    .poster-name-row {
+      font-size: 13.5px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 4px;
+      flex-wrap: wrap;
+    }
+    .poster-badge {
+      font-size: 10px;
+      padding: 1px 7px;
+      background: var(--honey-soft);
+      color: var(--honey-deep);
+      border-radius: var(--radius-pill);
+      font-weight: 700;
+    }
+    .poster-verified {
+      font-size: 10px;
+      padding: 1px 7px;
+      background: var(--mint-soft);
+      color: var(--mint-deep);
+      border-radius: var(--radius-pill);
+      font-weight: 700;
+    }
+    .poster-meta {
+      font-size: 11px;
+      color: var(--ink-3);
+      font-family: var(--font-en);
+      font-weight: 500;
+    }
+    .poster-report {
+      padding: 6px 10px;
+      background: var(--bg);
+      border-radius: var(--radius-pill);
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--ink-3);
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+    .poster-report:hover { color: var(--warn); background: var(--warn-soft); }
+
+    /* 拾主额外信息（招领详情用） */
+    .info-extra {
+      background: var(--surface);
+      border-radius: var(--radius-md);
+      margin-bottom: 16px;
+      box-shadow: var(--shadow-card);
+      overflow: hidden;
+    }
+    .info-extra-row {
+      padding: 12px 14px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border-bottom: 1px solid var(--divider-soft);
+    }
+    .info-extra-row:last-child { border-bottom: none; }
+    .ie-icon {
+      width: 30px; height: 30px;
+      border-radius: 10px;
+      background: var(--mint-soft);
+      color: var(--mint-deep);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px;
+      flex-shrink: 0;
+    }
+    .ie-icon.honey { background: var(--honey-soft); color: var(--honey-deep); }
+    .ie-label {
+      font-size: 11.5px;
+      color: var(--ink-3);
+      font-weight: 600;
+      width: 60px;
+      flex-shrink: 0;
+    }
+    .ie-value {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--ink-1);
+      flex: 1;
+      min-width: 0;
+    }
+    .ie-value .countdown {
+      color: var(--apricot-deep);
+      font-family: var(--font-en);
+      font-weight: 700;
+      margin-left: 4px;
+    }
+
+    /* 留线索快捷入口（寻宠详情用） */
+    .leave-clue {
+      background: linear-gradient(135deg, var(--apricot-soft), #FFD8C0);
+      border-radius: var(--radius-md);
+      padding: 12px 14px;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+      border: 1px solid rgba(255,133,82,0.25);
+    }
+    .leave-clue:hover { background: linear-gradient(135deg, #FFD8C0, #FFC6A0); }
+    .lc-icon {
+      width: 38px; height: 38px;
+      background: white;
+      border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px;
+      color: var(--apricot-deep);
+      box-shadow: 0 2px 6px rgba(255,133,82,0.2);
+      flex-shrink: 0;
+    }
+    .lc-content { flex: 1; }
+    .lc-title { font-size: 13.5px; font-weight: 700; color: var(--apricot-deep); }
+    .lc-sub { font-size: 11px; color: var(--apricot-deep); opacity: 0.8; margin-top: 2px; }
+    .lc-arrow { color: var(--apricot-deep); font-size: 18px; }
+
     /* 底部按钮 */
     .action-bar {
       position: absolute; bottom: 0; left: 0; right: 0;
@@ -1295,28 +1436,51 @@
       <div class="sub-header">
         <div class="back-btn" onclick="goBack()">←</div>
         <div class="sub-title">寻宠详情</div>
-        <div class="sub-icon">↗</div>
+        <div class="sub-icon" onclick="openShare(1)">↗</div>
       </div>
       <div class="detail-scroll">
         <div class="hero-photo ph-blue">
           <span>🐱</span>
           <div class="hero-status lost">寻宠中</div>
-          <div class="hero-time">第 6 小时</div>
+          <div class="hero-time">走失 6 小时</div>
         </div>
         <div class="detail-body">
           <div class="detail-name">胖丁</div>
           <div class="detail-subtitle">英短蓝猫 · 公 · 3 岁 · 戴粉色项圈</div>
           <div class="info-grid">
-            <div class="info-cell"><div class="label">Location</div><div class="value">古城北门</div></div>
-            <div class="info-cell"><div class="label">Time</div><div class="value">今日 14:30</div></div>
+            <div class="info-cell"><div class="label">走失地点</div><div class="value">古城北门</div></div>
+            <div class="info-cell"><div class="label">走失时间</div><div class="value">今日 14:30</div></div>
           </div>
           <div class="section-label">特征描述</div>
           <div class="desc-card">今天下午带胖丁去人民路咖啡馆，吃完饭出门时它窜出去就不见了。胆小、不会让陌生人碰，听到名字会喵叫一声。看到请尽量拍照不要追 🙏</div>
+
+          <div class="poster-card">
+            <div class="poster-avatar">王</div>
+            <div class="poster-info">
+              <div class="poster-name-row">
+                <span>王*（胖丁妈妈）</span>
+                <span class="poster-verified">✓ 实名</span>
+              </div>
+              <div class="poster-meta">大理古城 · 已发布 1 条 · 善行值 12</div>
+            </div>
+            <div class="poster-report" onclick="openReportSheet()">举报</div>
+          </div>
+
           <div class="feature-card">
             <span class="ic">🔒</span>
-            <div><b>失主已设置「私有特征」用于认领核对</b><br>如果你捡到了相似的猫，点"我捡到了"进入沟通建议。</div>
+            <div><b>失主已设置「私有特征」用于认领核对</b><br>如果你确认捡到了相似的猫，点底部「我看到 ta 了」沟通核对。</div>
           </div>
-          <div class="section-label">线索 <span class="count">· 2 条</span></div>
+
+          <div class="leave-clue" onclick="showScreen('chat')">
+            <div class="lc-icon">📌</div>
+            <div class="lc-content">
+              <div class="lc-title">看到过 ta？留下线索</div>
+              <div class="lc-sub">用话术模板快速描述时间、地点、方向</div>
+            </div>
+            <div class="lc-arrow">›</div>
+          </div>
+
+          <div class="section-label">已有线索 <span class="count">· 2 条</span></div>
           <div class="clue-card">
             <div class="clue-avatar">陈</div>
             <div style="flex:1">
@@ -1337,7 +1501,7 @@
       </div>
       <div class="action-bar">
         <div class="btn-secondary" onclick="showScreen('chat')">💬 留言</div>
-        <div class="btn-primary" onclick="showScreen('contact-guide')">📌 我捡到了</div>
+        <div class="btn-primary" onclick="showScreen('contact-guide')">📌 我看到 ta 了</div>
       </div>
     </div>
 
@@ -1346,23 +1510,57 @@
       <div class="sub-header">
         <div class="back-btn" onclick="goBack()">←</div>
         <div class="sub-title">招领详情</div>
-        <div class="sub-icon">↗</div>
+        <div class="sub-icon" onclick="openShare(0)">↗</div>
       </div>
       <div class="detail-scroll">
         <div class="hero-photo ph-orange">
           <span>🐱</span>
           <div class="hero-status found">招领中</div>
-          <div class="hero-time">第 1 小时</div>
+          <div class="hero-time">招领 1 小时</div>
         </div>
         <div class="detail-body">
-          <div class="detail-name">橘猫，约 2 岁</div>
-          <div class="detail-subtitle">橘色 · ♀ · 戴红色项圈 · 亲人</div>
+          <div class="detail-name">小橘子</div>
+          <div class="detail-subtitle">橘猫 · ♀ · 约 2 岁 · 戴红色项圈 · 亲人</div>
           <div class="info-grid">
-            <div class="info-cell"><div class="label">Found at</div><div class="value">人民路三月街</div></div>
-            <div class="info-cell"><div class="label">Time</div><div class="value">今日 09:00</div></div>
+            <div class="info-cell"><div class="label">发现地点</div><div class="value">人民路三月街</div></div>
+            <div class="info-cell"><div class="label">发现时间</div><div class="value">今日 09:00</div></div>
           </div>
+
+          <div class="section-label">目前状况</div>
+          <div class="info-extra">
+            <div class="info-extra-row">
+              <div class="ie-icon">🏠</div>
+              <div class="ie-label">目前位置</div>
+              <div class="ie-value">人民路 39 号「白桃」咖啡馆</div>
+            </div>
+            <div class="info-extra-row">
+              <div class="ie-icon honey">⏰</div>
+              <div class="ie-label">可照料</div>
+              <div class="ie-value">3 天<span class="countdown">· 至 5 月 25 日</span></div>
+            </div>
+            <div class="info-extra-row">
+              <div class="ie-icon">🩺</div>
+              <div class="ie-label">健康</div>
+              <div class="ie-value">已喂食，未发现外伤；未做疫苗检查</div>
+            </div>
+          </div>
+
           <div class="section-label">发现者描述</div>
           <div class="desc-card">我在人民路开咖啡馆，今早开店时这只橘猫蹲在门口不走，看起来很饿。喂了它一点猫粮，目前在店里看店 😺</div>
+
+          <div class="poster-card">
+            <div class="poster-avatar mint">客</div>
+            <div class="poster-info">
+              <div class="poster-name-row">
+                <span>客栈老板娘</span>
+                <span class="poster-badge">⭐ 守护者</span>
+                <span class="poster-verified">✓ 实名</span>
+              </div>
+              <div class="poster-meta">大理古城 · 已成功归还 3 次 · 善行值 48</div>
+            </div>
+            <div class="poster-report" onclick="openReportSheet()">举报</div>
+          </div>
+
           <div class="feature-card green">
             <span class="ic">💬</span>
             <div><b>认领前会拿到一份「沟通建议」</b><br>平台提供与失主沟通的话术和见面建议。<b>核对怎么走由你们自己决定</b>——确认归还时回来打个卡就行。</div>
@@ -2114,6 +2312,50 @@
       </div>
     </div>
 
+    <!-- ===== Report Sheet · 举报这条信息 ===== -->
+    <div class="as-mask" id="report-sheet" onclick="if(event.target===this) closeReportSheet()">
+      <div class="action-sheet">
+        <div class="as-handle"></div>
+        <div class="as-title">举报这条信息</div>
+        <div class="as-option" onclick="submitReport('虚假信息')">
+          <div class="as-ic">⚠</div>
+          <div class="as-text">
+            <div class="as-label">虚假信息</div>
+            <div class="as-sub">怀疑捏造、恶意发布、骗取爱心</div>
+          </div>
+        </div>
+        <div class="as-option" onclick="submitReport('重复发布')">
+          <div class="as-ic">🔁</div>
+          <div class="as-text">
+            <div class="as-label">重复发布</div>
+            <div class="as-sub">同一信息多次出现、刷屏</div>
+          </div>
+        </div>
+        <div class="as-option" onclick="submitReport('违规内容')">
+          <div class="as-ic">🚫</div>
+          <div class="as-text">
+            <div class="as-label">违规内容</div>
+            <div class="as-sub">含微信号 / 电话 / 二维码、引导平台外联系</div>
+          </div>
+        </div>
+        <div class="as-option" onclick="submitReport('悬赏金钱')">
+          <div class="as-ic">💸</div>
+          <div class="as-text">
+            <div class="as-label">悬赏金 / 索要财物</div>
+            <div class="as-sub">违反平台禁止金钱往来的规则</div>
+          </div>
+        </div>
+        <div class="as-option" onclick="submitReport('其他')">
+          <div class="as-ic">⋯</div>
+          <div class="as-text">
+            <div class="as-label">其他</div>
+            <div class="as-sub">提交后将由平台审核员人工核查</div>
+          </div>
+        </div>
+        <div class="as-cancel" onclick="closeReportSheet()">取消</div>
+      </div>
+    </div>
+
     <!-- ===== Share Modal · 帮忙转发 ===== -->
     <div class="share-modal" id="share-modal" onclick="if(event.target===this) closeShareModal()">
       <div class="share-box">
@@ -2507,6 +2749,18 @@
 
   function closeShareModal() {
     document.getElementById('share-modal').classList.remove('show');
+  }
+
+  /* ============== 举报 ============== */
+  function openReportSheet() {
+    document.getElementById('report-sheet').classList.add('show');
+  }
+  function closeReportSheet() {
+    document.getElementById('report-sheet').classList.remove('show');
+  }
+  function submitReport(reason) {
+    closeReportSheet();
+    alert('✓ 举报已提交\n\n原因：' + reason + '\n平台审核员将在 24 小时内核查\n谢谢你的反馈 💛');
   }
 
   /* ============== 搜索逻辑 ============== */
