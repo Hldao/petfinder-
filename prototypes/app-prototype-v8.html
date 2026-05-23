@@ -695,6 +695,79 @@
     .dispute-type { padding: 14px 10px; background: var(--surface); color: var(--ink-2); font-size: 13px; font-weight: 600; border-radius: var(--radius-md); text-align: center; cursor: pointer; box-shadow: var(--shadow-card); }
     .dispute-type.selected { background: var(--warn-soft); color: var(--warn-deep); box-shadow: 0 0 0 2px var(--warn); }
 
+    /* Search */
+    .search-input-header { padding: 8px 14px; gap: 10px; }
+    .search-input-wrap {
+      flex: 1; display: flex; align-items: center; gap: 7px;
+      background: var(--bg); padding: 0 14px;
+      border-radius: var(--radius-pill); height: 38px;
+    }
+    .search-input-icon { font-size: 14px; color: var(--ink-3); flex-shrink: 0; }
+    .search-input {
+      flex: 1; border: none; background: transparent; outline: none;
+      font-family: var(--font-cn); font-size: 13.5px; color: var(--ink-1);
+      min-width: 0;
+    }
+    .search-input::placeholder { color: var(--ink-4); }
+    .search-input-clear {
+      width: 18px; height: 18px; background: var(--ink-4); color: white;
+      border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      font-size: 11px; cursor: pointer; flex-shrink: 0;
+      visibility: hidden;
+    }
+    .search-input-wrap.has-text .search-input-clear { visibility: visible; }
+    .search-cancel {
+      font-size: 14px; color: var(--apricot-deep); font-weight: 700;
+      cursor: pointer; padding: 0 2px; flex-shrink: 0;
+    }
+    .search-chips {
+      display: flex; gap: 8px; flex-wrap: wrap;
+      padding: 0 20px 4px;
+    }
+    .search-chip {
+      padding: 7px 14px; background: var(--surface); border-radius: var(--radius-pill);
+      font-size: 13px; color: var(--ink-2); cursor: pointer;
+      box-shadow: var(--shadow-pill); font-weight: 500;
+    }
+    .search-chip.hot { color: var(--apricot-deep); font-weight: 600; }
+    .suggestion-list {
+      background: var(--surface); border-radius: var(--radius-md);
+      margin: 0 16px 12px; overflow: hidden; box-shadow: var(--shadow-card);
+    }
+    .suggestion-item {
+      padding: 12px 14px; display: flex; align-items: center; gap: 10px;
+      cursor: pointer; border-bottom: 1px solid var(--divider-soft);
+    }
+    .suggestion-item:last-child { border-bottom: none; }
+    .sug-icon { color: var(--ink-3); font-size: 14px; }
+    .sug-text { flex: 1; font-size: 13.5px; font-weight: 500; color: var(--ink-1); }
+    .sug-text mark {
+      background: var(--apricot-soft); color: var(--apricot-deep);
+      padding: 0 2px; border-radius: 2px; font-weight: 700;
+    }
+    .sug-tag {
+      font-size: 11px; padding: 2px 8px;
+      background: var(--apricot-soft); color: var(--apricot-deep);
+      border-radius: var(--radius-pill); font-weight: 600;
+    }
+    .sug-tag.found { background: var(--mint-soft); color: var(--mint-deep); }
+    .sug-tag.care { background: var(--plum-soft); color: var(--plum-deep); }
+    .search-empty {
+      padding: 70px 40px 40px; text-align: center;
+    }
+    .search-empty-icon { font-size: 56px; opacity: 0.4; line-height: 1; }
+    .search-empty-title {
+      margin-top: 18px; font-size: 14.5px; font-weight: 700; color: var(--ink-1);
+    }
+    .search-empty-sub {
+      margin-top: 8px; font-size: 12.5px; color: var(--ink-3); line-height: 1.7;
+    }
+    .search-empty-cta {
+      color: var(--apricot-deep); font-weight: 700; cursor: pointer;
+      text-decoration: underline; text-decoration-style: dotted;
+      text-underline-offset: 3px;
+    }
+
     /* Privacy Modal */
     .privacy-modal { position: absolute; inset: 44px 0 0 0; background: rgba(31,31,31,0.55); backdrop-filter: blur(8px); z-index: 1000; display: flex; align-items: center; justify-content: center; padding: 24px; }
     .privacy-modal.hidden { display: none; }
@@ -779,8 +852,8 @@
     <div class="screen active" data-screen="feed">
       <div class="nav-region">
         <div class="nav-row">
-          <div class="city-tag"><span class="pin">📍</span><span>大理</span><span class="arrow">▼</span></div>
-          <div class="search-pill"><span>🔍</span><span>搜品种、地点、特征...</span></div>
+          <div class="city-tag" style="cursor:default"><span class="pin">📍</span><span>大理</span></div>
+          <div class="search-pill" onclick="showScreen('search')"><span>🔍</span><span>搜品种、地点、特征...</span></div>
           <div class="icon-btn" onclick="showScreen('messages')">🔔<div class="dot"></div></div>
         </div>
       </div>
@@ -1622,6 +1695,134 @@
       </div>
     </div>
 
+    <!-- ===== 屏 16 · Search ===== -->
+    <div class="screen" data-screen="search">
+      <div class="sub-header search-input-header">
+        <div class="back-btn" onclick="goBack()">←</div>
+        <div class="search-input-wrap" id="search-wrap">
+          <span class="search-input-icon">🔍</span>
+          <input type="text" class="search-input" id="search-box"
+                 placeholder="搜品种、地点、特征..."
+                 oninput="onSearchInput()" autocomplete="off">
+          <span class="search-input-clear" onclick="clearSearchInput()">×</span>
+        </div>
+        <span class="search-cancel" onclick="doSearch()">搜索</span>
+      </div>
+
+      <div class="scroll-area" style="padding-top: 0">
+
+        <!-- 默认状态：历史 + 热门 -->
+        <div id="search-default">
+          <div class="section-header">
+            <span class="title">最近搜索</span>
+            <span class="right" onclick="clearHistory()">清除</span>
+          </div>
+          <div class="search-chips">
+            <div class="search-chip" onclick="doSearchWith('胖丁')">胖丁</div>
+            <div class="search-chip" onclick="doSearchWith('蓝猫')">蓝猫</div>
+            <div class="search-chip" onclick="doSearchWith('古城北门')">古城北门</div>
+            <div class="search-chip" onclick="doSearchWith('比熊')">比熊</div>
+          </div>
+
+          <div class="section-header">
+            <span class="title">大理热门搜索</span>
+          </div>
+          <div class="search-chips">
+            <div class="search-chip hot" onclick="doSearchWith('英短')">🔥 英短</div>
+            <div class="search-chip hot" onclick="doSearchWith('橘猫')">🔥 橘猫</div>
+            <div class="search-chip" onclick="doSearchWith('中华田园犬')">中华田园犬</div>
+            <div class="search-chip" onclick="doSearchWith('拉布拉多')">拉布拉多</div>
+            <div class="search-chip" onclick="doSearchWith('人民路')">人民路</div>
+            <div class="search-chip" onclick="doSearchWith('洱海月')">洱海月</div>
+            <div class="search-chip" onclick="doSearchWith('下关')">下关</div>
+            <div class="search-chip" onclick="doSearchWith('苍山门')">苍山门</div>
+          </div>
+        </div>
+
+        <!-- 输入中：建议 -->
+        <div id="search-suggestion" style="display:none">
+          <div class="section-header">
+            <span class="title">搜索建议</span>
+          </div>
+          <div class="suggestion-list">
+            <div class="suggestion-item" onclick="doSearchFromSuggestion()">
+              <span class="sug-icon">🔍</span>
+              <span class="sug-text" id="sug-line-1">关键词</span>
+            </div>
+            <div class="suggestion-item" onclick="doSearchFromSuggestion()">
+              <span class="sug-icon">🐾</span>
+              <span class="sug-text" id="sug-line-2">相关帖子</span>
+              <span class="sug-tag" id="sug-line-2-tag">寻宠</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 结果列表 -->
+        <div id="search-result" style="display:none">
+          <div class="section-header">
+            <span class="title">搜索结果</span>
+            <span class="count">· <span id="result-count">2</span> 条</span>
+            <span class="right" id="result-keyword"></span>
+          </div>
+          <div class="feed-list" id="search-result-list">
+            <div class="pet-card sr-item" onclick="showScreen('detail-lost')">
+              <div class="pc-body">
+                <div class="pc-photo ph-blue"><span>🐱</span><div class="status-bubble lost">寻宠</div></div>
+                <div class="pc-info">
+                  <div class="pc-name-row"><span class="pc-name">胖丁</span><span class="breed">· 英短蓝猫 · ♂ 3 岁</span></div>
+                  <div class="pc-meta"><span>📍 古城北门</span><span class="urgent">⚡ 10 min 前</span></div>
+                  <div class="pc-desc">穿粉色项圈，左耳缺一小块。妈妈非常着急 🙏</div>
+                </div>
+              </div>
+              <div class="pc-footer">
+                <div class="distance-tag">📍 0.8 km</div>
+                <div class="pc-actions"><span class="pc-action">💬 12</span></div>
+              </div>
+            </div>
+            <div class="pet-card sr-item" onclick="showScreen('detail-found')">
+              <div class="pc-body">
+                <div class="pc-photo ph-orange"><span>🐱</span><div class="status-bubble found">招领</div></div>
+                <div class="pc-info">
+                  <div class="pc-name-row"><span class="pc-name">小橘子</span><span class="breed">· 约 2 岁 · ♀</span></div>
+                  <div class="pc-meta"><span>📍 人民路三月街</span><span class="urgent">⚡ 30 min 前</span></div>
+                  <div class="pc-desc">在咖啡馆门口蹲了一下午，看着像走丢的 ☕️</div>
+                </div>
+              </div>
+              <div class="pc-footer">
+                <div class="distance-tag">📍 1.2 km</div>
+                <div class="pc-actions"><span class="pc-action">💬 3</span></div>
+              </div>
+            </div>
+            <div class="pet-card sr-item" onclick="showScreen('detail-found')">
+              <div class="pc-body">
+                <div class="pc-photo ph-cream"><span>🐶</span><div class="status-bubble care">照料</div></div>
+                <div class="pc-info">
+                  <div class="pc-name-row"><span class="pc-name">小白</span><span class="breed">· 比熊 · ♂ 5kg</span></div>
+                  <div class="pc-meta"><span>📍 下关泰安路</span><span class="time">2 hr 前</span></div>
+                  <div class="pc-desc">在小区门口捡到，毛色干净有人养过 🏠</div>
+                </div>
+              </div>
+              <div class="pc-footer">
+                <div class="distance-tag">📍 4.2 km</div>
+                <div class="pc-actions"><span class="pc-action">💬 5</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 空结果 -->
+        <div id="search-empty" class="search-empty" style="display:none">
+          <div class="search-empty-icon">🔍</div>
+          <div class="search-empty-title">没有找到相关结果</div>
+          <div class="search-empty-sub">
+            换个关键词试试<br>
+            或者 <span class="search-empty-cta" onclick="showScreen('publish')">发布寻宠信息</span> 让大家帮你找
+          </div>
+        </div>
+
+      </div>
+    </div>
+
     <!-- ===== 隐私 Modal（覆盖在 feed 屏上，默认显示） ===== -->
     <div class="privacy-modal" id="privacy-modal">
       <div class="privacy-box">
@@ -1666,6 +1867,7 @@
     <li class="flow-item"><b>沟通流</b><span class="flow-arrow">→</span><span>消息列表 → 聊天 → 点顶部宠物卡跳详情</span></li>
     <li class="flow-item"><b>我的数据流</b><span class="flow-arrow">→</span><span>我的 → 善行值卡 / 我的发布 / 争议申诉</span></li>
     <li class="flow-item"><b>异常流</b><span class="flow-arrow">→</span><span>归还自检底部「争议申诉」/ 我的 → 争议申诉</span></li>
+    <li class="flow-item"><b>搜索流</b><span class="flow-arrow">→</span><span>首页搜索栏 → 历史/热门/输入 → 建议 → 结果 / 空状态（无果时引导发布）</span></li>
   </ul>
 
   <div class="im-section">快速跳转 · DEBUG NAV</div>
@@ -1685,6 +1887,7 @@
     <div class="im-jump" onclick="showScreen('points-history')"><span class="num">13</span>善行值流水</div>
     <div class="im-jump" onclick="showScreen('my-posts')"><span class="num">14</span>我的发布</div>
     <div class="im-jump" onclick="showScreen('dispute')"><span class="num">15</span>争议申诉</div>
+    <div class="im-jump" onclick="showScreen('search')"><span class="num">16</span>搜索 Search</div>
     <div class="im-jump" onclick="showPrivacyModal()"><span class="num">00</span>隐私 Modal</div>
   </div>
 </div>
@@ -1708,6 +1911,13 @@
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
     const t = document.querySelector(`[data-screen="${name}"]`);
     if (t) t.classList.add('active');
+    // 进入搜索屏时自动聚焦输入框
+    if (name === 'search') {
+      setTimeout(() => {
+        const box = document.getElementById('search-box');
+        if (box) box.focus();
+      }, 80);
+    }
   }
 
   function goBack() {
@@ -1724,6 +1934,128 @@
 
   function showPrivacyModal() {
     document.getElementById('privacy-modal').classList.remove('hidden');
+  }
+
+  /* ============== 搜索逻辑 ============== */
+  // mock 数据集（卡片关键词索引）
+  const SEARCH_DATA = [
+    { keywords: ['胖丁','英短','蓝猫','古城','北门','寻宠','♂','3岁','粉色','项圈'], status: '寻宠' },
+    { keywords: ['小橘子','橘猫','招领','人民路','三月街','咖啡','♀','2岁'], status: '招领' },
+    { keywords: ['小白','比熊','照料','下关','泰安','♂','5kg','白色'], status: '照料' },
+    { keywords: ['小棕','棕白','苍山','棕色'], status: '招领' }
+  ];
+
+  function matchSearch(keyword) {
+    const k = keyword.trim().toLowerCase();
+    if (!k) return [];
+    return SEARCH_DATA.filter(item =>
+      item.keywords.some(kw => kw.toLowerCase().includes(k) || k.includes(kw.toLowerCase()))
+    );
+  }
+
+  function onSearchInput() {
+    const box = document.getElementById('search-box');
+    const wrap = document.getElementById('search-wrap');
+    const v = box.value.trim();
+
+    if (v) wrap.classList.add('has-text');
+    else wrap.classList.remove('has-text');
+
+    if (!v) {
+      // 回到默认状态
+      showSearchState('default');
+    } else {
+      // 显示建议（最多 2 条匹配）
+      const matches = matchSearch(v);
+      const sug1 = document.getElementById('sug-line-1');
+      const sug2 = document.getElementById('sug-line-2');
+      const sug2Tag = document.getElementById('sug-line-2-tag');
+
+      sug1.innerHTML = `搜 "<mark>${escapeHtml(v)}</mark>" 相关`;
+
+      if (matches.length > 0) {
+        const first = matches[0];
+        // 找到最匹配的关键词
+        const matched = first.keywords.find(kw =>
+          kw.toLowerCase().includes(v.toLowerCase()) || v.toLowerCase().includes(kw.toLowerCase())
+        ) || v;
+        sug2.innerHTML = `<mark>${escapeHtml(matched)}</mark> · ${first.status}信息`;
+        sug2Tag.textContent = first.status;
+        sug2Tag.className = 'sug-tag ' + (first.status === '招领' ? 'found' : (first.status === '照料' ? 'care' : ''));
+        document.querySelectorAll('#search-suggestion .suggestion-item')[1].style.display = 'flex';
+      } else {
+        document.querySelectorAll('#search-suggestion .suggestion-item')[1].style.display = 'none';
+      }
+      showSearchState('suggestion');
+    }
+  }
+
+  function doSearch() {
+    const box = document.getElementById('search-box');
+    if (!box.value.trim()) return;
+    showResultsFor(box.value.trim());
+  }
+
+  function doSearchWith(keyword) {
+    const box = document.getElementById('search-box');
+    const wrap = document.getElementById('search-wrap');
+    box.value = keyword;
+    wrap.classList.add('has-text');
+    showResultsFor(keyword);
+  }
+
+  function doSearchFromSuggestion() {
+    const v = document.getElementById('search-box').value.trim();
+    if (v) showResultsFor(v);
+  }
+
+  function showResultsFor(keyword) {
+    const matches = matchSearch(keyword);
+    document.getElementById('result-keyword').textContent = `关于 "${keyword}"`;
+    if (matches.length === 0) {
+      showSearchState('empty');
+    } else {
+      document.getElementById('result-count').textContent = matches.length;
+      // 隐藏不匹配的卡片
+      const items = document.querySelectorAll('#search-result-list .sr-item');
+      const statusMap = ['寻宠', '招领', '照料', '招领']; // 与 SEARCH_DATA 顺序对应
+      items.forEach((el, i) => {
+        const item = SEARCH_DATA[i];
+        const hit = matches.includes(item);
+        el.style.display = hit ? 'block' : 'none';
+      });
+      showSearchState('result');
+    }
+  }
+
+  function showSearchState(state) {
+    ['default', 'suggestion', 'result', 'empty'].forEach(s => {
+      const el = document.getElementById('search-' + s);
+      if (el) el.style.display = (s === state) ? 'block' : 'none';
+    });
+  }
+
+  function clearSearchInput() {
+    const box = document.getElementById('search-box');
+    const wrap = document.getElementById('search-wrap');
+    box.value = '';
+    wrap.classList.remove('has-text');
+    box.focus();
+    showSearchState('default');
+  }
+
+  function clearHistory() {
+    if (confirm('清除最近搜索？')) {
+      // 演示用 - 真实场景应清 localStorage
+      document.querySelector('#search-default .search-chips').innerHTML =
+        '<div style="font-size:12px;color:var(--ink-4);padding:4px 0">暂无搜索历史</div>';
+    }
+  }
+
+  function escapeHtml(s) {
+    return s.replace(/[&<>"']/g, c => ({
+      '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+    })[c]);
   }
 </script>
 
