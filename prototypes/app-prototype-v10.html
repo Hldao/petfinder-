@@ -4163,17 +4163,21 @@
     const effStatus = d.mapStatus || d.status;
     const statusCls = d.expired ? 'expired' : effStatus;
     const statusLabel = d.expired ? '已过期' : d.statusLabel;
-    const urgentClass = !d.expired
-      ? ((effStatus === 'lost' && isUrgent(d)) ? ' urgent-card' : effStatus === 'care' ? ' care-card' : ' found-card')
+    // 卡片视觉平等：不强化任何一类（删除原 urgent-card 路径，符合"不评判失主"哲学）
+    const borderClass = !d.expired
+      ? (effStatus === 'lost' ? ' lost-card' : effStatus === 'care' ? ' care-card' : ' found-card')
       : '';
-    const timeSpan = renderTimeAndPhase(d);
+    // 时间显示：纯中性字符串（不再用 phase 倒计时）
+    const timeSpan = `<span class="time">${d.time}</span>`;
     const hint = CARD_HINTS[d.id];
     const hintHtml = hint ? `<div class="card-hint-strip ${effStatus}" onclick="event.stopPropagation();showScreen('${detailScreen}')">${hint}<span class="hint-arrow">›</span></div>` : '';
-    const phase = getRecoveryPhase(d);
-    const overdueHtml = (d.status === 'lost' && !d.expired && (phase.name === 'critical' || phase.name === 'longterm'))
-      ? `<div class="overdue-badge">${phase.name === 'longterm' ? '⚠ 超3天' : '⚠ 超24h'}</div>` : '';
+    // 超时角标：直接基于 timeMins 判断（剥离对 getRecoveryPhase 的依赖）
+    const isLongterm = d.timeMins >= 4320;  // ≥ 3 天
+    const isOverdue  = d.timeMins >= 1440;  // ≥ 24h
+    const overdueHtml = (d.status === 'lost' && !d.expired && isOverdue)
+      ? `<div class="overdue-badge">${isLongterm ? '⚠ 超3天' : '⚠ 超24h'}</div>` : '';
     const emoTime = formatEmotionalTime(d);
-    const emoHtml = emoTime ? `<div class="emotional-time${phase.name === 'longterm' ? ' longterm' : ''}">${emoTime}</div>` : '';
+    const emoHtml = emoTime ? `<div class="emotional-time${isLongterm ? ' longterm' : ''}">${emoTime}</div>` : '';
     const voiceTxt = OWNER_VOICES[d.id];
     const voiceHtml = voiceTxt ? `<div class="owner-voice">${voiceTxt}</div>` : '';
     return `<div class="card-swipe-wrapper">
@@ -4181,7 +4185,7 @@
         <div class="swa-btn" onclick="handleCardContact(${d.id})"><span class="swa-ic">📞</span>联系</div>
         <div class="swa-btn" onclick="handleCardMap(${d.id})"><span class="swa-ic">🗺</span>地图</div>
       </div>
-      <div class="pet-card${urgentClass}" ${expiredStyle} onclick="showScreen('${detailScreen}')">
+      <div class="pet-card${borderClass}" ${expiredStyle} onclick="showScreen('${detailScreen}')">
         ${overdueHtml}${hintHtml}
         <div class="pc-body">
           <div class="pc-photo ${d.photoClass}"><span>${d.emoji}</span><div class="status-bubble ${statusCls}">${statusLabel}</div></div>
@@ -4190,7 +4194,7 @@
             <div class="pc-meta"><span class="loc-link" onclick="event.stopPropagation();showOnMapByLoc(${d.id})">📍 ${d.loc} · ${distanceStr} km</span>${timeSpan}</div>
             ${emoHtml}
             <div class="pc-desc">${d.desc}</div>
-            ${isUrgent(d) ? renderNearbyHelpers(d) : ''}
+            ${renderNearbyHelpers(d)}
           </div>
         </div>
         ${voiceHtml}
