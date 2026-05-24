@@ -1928,8 +1928,8 @@
 
     /* 卡片左侧状态彩边（极简版 · 不强化任何一类卡） */
     .pet-card.lost-card   { border-left: 3px solid var(--apricot); }
-    .pet-card.found-card  { border-left: 3px solid var(--mint); }
-    .pet-card.care-card   { border-left: 3px solid var(--plum); }
+    .pet-card.found-card  { }
+    .pet-card.care-card   { }
     /* "附近的人也在帮"社区暗示 · 希望叙事主力（距离 ≤ 5km 都显示） */
     .nearby-helpers {
       display: flex; align-items: center; gap: 5px;
@@ -1961,9 +1961,13 @@
     .fsb-tagline.fading { opacity:0; }
     /* === 卡片左滑快捷操作 === */
     .card-swipe-wrapper { position:relative; border-radius:var(--radius-lg); overflow:hidden; box-shadow:var(--shadow-card); }
-    .card-swipe-wrapper .pet-card { box-shadow:none; border-radius:0; position:relative; z-index:2; transform:translateX(0); transition:transform 0.26s cubic-bezier(0.25,1,0.5,1); }
+    .card-swipe-wrapper .pet-card { box-shadow:none; border-radius:0; position:relative; z-index:2; transform:translateX(0); transition:transform 0.26s cubic-bezier(0.25,1,0.5,1); width:calc(100% - 10px); }
     .card-swipe-wrapper.open .pet-card { transform:translateX(-120px); }
-    .swipe-actions { position:absolute; right:0; top:0; bottom:0; width:120px; z-index:1; display:flex; align-items:center; gap:6px; padding:0 10px; background:var(--bg-deeper); }
+    .swipe-actions { position:absolute; right:0; top:0; bottom:0; width:120px; z-index:1; display:flex; align-items:center; gap:6px; padding:0 10px; background:var(--apricot-soft); }
+    .card-swipe-wrapper::after { content:'‹'; position:absolute; right:2px; top:50%; transform:translateY(-50%); font-size:14px; color:var(--apricot-deep); z-index:3; pointer-events:none; opacity:0.7; }
+    .card-swipe-wrapper.open::after { opacity:0; }
+    /* 右侧滑动图标提示 */
+    .swipe-hint-icon { font-size:10px; color:var(--apricot); letter-spacing:-1px; margin-left:auto; flex-shrink:0; }
     .swa-btn { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:3px; padding:8px 4px; border-radius:9px; cursor:pointer; background:white; box-shadow:var(--shadow-pill); font-size:10.5px; font-weight:700; color:var(--ink-2); }
     .swa-btn .swa-ic { font-size:18px; line-height:1.2; }
     .swa-btn:active { opacity:0.7; }
@@ -1991,6 +1995,8 @@
     .card-hint-strip.found { background: var(--mint-soft);    color: var(--mint-deep);    border-bottom: 1px solid rgba(91,184,159,0.15); }
     .card-hint-strip.care  { background: var(--plum-soft);    color: var(--plum-deep);    border-bottom: 1px solid rgba(166,114,212,0.15); }
     .card-hint-strip .hint-arrow { margin-left: auto; font-size: 13px; opacity: 0.7; }
+    .card-hint-strip { transition: opacity 0.28s ease; }
+    .card-hint-strip.hint-fading { opacity: 0; }
 
     /* 更新进展提示条 */
     .update-banner {
@@ -3862,6 +3868,14 @@
     return `<div class="nearby-helpers"><span class="nh-ic">🤝</span>${copy}</div>`;
   }
 
+  function getNearbyHelpersText(d) {
+    if (d.expired || d.distanceKm > 5) return '';
+    const n = Math.max(2, Math.round((6 - d.distanceKm) * 1.2 + d.comments * 0.4));
+    if (d.distanceKm < 1)  return `🤝 你附近还有 ${n} 位邻居在留意`;
+    if (d.distanceKm < 3)  return `🤝 ${Math.ceil(d.distanceKm)}km 内有 ${n} 人在帮 ta 找`;
+    return `🤝 大理本地 ${n} 人在接力转发`;
+  }
+
   let currentFilter = 'all';
   let currentSort = 'time';
 
@@ -4170,7 +4184,11 @@
     // 时间显示：纯中性字符串（不再用 phase 倒计时）
     const timeSpan = `<span class="time">${d.time}</span>`;
     const hint = CARD_HINTS[d.id];
-    const hintHtml = hint ? `<div class="card-hint-strip ${effStatus}" onclick="event.stopPropagation();showScreen('${detailScreen}')">${hint}<span class="hint-arrow">›</span></div>` : '';
+    const nearbyTxt = getNearbyHelpersText(d);
+    const firstMsg = hint || nearbyTxt;
+    const hintHtml = firstMsg
+      ? `<div class="card-hint-strip ${effStatus}" id="hint-${d.id}" onclick="event.stopPropagation();showScreen('${detailScreen}')">${firstMsg}<span class="hint-arrow">›</span></div>`
+      : '';
     // 超时角标：直接基于 timeMins 判断（剥离对 getRecoveryPhase 的依赖）
     const isLongterm = d.timeMins >= 4320;  // ≥ 3 天
     const isOverdue  = d.timeMins >= 1440;  // ≥ 24h
@@ -4178,8 +4196,6 @@
       ? `<div class="overdue-badge">${isLongterm ? '⚠ 超3天' : '⚠ 超24h'}</div>` : '';
     const emoTime = formatEmotionalTime(d);
     const emoHtml = emoTime ? `<div class="emotional-time${isLongterm ? ' longterm' : ''}">${emoTime}</div>` : '';
-    const voiceTxt = OWNER_VOICES[d.id];
-    const voiceHtml = voiceTxt ? `<div class="owner-voice">${voiceTxt}</div>` : '';
     return `<div class="card-swipe-wrapper">
       <div class="swipe-actions">
         <div class="swa-btn" onclick="handleCardContact(${d.id})"><span class="swa-ic">📞</span>联系</div>
@@ -4194,15 +4210,14 @@
             <div class="pc-meta"><span class="loc-link" onclick="event.stopPropagation();showOnMapByLoc(${d.id})">📍 ${d.loc} · ${distanceStr} km</span>${timeSpan}</div>
             ${emoHtml}
             <div class="pc-desc">${d.desc}</div>
-            ${renderNearbyHelpers(d)}
           </div>
         </div>
-        ${voiceHtml}
         <div class="pc-footer">
           <div class="pc-actions">
             <span class="pc-action">🤝 ${d.comments} 接力</span>
             <span class="pc-action share" onclick="event.stopPropagation();openShare(${d.id})">⤴ 转发</span>
           </div>
+          <span class="swipe-hint-icon">‹‹</span>
         </div>
       </div>
     </div>`;
@@ -4256,7 +4271,51 @@
       }
     });
     container.innerHTML = html;
+    // 绑定提示条轮播消息
+    items.forEach(d => {
+      const el = document.getElementById('hint-' + d.id);
+      if (!el) return;
+      const msgs = [CARD_HINTS[d.id], getNearbyHelpersText(d), OWNER_VOICES[d.id]].filter(Boolean);
+      if (msgs.length > 1) el._hintMsgs = msgs;
+    });
     bindSwipeActions();
+    bindHintRotation();
+    demoSwipeHint();
+  }
+
+  /* ============== 左滑新手引导 ============== */
+  function demoSwipeHint() {
+    const first = document.querySelector('#feed-list .card-swipe-wrapper');
+    if (!first) return;
+    const card = first.querySelector('.pet-card');
+    if (!card) return;
+    setTimeout(() => {
+      card.style.transition = 'transform 0.45s cubic-bezier(0.25,1,0.5,1)';
+      card.style.transform = 'translateX(-32px)';
+      setTimeout(() => {
+        card.style.transform = 'translateX(0)';
+        setTimeout(() => { card.style.transition = ''; }, 450);
+      }, 1400);
+    }, 3000);
+  }
+
+  /* ============== 提示条轮播 ============== */
+  function bindHintRotation() {
+    document.querySelectorAll('#feed-list .card-hint-strip').forEach(el => {
+      if (!el._hintMsgs || el._hintBound) return;
+      el._hintBound = true;
+      let cur = 0;
+      setInterval(() => {
+        el.classList.add('hint-fading');
+        setTimeout(() => {
+          cur = (cur + 1) % el._hintMsgs.length;
+          const arrow = el.querySelector('.hint-arrow');
+          el.textContent = el._hintMsgs[cur];
+          if (arrow) el.appendChild(arrow);
+          el.classList.remove('hint-fading');
+        }, 280);
+      }, 8000);
+    });
   }
 
   /* ============== 卡片左滑交互 ============== */
