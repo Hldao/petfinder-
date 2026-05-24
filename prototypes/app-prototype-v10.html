@@ -1612,8 +1612,37 @@
     .city-ic { font-size: 18px; width: 24px; text-align: center; flex-shrink: 0; }
     .city-opt-name { flex: 1; font-size: 14px; font-weight: 600; color: var(--ink-1); }
     .city-opt-sub { font-size: 11px; color: var(--mint-deep); font-weight: 600; }
-    .city-list { overflow-y: auto; max-height: 280px; }
+    .city-list { overflow-y: auto; max-height: 200px; }
     .city-list::-webkit-scrollbar { display: none; }
+    .city-section-label {
+      padding: 8px 16px 6px; font-size: 11px; color: var(--ink-4);
+      font-weight: 700; letter-spacing: 0.06em;
+    }
+    .city-relocate-btn {
+      margin: 0 16px 12px;
+      padding: 10px 14px;
+      background: var(--mint-soft); border-radius: var(--radius-md);
+      display: flex; align-items: center; gap: 8px;
+      cursor: pointer; color: var(--mint-deep);
+    }
+    .city-relocate-btn:hover { background: var(--mint); color: white; }
+    .city-relocate-btn .reloc-label { font-size: 13px; font-weight: 700; flex: 1; }
+    .city-relocate-btn .reloc-status { font-size: 11px; opacity: 0.8; font-family: var(--font-en); font-weight: 600; }
+
+    /* 城市切换 Toast */
+    .city-toast {
+      position: absolute; left: 50%; transform: translateX(-50%) translateY(20px);
+      bottom: 100px; white-space: nowrap;
+      background: rgba(31,31,31,0.88); color: white;
+      padding: 9px 18px; border-radius: var(--radius-pill);
+      font-size: 13px; font-weight: 600;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.2s ease, transform 0.2s ease;
+      z-index: 50;
+    }
+    .city-toast.show {
+      opacity: 1; transform: translateX(-50%) translateY(0);
+    }
 
     /* 卡片左侧状态彩边 */
     .pet-card.urgent-card { border-left: 3px solid var(--apricot); }
@@ -1673,6 +1702,7 @@
 <!-- ============== 主舞台 ============== -->
 <div class="stage">
   <div class="device">
+    <div class="city-toast" id="city-toast"></div>
     <div class="status-bar"><span>9:41</span><span style="font-size:11px">📶 5G 🔋</span></div>
 
     <!-- ===== 屏 1 · Feed ===== -->
@@ -1726,21 +1756,27 @@
                 <input class="city-search-input" id="city-search-input" placeholder="搜索城市..." oninput="filterCities(this.value)">
               </div>
             </div>
-            <div style="padding:0 16px 8px;font-size:11px;color:var(--ink-4);font-weight:700;letter-spacing:0.06em">当前位置</div>
-            <div class="city-option selected" onclick="selectCity('大理')">
-              <span class="city-ic">📍</span><span class="city-opt-name">大理</span><span class="city-opt-sub">已定位</span><span class="as-check" style="opacity:1">✓</span>
+            <div class="city-section-label">当前位置</div>
+            <div class="city-relocate-btn" onclick="simulateRelocate()">
+              <span>📍</span>
+              <span class="reloc-label">重新定位</span>
+              <span class="reloc-status" id="reloc-status">大理 · 已定位</span>
             </div>
-            <div style="padding:8px 16px 6px;font-size:11px;color:var(--ink-4);font-weight:700;letter-spacing:0.06em">云南热门城市</div>
+            <div id="recent-cities-section" style="display:none">
+              <div class="city-section-label">最近使用</div>
+              <div id="recent-cities-list"></div>
+            </div>
+            <div class="city-section-label">云南热门城市</div>
             <div class="city-list" id="city-list">
-              <div class="city-option" onclick="selectCity('丽江')"><span class="city-ic">🏔</span><span class="city-opt-name">丽江</span></div>
-              <div class="city-option" onclick="selectCity('昆明')"><span class="city-ic">🌆</span><span class="city-opt-name">昆明</span></div>
-              <div class="city-option" onclick="selectCity('西双版纳')"><span class="city-ic">🌿</span><span class="city-opt-name">西双版纳</span></div>
-              <div class="city-option" onclick="selectCity('香格里拉')"><span class="city-ic">🏔</span><span class="city-opt-name">香格里拉</span></div>
-              <div class="city-option" onclick="selectCity('腾冲')"><span class="city-ic">♨️</span><span class="city-opt-name">腾冲</span></div>
-              <div class="city-option" onclick="selectCity('保山')"><span class="city-ic">🌄</span><span class="city-opt-name">保山</span></div>
-              <div class="city-option" onclick="selectCity('楚雄')"><span class="city-ic">🦕</span><span class="city-opt-name">楚雄</span></div>
-              <div class="city-option" onclick="selectCity('曲靖')"><span class="city-ic">🏞</span><span class="city-opt-name">曲靖</span></div>
-              <div class="city-option" onclick="selectCity('玉溪')"><span class="city-ic">🌊</span><span class="city-opt-name">玉溪</span></div>
+              <div class="city-option" onclick="selectCity('丽江','🏔')"><span class="city-ic">🏔</span><span class="city-opt-name">丽江</span></div>
+              <div class="city-option" onclick="selectCity('昆明','🌆')"><span class="city-ic">🌆</span><span class="city-opt-name">昆明</span></div>
+              <div class="city-option" onclick="selectCity('西双版纳','🌿')"><span class="city-ic">🌿</span><span class="city-opt-name">西双版纳</span></div>
+              <div class="city-option" onclick="selectCity('香格里拉','🏔')"><span class="city-ic">🏔</span><span class="city-opt-name">香格里拉</span></div>
+              <div class="city-option" onclick="selectCity('腾冲','♨️')"><span class="city-ic">♨️</span><span class="city-opt-name">腾冲</span></div>
+              <div class="city-option" onclick="selectCity('保山','🌄')"><span class="city-ic">🌄</span><span class="city-opt-name">保山</span></div>
+              <div class="city-option" onclick="selectCity('楚雄','🦕')"><span class="city-ic">🦕</span><span class="city-opt-name">楚雄</span></div>
+              <div class="city-option" onclick="selectCity('曲靖','🏞')"><span class="city-ic">🏞</span><span class="city-opt-name">曲靖</span></div>
+              <div class="city-option" onclick="selectCity('玉溪','🌊')"><span class="city-ic">🌊</span><span class="city-opt-name">玉溪</span></div>
             </div>
             <div class="as-cancel" onclick="closeCityPicker()">取消</div>
           </div>
@@ -3294,6 +3330,61 @@
       mapPos:{top:65,left:22} }
   ];
 
+  // 各城市模拟数据
+  const CITY_FEEDS = {
+    '丽江': [
+      { id:100, emoji:'🐕', photoClass:'ph-orange', status:'lost', statusLabel:'寻宠', name:'旺财', breed:'柴犬 · ♂ 2岁', loc:'丽江古城四方街', time:'20 min 前', timeMins:20, distanceKm:0.6, urgent:true, comments:5, desc:'棕色柴犬，戴蓝色项圈，在四方街走失，胆小怕人，看到请拍照', mapPos:{top:30,left:32} },
+      { id:101, emoji:'🐱', photoClass:'ph-blue', status:'found', statusLabel:'招领', name:'雪儿', breed:'白色长毛猫 · ♀', loc:'束河古镇', time:'1 hr 前', timeMins:60, distanceKm:3.2, urgent:false, comments:3, desc:'在束河茶马古道旁发现，干净亲人，应该有主人', mapPos:{top:48,left:58} },
+      { id:102, emoji:'🐶', photoClass:'ph-cream', status:'lost', statusLabel:'寻宠', name:'豆豆', breed:'贵宾 · ♀ 1岁', loc:'玉龙雪山景区', time:'3 hr 前', timeMins:180, distanceKm:8.5, urgent:false, comments:9, desc:'在景区停车场走失，杏色毛，戴粉色蝴蝶结', mapPos:{top:15,left:68} },
+      { id:103, emoji:'🐱', photoClass:'ph-mint', status:'found', statusLabel:'招领', name:'小黑', breed:'黑猫 · 约1岁', loc:'忠义市场', time:'2 hr 前', timeMins:120, distanceKm:1.8, urgent:false, comments:2, desc:'在忠义市场附近发现，亲人，疑似走失家猫', mapPos:{top:62,left:42} },
+    ],
+    '昆明': [
+      { id:200, emoji:'🐱', photoClass:'ph-orange', status:'lost', statusLabel:'寻宠', name:'橘橘', breed:'橘猫 · ♂ 3岁', loc:'翠湖公园', time:'5 min 前', timeMins:5, distanceKm:0.4, urgent:true, comments:18, desc:'翠湖边走失，胖橘猫，戴绿色项圈，怕生请拍照不要追', mapPos:{top:28,left:33} },
+      { id:201, emoji:'🐕', photoClass:'ph-dark', status:'lost', statusLabel:'寻宠', name:'大黄', breed:'金毛 · ♂ 5岁', loc:'世博园附近', time:'2 hr 前', timeMins:120, distanceKm:5.2, urgent:false, comments:14, desc:'体型较大，性格温顺，在世博园附近走散', mapPos:{top:18,left:64} },
+      { id:202, emoji:'🐶', photoClass:'ph-pink', status:'found', statusLabel:'招领', name:'奶油', breed:'萨摩耶 · ♀ 2岁', loc:'滇池边', time:'30 min 前', timeMins:30, distanceKm:2.1, urgent:false, comments:7, desc:'在滇池边发现，干净漂亮，正在帮忙找主人', mapPos:{top:68,left:50} },
+      { id:203, emoji:'🐱', photoClass:'ph-plum', status:'lost', statusLabel:'寻宠', name:'蓝蓝', breed:'俄罗斯蓝猫 · ♀', loc:'南屏街', time:'1 hr 前', timeMins:60, distanceKm:1.3, urgent:false, comments:6, desc:'银灰色短毛，绿眼睛，在南屏街附近走失', mapPos:{top:46,left:40} },
+      { id:204, emoji:'🐶', photoClass:'ph-cream', status:'found', statusLabel:'招领', name:'球球', breed:'博美 · ♂ 3岁', loc:'官渡古镇', time:'4 hr 前', timeMins:240, distanceKm:7.8, urgent:false, comments:4, desc:'在官渡古镇捡到，毛色金黄，活泼爱叫', mapPos:{top:55,left:72} },
+    ],
+    '西双版纳': [
+      { id:300, emoji:'🐱', photoClass:'ph-orange', status:'lost', statusLabel:'寻宠', name:'芒果', breed:'橘猫 · ♂ 2岁', loc:'告庄西双景夜市', time:'1 hr 前', timeMins:60, distanceKm:1.1, urgent:true, comments:4, desc:'在告庄夜市走失，大橘猫，很能吃，叫芒果会回应', mapPos:{top:40,left:44} },
+      { id:301, emoji:'🐶', photoClass:'ph-mint', status:'found', statusLabel:'招领', name:'椰子', breed:'田园犬 · ♀ 幼犬', loc:'橄榄坝', time:'3 hr 前', timeMins:180, distanceKm:4.6, urgent:false, comments:3, desc:'在橄榄坝发现的小奶狗，疑似被遗弃，正帮找主人', mapPos:{top:62,left:28}, mapStatus:'care' },
+      { id:302, emoji:'🐱', photoClass:'ph-blue', status:'lost', statusLabel:'寻宠', name:'雨林', breed:'暹罗猫 · ♂ 2岁', loc:'野象谷附近', time:'昨天', timeMins:1200, distanceKm:12, urgent:false, comments:7, desc:'在野象谷景区附近走失，奶白色身体深色脸，怕陌生人', mapPos:{top:22,left:65} },
+    ],
+  };
+  // 剩余城市共用精简模板
+  ['香格里拉','腾冲','保山','楚雄','曲靖','玉溪'].forEach((city, i) => {
+    CITY_FEEDS[city] = [
+      { id:400+i*10, emoji:'🐱', photoClass:'ph-orange', status:'lost', statusLabel:'寻宠', name:'橘猫', breed:'约 1-2 岁 · ♂', loc:city+'市区', time:'2 hr 前', timeMins:120, distanceKm:1.5, urgent:false, comments:2, desc:'在'+city+'市区附近走失，橘色短毛，项圈已掉落，见到请联系', mapPos:{top:35,left:38} },
+      { id:401+i*10, emoji:'🐶', photoClass:'ph-cream', status:'found', statusLabel:'招领', name:'流浪犬', breed:'田园犬 · 中型', loc:city+'老街', time:'1 天前', timeMins:1440, distanceKm:3.2, urgent:false, comments:1, desc:'在'+city+'老街附近发现，疑似走失家犬，性格温顺', mapPos:{top:58,left:55} },
+    ];
+  });
+
+  const CITY_MAP_LABELS = {
+    '大理':    [{t:'21%',l:'15%',n:'古城北门'},{t:'38%',l:'42%',n:'人民路'},{t:'54%',l:'62%',n:'下关'},{t:'18%',l:'74%',n:'洱海月'},{t:'78%',l:'22%',n:'苍山门'}],
+    '丽江':    [{t:'26%',l:'30%',n:'四方街'},{t:'44%',l:'56%',n:'束河古镇'},{t:'13%',l:'66%',n:'玉龙雪山'},{t:'60%',l:'40%',n:'忠义市场'}],
+    '昆明':    [{t:'26%',l:'30%',n:'翠湖公园'},{t:'16%',l:'62%',n:'世博园'},{t:'66%',l:'48%',n:'滇池'},{t:'44%',l:'38%',n:'南屏街'},{t:'53%',l:'70%',n:'官渡古镇'}],
+    '西双版纳':[{t:'38%',l:'42%',n:'告庄西双景'},{t:'60%',l:'26%',n:'橄榄坝'},{t:'20%',l:'63%',n:'野象谷'}],
+  };
+
+  function getActiveFeedData() {
+    if (currentCity === '大理') return FEED_DATA;
+    return CITY_FEEDS[currentCity] || FEED_DATA;
+  }
+
+  function updateMapLabels(city) {
+    const layer = document.getElementById('map-layer');
+    if (!layer) return;
+    layer.querySelectorAll('.map-label').forEach(el => el.remove());
+    const labels = CITY_MAP_LABELS[city] || [{ t:'40%', l:'40%', n: city }];
+    labels.forEach(lb => {
+      const div = document.createElement('div');
+      div.className = 'map-label';
+      div.style.top = lb.t; div.style.left = lb.l;
+      div.textContent = lb.n;
+      layer.appendChild(div);
+    });
+  }
+
   let currentFilter = 'all';
   let currentSort = 'time';
 
@@ -3327,7 +3418,7 @@
   }
 
   function buildAllFiltered() {
-    allFiltered = FEED_DATA.filter(d => {
+    allFiltered = getActiveFeedData().filter(d => {
       if (allFilter === 'all') return true;
       const eff = d.mapStatus || d.status;
       if (allFilter === 'care') return eff === 'care';
@@ -3413,27 +3504,110 @@
     </div>`;
   }
 
+  const CITY_DATA = {
+    '大理':   { count:14, desc:'古城 · 洱海周边',   ic:'📍' },
+    '丽江':   { count:8,  desc:'古城 · 玉龙雪山周边', ic:'🏔' },
+    '昆明':   { count:31, desc:'主城区 · 滇池周边',  ic:'🌆' },
+    '西双版纳':{ count:5, desc:'景洪市区周边',       ic:'🌿' },
+    '香格里拉':{ count:3, desc:'独克宗古城周边',     ic:'🏔' },
+    '腾冲':   { count:6,  desc:'腾越镇周边',         ic:'♨️' },
+    '保山':   { count:9,  desc:'隆阳区周边',         ic:'🌄' },
+    '楚雄':   { count:11, desc:'楚雄市区周边',       ic:'🦕' },
+    '曲靖':   { count:19, desc:'麒麟区周边',         ic:'🏞' },
+    '玉溪':   { count:13, desc:'红塔区周边',         ic:'🌊' },
+  };
+  let currentCity = '大理';
+  let recentCities = [];
+
   function openCityPicker() {
     document.getElementById('city-sheet').classList.add('show');
     const input = document.getElementById('city-search-input');
-    if (input) { input.value = ''; filterCities(''); input.focus(); }
+    if (input) { input.value = ''; filterCities(''); }
+    updateRecentCities();
+    enableDragScroll(document.getElementById('city-list'), 'y');
   }
   function closeCityPicker() {
     document.getElementById('city-sheet').classList.remove('show');
   }
-  function selectCity(name) {
+  function selectCity(name, ic) {
+    if (name === currentCity) { closeCityPicker(); return; }
+    // 加入最近城市
+    recentCities = [currentCity, ...recentCities.filter(c => c !== currentCity)].slice(0, 3);
+    currentCity = name;
+    // 更新顶部标签
     document.getElementById('city-name').textContent = name;
-    document.querySelectorAll('.city-option').forEach(o => o.classList.remove('selected'));
-    event.currentTarget.classList.add('selected');
+    // 更新定位状态
+    const relocStatus = document.getElementById('reloc-status');
+    if (relocStatus) relocStatus.textContent = name + ' · 已切换';
+    // 联动首页内容
+    applyCityToFeed(name);
     closeCityPicker();
+    showCityToast('📍 已切换到 ' + name);
+  }
+  function applyCityToFeed(name) {
+    // 更新 section 标题
+    const sectionTitle = document.querySelector('[data-screen="feed"] .section-header .title');
+    if (sectionTitle) sectionTitle.textContent = name + '的小朋友';
+    // 大理专属提示条
+    const banner = document.getElementById('update-banner');
+    if (banner) banner.style.display = name === '大理' ? '' : 'none';
+    // 重渲染卡片、地图 pins、地图标签、底部卡片列表
+    renderFeed();
+    renderMapPins();
+    renderSheetCards();
+    updateMapLabels(name);
+  }
+  function simulateRelocate() {
+    const btn = document.querySelector('.city-relocate-btn');
+    const status = document.getElementById('reloc-status');
+    if (status) status.textContent = '定位中...';
+    if (btn) btn.style.opacity = '0.6';
+    setTimeout(() => {
+      if (btn) btn.style.opacity = '';
+      if (status) status.textContent = '大理 · 已定位';
+      if (currentCity !== '大理') {
+        recentCities = [currentCity, ...recentCities.filter(c => c !== currentCity)].slice(0, 3);
+        currentCity = '大理';
+        document.getElementById('city-name').textContent = '大理';
+        applyCityToFeed('大理');
+        closeCityPicker();
+        showCityToast('📍 已重新定位到大理');
+      } else {
+        closeCityPicker();
+        showCityToast('📍 当前位置：大理');
+      }
+    }, 1200);
+  }
+  function updateRecentCities() {
+    const section = document.getElementById('recent-cities-section');
+    const list = document.getElementById('recent-cities-list');
+    if (!section || !list) return;
+    if (recentCities.length === 0) { section.style.display = 'none'; return; }
+    section.style.display = '';
+    list.innerHTML = recentCities.map(name => {
+      const d = CITY_DATA[name] || { ic: '🏙' };
+      return `<div class="city-option" onclick="selectCity('${name}','${d.ic}')">
+        <span class="city-ic">${d.ic}</span>
+        <span class="city-opt-name">${name}</span>
+        <span class="city-opt-sub" style="color:var(--ink-4)">最近使用</span>
+      </div>`;
+    }).join('');
   }
   function filterCities(q) {
     const list = document.getElementById('city-list');
     if (!list) return;
     list.querySelectorAll('.city-option').forEach(o => {
-      const match = o.querySelector('.city-opt-name').textContent.includes(q);
-      o.style.display = match ? '' : 'none';
+      o.style.display = o.querySelector('.city-opt-name').textContent.includes(q) ? '' : 'none';
     });
+  }
+  let _toastTimer = null;
+  function showCityToast(msg) {
+    const el = document.getElementById('city-toast');
+    if (!el) return;
+    el.textContent = msg;
+    el.classList.add('show');
+    if (_toastTimer) clearTimeout(_toastTimer);
+    _toastTimer = setTimeout(() => el.classList.remove('show'), 2200);
   }
 
   function switchMpTab(el, section) {
@@ -3487,7 +3661,7 @@
     if (!container) return;
 
     // 过滤
-    let items = FEED_DATA.filter(d => {
+    let items = getActiveFeedData().filter(d => {
       if (currentFilter === 'all') return true;
       const eff = d.mapStatus || d.status;
       if (currentFilter === 'care') return eff === 'care';
@@ -3566,7 +3740,7 @@
     const layer = document.getElementById('map-layer');
     if (!layer) return;
     layer.querySelectorAll('.map-pin').forEach(p => p.remove());
-    FEED_DATA.forEach(d => {
+    getActiveFeedData().forEach(d => {
       const sc = d.mapStatus || d.status;
       const pulse = (d.status === 'lost') ? '<div class="pin-pulse"></div>' : '';
       const pin = document.createElement('div');
@@ -3588,7 +3762,7 @@
     const labelMap  = { lost:'丢失', found:'招领', care:'照料中' };
     const bgMap     = { lost:'var(--apricot-soft)', found:'var(--mint-soft)', care:'var(--plum-soft)' };
     const colorMap  = { lost:'var(--apricot-deep)', found:'var(--mint-deep)', care:'var(--plum-deep)' };
-    content.innerHTML = FEED_DATA.map(d => {
+    content.innerHTML = getActiveFeedData().map(d => {
       const sc = d.mapStatus || d.status;
       const distStr = d.distanceKm < 1
         ? Math.round(d.distanceKm * 1000) + ' 米'
@@ -3602,21 +3776,52 @@
     updateSheetTitle('', FEED_DATA.length);
   }
 
-  // 横向拖拽滚动（filter-row）
-  function enableDragScroll(el) {
-    let down = false, startX, startScroll;
-    el.style.cursor = 'grab';
-    el.addEventListener('mousedown', e => {
-      down = true; startX = e.pageX; startScroll = el.scrollLeft;
-      el.style.cursor = 'grabbing'; el.style.userSelect = 'none';
-    });
-    window.addEventListener('mouseup', () => {
-      down = false; el.style.cursor = 'grab'; el.style.userSelect = '';
-    });
-    window.addEventListener('mousemove', e => {
-      if (!down) return;
-      el.scrollLeft = startScroll - (e.pageX - startX);
-    });
+  // 拖拽滚动 — 用 PointerCapture 绑在元素自身，支持鼠标和触屏
+  // axis: 'x' 横向 | 'y' 纵向 | 'both' 双向（默认 'x'）
+  function enableDragScroll(el, axis) {
+    if (!el) return;
+    axis = axis || 'x';
+    // 清除旧的绑定再重新绑，避免重复累积
+    if (el._cleanupDrag) el._cleanupDrag();
+    el.style.userSelect = 'none';
+    el.style.cursor = axis === 'y' ? 'default' : 'grab';
+
+    function onDown(e) {
+      if (e.button !== undefined && e.button !== 0) return;
+      el._ds = { x: e.clientX, y: e.clientY, sl: el.scrollLeft, st: el.scrollTop, id: e.pointerId, captured: false };
+    }
+    function onMove(e) {
+      if (!el._ds) return;
+      const dx = Math.abs(e.clientX - el._ds.x);
+      const dy = Math.abs(e.clientY - el._ds.y);
+      // 超过 5px 才视为拖拽，避免吞掉点击
+      if (!el._ds.captured && (dx > 5 || dy > 5)) {
+        el.setPointerCapture(e.pointerId);
+        el._ds.captured = true;
+        if (axis !== 'y') el.style.cursor = 'grabbing';
+      }
+      if (!el._ds.captured) return;
+      if (axis !== 'y') el.scrollLeft = el._ds.sl - (e.clientX - el._ds.x);
+      if (axis !== 'x') el.scrollTop  = el._ds.st - (e.clientY - el._ds.y);
+    }
+    function onUp(e) {
+      if (el._ds && el._ds.captured && el.hasPointerCapture(e.pointerId)) {
+        el.releasePointerCapture(e.pointerId);
+      }
+      el._ds = null;
+      if (axis !== 'y') el.style.cursor = 'grab';
+    }
+
+    el.addEventListener('pointerdown',   onDown);
+    el.addEventListener('pointermove',   onMove);
+    el.addEventListener('pointerup',     onUp);
+    el.addEventListener('pointercancel', onUp);
+    el._cleanupDrag = () => {
+      el.removeEventListener('pointerdown',   onDown);
+      el.removeEventListener('pointermove',   onMove);
+      el.removeEventListener('pointerup',     onUp);
+      el.removeEventListener('pointercancel', onUp);
+    };
   }
 
   // 初次渲染
