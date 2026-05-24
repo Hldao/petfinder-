@@ -1537,7 +1537,6 @@
           <div class="chip active" data-filter="all" onclick="applyFilter('all', this)">全部</div>
           <div class="chip" data-filter="lost" onclick="applyFilter('lost', this)"><span class="chip-dot" style="background:var(--apricot)"></span>寻宠</div>
           <div class="chip" data-filter="found" onclick="applyFilter('found', this)"><span class="chip-dot" style="background:var(--mint)"></span>招领</div>
-          <div class="chip" data-filter="care" onclick="applyFilter('care', this)"><span class="chip-dot" style="background:var(--plum)"></span>临时照料</div>
           <div class="chip chip-sort" id="sort-chip" onclick="openSortSheet()">⏱ 最新</div>
         </div>
       </div>
@@ -1746,11 +1745,6 @@
               <div class="ie-value">人民路 39 号「白桃」咖啡馆</div>
             </div>
             <div class="info-extra-row">
-              <div class="ie-icon honey">⏰</div>
-              <div class="ie-label">可照料</div>
-              <div class="ie-value">3 天<span class="countdown">· 至 5 月 25 日</span></div>
-            </div>
-            <div class="info-extra-row">
               <div class="ie-icon">🩺</div>
               <div class="ie-label">健康</div>
               <div class="ie-value">已喂食，未发现外伤；未做疫苗检查</div>
@@ -1891,13 +1885,6 @@
           <div class="form-row">
             <div class="form-label"><span class="req">*</span> 目前位置</div>
             <input class="form-input" placeholder="比如：我家 / 宠物医院 / 小区门卫处">
-          </div>
-          <div class="form-row">
-            <div class="form-label"><span class="req">*</span> 可临时照料</div>
-            <div class="form-value" onclick="openCareDaysSheet()">
-              <span id="publish-care-days">3 天</span>
-              <span class="form-arrow">›</span>
-            </div>
           </div>
           <div class="form-row">
             <div class="form-label">健康状况</div>
@@ -2195,18 +2182,15 @@
             <div class="points-stats">
               <div class="stat-cell"><div class="stat-num">3</div><div class="stat-label">归还成功</div></div>
               <div class="stat-cell"><div class="stat-num">8</div><div class="stat-label">提供线索</div></div>
-              <div class="stat-cell"><div class="stat-num">3</div><div class="stat-label">临时照料</div></div>
               <div class="stat-cell"><div class="stat-num">5</div><div class="stat-label">收到感谢</div></div>
             </div>
           </div>
         </div>
         <div class="profile-content">
-          <div class="quick-actions" style="grid-template-columns: repeat(2, 1fr)">
+          <div class="quick-actions" style="grid-template-columns: 1fr">
             <div class="quick-action" onclick="showScreen('my-posts')"><div class="qa-icon apricot">📝</div><div class="qa-label">我的发布</div></div>
-            <div class="quick-action" onclick="alert('我可临时照料\n（在下方菜单切换开关）')"><div class="qa-icon mint">🏠</div><div class="qa-label">我可照料</div></div>
           </div>
           <div class="menu-section">
-            <div class="menu-row"><span class="menu-icon">🏠</span><span class="menu-label">我可以临时照料</span><span class="menu-meta ok">已开启</span><span class="menu-arrow">›</span></div>
             <div class="menu-row" onclick="openMPModal()"><span class="menu-icon">📣</span><span class="menu-label">关注公众号</span><span class="menu-meta" style="color:var(--mint-deep)">推送更及时</span><span class="menu-arrow">›</span></div>
             <div class="menu-row" onclick="showScreen('dispute')"><span class="menu-icon">⚠</span><span class="menu-label">争议申诉</span><span class="menu-arrow">›</span></div>
           </div>
@@ -2269,17 +2253,16 @@
         </div>
         <div class="mp-card">
           <div class="pc-body" onclick="showScreen('detail-found')">
-            <div class="pc-photo ph-cream"><span>🐶</span><div class="status-bubble care">照料</div></div>
+            <div class="pc-photo ph-cream"><span>🐶</span><div class="status-bubble found">招领</div></div>
             <div class="pc-info">
               <div class="pc-name-row"><span class="pc-name">小白</span><span class="breed">· 比熊 · ♂</span></div>
               <div class="pc-meta"><span>📍 下关泰安路</span><span class="time">2 hr 前</span></div>
               <div class="pc-desc">在小区门口捡到，毛色干净有人养过...</div>
-              <div style="font-family:var(--font-en);font-size:10.5px;color:var(--ink-4);margin-top:5px;font-weight:600">👀 28 · 💬 5 · 临时照料中</div>
+              <div style="font-family:var(--font-en);font-size:10.5px;color:var(--ink-4);margin-top:5px;font-weight:600">👀 28 · 💬 5 · 招领中</div>
             </div>
           </div>
           <div class="mp-actions">
             <div class="mp-action primary" onclick="if(confirm('确认已归还？'))showScreen('return-success')">✓ 标记已归还</div>
-            <div class="mp-action">延长照料</div>
             <div class="mp-action" onclick="showScreen('publish')">编辑</div>
           </div>
         </div>
@@ -2493,31 +2476,6 @@
           <div class="as-text"><div class="as-label">自定义</div></div>
         </div>
         <div class="as-cancel" onclick="closeTimeSheet()">取消</div>
-      </div>
-    </div>
-
-    <!-- ===== Care Days Sheet · 临时照料天数 ===== -->
-    <div class="as-mask" id="care-days-sheet" onclick="if(event.target===this) closeCareDaysSheet()">
-      <div class="action-sheet">
-        <div class="as-handle"></div>
-        <div class="as-title">你能临时照料多久？</div>
-        <div class="as-option" onclick="selectCareDays('1 天')">
-          <div class="as-ic">1️⃣</div>
-          <div class="as-text"><div class="as-label">1 天</div><div class="as-sub">仅当晚</div></div>
-        </div>
-        <div class="as-option" onclick="selectCareDays('3 天')">
-          <div class="as-ic">3️⃣</div>
-          <div class="as-text"><div class="as-label">3 天</div><div class="as-sub">常见选择</div></div>
-        </div>
-        <div class="as-option" onclick="selectCareDays('一周')">
-          <div class="as-ic">7️⃣</div>
-          <div class="as-text"><div class="as-label">一周</div></div>
-        </div>
-        <div class="as-option" onclick="selectCareDays('长期（直到找到主人）')">
-          <div class="as-ic">♾</div>
-          <div class="as-text"><div class="as-label">长期</div><div class="as-sub">直到找到主人</div></div>
-        </div>
-        <div class="as-cancel" onclick="closeCareDaysSheet()">取消</div>
       </div>
     </div>
 
@@ -2851,11 +2809,11 @@
       time:'10 min 前', timeMins:10, distanceKm:0.8, urgent:true,
       comments:12, tall:true,
       desc:'穿粉色项圈，左耳缺一小块。胆小，听到名字会喵叫。看到请拍照不要追 🙏' },
-    { id: 2, emoji:'🐶', photoClass:'ph-cream', status:'care', statusLabel:'照料',
+    { id: 2, emoji:'🐶', photoClass:'ph-cream', status:'found', statusLabel:'招领',
       name:'小白', breed:'比熊 · ♂ 5kg', loc:'下关泰安路',
       time:'2 hr 前', timeMins:120, distanceKm:4.2, urgent:false,
       comments:5, tall:false,
-      desc:'在小区门口捡到，毛色干净有人养过。我家可以临时照看 2-3 天 🏠' },
+      desc:'在小区门口捡到，毛色干净有人养过，正在寻找主人 🐾' },
     { id: 3, emoji:'🐈', photoClass:'ph-mint', status:'lost', statusLabel:'寻宠',
       name:'咖啡', breed:'美短 · ♀ 1 岁半', loc:'洋人街',
       time:'1 hr 前', timeMins:60, distanceKm:1.5, urgent:false,
@@ -2876,11 +2834,11 @@
       time:'昨天', timeMins:1440, distanceKm:3.6, urgent:false,
       comments:22, tall:false,
       desc:'短腿圆屁股的小可爱，戴红色背带。容易认出来' },
-    { id: 7, emoji:'🐶', photoClass:'ph-pink', status:'care', statusLabel:'照料',
+    { id: 7, emoji:'🐶', photoClass:'ph-pink', status:'found', statusLabel:'招领',
       name:'雪球', breed:'比熊串 · ♂', loc:'喜洲古镇',
       time:'5 hr 前', timeMins:300, distanceKm:18.5, urgent:false,
       comments:4, tall:true,
-      desc:'在喜洲扎染店门口流浪，店主可临时照看' },
+      desc:'在喜洲扎染店门口被发现，毛色干净，应该是走失的家犬' },
     { id: 8, emoji:'🐱', photoClass:'ph-orange', status:'found', statusLabel:'招领',
       name:'虎子', breed:'橘猫 · ♂ 估 4 岁', loc:'叶榆路',
       time:'2 hr 前', timeMins:130, distanceKm:1.9, urgent:false,
@@ -2901,11 +2859,11 @@
       time:'6 hr 前', timeMins:360, distanceKm:2.8, urgent:false,
       comments:14, tall:true,
       desc:'体型偏小，毛色奶白带浅金。爱叫，听到罐头声会出现' },
-    { id: 12, emoji:'🐶', photoClass:'ph-dark', status:'care', statusLabel:'照料',
+    { id: 12, emoji:'🐶', photoClass:'ph-dark', status:'found', statusLabel:'招领',
       name:'小鸭', breed:'阿拉斯加幼犬 · ♂', loc:'凤仪镇',
       time:'3 天前', timeMins:4320, distanceKm:22, urgent:false,
       comments:38, tall:false,
-      desc:'在凤仪镇捡到的小奶狗，需要一个长期家庭 🥺' },
+      desc:'在凤仪镇路边发现的小奶狗，疑似走失，正在帮忙找主人 🐾' },
     { id: 13, emoji:'🐶', photoClass:'ph-pink', status:'found', statusLabel:'招领',
       name:'小棕', breed:'棕白色 · 约 6kg', loc:'苍山门',
       time:'9 days', timeMins:12960, distanceKm:3.4, urgent:false,
@@ -3062,7 +3020,7 @@
   function openShare(id) {
     const d = FEED_DATA.find(x => x.id === id);
     if (!d) return;
-    const statusFull = { lost: '寻宠中', found: '招领中', care: '临时照料中' };
+    const statusFull = { lost: '寻宠中', found: '招领中' };
     document.getElementById('scp-photo').className = 'scp-photo ' + d.photoClass;
     document.getElementById('scp-emoji').textContent = d.emoji;
     document.getElementById('scp-status').textContent = statusFull[d.status] || d.statusLabel;
@@ -3184,14 +3142,6 @@
     closeTimeSheet();
   }
 
-  // 临时照料天数 sheet
-  function openCareDaysSheet() { document.getElementById('care-days-sheet').classList.add('show'); }
-  function closeCareDaysSheet() { document.getElementById('care-days-sheet').classList.remove('show'); }
-  function selectCareDays(d) {
-    document.getElementById('publish-care-days').textContent = d;
-    closeCareDaysSheet();
-  }
-
   // 性别 / 年龄（简单 prompt）
   function openGenderAgeSheet() {
     const cur = document.getElementById('publish-gender-age').textContent;
@@ -3268,7 +3218,7 @@
         const first = matches[0];
         sug2.innerHTML = `<mark>${escapeHtml(first.name)}</mark> · ${first.loc}`;
         sug2Tag.textContent = first.statusLabel;
-        sug2Tag.className = 'sug-tag ' + (first.status === 'found' ? 'found' : (first.status === 'care' ? 'care' : ''));
+        sug2Tag.className = 'sug-tag ' + (first.status === 'found' ? 'found' : '');
         document.querySelectorAll('#search-suggestion .suggestion-item')[1].style.display = 'flex';
       } else {
         document.querySelectorAll('#search-suggestion .suggestion-item')[1].style.display = 'none';
