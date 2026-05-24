@@ -1012,6 +1012,8 @@
     .chat-msg.me .chat-bubble { background: var(--apricot); color: white; border-radius: 16px 16px 4px 16px; }
     .chat-msg.them .chat-bubble { background: var(--surface); color: var(--ink-1); border-radius: 16px 16px 16px 4px; box-shadow: var(--shadow-card); }
     .chat-msg b { font-weight: 700; }
+    .chat-bubble { user-select: text; cursor: text; }
+    .desc-card, .clue-text, .info-cell .value, .detail-name, .detail-subtitle { user-select: text; cursor: text; }
     .chat-avatar { width: 32px; height: 32px; border-radius: 50%; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 15px; }
     .chat-time { text-align: center; font-family: var(--font-en); font-size: 10.5px; color: var(--ink-4); margin: 8px 0; font-weight: 600; letter-spacing: 0.04em; }
     .chat-audit-bar { padding: 6px 16px; background: var(--honey-soft); font-size: 10.5px; color: var(--honey-deep); text-align: center; font-weight: 600; }
@@ -2018,6 +2020,280 @@
       cursor: pointer; padding: 4px; flex-shrink: 0;
     }
     .update-banner-close:hover { opacity: 1; }
+
+    /* ===== 长按/右键上下文菜单 ===== */
+    .ctx-menu {
+      position: fixed; z-index: 9999; background: var(--surface);
+      border-radius: var(--radius-md); box-shadow: 0 4px 24px rgba(31,31,31,0.18);
+      padding: 6px 0; min-width: 152px; display: none;
+    }
+    .ctx-menu.show { display: block; animation: ctxFadeIn 0.12s ease; }
+    @keyframes ctxFadeIn { from { opacity:0; transform:scale(0.93); } to { opacity:1; transform:scale(1); } }
+    .ctx-menu-item {
+      padding: 11px 18px; font-size: 13.5px; cursor: pointer;
+      display: flex; align-items: center; gap: 8px; color: var(--ink-1);
+    }
+    .ctx-menu-item:hover { background: var(--bg); }
+    .ctx-menu-item.save { color: var(--apricot-deep); font-weight: 700; }
+
+    /* ===== 记录页 ===== */
+    .records-list { flex: 1; overflow-y: auto; padding: 12px 16px 32px; display: flex; flex-direction: column; gap: 10px; }
+    .records-empty {
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      flex: 1; gap: 10px; color: var(--ink-3); padding-bottom: 60px;
+    }
+    .records-empty-icon { font-size: 44px; opacity: 0.35; }
+    .records-empty-text { font-size: 13.5px; }
+    .record-card {
+      background: var(--surface); border-radius: var(--radius-md);
+      box-shadow: var(--shadow-card); padding: 13px 14px;
+      display: flex; flex-direction: column; gap: 7px;
+      border-left: 3px solid transparent;
+    }
+    .record-card.me { border-left-color: var(--apricot); }
+    .record-card.them { border-left-color: var(--mint); }
+    .record-card-meta { display: flex; align-items: center; gap: 6px; }
+    .record-card-tag {
+      font-size: 10.5px; padding: 2px 9px; border-radius: var(--radius-pill); font-weight: 700;
+    }
+    .record-card-tag.me { background: var(--apricot-soft); color: var(--apricot-deep); }
+    .record-card-tag.them { background: var(--mint-soft); color: var(--mint-deep); }
+    .record-card-tag.info { background: var(--plum-soft); color: var(--plum-deep); }
+    .record-card.info { border-left-color: var(--plum); }
+    .record-discovery-time {
+      font-size: 15px; font-weight: 700; color: var(--ink-1);
+      margin: 8px 0 4px; cursor: pointer;
+      text-decoration: underline dotted var(--ink-5);
+      display: inline-block;
+    }
+    .record-card-text { font-size: 14px; color: var(--ink-1); line-height: 1.65; }
+    .record-recorded-at { font-size: 10px; color: var(--ink-4); margin-top: 8px; font-family: var(--font-en); font-weight: 600; }
+    .record-card-del { font-size: 17px; color: var(--ink-4); cursor: pointer; padding: 0 4px; line-height: 1; }
+    .record-card-del:hover { color: var(--warn); }
+    .record-count { font-size: 11.5px; color: var(--ink-3); padding: 8px 16px 0; }
+    .record-save-toast {
+      position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%);
+      background: rgba(31,31,31,0.78); color: #fff; font-size: 12.5px;
+      padding: 8px 18px; border-radius: var(--radius-pill); z-index: 9000;
+      pointer-events: none; opacity: 0; transition: opacity 0.25s;
+      white-space: nowrap;
+    }
+    .record-save-toast.show { opacity: 1; }
+
+    /* ===== 文件夹卡片 ===== */
+    .folder-section-title { font-size: 11px; color: var(--ink-4); font-weight: 700; padding: 14px 16px 6px; letter-spacing: 0.06em; text-transform: uppercase; }
+    .folder-list { padding: 0 16px; display: flex; flex-direction: column; gap: 8px; }
+    .folder-card {
+      background: var(--surface); border-radius: var(--radius-md);
+      box-shadow: var(--shadow-card); padding: 13px 15px;
+      display: flex; align-items: center; gap: 12px; cursor: pointer;
+    }
+    .folder-card:active { opacity: 0.7; }
+    .folder-card-icon { font-size: 22px; }
+    .folder-card-info { flex: 1; min-width: 0; }
+    .folder-card-name { font-size: 14px; font-weight: 700; color: var(--ink-1); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .folder-card-count { font-size: 11.5px; color: var(--ink-3); margin-top: 2px; }
+    .folder-card-actions { display: flex; gap: 2px; }
+    .folder-card-btn { font-size: 14px; color: var(--ink-4); padding: 5px 7px; cursor: pointer; border-radius: 6px; }
+    .folder-card-btn:hover { background: var(--bg); }
+    .folder-card-btn.del:hover { color: var(--warn); }
+    .folder-card-arrow { color: var(--ink-5); font-size: 16px; margin-left: 4px; }
+    .folder-add-btn {
+      margin: 10px 16px 0; padding: 12px 16px; border-radius: var(--radius-md);
+      border: 1.5px dashed var(--divider); cursor: pointer;
+      display: flex; align-items: center; gap: 8px;
+      font-size: 13.5px; color: var(--apricot-deep); font-weight: 600;
+      background: var(--surface-warm); transition: border-color 0.15s;
+    }
+    .folder-add-btn:hover { border-color: var(--apricot); }
+    .ungrouped-divider {
+      display: flex; align-items: center; gap: 10px; padding: 16px 16px 8px;
+    }
+    .ungrouped-divider-line { flex: 1; height: 1px; background: var(--divider); }
+    .ungrouped-divider-text { font-size: 11px; color: var(--ink-4); font-weight: 700; letter-spacing: 0.04em; white-space: nowrap; }
+
+    /* ===== 文字编辑弹窗 ===== */
+    .text-edit-overlay {
+      position: fixed; inset: 0; z-index: 9000;
+      background: rgba(31,31,31,0.5); display: none; align-items: center; justify-content: center;
+    }
+    .text-edit-overlay.show { display: flex; }
+    .text-edit-modal {
+      background: var(--surface); border-radius: var(--radius-lg);
+      width: min(400px, calc(100vw - 40px));
+      padding: 28px 24px 24px; display: flex; flex-direction: column; gap: 18px;
+      box-shadow: 0 8px 40px rgba(31,31,31,0.22);
+      animation: ctxFadeIn 0.15s ease;
+    }
+    .text-edit-title { font-size: 17px; font-weight: 700; color: var(--ink-1); }
+    .text-edit-textarea {
+      font-size: 15px; font-family: var(--font-cn); color: var(--ink-1);
+      border: none; outline: none; resize: none;
+      background: var(--bg); border-radius: var(--radius-md);
+      padding: 14px 16px; width: 100%; min-height: 140px; line-height: 1.7;
+    }
+    .text-edit-actions { display: flex; gap: 10px; }
+    .text-edit-cancel {
+      flex: 1; padding: 13px; border-radius: var(--radius-md); text-align: center;
+      font-size: 15px; font-weight: 600; cursor: pointer;
+      background: var(--bg); color: var(--ink-2);
+    }
+    .text-edit-confirm {
+      flex: 2; padding: 13px; border-radius: var(--radius-md); text-align: center;
+      font-size: 15px; font-weight: 700; cursor: pointer;
+      background: var(--apricot); color: #fff;
+    }
+    .text-edit-confirm:hover { background: var(--apricot-deep); }
+    .record-card-edit { font-size: 13px; color: var(--ink-4); cursor: pointer; padding: 2px 5px; border-radius: 5px; }
+    .record-card-edit:hover { color: var(--apricot-deep); background: var(--apricot-soft); }
+
+    /* ===== 新建记录弹窗 ===== */
+    .new-record-overlay {
+      position: fixed; inset: 0; z-index: 9000;
+      background: rgba(31,31,31,0.5); display: none; align-items: center; justify-content: center;
+    }
+    .new-record-overlay.show { display: flex; }
+    .new-record-modal {
+      background: var(--surface); border-radius: var(--radius-lg);
+      width: min(420px, calc(100vw - 40px));
+      padding: 28px 24px 24px; display: flex; flex-direction: column; gap: 16px;
+      box-shadow: 0 8px 40px rgba(31,31,31,0.22);
+      animation: ctxFadeIn 0.15s ease;
+    }
+    .new-record-title { font-size: 17px; font-weight: 700; color: var(--ink-1); }
+    .new-record-row { display: flex; flex-direction: column; gap: 6px; }
+    .new-record-label { font-size: 12px; font-weight: 700; color: var(--ink-3); letter-spacing: 0.04em; }
+    .new-record-time-input {
+      font-size: 20px; font-family: var(--font-en); font-weight: 700; color: var(--ink-1);
+      border: none; outline: none; background: var(--bg); border-radius: var(--radius-md);
+      padding: 12px 16px; width: 100%; text-align: center; letter-spacing: 0.04em;
+    }
+    .new-record-time-input::placeholder { color: var(--ink-5); font-size: 16px; }
+    .new-record-sender-row { display: flex; gap: 8px; }
+    .new-record-sender-chip {
+      flex: 1; padding: 9px; border-radius: var(--radius-md); text-align: center;
+      font-size: 13.5px; font-weight: 700; cursor: pointer;
+      background: var(--bg); color: var(--ink-3); border: 2px solid transparent;
+    }
+    .new-record-sender-chip.active-me { background: var(--apricot-soft); color: var(--apricot-deep); border-color: var(--apricot); }
+    .new-record-sender-chip.active-them { background: var(--mint-soft); color: var(--mint-deep); border-color: var(--mint); }
+    .new-record-textarea {
+      font-size: 15px; font-family: var(--font-cn); color: var(--ink-1);
+      border: none; outline: none; resize: none;
+      background: var(--bg); border-radius: var(--radius-md);
+      padding: 14px 16px; width: 100%; min-height: 130px; line-height: 1.7;
+    }
+    .new-record-add-btn {
+      display: flex; align-items: center; justify-content: center; gap: 6px;
+      padding: 11px 16px; border-radius: var(--radius-md);
+      border: 1.5px dashed var(--divider); cursor: pointer;
+      font-size: 13.5px; color: var(--apricot-deep); font-weight: 600;
+      background: var(--surface-warm); margin: 4px 16px 0;
+    }
+    .new-record-add-btn:hover { border-color: var(--apricot); }
+
+    /* ===== 视图切换 ===== */
+    .view-toggle { display: flex; gap: 4px; background: var(--bg); border-radius: var(--radius-sm); padding: 3px; }
+    .view-btn {
+      padding: 5px 10px; border-radius: 6px; cursor: pointer; font-size: 14px;
+      color: var(--ink-3); transition: background 0.15s;
+    }
+    .view-btn.active { background: var(--surface); color: var(--apricot-deep); box-shadow: 0 1px 3px rgba(31,31,31,0.08); }
+
+    /* ===== 时间轴视图 ===== */
+    .timeline-wrap { padding: 16px 16px 32px; }
+    .timeline-item { display: flex; gap: 0; position: relative; }
+    .timeline-left {
+      display: flex; flex-direction: column; align-items: center;
+      width: 14px; flex-shrink: 0; margin-right: 14px;
+    }
+    .timeline-dot {
+      width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; margin-top: 3px;
+      border: 2px solid var(--surface); box-shadow: 0 0 0 2px currentColor;
+    }
+    .timeline-dot.me { color: var(--apricot); background: var(--apricot); }
+    .timeline-dot.them { color: var(--mint); background: var(--mint); }
+    .timeline-dot.info { color: var(--plum); background: var(--plum); }
+    .timeline-line { width: 2px; background: var(--divider); flex: 1; min-height: 20px; margin-top: 4px; }
+    .timeline-item:last-child .timeline-line { display: none; }
+    .timeline-content { flex: 1; padding-bottom: 20px; }
+    .timeline-time { font-size: 15px; font-weight: 700; color: var(--ink-1); margin-bottom: 5px; }
+    .timeline-tag {
+      display: inline-block; font-size: 10px; padding: 1px 7px;
+      border-radius: var(--radius-pill); font-weight: 700; margin-left: 6px; vertical-align: middle;
+    }
+    .timeline-tag.me { background: var(--apricot-soft); color: var(--apricot-deep); }
+    .timeline-tag.them { background: var(--mint-soft); color: var(--mint-deep); }
+    .timeline-tag.info { background: var(--plum-soft); color: var(--plum-deep); }
+    .timeline-text { font-size: 13.5px; color: var(--ink-2); line-height: 1.65; }
+    .timeline-recorded { font-size: 10px; color: var(--ink-4); margin-top: 5px; font-family: var(--font-en); font-weight: 600; }
+
+    /* ===== 时间编辑弹窗 ===== */
+    .time-edit-overlay {
+      position: fixed; inset: 0; z-index: 9000;
+      background: rgba(31,31,31,0.5); display: none; align-items: center; justify-content: center;
+    }
+    .time-edit-overlay.show { display: flex; }
+    .time-edit-modal {
+      background: var(--surface); border-radius: var(--radius-lg);
+      width: min(360px, calc(100vw - 40px));
+      padding: 28px 24px 24px; display: flex; flex-direction: column; gap: 20px;
+      box-shadow: 0 8px 40px rgba(31,31,31,0.22);
+      animation: ctxFadeIn 0.15s ease;
+    }
+    .time-edit-title { font-size: 17px; font-weight: 700; color: var(--ink-1); }
+    .time-edit-input {
+      font-size: 28px; font-family: var(--font-en); font-weight: 700;
+      color: var(--ink-1); border: none; outline: none;
+      background: var(--bg); border-radius: var(--radius-md);
+      padding: 16px 18px; width: 100%; text-align: center;
+      letter-spacing: 0.04em;
+    }
+    .time-edit-input::placeholder { color: var(--ink-5); font-size: 20px; }
+    .time-edit-hints { display: flex; flex-direction: column; gap: 5px; }
+    .time-edit-hint-row {
+      display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--ink-3);
+    }
+    .time-edit-hint-code {
+      font-family: var(--font-en); font-weight: 700; color: var(--ink-2);
+      background: var(--bg); padding: 2px 8px; border-radius: 5px; font-size: 11.5px;
+    }
+    .time-edit-actions { display: flex; gap: 10px; }
+    .time-edit-cancel {
+      flex: 1; padding: 13px; border-radius: var(--radius-md); text-align: center;
+      font-size: 15px; font-weight: 600; cursor: pointer;
+      background: var(--bg); color: var(--ink-2);
+    }
+    .time-edit-confirm {
+      flex: 2; padding: 13px; border-radius: var(--radius-md); text-align: center;
+      font-size: 15px; font-weight: 700; cursor: pointer;
+      background: var(--apricot); color: #fff;
+    }
+    .time-edit-confirm:hover { background: var(--apricot-deep); }
+
+    /* ===== 文件夹选择器 ===== */
+    .folder-picker-overlay {
+      position: fixed; inset: 0; z-index: 8500;
+      background: rgba(31,31,31,0.42); display: none; align-items: flex-end;
+    }
+    .folder-picker-overlay.show { display: flex; }
+    .folder-picker-sheet {
+      width: 100%; max-height: 60vh; background: var(--surface);
+      border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+      padding: 16px 0 40px; display: flex; flex-direction: column;
+      animation: slideUp 0.2s ease;
+    }
+    @keyframes slideUp { from { transform: translateY(20px); opacity:0; } to { transform: translateY(0); opacity:1; } }
+    .picker-handle { width: 36px; height: 4px; background: var(--divider); border-radius: 2px; margin: 0 auto 16px; }
+    .picker-title { font-size: 12px; font-weight: 700; color: var(--ink-3); padding: 0 18px 10px; letter-spacing: 0.05em; }
+    .picker-list { flex: 1; overflow-y: auto; }
+    .picker-row {
+      padding: 13px 18px; font-size: 14px; cursor: pointer;
+      display: flex; align-items: center; gap: 10px; color: var(--ink-1);
+    }
+    .picker-row:hover { background: var(--bg); }
+    .picker-row.new-folder { color: var(--apricot-deep); font-weight: 700; }
+    .picker-row.skip { color: var(--ink-3); border-top: 1px solid var(--divider); margin-top: 4px; padding-top: 14px; }
   </style>
 </head>
 <body>
@@ -2818,6 +3094,112 @@
       </div>
     </div>
 
+    <!-- 全局：长按/右键上下文菜单 -->
+    <div class="ctx-menu" id="ctx-menu">
+      <div class="ctx-menu-item save" id="ctx-save-btn" onclick="ctxSaveToRecord()">📌 添加到记录</div>
+      <div class="ctx-menu-item" onclick="ctxCopy()">📋 复制</div>
+    </div>
+    <div class="record-save-toast" id="record-toast">已添加到记录 ✓</div>
+
+    <!-- 新建记录弹窗 -->
+    <div class="new-record-overlay" id="new-record-overlay" onclick="hideNewRecord()">
+      <div class="new-record-modal" onclick="event.stopPropagation()">
+        <div class="new-record-title">新建记录</div>
+        <div class="new-record-row">
+          <div class="new-record-label">日期</div>
+          <input type="date" class="new-record-time-input" id="new-record-date" style="font-size:16px;text-align:left;letter-spacing:normal">
+        </div>
+        <div class="new-record-row">
+          <div class="new-record-label">时间</div>
+          <input type="time" class="new-record-time-input" id="new-record-time" style="font-size:22px;text-align:center">
+        </div>
+        <div class="new-record-row">
+          <div class="new-record-label">发言方</div>
+          <div class="new-record-sender-row">
+            <div class="new-record-sender-chip active-me" id="chip-me" onclick="selectNewSender('me')">我</div>
+            <div class="new-record-sender-chip" id="chip-them" onclick="selectNewSender('them')">对方</div>
+          </div>
+        </div>
+        <div class="new-record-row">
+          <div class="new-record-label">内容</div>
+          <textarea class="new-record-textarea" id="new-record-text" placeholder="写下这条记录..."></textarea>
+        </div>
+        <div class="time-edit-actions">
+          <div class="time-edit-cancel" onclick="hideNewRecord()">取消</div>
+          <div class="time-edit-confirm" onclick="confirmNewRecord()">保存</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 文字编辑弹窗 -->
+    <div class="text-edit-overlay" id="text-edit-overlay" onclick="hideTextEdit()">
+      <div class="text-edit-modal" onclick="event.stopPropagation()">
+        <div class="text-edit-title">修改内容</div>
+        <textarea class="text-edit-textarea" id="text-edit-textarea"
+                  placeholder="输入记录内容..."></textarea>
+        <div class="text-edit-actions">
+          <div class="text-edit-cancel" onclick="hideTextEdit()">取消</div>
+          <div class="text-edit-confirm" onclick="confirmTextEdit()">确认</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 时间编辑弹窗 -->
+    <div class="time-edit-overlay" id="time-edit-overlay" onclick="hideTimeEdit()">
+      <div class="time-edit-modal" onclick="event.stopPropagation()">
+        <div class="time-edit-title" id="time-edit-title">发现时间</div>
+        <div class="new-record-row">
+          <div class="new-record-label">日期</div>
+          <input type="date" class="new-record-time-input" id="time-edit-date" style="font-size:16px;text-align:left;letter-spacing:normal">
+        </div>
+        <div class="new-record-row">
+          <div class="new-record-label">时间</div>
+          <input type="time" class="new-record-time-input" id="time-edit-input" style="font-size:22px;text-align:center"
+                 onkeydown="if(event.key==='Enter')confirmTimeEdit()">
+        </div>
+        <div class="time-edit-actions">
+          <div class="time-edit-cancel" onclick="hideTimeEdit()">取消</div>
+          <div class="time-edit-confirm" onclick="confirmTimeEdit()">确认</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 文件夹选择器 -->
+    <div class="folder-picker-overlay" id="folder-picker" onclick="hideFolderPicker()">
+      <div class="folder-picker-sheet" onclick="event.stopPropagation()">
+        <div class="picker-handle"></div>
+        <div class="picker-title">保存到哪个文件夹？</div>
+        <div class="picker-list" id="folder-picker-list"></div>
+      </div>
+    </div>
+
+    <!-- ===== 记录主页 ===== -->
+    <div class="screen" data-screen="records">
+      <div class="sub-header">
+        <div class="back-btn" onclick="goBack()">←</div>
+        <div class="sub-title">我的记录</div>
+        <div class="sub-icon" onclick="createFolder()">＋</div>
+      </div>
+      <div id="records-content" style="flex:1;overflow-y:auto;padding-bottom:24px;"></div>
+    </div>
+
+    <!-- ===== 文件夹详情页 ===== -->
+    <div class="screen" data-screen="folder-detail">
+      <div class="sub-header">
+        <div class="back-btn" onclick="goBack()">←</div>
+        <div class="sub-title" id="folder-detail-title">文件夹</div>
+        <div style="display:flex;gap:8px;align-items:center">
+          <div class="view-toggle">
+            <div class="view-btn active" id="vbtn-card" onclick="setFolderView('card')" title="卡片视图">⊞</div>
+            <div class="view-btn" id="vbtn-timeline" onclick="setFolderView('timeline')" title="时间轴">≡</div>
+          </div>
+          <div class="sub-icon" onclick="openNewRecord('folder')" style="font-size:20px;font-weight:700">＋</div>
+          <div class="sub-icon" onclick="promptDeleteFolder()">🗑</div>
+        </div>
+      </div>
+      <div id="folder-detail-content" style="flex:1;overflow-y:auto;padding-bottom:24px;"></div>
+    </div>
+
     <!-- ===== 屏 12 · Profile ===== -->
     <div class="screen" data-screen="profile">
       <div class="profile-scroll">
@@ -2843,8 +3225,9 @@
           </div>
         </div>
         <div class="profile-content">
-          <div class="quick-actions" style="grid-template-columns: 1fr">
+          <div class="quick-actions" style="grid-template-columns: 1fr 1fr">
             <div class="quick-action" onclick="showScreen('my-posts')"><div class="qa-icon apricot">📝</div><div class="qa-label">我的发布</div></div>
+            <div class="quick-action" onclick="showRecords()"><div class="qa-icon mint">📌</div><div class="qa-label">我的记录</div></div>
           </div>
           <div class="menu-section">
             <div class="menu-row" onclick="openMPModal()"><span class="menu-icon">📣</span><span class="menu-label">关注公众号</span><span class="menu-meta" style="color:var(--mint-deep)">推送更及时</span><span class="menu-arrow">›</span></div>
@@ -4604,6 +4987,7 @@
     renderFeed(); renderArchive(); renderMapPins(); renderSheetCards();
     document.querySelectorAll('.filter-row').forEach(enableDragScroll);
     initStatBarAutoDismiss();
+    initChatLongPress();
   }
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', initApp);
@@ -5429,6 +5813,622 @@
     return s.replace(/[&<>"']/g, c => ({
       '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
     })[c]);
+  }
+
+  /* ===== 记录 + 文件夹功能 ===== */
+  let records = [];
+  let folders = [];
+  let _ctxBubble = null;
+  let _ctxSelection = '';
+  let _pendingRecord = null;
+  let _currentFolderId = null;
+  let _folderSortAsc = true;
+  let _folderView = 'card'; // 'card' | 'timeline'
+
+  /* ---------- 长按/右键初始化 ---------- */
+  // 可触发右键菜单的选择器：聊天气泡 + 详情页内容区块
+  const SELECTABLE_SELECTOR = '.chat-bubble, .desc-card, .clue-text, .info-cell .value, .detail-name, .detail-subtitle';
+
+  function initChatLongPress() {
+    // 聊天页 + 两个详情页都监听
+    const screens = document.querySelectorAll('[data-screen="chat"], [data-screen="detail-lost"], [data-screen="detail-found"]');
+
+    screens.forEach(screen => {
+      screen.addEventListener('contextmenu', function(e) {
+        const target = e.target.closest(SELECTABLE_SELECTOR);
+        if (!target) return;
+        e.preventDefault();
+        const sel = window.getSelection().toString().trim();
+        const selInTarget = sel && target.contains(window.getSelection().anchorNode);
+        showCtxMenu(e.clientX, e.clientY, target, selInTarget ? sel : '');
+      });
+
+      let pressTimer = null;
+      screen.addEventListener('touchstart', function(e) {
+        const target = e.target.closest(SELECTABLE_SELECTOR);
+        if (!target) return;
+        pressTimer = setTimeout(() => {
+          const touch = e.touches[0];
+          showCtxMenu(touch.clientX, touch.clientY, target, '');
+        }, 500);
+      }, { passive: true });
+      screen.addEventListener('touchend', () => clearTimeout(pressTimer));
+      screen.addEventListener('touchmove', () => clearTimeout(pressTimer), { passive: true });
+    });
+
+    document.addEventListener('click', function(e) {
+      if (!e.target.closest('#ctx-menu')) hideCtxMenu();
+    });
+  }
+
+  function showCtxMenu(x, y, bubble, selection) {
+    _ctxBubble = bubble;
+    _ctxSelection = selection || '';
+    const btn = document.getElementById('ctx-save-btn');
+    btn.textContent = _ctxSelection ? '📌 添加选中内容' : '📌 添加全部';
+    const menu = document.getElementById('ctx-menu');
+    menu.style.display = 'block';
+    const mw = menu.offsetWidth, mh = menu.offsetHeight;
+    const vw = window.innerWidth, vh = window.innerHeight;
+    menu.style.left = Math.min(x + 4, vw - mw - 8) + 'px';
+    menu.style.top = Math.min(y - 4, vh - mh - 8) + 'px';
+    menu.classList.add('show');
+  }
+
+  function hideCtxMenu() {
+    const menu = document.getElementById('ctx-menu');
+    menu.classList.remove('show');
+    menu.style.display = '';
+    _ctxBubble = null;
+  }
+
+  function ctxSaveToRecord() {
+    if (!_ctxBubble) { hideCtxMenu(); return; }
+
+    let sender, senderLabel, prefillTime;
+
+    const msg = _ctxBubble.closest('.chat-msg');
+    if (msg) {
+      const isMe = msg.classList.contains('me');
+      sender = isMe ? 'me' : 'them';
+      senderLabel = isMe ? '我' : '对方';
+      prefillTime = getNow();
+      let node = msg.previousElementSibling;
+      while (node) {
+        if (node.classList && node.classList.contains('chat-time')) { prefillTime = node.textContent.trim(); break; }
+        node = node.previousElementSibling;
+      }
+    } else {
+      sender = 'info';
+      if (_ctxBubble.classList.contains('clue-text')) {
+        senderLabel = '线索';
+      } else if (_ctxBubble.classList.contains('desc-card')) {
+        senderLabel = '描述';
+      } else {
+        senderLabel = '详情';
+      }
+      // 自动抓取帖子里的「时间」字段
+      prefillTime = extractDetailTime() || getNow();
+    }
+
+    const text = (_ctxSelection || _ctxBubble.innerText).trim();
+    _preSaveData = { text, sender, senderLabel, partial: !!_ctxSelection };
+
+    hideCtxMenu();
+    // 先弹时间确认框
+    _timeEditMode = 'save';
+    document.getElementById('time-edit-title').textContent = '发现时间';
+    fillTimeEditFields(prefillTime);
+    document.getElementById('time-edit-overlay').classList.add('show');
+    setTimeout(() => document.getElementById('time-edit-input').focus(), 80);
+  }
+
+  function extractDetailTime() {
+    // 在当前可见的详情页里找「走失时间」「发现时间」等 label 对应的 value
+    const activeScreen = document.querySelector('.screen.active') ||
+      [...document.querySelectorAll('[data-screen="detail-lost"],[data-screen="detail-found"]')]
+        .find(s => s.style.display !== 'none' && s.offsetParent !== null);
+    if (!activeScreen) return null;
+    const cells = activeScreen.querySelectorAll('.info-cell');
+    for (const cell of cells) {
+      const label = cell.querySelector('.label');
+      if (label && /时间/.test(label.textContent)) {
+        const val = cell.querySelector('.value');
+        return val ? val.textContent.trim() : null;
+      }
+    }
+    return null;
+  }
+
+  function ctxCopy() {
+    if (_ctxBubble) {
+      const text = _ctxBubble.innerText.trim();
+      navigator.clipboard && navigator.clipboard.writeText(text).catch(() => {});
+    }
+    hideCtxMenu();
+  }
+
+  /* ---------- 文件夹选择器 ---------- */
+  function showFolderPicker() {
+    // 没有文件夹时直接引导新建
+    if (folders.length === 0) {
+      createFolderFromPicker();
+      return;
+    }
+    const list = document.getElementById('folder-picker-list');
+    list.innerHTML =
+      folders.map(f =>
+        `<div class="picker-row" onclick="assignToFolder(${f.id})">📁 ${escapeHtml(f.name)}</div>`
+      ).join('') +
+      `<div class="picker-row new-folder" onclick="createFolderFromPicker()">＋ 新建文件夹</div>`;
+    document.getElementById('folder-picker').classList.add('show');
+  }
+
+  function hideFolderPicker() {
+    document.getElementById('folder-picker').classList.remove('show');
+    // 如果取消了选择，把这条记录从 records 里移除（不允许无文件夹保存）
+    if (_pendingRecord && _pendingRecord.folderId === null) {
+      records = records.filter(r => r.id !== _pendingRecord.id);
+    }
+    _pendingRecord = null;
+  }
+
+  function assignToFolder(folderId) {
+    if (_pendingRecord) _pendingRecord.folderId = folderId;
+    _pendingRecord = null;
+    document.getElementById('folder-picker').classList.remove('show');
+    const f = folders.find(x => x.id === folderId);
+    showRecordToast('已保存到「' + (f ? f.name : '文件夹') + '」');
+  }
+
+  function createFolderFromPicker() {
+    const name = prompt('文件夹名称：', '');
+    if (!name || !name.trim()) {
+      // 用户取消，丢弃待保存的记录
+      if (_pendingRecord) {
+        records = records.filter(r => r.id !== _pendingRecord.id);
+        _pendingRecord = null;
+      }
+      document.getElementById('folder-picker').classList.remove('show');
+      return;
+    }
+    const f = { id: Date.now(), name: name.trim() };
+    folders.push(f);
+    assignToFolder(f.id);
+  }
+
+  /* ---------- 文件夹 CRUD ---------- */
+  function createFolder() {
+    const name = prompt('文件夹名称：', '');
+    if (!name || !name.trim()) return;
+    folders.push({ id: Date.now(), name: name.trim() });
+    renderRecords();
+  }
+
+  function renameFolder(id, e) {
+    e.stopPropagation();
+    const f = folders.find(x => x.id === id);
+    if (!f) return;
+    const name = prompt('重命名文件夹：', f.name);
+    if (!name || !name.trim()) return;
+    f.name = name.trim();
+    renderRecords();
+    if (_currentFolderId === id) document.getElementById('folder-detail-title').textContent = f.name;
+  }
+
+  function promptDeleteFolder() {
+    if (!confirm('删除该文件夹？\n文件夹内的记录将移到「未归类」')) return;
+    records.forEach(r => { if (r.folderId === _currentFolderId) r.folderId = null; });
+    folders = folders.filter(f => f.id !== _currentFolderId);
+    _currentFolderId = null;
+    goBack();
+    renderRecords();
+  }
+
+  function deleteFolderCard(id, e) {
+    e.stopPropagation();
+    if (!confirm('删除该文件夹？\n文件夹内的记录将移到「未归类」')) return;
+    records.forEach(r => { if (r.folderId === id) r.folderId = null; });
+    folders = folders.filter(f => f.id !== id);
+    renderRecords();
+  }
+
+  /* ---------- 渲染 ---------- */
+  function showRecords() {
+    renderRecords();
+    showScreen('records');
+  }
+
+  function openFolder(id) {
+    _currentFolderId = id;
+    _folderView = 'card';
+    document.getElementById('vbtn-card').className = 'view-btn active';
+    document.getElementById('vbtn-timeline').className = 'view-btn';
+    const f = folders.find(x => x.id === id);
+    document.getElementById('folder-detail-title').textContent = f ? f.name : '文件夹';
+    renderFolderDetail(id);
+    showScreen('folder-detail');
+  }
+
+  function renderRecords() {
+    const el = document.getElementById('records-content');
+    if (!el) return;
+    const ungrouped = records.filter(r => !r.folderId).sort((a, b) => a.ts - b.ts);
+    let html = '';
+
+    // 文件夹列表
+    if (folders.length > 0) {
+      html += `<div class="folder-section-title">文件夹</div><div class="folder-list">`;
+      html += folders.map(f => {
+        const count = records.filter(r => r.folderId === f.id).length;
+        return `<div class="folder-card" onclick="openFolder(${f.id})">` +
+          `<div class="folder-card-icon">📁</div>` +
+          `<div class="folder-card-info">` +
+            `<div class="folder-card-name">${escapeHtml(f.name)}</div>` +
+            `<div class="folder-card-count">${count} 条记录</div>` +
+          `</div>` +
+          `<div class="folder-card-actions">` +
+            `<div class="folder-card-btn" onclick="renameFolder(${f.id},event)" title="重命名">✏️</div>` +
+            `<div class="folder-card-btn del" onclick="deleteFolderCard(${f.id},event)" title="删除">🗑</div>` +
+          `</div>` +
+          `<div class="folder-card-arrow">›</div>` +
+        `</div>`;
+      }).join('');
+      html += `</div>`;
+    }
+
+    html += `<div class="folder-add-btn" onclick="createFolder()">＋ 新建文件夹</div>`;
+
+    if (folders.length === 0) {
+      html += `<div class="records-empty"><div class="records-empty-icon">📌</div><div class="records-empty-text">新建文件夹开始整理记录</div></div>`;
+    }
+
+    el.innerHTML = html;
+  }
+
+  function setFolderView(v) {
+    _folderView = v;
+    document.getElementById('vbtn-card').className = 'view-btn' + (v === 'card' ? ' active' : '');
+    document.getElementById('vbtn-timeline').className = 'view-btn' + (v === 'timeline' ? ' active' : '');
+    renderFolderDetail(_currentFolderId);
+  }
+
+  function renderFolderDetail(id) {
+    const el = document.getElementById('folder-detail-content');
+    if (!el) return;
+    const all = records.filter(r => r.folderId === id);
+    if (all.length === 0) {
+      el.innerHTML =
+        `<div class="records-empty"><div class="records-empty-icon">📂</div><div class="records-empty-text">还没有记录</div></div>` +
+        `<div class="new-record-add-btn" onclick="openNewRecord('folder')">＋ 手动新建记录</div>`;
+      return;
+    }
+    // 时间轴视图始终按时间升序（从早到晚）
+    const itemsAsc = [...all].sort((a, b) => a.ts - b.ts);
+
+    if (_folderView === 'timeline') {
+      el.innerHTML =
+        `<div class="record-count" style="padding:12px 16px 0">${all.length} 条 · 时间轴</div>` +
+        `<div class="timeline-wrap">` +
+        itemsAsc.map(r => {
+          const recordedStr = r.recordedAt ? fmtRecordedAt(r.recordedAt) : '';
+          return `<div class="timeline-item">` +
+            `<div class="timeline-left">` +
+              `<div class="timeline-dot ${r.sender}"></div>` +
+              `<div class="timeline-line"></div>` +
+            `</div>` +
+            `<div class="timeline-content">` +
+              `<div class="timeline-time">${escapeHtml(r.timeStr)}<span class="timeline-tag ${r.sender}">${r.senderLabel}</span></div>` +
+              `<div class="timeline-text">${escapeHtml(r.text)}</div>` +
+              (recordedStr ? `<div class="timeline-recorded">记录于 ${recordedStr}</div>` : '') +
+            `</div>` +
+          `</div>`;
+        }).join('') +
+        `</div>`;
+      return;
+    }
+
+    // 卡片视图
+    const items = [...all].sort((a, b) => _folderSortAsc ? a.ts - b.ts : b.ts - a.ts);
+    const sortLabel = _folderSortAsc ? '↑ 从早到晚' : '↓ 从晚到早';
+    el.innerHTML =
+      `<div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px 0">` +
+        `<div class="record-count" style="padding:0">${items.length} 条</div>` +
+        `<div onclick="toggleFolderSort()" style="font-size:11.5px;color:var(--apricot-deep);font-weight:700;cursor:pointer;padding:5px 12px;background:var(--apricot-soft);border-radius:var(--radius-pill)">${sortLabel}</div>` +
+      `</div>` +
+      `<div class="records-list">` + items.map(r => recordCardHtml(r, 'renderFolderDetail(' + id + ')')).join('') + `</div>` +
+      `<div class="new-record-add-btn" onclick="openNewRecord('folder')">＋ 手动新建记录</div>`;
+  }
+
+  function toggleFolderSort() {
+    _folderSortAsc = !_folderSortAsc;
+    renderFolderDetail(_currentFolderId);
+  }
+
+  function recordCardHtml(r, rerender) {
+    const recordedStr = r.recordedAt ? fmtRecordedAt(r.recordedAt) : '';
+    return `<div class="record-card ${r.sender}">` +
+      `<div class="record-card-meta">` +
+        `<span class="record-card-tag ${r.sender}">${r.senderLabel}</span>` +
+        (r.partial ? `<span style="font-size:10px;color:var(--ink-4);padding:2px 6px;background:var(--bg);border-radius:var(--radius-pill);">节选</span>` : '') +
+        `<span style="flex:1"></span>` +
+        `<span class="record-card-edit" onclick="editRecordText(${r.id})">✏️</span>` +
+        `<span class="record-card-del" onclick="deleteRecord(${r.id},()=>{${rerender}})">×</span>` +
+      `</div>` +
+      `<div class="record-discovery-time" onclick="editRecordTime(${r.id})" title="点击修改发现时间">${escapeHtml(r.timeStr)} ✎</div>` +
+      `<div class="record-card-text">${escapeHtml(r.text)}</div>` +
+      (recordedStr ? `<div class="record-recorded-at" onclick="editRecordedAt(${r.id})" style="cursor:pointer;text-decoration:underline dotted var(--ink-5)">记录于 ${recordedStr} ✎</div>` : '') +
+    `</div>`;
+  }
+
+  function fmtRecordedAt(ts) {
+    const d = new Date(ts);
+    const month = d.getMonth() + 1;
+    const day = d.getDate();
+    const hh = String(d.getHours()).padStart(2, '0');
+    const mm = String(d.getMinutes()).padStart(2, '0');
+    return `${month}月${day}日 ${hh}:${mm}`;
+  }
+
+  let _editingRecordId = null;
+  let _timeEditMode = 'edit'; // 'edit' | 'save'
+  let _preSaveData = null;    // 保存前暂存，等时间确认后再 push
+  let _newRecordTarget = null;
+  let _newRecordSender = 'me';
+
+  function openNewRecord(target) {
+    _newRecordTarget = target;
+    _newRecordSender = 'me';
+    const now = new Date();
+    const y = now.getFullYear();
+    const mo = String(now.getMonth() + 1).padStart(2, '0');
+    const da = String(now.getDate()).padStart(2, '0');
+    const hh = String(now.getHours()).padStart(2, '0');
+    const mm = String(now.getMinutes()).padStart(2, '0');
+    document.getElementById('new-record-date').value = `${y}-${mo}-${da}`;
+    document.getElementById('new-record-time').value = `${hh}:${mm}`;
+    document.getElementById('new-record-text').value = '';
+    selectNewSender('me');
+    document.getElementById('new-record-overlay').classList.add('show');
+    setTimeout(() => document.getElementById('new-record-text').focus(), 80);
+  }
+
+  function hideNewRecord() {
+    document.getElementById('new-record-overlay').classList.remove('show');
+    _newRecordTarget = null;
+  }
+
+  function selectNewSender(s) {
+    _newRecordSender = s;
+    document.getElementById('chip-me').className = 'new-record-sender-chip' + (s === 'me' ? ' active-me' : '');
+    document.getElementById('chip-them').className = 'new-record-sender-chip' + (s === 'them' ? ' active-them' : '');
+  }
+
+  function confirmNewRecord() {
+    const text = document.getElementById('new-record-text').value.trim();
+    if (!text) return;
+    const dateVal = document.getElementById('new-record-date').value; // YYYY-MM-DD
+    const timeVal = document.getElementById('new-record-time').value; // HH:MM
+    const timeStr = dateVal && timeVal
+      ? (() => {
+          const d = new Date(dateVal);
+          const mo = d.getMonth() + 1;
+          const da = d.getDate();
+          const now = new Date();
+          const isToday = d.toDateString() === now.toDateString();
+          return isToday ? `今天 ${timeVal}` : `${mo}月${da}日 ${timeVal}`;
+        })()
+      : (timeVal || getNow());
+    const ts = parseRecordTimeManual(dateVal && timeVal ? `${dateVal} ${timeVal}` : timeStr);
+    const folderId = _newRecordTarget === 'folder' ? _currentFolderId : null;
+    const senderLabel = _newRecordSender === 'me' ? '我' : '对方';
+    records.push({ text, sender: _newRecordSender, senderLabel, timeStr, ts, id: Date.now(), recordedAt: Date.now(), partial: false, folderId });
+    const target = _newRecordTarget;
+    hideNewRecord();
+    if (_currentFolderId !== null && target === 'folder') renderFolderDetail(_currentFolderId);
+    else renderRecords();
+  }
+
+  function editRecordText(id) {
+    _editingRecordId = id;
+    const r = records.find(x => x.id === id);
+    const ta = document.getElementById('text-edit-textarea');
+    ta.value = r ? r.text : '';
+    document.getElementById('text-edit-overlay').classList.add('show');
+    setTimeout(() => { ta.focus(); ta.setSelectionRange(ta.value.length, ta.value.length); }, 80);
+  }
+
+  function hideTextEdit() {
+    document.getElementById('text-edit-overlay').classList.remove('show');
+    _editingRecordId = null;
+  }
+
+  function confirmTextEdit() {
+    const trimmed = document.getElementById('text-edit-textarea').value.trim();
+    if (!trimmed) { hideTextEdit(); return; }
+    const r = records.find(x => x.id === _editingRecordId);
+    if (r) r.text = trimmed;
+    hideTextEdit();
+    if (_currentFolderId !== null) renderFolderDetail(_currentFolderId);
+    else renderRecords();
+  }
+
+  function editRecordTime(id) {
+    _editingRecordId = id;
+    _timeEditMode = 'edit';
+    document.getElementById('time-edit-title').textContent = '修改发现时间';
+    const r = records.find(x => x.id === id);
+    fillTimeEditFields(r ? r.timeStr : '');
+    document.getElementById('time-edit-overlay').classList.add('show');
+    setTimeout(() => document.getElementById('time-edit-input').focus(), 80);
+  }
+
+  function fillTimeEditFields(timeStr) {
+    // 把各种 timeStr 格式拆成 date(YYYY-MM-DD) + time(HH:MM) 分别填入
+    const now = new Date();
+    let date = now, hh = now.getHours(), mm = now.getMinutes();
+
+    const full = timeStr && timeStr.match(/^(\d{4})-(\d{1,2})-(\d{1,2})\s+(\d{1,2}):(\d{2})$/);
+    const md   = timeStr && timeStr.match(/^(\d{1,2})-(\d{1,2})\s+(\d{1,2}):(\d{2})$/);
+    const chi  = timeStr && timeStr.match(/^(\d{1,2})月(\d{1,2})日\s+(\d{1,2}):(\d{2})$/);
+    const tod  = timeStr && timeStr.match(/^(?:今天|今日)\s*(\d{1,2}):(\d{2})$/);
+    const yes  = timeStr && timeStr.match(/^(?:昨天|昨日)\s*(\d{1,2}):(\d{2})$/);
+    const pure = timeStr && timeStr.match(/^(\d{1,2}):(\d{2})$/);
+
+    if (full) {
+      date = new Date(+full[1], +full[2]-1, +full[3]);
+      hh = +full[4]; mm = +full[5];
+    } else if (md) {
+      date = new Date(now.getFullYear(), +md[1]-1, +md[2]);
+      hh = +md[3]; mm = +md[4];
+    } else if (chi) {
+      date = new Date(now.getFullYear(), +chi[1]-1, +chi[2]);
+      hh = +chi[3]; mm = +chi[4];
+    } else if (tod) {
+      date = now; hh = +tod[1]; mm = +tod[2];
+    } else if (yes) {
+      date = new Date(now); date.setDate(date.getDate() - 1);
+      hh = +yes[1]; mm = +yes[2];
+    } else if (pure) {
+      date = now; hh = +pure[1]; mm = +pure[2];
+    }
+
+    const y  = date.getFullYear();
+    const mo = String(date.getMonth() + 1).padStart(2, '0');
+    const da = String(date.getDate()).padStart(2, '0');
+    document.getElementById('time-edit-date').value  = `${y}-${mo}-${da}`;
+    document.getElementById('time-edit-input').value = `${String(hh).padStart(2,'0')}:${String(mm).padStart(2,'0')}`;
+  }
+
+  function hideTimeEdit() {
+    document.getElementById('time-edit-overlay').classList.remove('show');
+    if (_timeEditMode === 'save') _preSaveData = null; // 取消则丢弃
+    _editingRecordId = null;
+    _timeEditMode = 'edit';
+  }
+
+  function confirmTimeEdit() {
+    const dateVal = document.getElementById('time-edit-date').value;
+    const timeVal = document.getElementById('time-edit-input').value;
+    if (!timeVal) { hideTimeEdit(); return; }
+
+    // 合并成 timeStr 显示字符串
+    let trimmed, tsRaw;
+    if (dateVal) {
+      const d = new Date(dateVal);
+      const now = new Date();
+      const isToday = d.toDateString() === now.toDateString();
+      const mo = d.getMonth() + 1, da = d.getDate();
+      trimmed = isToday ? `今天 ${timeVal}` : `${mo}月${da}日 ${timeVal}`;
+      tsRaw = `${dateVal} ${timeVal}`;
+    } else {
+      trimmed = timeVal;
+      tsRaw = timeVal;
+    }
+    document.getElementById('time-edit-overlay').classList.remove('show');
+
+    if (_timeEditMode === 'save') {
+      const d = _preSaveData;
+      _preSaveData = null; _timeEditMode = 'edit';
+      if (!d) return;
+      const ts = parseRecordTimeManual(tsRaw);
+      const record = { ...d, timeStr: trimmed, ts, id: Date.now(), recordedAt: Date.now(), folderId: null };
+      records.push(record);
+      _pendingRecord = record;
+      showFolderPicker();
+    } else if (_timeEditMode === 'recorded') {
+      const r = records.find(x => x.id === _editingRecordId);
+      if (r) r.recordedAt = parseRecordTimeManual(tsRaw);
+      _editingRecordId = null; _timeEditMode = 'edit';
+      if (_currentFolderId !== null) renderFolderDetail(_currentFolderId);
+      else renderRecords();
+    } else {
+      const r = records.find(x => x.id === _editingRecordId);
+      if (r) { r.timeStr = trimmed; r.ts = parseRecordTimeManual(tsRaw); }
+      _editingRecordId = null; _timeEditMode = 'edit';
+      if (_currentFolderId !== null) renderFolderDetail(_currentFolderId);
+      else renderRecords();
+    }
+  }
+
+  function editRecordedAt(id) {
+    _editingRecordId = id;
+    _timeEditMode = 'recorded';
+    document.getElementById('time-edit-title').textContent = '修改记录时间';
+    const r = records.find(x => x.id === id);
+    const inp = document.getElementById('time-edit-input');
+    inp.value = r && r.recordedAt ? fmtForInput(r.recordedAt) : '';
+    document.getElementById('time-edit-overlay').classList.add('show');
+    setTimeout(() => inp.focus(), 80);
+  }
+
+  function fmtForInput(ts) {
+    const d = new Date(ts);
+    const y = d.getFullYear();
+    const mo = String(d.getMonth() + 1).padStart(2, '0');
+    const da = String(d.getDate()).padStart(2, '0');
+    const hh = String(d.getHours()).padStart(2, '0');
+    const mm = String(d.getMinutes()).padStart(2, '0');
+    return `${y}-${mo}-${da} ${hh}:${mm}`;
+  }
+
+  function parseRecordTimeManual(str) {
+    if (!str) return Date.now();
+    // YYYY-MM-DD HH:MM
+    let m = str.match(/^(\d{4})-(\d{1,2})-(\d{1,2})\s+(\d{1,2}):(\d{2})$/);
+    if (m) return new Date(+m[1], +m[2]-1, +m[3], +m[4], +m[5]).getTime();
+    // MM-DD HH:MM
+    m = str.match(/^(\d{1,2})-(\d{1,2})\s+(\d{1,2}):(\d{2})$/);
+    if (m) return new Date(new Date().getFullYear(), +m[1]-1, +m[2], +m[3], +m[4]).getTime();
+    // M月D日 HH:MM
+    m = str.match(/^(\d{1,2})月(\d{1,2})日\s+(\d{1,2}):(\d{2})$/);
+    if (m) return new Date(new Date().getFullYear(), +m[1]-1, +m[2], +m[3], +m[4]).getTime();
+    // 今天/昨天 HH:MM 及纯 HH:MM 交给原有解析器
+    return parseRecordTime(str);
+  }
+
+  function deleteRecord(id, cb) {
+    records = records.filter(r => r.id !== id);
+    if (cb) cb();
+  }
+
+  /* ---------- 工具函数 ---------- */
+  function parseRecordTime(str) {
+    if (!str) return Date.now();
+    const now = new Date();
+    const base = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    if (str.startsWith('今天') || str.startsWith('今日')) {
+      const t = str.replace(/^今[天日]/, '').trim();
+      const [h, m] = t.split(':').map(Number);
+      return new Date(base.getFullYear(), base.getMonth(), base.getDate(), h||0, m||0).getTime();
+    }
+    if (str.startsWith('昨天') || str.startsWith('昨日')) {
+      const t = str.replace(/^昨[天日]/, '').trim();
+      const [h, m] = t.split(':').map(Number);
+      const y = new Date(base); y.setDate(y.getDate() - 1);
+      return new Date(y.getFullYear(), y.getMonth(), y.getDate(), h||0, m||0).getTime();
+    }
+    // M月D日 HH:MM
+    const mdm = str.match(/^(\d{1,2})月(\d{1,2})日\s+(\d{1,2}):(\d{2})$/);
+    if (mdm) return new Date(now.getFullYear(), +mdm[1]-1, +mdm[2], +mdm[3], +mdm[4]).getTime();
+    // 纯 HH:MM
+    if (/^\d{1,2}:\d{2}$/.test(str)) {
+      const [h, m] = str.split(':').map(Number);
+      return new Date(base.getFullYear(), base.getMonth(), base.getDate(), h, m).getTime();
+    }
+    return Date.now();
+  }
+
+  function getNow() {
+    const d = new Date();
+    return `今天 ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+  }
+
+  function showRecordToast(msg) {
+    const t = document.getElementById('record-toast');
+    t.textContent = (msg || '已添加到记录') + ' ✓';
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2200);
   }
 </script>
 
