@@ -4578,6 +4578,27 @@
     }, 4000);
   })();
 
+  /* ============== 自我介绍条 · 5s 后自动隐退（一次性教育）==============
+   * 产品哲学：告诉一次就够，不强加重复信息（第 6 条：教育只说一次）
+   * Prototype 阶段每次打开都演示；上线时改为 localStorage 永久隐退
+   * 用户滚动 feed 即立即收起（说明已开始使用，无需再"介绍"）
+   * ====================================================== */
+  function initStatBarAutoDismiss() {
+    const bar = document.querySelector('.feed-stat-bar');
+    if (!bar) return;
+    let dismissed = false;
+    const dismiss = () => {
+      if (dismissed) return;
+      dismissed = true;
+      bar.classList.add('dismissed');
+    };
+    setTimeout(dismiss, 5000);
+    const scrollArea = bar.closest('.scroll-area');
+    if (scrollArea) {
+      scrollArea.addEventListener('scroll', dismiss, { once: true, passive: true });
+    }
+  }
+
   // 初次渲染
   function initApp() {
     renderFeed(); renderArchive(); renderMapPins(); renderSheetCards();
