@@ -206,7 +206,27 @@
     .pc-meta .urgent {
       color: var(--apricot-deep); background: var(--apricot-soft);
       padding: 1px 7px; border-radius: var(--radius-pill); font-size: 11px; font-weight: 700;
+      cursor: help;
     }
+    /* 找回窗口徽章（自动派生 · 不可手动设置） */
+    .phase-badge {
+      display: inline-flex; align-items: center; gap: 4px;
+      font-size: 10px; font-weight: 700;
+      padding: 1.5px 7px 2px; border-radius: 999px;
+      letter-spacing: 0.02em; line-height: 1.35;
+      white-space: nowrap;
+    }
+    .phase-badge .pd { width: 5px; height: 5px; border-radius: 50%; }
+    .phase-badge.green  { background: rgba(91,184,159,0.14);  color: #2F8C75; }
+    .phase-badge.green  .pd { background: var(--mint); }
+    .phase-badge.yellow { background: rgba(240,172,50,0.16);  color: #B97F1E; }
+    .phase-badge.yellow .pd { background: var(--honey); }
+    .phase-badge.orange { background: rgba(255,133,82,0.14);  color: var(--apricot-deep); }
+    .phase-badge.orange .pd { background: var(--apricot); }
+    .phase-badge.red    { background: rgba(220,80,80,0.14);   color: #A03838; }
+    .phase-badge.red    .pd { background: #DC5050; }
+    .phase-badge.gray   { background: rgba(120,120,120,0.10); color: #767676; }
+    .phase-badge.gray   .pd { background: #888; }
     .pc-desc { font-size: 12.5px; color: var(--ink-2); line-height: 1.55; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
     .pc-footer { display: flex; align-items: center; padding: 10px 14px 12px; gap: 8px; border-top: 1px solid var(--divider-soft); }
     .distance-tag {
@@ -218,24 +238,6 @@
     .pc-action { font-size: 11.5px; color: var(--ink-3); display: flex; align-items: center; gap: 3px; font-family: var(--font-en); font-weight: 600; }
     .pc-action.clue { color: var(--apricot-deep); background: var(--apricot-soft); padding: 4px 10px; border-radius: var(--radius-pill); font-family: var(--font-cn); font-weight: 700; }
     .feed-list { padding: 0 16px; display: flex; flex-direction: column; gap: 12px; }
-
-    /* 来源标签（代发标识） */
-    .pc-source {
-      display: inline-flex;
-      align-items: center;
-      gap: 3px;
-      padding: 2px 7px 3px;
-      border-radius: 999px;
-      font-size: 9.5px;
-      font-weight: 700;
-      margin-top: 5px;
-      letter-spacing: 0.02em;
-      line-height: 1.3;
-    }
-    .pc-source.user { display: none; }
-    .pc-source.group { background: rgba(255,133,82,0.10); color: var(--apricot-deep); }
-    .pc-source.clinic { background: rgba(91,184,159,0.12); color: #2F8C75; }
-    .pc-source.rescue { background: rgba(166,114,212,0.12); color: #7A4EA8; }
 
     /* 顶部数据条 */
     .feed-stat-bar {
@@ -279,6 +281,34 @@
       letter-spacing: 0.02em;
     }
     .fsb-meta .dot { color: var(--mint); margin: 0 3px; }
+    .fsb-soft { color: var(--ink-3); font-weight: 500; margin: 0 1px; }
+    .fsb-total {
+      margin-left: 8px;
+      padding: 6px 10px 7px;
+      background: white;
+      border-radius: 10px;
+      text-align: center;
+      cursor: pointer;
+      flex-shrink: 0;
+      box-shadow: 0 2px 6px rgba(255,133,82,0.18);
+      transition: transform 0.15s;
+    }
+    .fsb-total:hover { transform: translateY(-1px); }
+    .fsb-total-num {
+      font-family: var(--font-en);
+      font-size: 17px;
+      font-weight: 800;
+      color: var(--mint-deep, #2F8C75);
+      line-height: 1;
+      letter-spacing: -0.01em;
+    }
+    .fsb-total-label {
+      font-size: 9px;
+      color: var(--ink-3);
+      font-weight: 700;
+      margin-top: 3px;
+      letter-spacing: 0.06em;
+    }
 
     /* 往期案例区 */
     .archive-section { padding: 22px 0 0; }
@@ -1908,7 +1938,34 @@
     }
 
     /* 卡片左侧状态彩边 */
-    .pet-card.urgent-card { border-left: 3px solid var(--apricot); }
+    .pet-card.urgent-card {
+      border-left: 3px solid var(--apricot);
+      box-shadow: 0 8px 22px rgba(255,133,82,0.16), 0 0 0 1px rgba(255,133,82,0.10);
+      position: relative;
+    }
+    .pet-card.urgent-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 16px; right: 16px;
+      height: 2px;
+      background: linear-gradient(90deg, transparent 0%, var(--apricot) 50%, transparent 100%);
+      border-radius: 2px;
+      opacity: 0.85;
+    }
+    /* "附近的人也在找" 社区暗示（仅 urgent 卡） */
+    .nearby-helpers {
+      display: flex; align-items: center; gap: 5px;
+      margin-top: 7px;
+      padding: 5px 9px 6px;
+      background: linear-gradient(90deg, rgba(255,133,82,0.08), rgba(255,133,82,0.02));
+      border-radius: 7px;
+      font-size: 10.5px;
+      color: var(--apricot-deep);
+      font-weight: 600;
+      letter-spacing: 0.01em;
+    }
+    .nearby-helpers .nh-ic { font-size: 11px; }
+    .nearby-helpers .nh-num { font-family: var(--font-en); font-weight: 800; }
     .pet-card.found-card  { border-left: 3px solid var(--mint); }
     .pet-card.care-card   { border-left: 3px solid var(--plum); }
 
@@ -1986,21 +2043,19 @@
         </div>
       </div>
       <div class="scroll-area">
-        <!-- 顶部数据条：让"网络在运转"的感觉一眼可见 -->
+        <!-- 顶部数据条 · 叙事化（统计 → 故事）-->
         <div class="feed-stat-bar">
           <div class="fsb-ic">🐾</div>
           <div class="fsb-body">
             <div class="fsb-line">
-              大理今日新增 <span class="fsb-num">3</span><span class="fsb-sep">·</span>本周 <span class="fsb-num">14</span><span class="fsb-sep">·</span>历史已找回 <span class="fsb-num">47</span>
+              今天 <span class="fsb-num">3</span> 只小朋友<span class="fsb-soft">在等好心人</span><span class="fsb-sep">·</span>上周帮 <span class="fsb-num">8</span> 个家庭<span class="fsb-soft">团聚</span>
             </div>
-            <div class="fsb-meta">汇聚 12 个本地寻宠群<span class="dot">·</span>大理小动物保护协会<span class="dot">·</span>4 家宠物医院</div>
+            <div class="fsb-meta">真实失主自助发布<span class="dot">·</span>大理本地互助网络<span class="dot">·</span>拒绝悬赏 / 转发</div>
           </div>
-        </div>
-
-        <div class="section-header">
-          <span class="title">附近的小朋友</span>
-          <span class="count">· <span id="feed-count">14</span></span>
-          <span class="right" onclick="showScreen('all-posts')">查看全部 →</span>
+          <div class="fsb-total" onclick="showScreen('all-posts')">
+            <div class="fsb-total-num">47</div>
+            <div class="fsb-total-label">已团聚</div>
+          </div>
         </div>
         <!-- 更新进展提示条 -->
         <div class="update-banner" id="update-banner" onclick="showScreen('my-posts')">
@@ -3608,86 +3663,86 @@
   const FEED_DATA = [
     { id: 0, emoji:'🐱', photoClass:'ph-orange', status:'found', statusLabel:'招领',
       name:'小橘子', breed:'约 2 岁 · ♀', loc:'人民路三月街',
-      time:'30 min 前', timeMins:30, distanceKm:1.2, urgent:true,
-      comments:3, tall:false, source:'user', sourceLabel:'',
+      time:'30 min 前', timeMins:30, distanceKm:1.2,
+      comments:3, tall:false,
       desc:'在咖啡馆门口蹲了一下午，看着像走丢的。亲人，会撒娇 ☕️',
       mapPos:{top:38,left:43} },
     { id: 1, emoji:'🐱', photoClass:'ph-blue', status:'lost', statusLabel:'寻宠',
       name:'胖丁', breed:'英短蓝猫 · ♂ 3 岁', loc:'古城北门',
-      time:'10 min 前', timeMins:10, distanceKm:0.8, urgent:true,
-      comments:12, tall:true, source:'group', sourceLabel:'大理猫狗群',
+      time:'10 min 前', timeMins:10, distanceKm:0.8,
+      comments:12, tall:true,
       desc:'穿粉色项圈，左耳缺一小块。胆小，听到名字会喵叫。看到请拍照不要追 🙏',
       mapPos:{top:25,left:20} },
     { id: 2, emoji:'🐶', photoClass:'ph-cream', status:'found', statusLabel:'招领',
       name:'小白', breed:'比熊 · ♂ 5kg', loc:'下关泰安路',
-      time:'2 hr 前', timeMins:120, distanceKm:4.2, urgent:false,
-      comments:5, tall:false, source:'clinic', sourceLabel:'苍山宠物医院',
+      time:'2 hr 前', timeMins:120, distanceKm:4.2,
+      comments:5, tall:false,
       desc:'在小区门口捡到，毛色干净有人养过，正在寻找主人 🐾',
       mapPos:{top:52,left:65} },
     { id: 3, emoji:'🐈', photoClass:'ph-mint', status:'lost', statusLabel:'寻宠',
       name:'咖啡', breed:'美短 · ♀ 1 岁半', loc:'洋人街',
-      time:'1 hr 前', timeMins:60, distanceKm:1.5, urgent:false,
-      comments:8, tall:true, source:'user', sourceLabel:'',
+      time:'1 hr 前', timeMins:60, distanceKm:1.5,
+      comments:8, tall:true,
       desc:'咖啡色虎斑，右后腿有疤。胆小，可能躲在车底下，看到请轻声呼唤',
       mapPos:{top:30,left:36} },
     { id: 4, emoji:'🐕', photoClass:'ph-dark', status:'lost', statusLabel:'寻宠',
       name:'黑豆', breed:'中华田园犬 · ♂', loc:'才村码头',
-      time:'3 hr 前', timeMins:180, distanceKm:6.8, urgent:false,
-      comments:7, tall:false, source:'group', sourceLabel:'大理寻宠互助群',
+      time:'3 hr 前', timeMins:180, distanceKm:6.8,
+      comments:7, tall:false,
       desc:'全身黑色，颈部白毛。在洱海边走丢，主人正在沿环海路找',
       mapPos:{top:42,left:80} },
     { id: 5, emoji:'🐱', photoClass:'ph-pink', status:'found', statusLabel:'招领',
       name:'布偶宝宝', breed:'布偶猫 · ♀ 6 个月', loc:'人民路民宿区',
-      time:'45 min 前', timeMins:45, distanceKm:2.1, urgent:false,
-      comments:6, tall:true, source:'user', sourceLabel:'',
+      time:'45 min 前', timeMins:45, distanceKm:2.1,
+      comments:6, tall:true,
       desc:'蓝眼睛，长毛，戴金色铃铛项圈。在客栈大堂被发现 🛋️',
       mapPos:{top:44,left:50} },
     { id: 6, emoji:'🐶', photoClass:'ph-cream', status:'lost', statusLabel:'寻宠',
       name:'柯基屁屁', breed:'柯基 · ♀ 4 岁', loc:'苍山门',
-      time:'昨天', timeMins:1440, distanceKm:3.6, urgent:false,
-      comments:22, tall:false, source:'user', sourceLabel:'',
+      time:'昨天', timeMins:1440, distanceKm:3.6,
+      comments:22, tall:false,
       desc:'短腿圆屁股的小可爱，戴红色背带。容易认出来',
       mapPos:{top:60,left:16} },
     { id: 7, emoji:'🐶', photoClass:'ph-pink', status:'found', statusLabel:'招领',
       name:'雪球', breed:'比熊串 · ♂', loc:'喜洲古镇',
-      time:'5 hr 前', timeMins:300, distanceKm:18.5, urgent:false,
-      comments:4, tall:true, source:'rescue', sourceLabel:'大理小动物保护协会',
+      time:'5 hr 前', timeMins:300, distanceKm:18.5,
+      comments:4, tall:true,
       desc:'在喜洲扎染店门口被发现，毛色干净，应该是走失的家犬',
       mapPos:{top:18,left:82} },
     { id: 8, emoji:'🐱', photoClass:'ph-orange', status:'found', statusLabel:'招领',
       name:'虎子', breed:'橘猫 · ♂ 估 4 岁', loc:'叶榆路',
-      time:'2 hr 前', timeMins:130, distanceKm:1.9, urgent:false,
-      comments:2, tall:false, source:'user', sourceLabel:'',
+      time:'2 hr 前', timeMins:130, distanceKm:1.9,
+      comments:2, tall:false,
       desc:'在饭店后厨发现，胖胖的看起来不缺吃喝，应该有主',
       mapPos:{top:46,left:56} },
     { id: 9, emoji:'🐕', photoClass:'ph-brown', status:'lost', statusLabel:'寻宠',
       name:'土豆', breed:'杂交犬 · ♂ 中型', loc:'双廊镇',
-      time:'昨天', timeMins:1500, distanceKm:32, urgent:false,
-      comments:9, tall:true, source:'group', sourceLabel:'双廊客栈宠物群',
+      time:'昨天', timeMins:1500, distanceKm:32,
+      comments:9, tall:true,
       desc:'在双廊客栈附近走丢，戴蓝色项圈，胆子比较小',
       mapPos:{top:20,left:87} },
     { id: 10, emoji:'🐱', photoClass:'ph-blue', status:'lost', statusLabel:'寻宠',
       name:'小灰', breed:'蓝白英短 · ♀ 2 岁', loc:'海东',
-      time:'4 hr 前', timeMins:240, distanceKm:12, urgent:false,
-      comments:11, tall:false, source:'user', sourceLabel:'',
+      time:'4 hr 前', timeMins:240, distanceKm:12,
+      comments:11, tall:false,
       desc:'从海东民宿跑出，怕生。可能在芦苇地或山脚',
       mapPos:{top:55,left:84} },
     { id: 11, emoji:'🐱', photoClass:'ph-cream', status:'lost', statusLabel:'寻宠',
       name:'奶糖', breed:'金渐层 · ♀ 3 岁', loc:'塔顶玉局公园',
-      time:'6 hr 前', timeMins:360, distanceKm:2.8, urgent:false,
-      comments:14, tall:true, source:'user', sourceLabel:'',
+      time:'6 hr 前', timeMins:360, distanceKm:2.8,
+      comments:14, tall:true,
       desc:'体型偏小，毛色奶白带浅金。爱叫，听到罐头声会出现',
       mapPos:{top:58,left:28} },
     { id: 12, emoji:'🐶', photoClass:'ph-dark', status:'found', statusLabel:'招领',
       name:'小鸭', breed:'阿拉斯加幼犬 · ♂', loc:'凤仪镇',
-      time:'3 天前', timeMins:4320, distanceKm:22, urgent:false,
-      comments:38, tall:false, source:'clinic', sourceLabel:'凤仪动物诊所',
+      time:'3 天前', timeMins:4320, distanceKm:22,
+      comments:38, tall:false,
       desc:'在凤仪镇路边发现的小奶狗，疑似走失，正在帮忙找主人 🐾',
       mapPos:{top:62,left:72} },
     { id: 13, emoji:'🐶', photoClass:'ph-pink', status:'found', statusLabel:'招领',
       name:'小棕', breed:'棕白色 · 约 6kg', loc:'苍山门',
-      time:'9 days', timeMins:12960, distanceKm:3.4, urgent:false,
-      comments:2, tall:false, expired:true, source:'rescue', sourceLabel:'大理小动物保护协会',
+      time:'9 days', timeMins:12960, distanceKm:3.4,
+      comments:2, tall:false, expired:true,
       desc:'在山脚捡到，比较瘦，已带去打疫苗。希望主人快点出现 💛',
       mapPos:{top:65,left:22} }
   ];
@@ -3714,29 +3769,29 @@
   // 各城市模拟数据
   const CITY_FEEDS = {
     '丽江': [
-      { id:100, emoji:'🐕', photoClass:'ph-orange', status:'lost', statusLabel:'寻宠', name:'旺财', breed:'柴犬 · ♂ 2岁', loc:'丽江古城四方街', time:'20 min 前', timeMins:20, distanceKm:0.6, urgent:true, comments:5, desc:'棕色柴犬，戴蓝色项圈，在四方街走失，胆小怕人，看到请拍照', mapPos:{top:30,left:32} },
-      { id:101, emoji:'🐱', photoClass:'ph-blue', status:'found', statusLabel:'招领', name:'雪儿', breed:'白色长毛猫 · ♀', loc:'束河古镇', time:'1 hr 前', timeMins:60, distanceKm:3.2, urgent:false, comments:3, desc:'在束河茶马古道旁发现，干净亲人，应该有主人', mapPos:{top:48,left:58} },
-      { id:102, emoji:'🐶', photoClass:'ph-cream', status:'lost', statusLabel:'寻宠', name:'豆豆', breed:'贵宾 · ♀ 1岁', loc:'玉龙雪山景区', time:'3 hr 前', timeMins:180, distanceKm:8.5, urgent:false, comments:9, desc:'在景区停车场走失，杏色毛，戴粉色蝴蝶结', mapPos:{top:15,left:68} },
-      { id:103, emoji:'🐱', photoClass:'ph-mint', status:'found', statusLabel:'招领', name:'小黑', breed:'黑猫 · 约1岁', loc:'忠义市场', time:'2 hr 前', timeMins:120, distanceKm:1.8, urgent:false, comments:2, desc:'在忠义市场附近发现，亲人，疑似走失家猫', mapPos:{top:62,left:42} },
+      { id:100, emoji:'🐕', photoClass:'ph-orange', status:'lost', statusLabel:'寻宠', name:'旺财', breed:'柴犬 · ♂ 2岁', loc:'丽江古城四方街', time:'20 min 前', timeMins:20, distanceKm:0.6, comments:5, desc:'棕色柴犬，戴蓝色项圈，在四方街走失，胆小怕人，看到请拍照', mapPos:{top:30,left:32} },
+      { id:101, emoji:'🐱', photoClass:'ph-blue', status:'found', statusLabel:'招领', name:'雪儿', breed:'白色长毛猫 · ♀', loc:'束河古镇', time:'1 hr 前', timeMins:60, distanceKm:3.2, comments:3, desc:'在束河茶马古道旁发现，干净亲人，应该有主人', mapPos:{top:48,left:58} },
+      { id:102, emoji:'🐶', photoClass:'ph-cream', status:'lost', statusLabel:'寻宠', name:'豆豆', breed:'贵宾 · ♀ 1岁', loc:'玉龙雪山景区', time:'3 hr 前', timeMins:180, distanceKm:8.5, comments:9, desc:'在景区停车场走失，杏色毛，戴粉色蝴蝶结', mapPos:{top:15,left:68} },
+      { id:103, emoji:'🐱', photoClass:'ph-mint', status:'found', statusLabel:'招领', name:'小黑', breed:'黑猫 · 约1岁', loc:'忠义市场', time:'2 hr 前', timeMins:120, distanceKm:1.8, comments:2, desc:'在忠义市场附近发现，亲人，疑似走失家猫', mapPos:{top:62,left:42} },
     ],
     '昆明': [
-      { id:200, emoji:'🐱', photoClass:'ph-orange', status:'lost', statusLabel:'寻宠', name:'橘橘', breed:'橘猫 · ♂ 3岁', loc:'翠湖公园', time:'5 min 前', timeMins:5, distanceKm:0.4, urgent:true, comments:18, desc:'翠湖边走失，胖橘猫，戴绿色项圈，怕生请拍照不要追', mapPos:{top:28,left:33} },
-      { id:201, emoji:'🐕', photoClass:'ph-dark', status:'lost', statusLabel:'寻宠', name:'大黄', breed:'金毛 · ♂ 5岁', loc:'世博园附近', time:'2 hr 前', timeMins:120, distanceKm:5.2, urgent:false, comments:14, desc:'体型较大，性格温顺，在世博园附近走散', mapPos:{top:18,left:64} },
-      { id:202, emoji:'🐶', photoClass:'ph-pink', status:'found', statusLabel:'招领', name:'奶油', breed:'萨摩耶 · ♀ 2岁', loc:'滇池边', time:'30 min 前', timeMins:30, distanceKm:2.1, urgent:false, comments:7, desc:'在滇池边发现，干净漂亮，正在帮忙找主人', mapPos:{top:68,left:50} },
-      { id:203, emoji:'🐱', photoClass:'ph-plum', status:'lost', statusLabel:'寻宠', name:'蓝蓝', breed:'俄罗斯蓝猫 · ♀', loc:'南屏街', time:'1 hr 前', timeMins:60, distanceKm:1.3, urgent:false, comments:6, desc:'银灰色短毛，绿眼睛，在南屏街附近走失', mapPos:{top:46,left:40} },
-      { id:204, emoji:'🐶', photoClass:'ph-cream', status:'found', statusLabel:'招领', name:'球球', breed:'博美 · ♂ 3岁', loc:'官渡古镇', time:'4 hr 前', timeMins:240, distanceKm:7.8, urgent:false, comments:4, desc:'在官渡古镇捡到，毛色金黄，活泼爱叫', mapPos:{top:55,left:72} },
+      { id:200, emoji:'🐱', photoClass:'ph-orange', status:'lost', statusLabel:'寻宠', name:'橘橘', breed:'橘猫 · ♂ 3岁', loc:'翠湖公园', time:'5 min 前', timeMins:5, distanceKm:0.4, comments:18, desc:'翠湖边走失，胖橘猫，戴绿色项圈，怕生请拍照不要追', mapPos:{top:28,left:33} },
+      { id:201, emoji:'🐕', photoClass:'ph-dark', status:'lost', statusLabel:'寻宠', name:'大黄', breed:'金毛 · ♂ 5岁', loc:'世博园附近', time:'2 hr 前', timeMins:120, distanceKm:5.2, comments:14, desc:'体型较大，性格温顺，在世博园附近走散', mapPos:{top:18,left:64} },
+      { id:202, emoji:'🐶', photoClass:'ph-pink', status:'found', statusLabel:'招领', name:'奶油', breed:'萨摩耶 · ♀ 2岁', loc:'滇池边', time:'30 min 前', timeMins:30, distanceKm:2.1, comments:7, desc:'在滇池边发现，干净漂亮，正在帮忙找主人', mapPos:{top:68,left:50} },
+      { id:203, emoji:'🐱', photoClass:'ph-plum', status:'lost', statusLabel:'寻宠', name:'蓝蓝', breed:'俄罗斯蓝猫 · ♀', loc:'南屏街', time:'1 hr 前', timeMins:60, distanceKm:1.3, comments:6, desc:'银灰色短毛，绿眼睛，在南屏街附近走失', mapPos:{top:46,left:40} },
+      { id:204, emoji:'🐶', photoClass:'ph-cream', status:'found', statusLabel:'招领', name:'球球', breed:'博美 · ♂ 3岁', loc:'官渡古镇', time:'4 hr 前', timeMins:240, distanceKm:7.8, comments:4, desc:'在官渡古镇捡到，毛色金黄，活泼爱叫', mapPos:{top:55,left:72} },
     ],
     '西双版纳': [
-      { id:300, emoji:'🐱', photoClass:'ph-orange', status:'lost', statusLabel:'寻宠', name:'芒果', breed:'橘猫 · ♂ 2岁', loc:'告庄西双景夜市', time:'1 hr 前', timeMins:60, distanceKm:1.1, urgent:true, comments:4, desc:'在告庄夜市走失，大橘猫，很能吃，叫芒果会回应', mapPos:{top:40,left:44} },
-      { id:301, emoji:'🐶', photoClass:'ph-mint', status:'found', statusLabel:'招领', name:'椰子', breed:'田园犬 · ♀ 幼犬', loc:'橄榄坝', time:'3 hr 前', timeMins:180, distanceKm:4.6, urgent:false, comments:3, desc:'在橄榄坝发现的小奶狗，疑似被遗弃，正帮找主人', mapPos:{top:62,left:28} },
-      { id:302, emoji:'🐱', photoClass:'ph-blue', status:'lost', statusLabel:'寻宠', name:'雨林', breed:'暹罗猫 · ♂ 2岁', loc:'野象谷附近', time:'昨天', timeMins:1200, distanceKm:12, urgent:false, comments:7, desc:'在野象谷景区附近走失，奶白色身体深色脸，怕陌生人', mapPos:{top:22,left:65} },
+      { id:300, emoji:'🐱', photoClass:'ph-orange', status:'lost', statusLabel:'寻宠', name:'芒果', breed:'橘猫 · ♂ 2岁', loc:'告庄西双景夜市', time:'1 hr 前', timeMins:60, distanceKm:1.1, comments:4, desc:'在告庄夜市走失，大橘猫，很能吃，叫芒果会回应', mapPos:{top:40,left:44} },
+      { id:301, emoji:'🐶', photoClass:'ph-mint', status:'found', statusLabel:'招领', name:'椰子', breed:'田园犬 · ♀ 幼犬', loc:'橄榄坝', time:'3 hr 前', timeMins:180, distanceKm:4.6, comments:3, desc:'在橄榄坝发现的小奶狗，疑似被遗弃，正帮找主人', mapPos:{top:62,left:28} },
+      { id:302, emoji:'🐱', photoClass:'ph-blue', status:'lost', statusLabel:'寻宠', name:'雨林', breed:'暹罗猫 · ♂ 2岁', loc:'野象谷附近', time:'昨天', timeMins:1200, distanceKm:12, comments:7, desc:'在野象谷景区附近走失，奶白色身体深色脸，怕陌生人', mapPos:{top:22,left:65} },
     ],
   };
   // 剩余城市共用精简模板
   ['香格里拉','腾冲','保山','楚雄','曲靖','玉溪'].forEach((city, i) => {
     CITY_FEEDS[city] = [
-      { id:400+i*10, emoji:'🐱', photoClass:'ph-orange', status:'lost', statusLabel:'寻宠', name:'橘猫', breed:'约 1-2 岁 · ♂', loc:city+'市区', time:'2 hr 前', timeMins:120, distanceKm:1.5, urgent:false, comments:2, desc:'在'+city+'市区附近走失，橘色短毛，项圈已掉落，见到请联系', mapPos:{top:35,left:38} },
-      { id:401+i*10, emoji:'🐶', photoClass:'ph-cream', status:'found', statusLabel:'招领', name:'流浪犬', breed:'田园犬 · 中型', loc:city+'老街', time:'1 天前', timeMins:1440, distanceKm:3.2, urgent:false, comments:1, desc:'在'+city+'老街附近发现，疑似走失家犬，性格温顺', mapPos:{top:58,left:55} },
+      { id:400+i*10, emoji:'🐱', photoClass:'ph-orange', status:'lost', statusLabel:'寻宠', name:'橘猫', breed:'约 1-2 岁 · ♂', loc:city+'市区', time:'2 hr 前', timeMins:120, distanceKm:1.5, comments:2, desc:'在'+city+'市区附近走失，橘色短毛，项圈已掉落，见到请联系', mapPos:{top:35,left:38} },
+      { id:401+i*10, emoji:'🐶', photoClass:'ph-cream', status:'found', statusLabel:'招领', name:'流浪犬', breed:'田园犬 · 中型', loc:city+'老街', time:'1 天前', timeMins:1440, distanceKm:3.2, comments:1, desc:'在'+city+'老街附近发现，疑似走失家犬，性格温顺', mapPos:{top:58,left:55} },
     ];
   });
 
@@ -3764,6 +3819,76 @@
       div.textContent = lb.n;
       layer.appendChild(div);
     });
+  }
+
+  /* ============== 找回窗口 · 紧迫度自动判定 ==============
+   * 「⚡ 急」不再硬编码，由两个客观信号派生：
+   *   1) 黄金窗口（动物行为学共识 · 找回率随时间衰减）
+   *   2) 地理临近（你能帮上忙）+ 健康危急（仅招领可勾）
+   * 用户无法手动设置 → 防滥用，保持 ⚡ 信号稀缺性
+   * ====================================================== */
+  function getRecoveryPhase(d) {
+    if (d.expired) return { name:'expired', label:'已过期', color:'gray', remaining:0 };
+    const t = d.timeMins;
+    if (d.status === 'lost') {
+      if (t < 360)  return { name:'golden',   label:'黄金时段', color:'green',  remaining:360 - t };
+      if (t < 1440) return { name:'second',   label:'第二窗口', color:'yellow', remaining:1440 - t };
+      if (t < 4320) return { name:'critical', label:'关键期',   color:'orange', remaining:4320 - t };
+      return { name:'longterm', label:'长期跟踪', color:'red', remaining:0 };
+    }
+    if (t < 1440) return { name:'fresh',  label:'新发现', color:'green',  remaining:1440 - t };
+    if (t < 4320) return { name:'recent', label:'近期',   color:'yellow', remaining:4320 - t };
+    return { name:'old', label:'陈旧', color:'gray', remaining:0 };
+  }
+
+  function isUrgent(d) {
+    if (d.expired) return false;
+    const phase = getRecoveryPhase(d);
+    if (d.status === 'lost' && phase.name === 'golden' && d.distanceKm <= 5) return true;
+    if (d.distanceKm <= 1 && d.timeMins <= 120) return true;
+    if (d.status === 'found' && d.health === 'urgent') return true;
+    return false;
+  }
+
+  function formatRemaining(mins) {
+    if (mins <= 0) return '';
+    if (mins < 60) return `剩 ${mins}min`;
+    const h = Math.floor(mins / 60);
+    const m = mins % 60;
+    return m === 0 ? `剩 ${h}h` : `剩 ${h}h${m}m`;
+  }
+
+  function urgentReason(d) {
+    if (!isUrgent(d)) return '';
+    const reasons = [];
+    const phase = getRecoveryPhase(d);
+    if (d.status === 'lost' && phase.name === 'golden' && d.distanceKm <= 5) {
+      reasons.push(`黄金时段${formatRemaining(phase.remaining)}`);
+    }
+    if (d.distanceKm <= 1) reasons.push(`距你 ${Math.round(d.distanceKm * 1000)}m`);
+    if (d.health === 'urgent') reasons.push('健康危急');
+    return reasons.join(' · ');
+  }
+
+  function renderTimeAndPhase(d) {
+    // 奥卡姆剃刀：时间感由 phase 的「剩余时间」承载，删除精确"10 min"字样避免与 phase 重复
+    // ⚡ 不再绑定时间，独立 chip 表达「对你来说急」（地理+时间双维度）
+    const urgent = isUrgent(d);
+    const phase = getRecoveryPhase(d);
+    const urgentHTML = urgent
+      ? `<span class="urgent" title="⚡ ${urgentReason(d)}">⚡</span>`
+      : '';
+    const remainTxt = phase.remaining > 0 ? ' · ' + formatRemaining(phase.remaining) : '';
+    const phaseHTML = `<span class="phase-badge ${phase.color}" title="${phase.label}${remainTxt}"><span class="pd"></span>${phase.label}${remainTxt}</span>`;
+    return urgentHTML + phaseHTML;
+  }
+
+  // "附近的人也在找" mock：基于 distance 推区域接力人数
+  function renderNearbyHelpers(d) {
+    if (d.distanceKm > 5) return '';
+    const n = Math.max(1, Math.round((6 - d.distanceKm) * 0.8 + d.comments * 0.3));
+    const radius = d.distanceKm < 1 ? 1 : (d.distanceKm < 2 ? 2 : 5);
+    return `<div class="nearby-helpers"><span class="nh-ic">🤝</span>你 <span class="nh-num">${radius}</span>km 内还有 <span class="nh-num">${n}</span> 人正在帮忙找</div>`;
   }
 
   let currentFilter = 'all';
@@ -3852,36 +3977,27 @@
     const detailScreen = d.status === 'lost' ? 'detail-lost' : 'detail-found';
     const distanceStr = d.distanceKm < 10 ? d.distanceKm.toFixed(1) : d.distanceKm.toFixed(0);
     const expiredCardStyle = d.expired ? 'style="opacity:0.55"' : '';
-    const expiredDistStyle = d.expired ? 'style="background:var(--bg-deeper);color:var(--ink-3)"' : '';
     const effStatus = d.mapStatus || d.status;
     const statusCls = d.expired ? 'expired' : effStatus;
     const statusLabel = d.expired ? '已过期' : d.statusLabel;
-    const borderClass = !d.expired ? (effStatus === 'lost' ? ' urgent-card' : ' found-card') : '';
-    const timeSpan = d.urgent ? `<span class="urgent">⚡ ${d.time}</span>` : `<span class="time">${d.time}</span>`;
+    const borderClass = !d.expired ? (effStatus === 'lost' && isUrgent(d) ? ' urgent-card' : ' found-card') : '';
+    const timeSpan = renderTimeAndPhase(d);
     const hint = CARD_HINTS[d.id];
     const hintHtml = hint ? `<div class="card-hint-strip ${effStatus}">${hint}<span class="hint-arrow">›</span></div>` : '';
-    const views = Math.max(15, d.comments * 6 + Math.min(120, Math.round(2880 / Math.max(d.timeMins, 10))));
-    // 来源标签（代发标识）
-    const sourceIcon = { group: '📌', clinic: '🏥', rescue: '🐾' }[d.source] || '';
-    const sourceHTML = (d.source && d.source !== 'user' && d.sourceLabel)
-      ? `<div class="pc-source ${d.source}">${sourceIcon} 来自 ${d.sourceLabel} · 已授权</div>`
-      : '';
     return `<div class="pet-card${borderClass}" ${expiredCardStyle} onclick="showScreen('${detailScreen}')">
       ${hintHtml}
       <div class="pc-body">
         <div class="pc-photo ${d.photoClass}"><span>${d.emoji}</span><div class="status-bubble ${statusCls}">${statusLabel}</div></div>
         <div class="pc-info">
           <div class="pc-name-row"><span class="pc-name">${d.name}</span><span class="breed">· ${d.breed}</span></div>
-          <div class="pc-meta"><span>📍 ${d.loc}</span>${timeSpan}</div>
+          <div class="pc-meta"><span>📍 ${d.loc} · ${distanceStr} km</span>${timeSpan}</div>
           <div class="pc-desc">${d.desc}</div>
-          ${sourceHTML}
+          ${isUrgent(d) ? renderNearbyHelpers(d) : ''}
         </div>
       </div>
       <div class="pc-footer">
-        <div class="distance-tag" ${expiredDistStyle}>📍 ${distanceStr} km</div>
         <div class="pc-actions">
-          <span class="pc-action">💬 ${d.comments}</span>
-          <span class="pc-action">👀 ${views}</span>
+          <span class="pc-action">🤝 ${d.comments} 接力</span>
           <span class="pc-action share" onclick="event.stopPropagation();openShare(${d.id})">⤴ 转发</span>
         </div>
       </div>
@@ -4070,25 +4186,15 @@
       const detailScreen = d.status === 'lost' ? 'detail-lost' : 'detail-found';
       const distanceStr = d.distanceKm < 10 ? d.distanceKm.toFixed(1) : d.distanceKm.toFixed(0);
       const expiredCardStyle = d.expired ? 'style="opacity:0.55"' : '';
-      const expiredDistStyle = d.expired ? 'style="background:var(--bg-deeper);color:var(--ink-3)"' : '';
       const effStatus = d.mapStatus || d.status;
       const statusCls = d.expired ? 'expired' : effStatus;
       const statusLabel = d.expired ? '已过期' : d.statusLabel;
       const urgentClass = !d.expired
-        ? (effStatus === 'lost' ? ' urgent-card' : ' found-card')
+        ? (effStatus === 'lost' && isUrgent(d) ? ' urgent-card' : ' found-card')
         : '';
-      const timeSpan = d.urgent
-        ? `<span class="urgent">⚡ ${d.time}</span>`
-        : `<span class="time">${d.time}</span>`;
+      const timeSpan = renderTimeAndPhase(d);
       const hint = CARD_HINTS[d.id];
       const hintHtml = hint ? `<div class="card-hint-strip ${effStatus}" onclick="event.stopPropagation();showScreen('${detailScreen}')">${hint}<span class="hint-arrow">›</span></div>` : '';
-      // mock views（公式：基础 + 评论加权 + 时间衰减反比）
-      const views = Math.max(15, d.comments * 6 + Math.min(120, Math.round(2880 / Math.max(d.timeMins, 10))));
-      // 来源标签（代发标识）
-      const sourceIcon = { group: '📌', clinic: '🏥', rescue: '🐾' }[d.source] || '';
-      const sourceHTML = (d.source && d.source !== 'user' && d.sourceLabel)
-        ? `<div class="pc-source ${d.source}">${sourceIcon} 来自 ${d.sourceLabel} · 已授权</div>`
-        : '';
       return `
         <div class="pet-card${urgentClass}" ${expiredCardStyle} onclick="showScreen('${detailScreen}')">
           ${hintHtml}
@@ -4103,18 +4209,16 @@
                 <span class="breed">· ${d.breed}</span>
               </div>
               <div class="pc-meta">
-                <span class="loc-link" onclick="event.stopPropagation();showOnMapByLoc(${d.id})">📍 ${d.loc}</span>
+                <span class="loc-link" onclick="event.stopPropagation();showOnMapByLoc(${d.id})">📍 ${d.loc} · ${distanceStr} km</span>
                 ${timeSpan}
               </div>
               <div class="pc-desc">${d.desc}</div>
-              ${sourceHTML}
+              ${isUrgent(d) ? renderNearbyHelpers(d) : ''}
             </div>
           </div>
           <div class="pc-footer">
-            <div class="distance-tag" ${expiredDistStyle}>📍 ${distanceStr} km</div>
             <div class="pc-actions">
-              <span class="pc-action">💬 ${d.comments}</span>
-              <span class="pc-action">👀 ${views}</span>
+              <span class="pc-action">🤝 ${d.comments} 接力</span>
               <span class="pc-action share" onclick="event.stopPropagation();openShare(${d.id})">⤴ 转发</span>
             </div>
           </div>
@@ -5001,15 +5105,12 @@
       const expiredStyle = d.expired ? 'style="opacity:0.55"' : '';
       const statusCls = d.expired ? 'expired' : d.status;
       const statusLabel = d.expired ? '已过期' : d.statusLabel;
-      const timeSpan = d.urgent
-        ? `<span class="urgent">⚡ ${d.time}</span>`
-        : `<span class="time">${d.time}</span>`;
-      const sourceIcon = { group: '📌', clinic: '🏥', rescue: '🐾' }[d.source] || '';
-      const sourceHTML = (d.source && d.source !== 'user' && d.sourceLabel)
-        ? `<div class="pc-source ${d.source}">${sourceIcon} 来自 ${d.sourceLabel} · 已授权</div>`
+      const urgentClass = !d.expired
+        ? (d.status === 'lost' && isUrgent(d) ? ' urgent-card' : ' found-card')
         : '';
+      const timeSpan = renderTimeAndPhase(d);
       return `
-        <div class="pet-card" ${expiredStyle} onclick="showScreen('${detailScreen}')">
+        <div class="pet-card${urgentClass}" ${expiredStyle} onclick="showScreen('${detailScreen}')">
           <div class="pc-body">
             <div class="pc-photo ${d.photoClass}">
               <span>${d.emoji}</span>
@@ -5021,17 +5122,16 @@
                 <span class="breed">· ${d.breed}</span>
               </div>
               <div class="pc-meta">
-                <span>📍 ${d.loc}</span>
+                <span>📍 ${d.loc} · ${distanceStr} km</span>
                 ${timeSpan}
               </div>
               <div class="pc-desc">${d.desc}</div>
-              ${sourceHTML}
+              ${isUrgent(d) ? renderNearbyHelpers(d) : ''}
             </div>
           </div>
           <div class="pc-footer">
-            <div class="distance-tag">📍 ${distanceStr} km</div>
             <div class="pc-actions">
-              <span class="pc-action">💬 ${d.comments}</span>
+              <span class="pc-action">🤝 ${d.comments} 接力</span>
               <span class="pc-action share" onclick="event.stopPropagation();openShare(${d.id})">⤴ 转发</span>
             </div>
           </div>
