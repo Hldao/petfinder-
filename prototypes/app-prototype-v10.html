@@ -1553,6 +1553,15 @@
     .sheet-content-scroll { flex:1; overflow-y:auto; padding:0 12px 14px; overscroll-behavior:contain; }
     .sheet-content-scroll::-webkit-scrollbar { display:none; }
     .sheet-card.out-of-view { opacity:0.35; }
+    .sheet-filter-label { display:none; font-size:10px; font-weight:700; padding:1px 7px; border-radius:10px; margin-left:6px; vertical-align:middle; }
+    .sheet-filter-label.show { display:inline-block; }
+    .sheet-filter-label.lost  { background:var(--apricot-soft); color:var(--apricot-deep); }
+    .sheet-filter-label.found { background:var(--mint-soft); color:var(--mint-deep); }
+    .sheet-filter-label.care  { background:var(--plum-soft); color:var(--plum-deep); }
+    .sheet-card.highlighted { animation: sheetCardFlash 1.5s ease forwards; }
+    @keyframes sheetCardFlash { 0%,20%{background:var(--apricot-soft);border-radius:8px} 100%{background:transparent} }
+    .sheet-handle.pulse { animation: handlePulse 1.8s ease-in-out infinite; }
+    @keyframes handlePulse { 0%,100%{transform:scaleX(1);opacity:0.4} 55%{transform:scaleX(1.6);opacity:1} }
     .sheet-viewport-hint { font-size:11px; color:var(--ink-3); padding:0 16px 5px; display:none; }
     .sheet-viewport-hint.show { display:block; }
     /* 在此区域搜索按钮 */
@@ -1893,7 +1902,7 @@
             <div class="sheet-drag-hint" id="sheet-drag-hint">上滑查看更多 ↑</div>
           </div>
           <div class="sheet-header">
-            <div class="sheet-title" id="sheet-title">可见区域 · 5 条信息</div>
+            <div class="sheet-title" id="sheet-title">可见区域 · 5 条信息<span class="sheet-filter-label" id="sheet-filter-label"></span></div>
             <span class="sheet-filter-toggle" id="sheet-filter-toggle">筛选 ›</span>
           </div>
           <div class="sheet-viewport-hint" id="sheet-viewport-hint">🗺 仅显示当前可见区域的宠物</div>
@@ -3882,6 +3891,16 @@
     popup.style.left = (rect.left - containerRect.left + rect.width / 2) + 'px';
     popup.style.top  = (rect.top  - containerRect.top) + 'px';
     popup.classList.add('show');
+    // 展开面板并高亮对应底部列表卡片
+    if (window._ensureExpanded) window._ensureExpanded();
+    const sc = document.getElementById('sheet-content');
+    const card = sc && sc.querySelector('[data-pin-key="' + key + '"]');
+    if (card) {
+      sc.scrollTo({ top: card.offsetTop - 8, behavior: 'smooth' });
+      card.classList.remove('highlighted');
+      void card.offsetWidth;
+      card.classList.add('highlighted');
+    }
   }
 
   function closePinPopup(e) {
@@ -3910,6 +3929,8 @@
       const hdr = sheet.querySelector('.sheet-header');
       if (hdr) hdr.style.visibility = collapsed ? 'hidden' : '';
       if (content) content.style.visibility = collapsed ? 'hidden' : '';
+      const handle = sheet.querySelector('.sheet-handle');
+      if (handle) handle.classList.toggle('pulse', collapsed);
     }
 
     function nearestSnap(h) {
@@ -3950,8 +3971,9 @@
     dragEl.addEventListener('click', function() { applySnap((curSnap + 1) % SNAPS.length); });
     applySnap(1);
 
-    window._expandSheet  = function(i) { applySnap(i !== undefined ? i : 1); };
+    window._expandSheet   = function(i) { applySnap(i !== undefined ? i : 1); };
     window._collapseSheet = function() { if (curSnap > 0) applySnap(0); };
+    window._ensureExpanded = function() { if (curSnap === 0) applySnap(1); };
   })();
 
   // 地图拖拽
@@ -4146,6 +4168,16 @@
         updateSheetTitle(s.cls || '', visible);
       }
       if (window._syncSheetChips) window._syncSheetChips(s.cls || '');
+      const lbl = document.getElementById('sheet-filter-label');
+      if (lbl) {
+        if (s.cls) {
+          const nm = { lost:'仅看丢失', found:'仅看招领', care:'仅看照料中' };
+          lbl.textContent = nm[s.cls] || '';
+          lbl.className = 'sheet-filter-label show ' + s.cls;
+        } else {
+          lbl.className = 'sheet-filter-label';
+        }
+      }
       const pp = document.getElementById('pin-popup');
       if (pp) pp.classList.remove('show');
     }
