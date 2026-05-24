@@ -4573,7 +4573,7 @@
       const lbl = document.getElementById('sheet-filter-label');
       if (lbl) {
         if (s.cls) {
-          const nm = { lost:'仅看丢失', found:'仅看招领', care:'仅看照料中' };
+          const nm = { lost:'仅看丢失', found:'仅看招领' };
           lbl.textContent = nm[s.cls] || '';
           lbl.className = 'sheet-filter-label show ' + s.cls;
         } else {
