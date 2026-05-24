@@ -219,6 +219,178 @@
     .pc-action.clue { color: var(--apricot-deep); background: var(--apricot-soft); padding: 4px 10px; border-radius: var(--radius-pill); font-family: var(--font-cn); font-weight: 700; }
     .feed-list { padding: 0 16px; display: flex; flex-direction: column; gap: 12px; }
 
+    /* 来源标签（代发标识） */
+    .pc-source {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      padding: 2px 7px 3px;
+      border-radius: 999px;
+      font-size: 9.5px;
+      font-weight: 700;
+      margin-top: 5px;
+      letter-spacing: 0.02em;
+      line-height: 1.3;
+    }
+    .pc-source.user { display: none; }
+    .pc-source.group { background: rgba(255,133,82,0.10); color: var(--apricot-deep); }
+    .pc-source.clinic { background: rgba(91,184,159,0.12); color: #2F8C75; }
+    .pc-source.rescue { background: rgba(166,114,212,0.12); color: #7A4EA8; }
+
+    /* 顶部数据条 */
+    .feed-stat-bar {
+      margin: 6px 16px 14px;
+      padding: 11px 14px 12px;
+      background: linear-gradient(135deg, #FFF4EB 0%, #FFFAF3 100%);
+      border-radius: 12px;
+      border: 1px solid rgba(255,133,82,0.16);
+      display: flex;
+      align-items: center;
+      gap: 11px;
+    }
+    .fsb-ic {
+      width: 28px; height: 28px;
+      background: white;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px;
+      flex-shrink: 0;
+      box-shadow: 0 2px 6px rgba(255,133,82,0.15);
+    }
+    .fsb-body { flex: 1; min-width: 0; line-height: 1.35; }
+    .fsb-line {
+      font-size: 12px;
+      color: var(--ink-2);
+      font-weight: 600;
+    }
+    .fsb-num {
+      color: var(--apricot-deep);
+      font-weight: 800;
+      font-family: var(--font-en);
+      font-size: 13px;
+      letter-spacing: 0.01em;
+    }
+    .fsb-sep { color: var(--ink-4); margin: 0 5px; font-weight: 400; }
+    .fsb-meta {
+      font-size: 10px;
+      color: var(--ink-3);
+      margin-top: 2px;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+    }
+    .fsb-meta .dot { color: var(--mint); margin: 0 3px; }
+
+    /* 往期案例区 */
+    .archive-section { padding: 22px 0 0; }
+    .archive-divider {
+      display: flex;
+      align-items: center;
+      padding: 0 16px;
+      margin-bottom: 14px;
+      gap: 12px;
+    }
+    .archive-divider .line {
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--divider), transparent);
+    }
+    .archive-divider .label {
+      font-size: 10.5px;
+      color: var(--ink-3);
+      letter-spacing: 0.16em;
+      font-weight: 700;
+      text-transform: uppercase;
+      font-family: var(--font-en);
+    }
+    .archive-header {
+      padding: 0 16px;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: baseline;
+    }
+    .archive-header .title {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--ink-1);
+    }
+    .archive-header .meta {
+      margin-left: auto;
+      font-size: 10.5px;
+      color: var(--ink-3);
+      font-weight: 500;
+    }
+    .archive-list {
+      padding: 0 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .archive-card {
+      background: var(--surface);
+      border-radius: 14px;
+      padding: 11px 12px;
+      display: flex;
+      gap: 11px;
+      box-shadow: 0 0 0 1px var(--divider-soft);
+      cursor: pointer;
+      transition: transform 0.15s;
+    }
+    .archive-card:hover { transform: translateY(-1px); }
+    .ac-photo {
+      width: 52px; height: 52px;
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 26px;
+      flex-shrink: 0;
+      position: relative;
+    }
+    .ac-photo .check {
+      position: absolute;
+      bottom: -3px; right: -3px;
+      width: 18px; height: 18px;
+      background: var(--mint);
+      border: 2px solid white;
+      border-radius: 50%;
+      color: white;
+      font-size: 9px;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 800;
+    }
+    .ac-info { flex: 1; min-width: 0; }
+    .ac-head {
+      display: flex;
+      align-items: baseline;
+      gap: 6px;
+      margin-bottom: 2px;
+    }
+    .ac-name { font-size: 13.5px; font-weight: 700; }
+    .ac-breed { font-size: 10.5px; color: var(--ink-3); font-weight: 500; }
+    .ac-badge {
+      margin-left: auto;
+      display: inline-flex;
+      align-items: center;
+      padding: 1px 7px 2px;
+      background: rgba(91,184,159,0.14);
+      color: #2F8C75;
+      border-radius: 999px;
+      font-size: 9.5px;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+    }
+    .ac-meta {
+      font-size: 10.5px;
+      color: var(--ink-3);
+      margin-bottom: 4px;
+      font-family: var(--font-en);
+      font-weight: 500;
+    }
+    .ac-meta .ac-sep { margin: 0 5px; color: var(--ink-4); }
+    .ac-story {
+      font-size: 11.5px;
+      color: var(--ink-2);
+      line-height: 1.55;
+    }
+
     .feed-empty-state {
       padding: 70px 30px 40px;
       text-align: center;
@@ -1267,33 +1439,115 @@
     .scp-divider {
       height: 1px;
       background: var(--divider-soft);
-      margin-bottom: 12px;
+      margin-bottom: 14px;
     }
     .scp-footer {
       display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    /* 顶部行动指引条 */
+    .scp-action-banner {
+      background: linear-gradient(135deg, #FFF4EB 0%, #FFE9D6 100%);
+      border: 1px dashed rgba(255,133,82,0.45);
+      border-radius: 12px;
+      padding: 10px 12px 11px;
+      display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 10px;
     }
-    .scp-qrcode {
-      width: 56px; height: 56px;
-      background: white;
-      border: 1px solid var(--divider);
-      border-radius: 8px;
-      padding: 4px;
+    .scp-action-icon {
+      width: 30px; height: 30px;
+      border-radius: 50%;
+      background: var(--apricot);
+      color: white;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px;
       flex-shrink: 0;
+      box-shadow: 0 2px 6px rgba(255,133,82,0.35);
     }
-    .scp-cta { flex: 1; min-width: 0; }
-    .scp-cta-title {
+    .scp-action-text { flex: 1; min-width: 0; line-height: 1.35; }
+    .scp-action-title {
       font-size: 12.5px;
       font-weight: 700;
-      color: var(--ink-1);
+      color: var(--apricot-deep, #C45A2A);
+      letter-spacing: -0.005em;
     }
-    .scp-cta-sub {
+    .scp-action-sub {
       font-size: 10.5px;
       color: var(--ink-3);
       margin-top: 2px;
-      font-family: var(--font-en);
-      letter-spacing: 0.04em;
+    }
+
+    /* 二维码行 */
+    .scp-qr-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    .scp-qr-cell {
+      background: white;
+      border-radius: 12px;
+      padding: 10px 8px 9px;
+      display: flex; flex-direction: column; align-items: center; gap: 6px;
+      box-shadow: 0 0 0 1px var(--divider-soft);
+    }
+    .scp-qr-cell.primary {
+      background: linear-gradient(180deg, #FFFAF4 0%, #FFFFFF 60%);
+      box-shadow: 0 0 0 1px rgba(255,133,82,0.18);
+    }
+    .scp-qr-box {
+      width: 76px; height: 76px;
+      display: flex; align-items: center; justify-content: center;
+      position: relative;
+    }
+    .scp-qr-label {
+      text-align: center;
+      line-height: 1.35;
+    }
+    .scp-qr-label-name {
+      font-size: 11.5px;
+      font-weight: 700;
+      color: var(--ink-1);
+      letter-spacing: -0.005em;
+    }
+    .scp-qr-label-sub {
+      font-size: 10px;
+      color: var(--ink-3);
+      margin-top: 1px;
+      letter-spacing: 0.02em;
+    }
+
+    /* 微信小程序码 mockup（雪花圆形）*/
+    .mp-code {
+      width: 100%; height: 100%;
+      border-radius: 50%;
+      background: white;
+      position: relative;
+      box-shadow: inset 0 0 0 1px #EFE7D5;
+    }
+    .mp-code svg { width: 100%; height: 100%; display: block; }
+
+    /* 公众号码 mockup（方形 + 微信绿 footer）*/
+    .oa-code {
+      width: 100%; height: 100%;
+      background: white;
+      border-radius: 6px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: inset 0 0 0 1px #E6E0D2;
+    }
+    .oa-code svg { width: 100%; height: calc(100% - 14px); display: block; padding: 5px; box-sizing: border-box; }
+    .oa-code-tag {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 14px;
+      background: #07C160;
+      color: white;
+      font-size: 8px;
+      letter-spacing: 0.06em;
+      font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
     }
 
     .share-actions {
@@ -1320,7 +1574,7 @@
       box-shadow: 0 4px 12px rgba(255,133,82,0.25);
     }
     .share-act-ic { font-size: 20px; }
-    .share-act-text { font-size: 12px; font-weight: 700; }
+    .share-act-text { font-size: 12px; font-weight: 700; text-align: center; line-height: 1.3; }
 
     .share-tip {
       padding: 12px 18px 18px;
@@ -1541,6 +1795,17 @@
         </div>
       </div>
       <div class="scroll-area">
+        <!-- 顶部数据条：让"网络在运转"的感觉一眼可见 -->
+        <div class="feed-stat-bar">
+          <div class="fsb-ic">🐾</div>
+          <div class="fsb-body">
+            <div class="fsb-line">
+              大理今日新增 <span class="fsb-num">3</span><span class="fsb-sep">·</span>本周 <span class="fsb-num">14</span><span class="fsb-sep">·</span>历史已找回 <span class="fsb-num">47</span>
+            </div>
+            <div class="fsb-meta">汇聚 12 个本地寻宠群<span class="dot">·</span>大理小动物保护协会<span class="dot">·</span>4 家宠物医院</div>
+          </div>
+        </div>
+
         <div class="section-header">
           <span class="title">附近的小朋友</span>
           <span class="count">· <span id="feed-count">14</span></span>
@@ -1551,6 +1816,20 @@
           <div class="fe-icon">🐾</div>
           <div class="fe-title">附近暂时没有这类信息</div>
           <div class="fe-cta" onclick="resetFilter()">查看全部 →</div>
+        </div>
+
+        <!-- 往期成功案例 · 永远不让 feed 显空 -->
+        <div class="archive-section" id="archive-section">
+          <div class="archive-divider">
+            <div class="line"></div>
+            <div class="label">past cases · 往期</div>
+            <div class="line"></div>
+          </div>
+          <div class="archive-header">
+            <div class="title">往期成功案例</div>
+            <div class="meta">共 <strong style="color:var(--mint);font-family:var(--font-en);font-weight:800">47</strong> 个家庭团聚</div>
+          </div>
+          <div class="archive-list" id="archive-list"></div>
         </div>
 
         <!-- 排序 Action Sheet -->
@@ -2554,37 +2833,114 @@
               <div class="scp-desc" id="scp-desc">穿粉色项圈，左耳缺一小块。胆小，听到名字会喵叫。看到请尽量拍照不要追 🙏</div>
               <div class="scp-divider"></div>
               <div class="scp-footer">
-                <div class="scp-qrcode">
-                  <svg viewBox="0 0 30 30" width="100%" height="100%" fill="#1F1F1F">
-                    <rect x="0" y="0" width="9" height="9"/>
-                    <rect x="2" y="2" width="5" height="5" fill="white"/>
-                    <rect x="3" y="3" width="3" height="3" fill="#1F1F1F"/>
-                    <rect x="21" y="0" width="9" height="9"/>
-                    <rect x="23" y="2" width="5" height="5" fill="white"/>
-                    <rect x="24" y="3" width="3" height="3" fill="#1F1F1F"/>
-                    <rect x="0" y="21" width="9" height="9"/>
-                    <rect x="2" y="23" width="5" height="5" fill="white"/>
-                    <rect x="3" y="24" width="3" height="3" fill="#1F1F1F"/>
-                    <rect x="11" y="2" width="2" height="2"/>
-                    <rect x="15" y="0" width="2" height="2"/>
-                    <rect x="17" y="4" width="2" height="2"/>
-                    <rect x="11" y="11" width="2" height="2"/>
-                    <rect x="15" y="13" width="2" height="2"/>
-                    <rect x="19" y="11" width="2" height="2"/>
-                    <rect x="13" y="17" width="2" height="2"/>
-                    <rect x="17" y="19" width="2" height="2"/>
-                    <rect x="21" y="15" width="2" height="2"/>
-                    <rect x="25" y="13" width="2" height="2"/>
-                    <rect x="11" y="22" width="2" height="2"/>
-                    <rect x="15" y="24" width="2" height="2"/>
-                    <rect x="19" y="22" width="2" height="2"/>
-                    <rect x="23" y="25" width="2" height="2"/>
-                    <rect x="27" y="22" width="2" height="2"/>
-                  </svg>
+                <!-- 行动指引条 -->
+                <div class="scp-action-banner">
+                  <div class="scp-action-icon">👆</div>
+                  <div class="scp-action-text">
+                    <div class="scp-action-title">长按图片 → 识别小程序码</div>
+                    <div class="scp-action-sub">立即查看详情 · 留下线索 · 帮 ta 回家</div>
+                  </div>
                 </div>
-                <div class="scp-cta">
-                  <div class="scp-cta-title">扫码查看详情 / 提供线索</div>
-                  <div class="scp-cta-sub">微信扫一扫</div>
+
+                <!-- 双码并行 -->
+                <div class="scp-qr-row">
+                  <!-- 小程序码（主，直达详情）-->
+                  <div class="scp-qr-cell primary">
+                    <div class="scp-qr-box">
+                      <div class="mp-code">
+                        <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                          <!-- 三个角内嵌定位方块（小程序码特征：在圆形里）-->
+                          <g fill="#1F1F1F">
+                            <rect x="18" y="18" width="10" height="10" rx="1.5"/>
+                            <rect x="72" y="18" width="10" height="10" rx="1.5"/>
+                            <rect x="18" y="72" width="10" height="10" rx="1.5"/>
+                          </g>
+                          <!-- 同心环（dash 段，营造小程序码雪花感）-->
+                          <circle cx="50" cy="50" r="44" fill="none" stroke="#1F1F1F" stroke-width="2.2" stroke-dasharray="2 2.6" stroke-linecap="round"/>
+                          <circle cx="50" cy="50" r="36" fill="none" stroke="#1F1F1F" stroke-width="1.8" stroke-dasharray="1.8 2.4" stroke-linecap="round"/>
+                          <circle cx="50" cy="50" r="29" fill="none" stroke="#1F1F1F" stroke-width="1.6" stroke-dasharray="1.5 2" stroke-linecap="round"/>
+                          <!-- 内圈散点 -->
+                          <g fill="#1F1F1F">
+                            <circle cx="50" cy="33" r="1.3"/>
+                            <circle cx="35" cy="40" r="1.1"/>
+                            <circle cx="65" cy="40" r="1.1"/>
+                            <circle cx="38" cy="55" r="1.2"/>
+                            <circle cx="62" cy="55" r="1.2"/>
+                            <circle cx="50" cy="62" r="1.4"/>
+                            <circle cx="42" cy="65" r="0.9"/>
+                            <circle cx="58" cy="65" r="0.9"/>
+                            <circle cx="45" cy="36" r="0.9"/>
+                            <circle cx="55" cy="36" r="0.9"/>
+                          </g>
+                          <!-- 中心 logo 圆 -->
+                          <circle cx="50" cy="50" r="11" fill="#FF8552"/>
+                          <text x="50" y="55" text-anchor="middle" font-size="13" fill="white" font-weight="700" font-family="-apple-system,sans-serif">寻</text>
+                        </svg>
+                      </div>
+                    </div>
+                    <div class="scp-qr-label">
+                      <div class="scp-qr-label-name">看详情 · 留线索</div>
+                      <div class="scp-qr-label-sub">长按识别小程序码</div>
+                    </div>
+                  </div>
+
+                  <!-- 公众号码（副，沉淀关注）-->
+                  <div class="scp-qr-cell">
+                    <div class="scp-qr-box">
+                      <div class="oa-code">
+                        <svg viewBox="0 0 30 30" xmlns="http://www.w3.org/2000/svg">
+                          <g fill="#1F1F1F">
+                            <!-- 三个定位方块（QR 特征：方形）-->
+                            <rect x="0" y="0" width="8" height="8"/>
+                            <rect x="2" y="2" width="4" height="4" fill="white"/>
+                            <rect x="3" y="3" width="2" height="2"/>
+                            <rect x="22" y="0" width="8" height="8"/>
+                            <rect x="24" y="2" width="4" height="4" fill="white"/>
+                            <rect x="25" y="3" width="2" height="2"/>
+                            <rect x="0" y="22" width="8" height="8"/>
+                            <rect x="2" y="24" width="4" height="4" fill="white"/>
+                            <rect x="3" y="25" width="2" height="2"/>
+                            <!-- 数据块（伪随机散布）-->
+                            <rect x="10" y="1" width="1.5" height="1.5"/>
+                            <rect x="13" y="3" width="1.5" height="1.5"/>
+                            <rect x="16" y="1" width="1.5" height="1.5"/>
+                            <rect x="18" y="5" width="1.5" height="1.5"/>
+                            <rect x="11" y="6" width="1.5" height="1.5"/>
+                            <rect x="14" y="8" width="1.5" height="1.5"/>
+                            <rect x="1" y="11" width="1.5" height="1.5"/>
+                            <rect x="4" y="14" width="1.5" height="1.5"/>
+                            <rect x="7" y="11" width="1.5" height="1.5"/>
+                            <rect x="6" y="17" width="1.5" height="1.5"/>
+                            <rect x="2" y="19" width="1.5" height="1.5"/>
+                            <rect x="11" y="11" width="1.5" height="1.5"/>
+                            <rect x="14" y="13" width="1.5" height="1.5"/>
+                            <rect x="17" y="11" width="1.5" height="1.5"/>
+                            <rect x="20" y="14" width="1.5" height="1.5"/>
+                            <rect x="13" y="16" width="1.5" height="1.5"/>
+                            <rect x="16" y="18" width="1.5" height="1.5"/>
+                            <rect x="11" y="20" width="1.5" height="1.5"/>
+                            <rect x="19" y="20" width="1.5" height="1.5"/>
+                            <rect x="22" y="11" width="1.5" height="1.5"/>
+                            <rect x="25" y="13" width="1.5" height="1.5"/>
+                            <rect x="27" y="10" width="1.5" height="1.5"/>
+                            <rect x="23" y="16" width="1.5" height="1.5"/>
+                            <rect x="26" y="18" width="1.5" height="1.5"/>
+                            <rect x="11" y="23" width="1.5" height="1.5"/>
+                            <rect x="14" y="25" width="1.5" height="1.5"/>
+                            <rect x="17" y="23" width="1.5" height="1.5"/>
+                            <rect x="20" y="26" width="1.5" height="1.5"/>
+                            <rect x="23" y="23" width="1.5" height="1.5"/>
+                            <rect x="26" y="25" width="1.5" height="1.5"/>
+                          </g>
+                        </svg>
+                        <div class="oa-code-tag">微信公众号</div>
+                      </div>
+                    </div>
+                    <div class="scp-qr-label">
+                      <div class="scp-qr-label-name">持续关注</div>
+                      <div class="scp-qr-label-sub">新走失第一时间推送</div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -2592,13 +2948,13 @@
         </div>
 
         <div class="share-actions">
-          <div class="share-act" onclick="alert('✅ 卡片已保存到相册\n可手动转发到朋友圈')">
+          <div class="share-act" onclick="alert('✅ 卡片已保存到相册\n打开朋友圈 → 从相册选这张图发布即可\n朋友长按图片可识别小程序码')">
             <div class="share-act-ic">📷</div>
-            <div class="share-act-text">保存图片</div>
+            <div class="share-act-text">保存到相册<br><span style="font-size:9.5px;font-weight:500;opacity:0.8">→ 发朋友圈</span></div>
           </div>
-          <div class="share-act primary" onclick="alert('💬 已唤起微信分享\n选择「朋友圈」即可发布')">
+          <div class="share-act primary" onclick="alert('💬 已唤起微信\n选择好友 / 群聊发送')">
             <div class="share-act-ic">💬</div>
-            <div class="share-act-text">分享到微信</div>
+            <div class="share-act-text">分享给好友<br><span style="font-size:9.5px;font-weight:500;opacity:0.9">→ 微信会话</span></div>
           </div>
         </div>
 
@@ -2802,73 +3158,92 @@
     { id: 0, emoji:'🐱', photoClass:'ph-orange', status:'found', statusLabel:'招领',
       name:'小橘子', breed:'约 2 岁 · ♀', loc:'人民路三月街',
       time:'30 min 前', timeMins:30, distanceKm:1.2, urgent:true,
-      comments:3, tall:false,
+      comments:3, tall:false, source:'user', sourceLabel:'',
       desc:'在咖啡馆门口蹲了一下午，看着像走丢的。亲人，会撒娇 ☕️' },
     { id: 1, emoji:'🐱', photoClass:'ph-blue', status:'lost', statusLabel:'寻宠',
       name:'胖丁', breed:'英短蓝猫 · ♂ 3 岁', loc:'古城北门',
       time:'10 min 前', timeMins:10, distanceKm:0.8, urgent:true,
-      comments:12, tall:true,
+      comments:12, tall:true, source:'group', sourceLabel:'大理猫狗群',
       desc:'穿粉色项圈，左耳缺一小块。胆小，听到名字会喵叫。看到请拍照不要追 🙏' },
     { id: 2, emoji:'🐶', photoClass:'ph-cream', status:'found', statusLabel:'招领',
       name:'小白', breed:'比熊 · ♂ 5kg', loc:'下关泰安路',
       time:'2 hr 前', timeMins:120, distanceKm:4.2, urgent:false,
-      comments:5, tall:false,
+      comments:5, tall:false, source:'clinic', sourceLabel:'苍山宠物医院',
       desc:'在小区门口捡到，毛色干净有人养过，正在寻找主人 🐾' },
     { id: 3, emoji:'🐈', photoClass:'ph-mint', status:'lost', statusLabel:'寻宠',
       name:'咖啡', breed:'美短 · ♀ 1 岁半', loc:'洋人街',
       time:'1 hr 前', timeMins:60, distanceKm:1.5, urgent:false,
-      comments:8, tall:true,
+      comments:8, tall:true, source:'user', sourceLabel:'',
       desc:'咖啡色虎斑，右后腿有疤。胆小，可能躲在车底下，看到请轻声呼唤' },
     { id: 4, emoji:'🐕', photoClass:'ph-dark', status:'lost', statusLabel:'寻宠',
       name:'黑豆', breed:'中华田园犬 · ♂', loc:'才村码头',
       time:'3 hr 前', timeMins:180, distanceKm:6.8, urgent:false,
-      comments:7, tall:false,
+      comments:7, tall:false, source:'group', sourceLabel:'大理寻宠互助群',
       desc:'全身黑色，颈部白毛。在洱海边走丢，主人正在沿环海路找' },
     { id: 5, emoji:'🐱', photoClass:'ph-pink', status:'found', statusLabel:'招领',
       name:'布偶宝宝', breed:'布偶猫 · ♀ 6 个月', loc:'人民路民宿区',
       time:'45 min 前', timeMins:45, distanceKm:2.1, urgent:false,
-      comments:6, tall:true,
+      comments:6, tall:true, source:'user', sourceLabel:'',
       desc:'蓝眼睛，长毛，戴金色铃铛项圈。在客栈大堂被发现 🛋️' },
     { id: 6, emoji:'🐶', photoClass:'ph-cream', status:'lost', statusLabel:'寻宠',
       name:'柯基屁屁', breed:'柯基 · ♀ 4 岁', loc:'苍山门',
       time:'昨天', timeMins:1440, distanceKm:3.6, urgent:false,
-      comments:22, tall:false,
+      comments:22, tall:false, source:'user', sourceLabel:'',
       desc:'短腿圆屁股的小可爱，戴红色背带。容易认出来' },
     { id: 7, emoji:'🐶', photoClass:'ph-pink', status:'found', statusLabel:'招领',
       name:'雪球', breed:'比熊串 · ♂', loc:'喜洲古镇',
       time:'5 hr 前', timeMins:300, distanceKm:18.5, urgent:false,
-      comments:4, tall:true,
+      comments:4, tall:true, source:'rescue', sourceLabel:'大理小动物保护协会',
       desc:'在喜洲扎染店门口被发现，毛色干净，应该是走失的家犬' },
     { id: 8, emoji:'🐱', photoClass:'ph-orange', status:'found', statusLabel:'招领',
       name:'虎子', breed:'橘猫 · ♂ 估 4 岁', loc:'叶榆路',
       time:'2 hr 前', timeMins:130, distanceKm:1.9, urgent:false,
-      comments:2, tall:false,
+      comments:2, tall:false, source:'user', sourceLabel:'',
       desc:'在饭店后厨发现，胖胖的看起来不缺吃喝，应该有主' },
     { id: 9, emoji:'🐕', photoClass:'ph-brown', status:'lost', statusLabel:'寻宠',
       name:'土豆', breed:'杂交犬 · ♂ 中型', loc:'双廊镇',
       time:'昨天', timeMins:1500, distanceKm:32, urgent:false,
-      comments:9, tall:true,
+      comments:9, tall:true, source:'group', sourceLabel:'双廊客栈宠物群',
       desc:'在双廊客栈附近走丢，戴蓝色项圈，胆子比较小' },
     { id: 10, emoji:'🐱', photoClass:'ph-blue', status:'lost', statusLabel:'寻宠',
       name:'小灰', breed:'蓝白英短 · ♀ 2 岁', loc:'海东',
       time:'4 hr 前', timeMins:240, distanceKm:12, urgent:false,
-      comments:11, tall:false,
+      comments:11, tall:false, source:'user', sourceLabel:'',
       desc:'从海东民宿跑出，怕生。可能在芦苇地或山脚' },
     { id: 11, emoji:'🐱', photoClass:'ph-cream', status:'lost', statusLabel:'寻宠',
       name:'奶糖', breed:'金渐层 · ♀ 3 岁', loc:'塔顶玉局公园',
       time:'6 hr 前', timeMins:360, distanceKm:2.8, urgent:false,
-      comments:14, tall:true,
+      comments:14, tall:true, source:'user', sourceLabel:'',
       desc:'体型偏小，毛色奶白带浅金。爱叫，听到罐头声会出现' },
     { id: 12, emoji:'🐶', photoClass:'ph-dark', status:'found', statusLabel:'招领',
       name:'小鸭', breed:'阿拉斯加幼犬 · ♂', loc:'凤仪镇',
       time:'3 天前', timeMins:4320, distanceKm:22, urgent:false,
-      comments:38, tall:false,
+      comments:38, tall:false, source:'clinic', sourceLabel:'凤仪动物诊所',
       desc:'在凤仪镇路边发现的小奶狗，疑似走失，正在帮忙找主人 🐾' },
     { id: 13, emoji:'🐶', photoClass:'ph-pink', status:'found', statusLabel:'招领',
       name:'小棕', breed:'棕白色 · 约 6kg', loc:'苍山门',
       time:'9 days', timeMins:12960, distanceKm:3.4, urgent:false,
-      comments:2, tall:false, expired:true,
+      comments:2, tall:false, expired:true, source:'rescue', sourceLabel:'大理小动物保护协会',
       desc:'在山脚捡到，比较瘦，已带去打疫苗。希望主人快点出现 💛' }
+  ];
+
+  /* ============== 往期成功案例数据 ============== */
+  const ARCHIVED_CASES = [
+    { emoji:'🐈', photoClass:'ph-orange', name:'阿黄', breed:'橘猫 · ♂',
+      loc:'人民路', daysAgo:5, days:3, helpers:8,
+      story:'走丢第 3 天，咖啡馆老板留意到后联系了主人 ☕️' },
+    { emoji:'🐶', photoClass:'ph-cream', name:'豆豆', breed:'柯基 · ♀',
+      loc:'喜洲古镇', daysAgo:12, days:7, helpers:14,
+      story:'喜洲游客在洱海边发现，民宿主收留 1 周等到主人从昆明赶来 🚗' },
+    { emoji:'🐱', photoClass:'ph-mint', name:'布丁', breed:'美短 · ♂',
+      loc:'下关', daysAgo:18, days:1, helpers:4,
+      story:'走失当天就被小区保安找回 — 还戴着主人买的新项圈 💛' },
+    { emoji:'🐕', photoClass:'ph-dark', name:'阿黑', breed:'中华田园犬',
+      loc:'古城北门', daysAgo:25, days:14, helpers:22,
+      story:'丢失 2 周，朋友圈接力 30+ 次，最终来自双廊的线索促成找回 🐾' },
+    { emoji:'🐱', photoClass:'ph-pink', name:'糖糖', breed:'布偶 · ♀',
+      loc:'海东', daysAgo:30, days:5, helpers:11,
+      story:'宠物医院送来的猫与寻宠帖匹配，立刻联系主人 🏥' }
   ];
 
   let currentFilter = 'all';
@@ -2934,6 +3309,11 @@
       const timeSpan = d.urgent
         ? `<span class="urgent">⚡ ${d.time}</span>`
         : `<span class="time">${d.time}</span>`;
+      // 来源标签（代发标识）
+      const sourceIcon = { group: '📌', clinic: '🏥', rescue: '🐾' }[d.source] || '';
+      const sourceHTML = (d.source && d.source !== 'user' && d.sourceLabel)
+        ? `<div class="pc-source ${d.source}">${sourceIcon} 来自 ${d.sourceLabel} · 已授权</div>`
+        : '';
       // mock views（公式：基础 + 评论加权 + 时间衰减反比）
       const views = Math.max(15, d.comments * 6 + Math.min(120, Math.round(2880 / Math.max(d.timeMins, 10))));
       return `
@@ -2953,6 +3333,7 @@
                 ${timeSpan}
               </div>
               <div class="pc-desc">${d.desc}</div>
+              ${sourceHTML}
             </div>
           </div>
           <div class="pc-footer">
@@ -2968,11 +3349,37 @@
     }).join('');
   }
 
+  /* ============== 往期成功案例渲染 ============== */
+  function renderArchive() {
+    const container = document.getElementById('archive-list');
+    if (!container) return;
+    container.innerHTML = ARCHIVED_CASES.map(c => `
+      <div class="archive-card" onclick="alert('查看详情：${c.name} 找回故事\\n（暂跳转占位）')">
+        <div class="ac-photo ${c.photoClass}">
+          <span>${c.emoji}</span>
+          <div class="check">✓</div>
+        </div>
+        <div class="ac-info">
+          <div class="ac-head">
+            <span class="ac-name">${c.name}</span>
+            <span class="ac-breed">· ${c.breed}</span>
+            <span class="ac-badge">✓ 已找到</span>
+          </div>
+          <div class="ac-meta">
+            📍 ${c.loc}<span class="ac-sep">·</span>${c.daysAgo} 天前<span class="ac-sep">·</span>${c.days} 天找回<span class="ac-sep">·</span>${c.helpers} 人接力
+          </div>
+          <div class="ac-story">${c.story}</div>
+        </div>
+      </div>
+    `).join('');
+  }
+
   // 初次渲染
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', renderFeed);
+    document.addEventListener('DOMContentLoaded', () => { renderFeed(); renderArchive(); });
   } else {
     renderFeed();
+    renderArchive();
   }
 
   /* ============== 聊天 · 快捷回复 + 发送 ============== */
@@ -3268,6 +3675,10 @@
       const timeSpan = d.urgent
         ? `<span class="urgent">⚡ ${d.time}</span>`
         : `<span class="time">${d.time}</span>`;
+      const sourceIcon = { group: '📌', clinic: '🏥', rescue: '🐾' }[d.source] || '';
+      const sourceHTML = (d.source && d.source !== 'user' && d.sourceLabel)
+        ? `<div class="pc-source ${d.source}">${sourceIcon} 来自 ${d.sourceLabel} · 已授权</div>`
+        : '';
       return `
         <div class="pet-card" ${expiredStyle} onclick="showScreen('${detailScreen}')">
           <div class="pc-body">
@@ -3285,6 +3696,7 @@
                 ${timeSpan}
               </div>
               <div class="pc-desc">${d.desc}</div>
+              ${sourceHTML}
             </div>
           </div>
           <div class="pc-footer">
