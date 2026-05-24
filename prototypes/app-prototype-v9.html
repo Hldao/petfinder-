@@ -1,0 +1,2425 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>寻宠 · 大理 — 高保真原型 v7（合规版）</title>
+</head>
+<body>
+<style>
+  :root {
+    --primary: #FF6B35;
+    --primary-soft: #FFF1E9;
+    --primary-border: #FFDCC8;
+    --ink-1: #0F172A;
+    --ink-2: #334155;
+    --ink-3: #64748B;
+    --ink-4: #94A3B8;
+    --bg: #FAFAF7;
+    --surface: #FFFFFF;
+    --border: #E2E8F0;
+    --border-soft: #F1F5F9;
+    --status-lost: #DC2626;
+    --status-found: #059669;
+    --status-care: #D97706;
+    --shadow-sm: 0 1px 2px rgba(15,23,42,0.04);
+    --shadow-md: 0 4px 12px rgba(15,23,42,0.06), 0 2px 4px rgba(15,23,42,0.04);
+    --radius-sm: 8px; --radius-md: 12px; --radius-lg: 16px; --radius-full: 9999px;
+  }
+  .stage { display: flex; justify-content: center; padding: 20px 0 40px; }
+  .device {
+    width: 390px; height: 800px;
+    background: var(--bg);
+    border-radius: 48px;
+    border: 12px solid #1a1a1a;
+    overflow: hidden; position: relative;
+    box-shadow: 0 40px 80px rgba(0,0,0,0.25), 0 16px 32px rgba(0,0,0,0.15);
+    font-family: -apple-system, "PingFang SC", "SF Pro Display", system-ui, sans-serif;
+    color: var(--ink-1); font-size: 14px; line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+  .device::before {
+    content: ''; position: absolute;
+    top: 0; left: 50%; transform: translateX(-50%);
+    width: 130px; height: 30px;
+    background: #1a1a1a;
+    border-bottom-left-radius: 18px; border-bottom-right-radius: 18px;
+    z-index: 100;
+  }
+  .status-bar {
+    height: 44px;
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 0 28px;
+    font-size: 14px; font-weight: 600;
+  }
+  .screen {
+    position: absolute; top: 44px; left: 0; right: 0; bottom: 0;
+    overflow: hidden; background: var(--bg);
+    display: flex; flex-direction: column;
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.2s ease;
+  }
+  .screen.active { opacity: 1; pointer-events: auto; z-index: 1; }
+
+  /* Top nav */
+  .top-nav { padding: 8px 16px 12px; display: flex; align-items: center; gap: 10px; }
+  .city-tag { display: flex; align-items: center; gap: 6px; font-size: 15px; font-weight: 600; padding: 6px 12px 6px 10px; border-radius: var(--radius-full); background: var(--surface); box-shadow: var(--shadow-sm); }
+  .city-tag .pulse { width: 8px; height: 8px; background: var(--primary); border-radius: 50%; box-shadow: 0 0 0 4px var(--primary-soft); }
+  .search { flex: 1; height: 36px; background: var(--surface); border-radius: var(--radius-full); border: 1px solid var(--border); display: flex; align-items: center; padding: 0 14px; font-size: 13px; color: var(--ink-4); gap: 6px; }
+  .notif-btn { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; background: var(--surface); border-radius: 50%; box-shadow: var(--shadow-sm); position: relative; font-size: 16px; }
+  .notif-btn .dot { position: absolute; top: 8px; right: 9px; width: 8px; height: 8px; background: var(--primary); border-radius: 50%; border: 2px solid var(--surface); }
+
+  /* Filter strip */
+  .filter-strip { padding: 0 16px 12px; display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; align-items: center; }
+  .filter-strip::-webkit-scrollbar { display: none; }
+  .chip { padding: 7px 14px; border-radius: var(--radius-full); background: var(--surface); border: 1px solid var(--border); font-size: 13px; white-space: nowrap; color: var(--ink-3); font-weight: 500; display: flex; align-items: center; gap: 5px; cursor: pointer; }
+  .chip.active { background: var(--ink-1); color: white; border-color: var(--ink-1); }
+  .chip-dot { width: 6px; height: 6px; border-radius: 50%; }
+  .sort-chip { background: var(--primary-soft); border-color: var(--primary-border); color: var(--primary); font-weight: 600; margin-left: auto; margin-right: 4px; }
+  .filter-divider { width: 1px; height: 20px; background: var(--border); margin: 0 2px; }
+
+  /* Feed */
+  .feed { flex: 1; overflow-y: auto; padding: 4px 14px 100px; }
+  .card { background: var(--surface); border-radius: var(--radius-lg); margin-bottom: 12px; overflow: hidden; box-shadow: var(--shadow-sm); border: 1px solid var(--border-soft); cursor: pointer; }
+  .card.expired { opacity: 0.55; filter: saturate(0.6); }
+  .card-row { display: flex; padding: 12px; gap: 12px; }
+  .photo { width: 92px; height: 92px; border-radius: var(--radius-md); flex-shrink: 0; position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; font-size: 38px; }
+  .photo::after { content: ''; position: absolute; inset: 0; box-shadow: inset 0 0 0 1px rgba(15,23,42,0.06); border-radius: var(--radius-md); pointer-events: none; }
+  .ph-blue { background: linear-gradient(135deg, #93B5E1, #6B8FC7); }
+  .ph-orange { background: linear-gradient(135deg, #FFD58A, #F5A623); }
+  .ph-cream { background: linear-gradient(135deg, #F5E9D2, #E5C99A); }
+  .ph-dark { background: linear-gradient(135deg, #4A5568, #2D3748); }
+  .ph-brown { background: linear-gradient(135deg, #C8956A, #9C6B3F); }
+  .ph-pink { background: linear-gradient(135deg, #FBD0D0, #F09898); }
+
+  .status-badge { position: absolute; top: 6px; left: 6px; padding: 3px 8px; border-radius: 6px; font-size: 10.5px; color: #fff; font-weight: 600; backdrop-filter: blur(8px); z-index: 2; }
+  .status-badge.lost { background: rgba(220,38,38,0.94); }
+  .status-badge.found { background: rgba(5,150,105,0.94); }
+  .status-badge.care { background: rgba(217,119,6,0.94); }
+  .status-badge.returned { background: rgba(100,116,139,0.94); }
+
+  .info { flex: 1; min-width: 0; }
+  .pet-title { font-size: 15px; font-weight: 600; margin-bottom: 3px; display: flex; align-items: baseline; gap: 6px; }
+  .pet-title .breed { font-size: 12px; color: var(--ink-3); font-weight: 400; }
+  .pet-meta { font-size: 12px; color: var(--ink-3); margin-bottom: 5px; }
+  .time-tag { font-weight: 600; }
+  .time-tag.urgent { color: var(--primary); }
+  .time-tag.recent { color: var(--ink-2); }
+  .time-tag.stale { color: var(--ink-4); }
+  .pet-desc { font-size: 12.5px; color: var(--ink-2); line-height: 1.45; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+  .card-footer { display: flex; justify-content: space-between; align-items: center; padding: 8px 14px 10px; border-top: 1px solid var(--border-soft); font-size: 12px; }
+  .distance-pill { color: var(--primary); font-weight: 600; font-size: 12px; }
+  .footer-actions { display: flex; gap: 14px; }
+  .footer-action { color: var(--ink-3); }
+
+  /* FAB & Tab */
+  .tab-bar { position: absolute; bottom: 0; left: 0; right: 0; height: 78px; background: rgba(255,255,255,0.94); backdrop-filter: blur(20px); border-top: 1px solid var(--border-soft); display: flex; padding-bottom: 18px; z-index: 10; overflow: visible; }
+  .tab { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 11px; color: var(--ink-4); gap: 3px; cursor: pointer; }
+  .tab.active { color: var(--primary); font-weight: 600; }
+  .tab .icon { font-size: 22px; }
+  .tab.spacer { pointer-events: none; visibility: hidden; }
+  /* 中间发布按钮 */
+  .tab-pub { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; padding-bottom: 4px; cursor: pointer; position: relative; }
+  .tab-pub-circle { width: 52px; height: 52px; background: linear-gradient(135deg, var(--primary), #FF4A12); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 28px; font-weight: 300; line-height: 1; box-shadow: 0 4px 14px rgba(255,107,53,0.45), 0 2px 4px rgba(255,107,53,0.3); border: 3px solid white; position: absolute; top: -18px; left: 50%; transform: translateX(-50%); }
+  .tab-pub-label { font-size: 11px; color: var(--primary); font-weight: 600; margin-top: 38px; }
+
+  /* Header / Detail */
+  .detail-header { height: 56px; display: flex; align-items: center; padding: 0 16px; gap: 12px; }
+  .back-btn, .share-btn, .header-icon-btn { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; background: var(--surface); border-radius: 50%; box-shadow: var(--shadow-sm); font-size: 18px; cursor: pointer; }
+  .detail-title { font-size: 16px; font-weight: 600; }
+  .detail-spacer { flex: 1; }
+  .detail-scroll { flex: 1; overflow-y: auto; padding-bottom: 110px; }
+  .hero-photo { width: 100%; height: 240px; position: relative; display: flex; align-items: center; justify-content: center; font-size: 110px; }
+  .hero-status { position: absolute; top: 16px; left: 16px; padding: 6px 14px; border-radius: var(--radius-full); font-size: 12px; color: white; font-weight: 600; backdrop-filter: blur(12px); }
+  .hero-status.lost { background: rgba(220,38,38,0.92); }
+  .hero-status.found { background: rgba(5,150,105,0.92); }
+  .detail-body { padding: 20px 18px; }
+  .detail-name { font-size: 22px; font-weight: 700; margin-bottom: 4px; }
+  .detail-subtitle { font-size: 14px; color: var(--ink-3); margin-bottom: 16px; }
+  .detail-stats { display: flex; gap: 14px; padding: 14px; background: var(--surface); border-radius: var(--radius-md); margin-bottom: 18px; border: 1px solid var(--border-soft); }
+  .stat { flex: 1; display: flex; align-items: center; gap: 10px; }
+  .stat-icon { width: 34px; height: 34px; background: var(--primary-soft); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 17px; }
+  .stat-label { font-size: 11px; color: var(--ink-3); margin-bottom: 2px; }
+  .stat-value { font-size: 13px; font-weight: 600; }
+  .stat-divider { width: 1px; background: var(--border-soft); margin: 4px 0; }
+  .section-label { font-size: 11px; font-weight: 600; color: var(--ink-3); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
+  .desc-block { background: var(--surface); border-radius: var(--radius-md); padding: 14px 16px; margin-bottom: 18px; font-size: 14px; color: var(--ink-2); line-height: 1.6; border: 1px solid var(--border-soft); }
+  .feature-lock { background: linear-gradient(135deg, #FFF7ED, #FFEDD5); border-radius: var(--radius-md); padding: 14px; margin-bottom: 18px; border: 1px dashed #FED7AA; display: flex; gap: 10px; align-items: flex-start; font-size: 12.5px; color: #9A3412; line-height: 1.55; }
+  .feature-lock.green { background: linear-gradient(135deg, #ECFDF5, #D1FAE5); border-color: #6EE7B7; color: #065F46; }
+  .feature-lock-icon { font-size: 18px; flex-shrink: 0; }
+
+  /* Action bar */
+  .action-bar { position: absolute; bottom: 0; left: 0; right: 0; background: rgba(255,255,255,0.96); backdrop-filter: blur(20px); border-top: 1px solid var(--border-soft); padding: 12px 16px 24px; display: flex; gap: 10px; z-index: 10; }
+  .btn-secondary, .btn-primary { height: 48px; border-radius: var(--radius-lg); font-size: 14.5px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 6px; cursor: pointer; }
+  .btn-secondary { flex: 1; background: var(--surface); color: var(--ink-1); border: 1px solid var(--border); }
+  .btn-primary { flex: 1.4; background: linear-gradient(135deg, var(--primary), #FF4A12); color: white; box-shadow: 0 4px 12px rgba(255,107,53,0.3); }
+
+  /* Clues */
+  .clue-list { background: var(--surface); border-radius: var(--radius-md); border: 1px solid var(--border-soft); margin-bottom: 18px; overflow: hidden; }
+  .clue-item { padding: 12px 14px; border-bottom: 1px solid var(--border-soft); display: flex; gap: 10px; }
+  .clue-item:last-child { border-bottom: none; }
+  .clue-avatar { width: 32px; height: 32px; border-radius: 50%; background: linear-gradient(135deg, #94A3B8, #64748B); color: white; font-size: 12px; font-weight: 600; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .clue-author { font-size: 12.5px; font-weight: 600; display: flex; align-items: center; gap: 6px; margin-bottom: 2px; }
+  .clue-badge { font-size: 10px; padding: 1px 6px; border-radius: 4px; background: var(--primary-soft); color: var(--primary); font-weight: 600; }
+  .clue-meta { font-size: 11px; color: var(--ink-4); margin-bottom: 4px; }
+  .clue-text { font-size: 13px; color: var(--ink-2); line-height: 1.5; }
+
+  /* Publish form */
+  .seg-control { display: flex; background: var(--surface); border-radius: var(--radius-md); padding: 4px; margin: 12px 18px 18px; box-shadow: var(--shadow-sm); border: 1px solid var(--border-soft); }
+  .seg { flex: 1; padding: 10px; text-align: center; border-radius: 8px; font-size: 14px; font-weight: 600; color: var(--ink-3); cursor: pointer; }
+  .seg.active { background: linear-gradient(135deg, var(--primary), #FF4A12); color: white; box-shadow: 0 2px 6px rgba(255,107,53,0.3); }
+  .form-scroll { flex: 1; overflow-y: auto; padding-bottom: 110px; }
+  .form-section { background: var(--surface); margin: 0 14px 14px; border-radius: var(--radius-md); overflow: hidden; border: 1px solid var(--border-soft); }
+  .form-row { padding: 14px 16px; border-bottom: 1px solid var(--border-soft); }
+  .form-row:last-child { border-bottom: none; }
+  .form-label { font-size: 12px; color: var(--ink-3); margin-bottom: 6px; display: flex; align-items: center; justify-content: space-between; }
+  .form-label .required { color: var(--status-lost); }
+  .form-input { width: 100%; border: none; background: transparent; font-size: 14px; color: var(--ink-1); outline: none; font-family: inherit; padding: 0; }
+  .form-input::placeholder { color: var(--ink-4); }
+  .form-value { font-size: 14px; color: var(--ink-1); display: flex; align-items: center; justify-content: space-between; }
+  .form-value .arrow { color: var(--ink-4); }
+  .form-textarea { width: 100%; border: none; background: transparent; font-size: 14px; color: var(--ink-1); outline: none; font-family: inherit; resize: none; min-height: 64px; padding: 0; line-height: 1.5; }
+  .photo-upload-row { padding: 14px 16px; display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; }
+  .photo-upload-row::-webkit-scrollbar { display: none; }
+  .photo-slot { width: 70px; height: 70px; border-radius: 10px; flex-shrink: 0; background: var(--bg); border: 2px dashed var(--border); display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--ink-4); font-size: 11px; gap: 2px; cursor: pointer; }
+  .photo-slot.filled { border: 1px solid var(--border); border-style: solid; position: relative; overflow: hidden; font-size: 32px; }
+  .photo-slot.filled .x { position: absolute; top: 2px; right: 2px; width: 18px; height: 18px; background: rgba(15,23,42,0.7); border-radius: 50%; color: white; font-size: 11px; display: flex; align-items: center; justify-content: center; }
+  .private-feature-card { margin: 0 14px 14px; background: linear-gradient(135deg, #FFF7ED, #FFEDD5); border: 1px dashed #FED7AA; border-radius: var(--radius-md); overflow: hidden; }
+  .private-feature-header { padding: 12px 16px 8px; display: flex; align-items: center; gap: 8px; color: #9A3412; }
+  .private-feature-header b { font-size: 13px; }
+  .private-feature-body { padding: 0 16px 14px; font-size: 11.5px; color: #9A3412; line-height: 1.5; }
+  .private-feature-input { background: white; border-radius: 10px; padding: 12px; margin: 0 16px 14px; border: 1px solid #FED7AA; }
+  .private-feature-input textarea { width: 100%; border: none; outline: none; font-family: inherit; font-size: 14px; resize: none; background: transparent; color: var(--ink-1); min-height: 50px; }
+  .pet-type-options { display: flex; gap: 8px; flex-wrap: wrap; }
+  .pet-type { padding: 8px 14px; border: 1px solid var(--border); border-radius: var(--radius-full); font-size: 13px; color: var(--ink-2); cursor: pointer; background: var(--bg); }
+  .pet-type.active { background: var(--primary-soft); border-color: var(--primary); color: var(--primary); font-weight: 600; }
+  .contact-radio { padding: 14px 16px; }
+  .radio-item { display: flex; align-items: center; gap: 10px; padding: 10px 0; cursor: pointer; }
+  .radio-circle { width: 18px; height: 18px; border-radius: 50%; border: 2px solid var(--border); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .radio-circle.selected { border-color: var(--primary); }
+  .radio-circle.selected::after { content: ''; width: 8px; height: 8px; background: var(--primary); border-radius: 50%; }
+  .radio-title { font-size: 14px; color: var(--ink-1); }
+  .radio-sub { font-size: 11.5px; color: var(--ink-3); margin-top: 2px; }
+
+  /* Contact guide */
+  .guide-screen { flex: 1; overflow-y: auto; padding: 20px 18px 120px; }
+  .guide-hero { text-align: center; padding: 8px 0 18px; }
+  .guide-icon { width: 64px; height: 64px; background: linear-gradient(135deg, var(--primary-soft), #FFE4D4); border: 1px solid var(--primary-border); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 28px; margin: 0 auto 12px; }
+  .guide-title { font-size: 18px; font-weight: 700; margin-bottom: 6px; }
+  .guide-sub { font-size: 13px; color: var(--ink-3); line-height: 1.55; padding: 0 16px; }
+  .pet-summary-card { background: var(--surface); border-radius: var(--radius-md); padding: 14px; border: 1px solid var(--border-soft); display: flex; gap: 12px; margin-bottom: 18px; }
+  .pet-summary-thumb { width: 60px; height: 60px; border-radius: 10px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 32px; }
+  .info-card-soft { background: linear-gradient(135deg, #FFF7ED, #FFEDD5); border: 1px dashed #FED7AA; border-radius: var(--radius-md); padding: 14px; color: #9A3412; margin-bottom: 18px; }
+  .info-card-soft b { font-size: 13.5px; }
+  .info-card-soft .info-body { font-size: 12.5px; line-height: 1.55; margin-top: 8px; }
+  .message-template { background: var(--surface); border: 1px solid var(--border-soft); border-radius: var(--radius-md); padding: 12px 14px; margin-bottom: 10px; }
+  .msg-text { font-size: 13.5px; color: var(--ink-2); line-height: 1.55; margin-bottom: 10px; }
+  .msg-text b { color: var(--ink-1); }
+  .copy-btn { font-size: 12px; padding: 6px 14px; border-radius: var(--radius-full); background: var(--primary-soft); color: var(--primary); border: 1px solid var(--primary-border); font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; }
+  .safe-places-card { background: var(--surface); border: 1px solid var(--border-soft); border-radius: var(--radius-md); padding: 14px; margin-bottom: 14px; }
+  .safe-places-card h5 { margin: 0 0 4px; font-size: 13.5px; color: var(--ink-1); }
+  .safe-places-card .sub { font-size: 11.5px; color: var(--ink-3); margin-bottom: 10px; line-height: 1.5; }
+  .place-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .place-chip { font-size: 11.5px; padding: 4px 10px; border-radius: var(--radius-full); background: #F1F5F9; color: var(--ink-2); }
+  .offline-block { background: var(--surface); border: 1px solid var(--border-soft); border-radius: var(--radius-md); padding: 4px 0; margin-bottom: 14px; }
+  .offline-row { padding: 12px 14px; border-bottom: 1px solid var(--border-soft); display: flex; gap: 12px; align-items: flex-start; }
+  .offline-row:last-child { border-bottom: none; }
+  .offline-num { width: 24px; height: 24px; border-radius: 50%; background: var(--primary-soft); color: var(--primary); font-weight: 600; font-size: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .offline-row b { font-size: 13.5px; }
+  .offline-sub { font-size: 11.5px; color: var(--ink-3); margin-top: 2px; line-height: 1.5; }
+  .warn-block { background: #FEF2F2; border: 1px solid #FECACA; border-radius: var(--radius-md); padding: 12px 14px; font-size: 11.5px; color: #991B1B; line-height: 1.6; margin-top: 14px; }
+
+  /* Checklist */
+  .checklist-screen { flex: 1; overflow-y: auto; padding: 18px 18px 120px; }
+  .self-check-hint { background: var(--primary-soft); border: 1px solid var(--primary-border); border-radius: var(--radius-md); padding: 12px 14px; font-size: 12.5px; color: #9A3412; line-height: 1.6; margin-bottom: 14px; }
+  .checklist-item { background: var(--surface); border: 1px solid var(--border-soft); border-radius: var(--radius-md); padding: 13px 16px; margin-bottom: 8px; display: flex; align-items: flex-start; gap: 12px; cursor: pointer; }
+  .checklist-item.done { background: #ECFDF5; border-color: #A7F3D0; }
+  .checklist-check { width: 22px; height: 22px; border-radius: 50%; border: 2px solid var(--border); display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 12px; margin-top: 1px; }
+  .checklist-item.done .checklist-check { background: var(--status-found); border-color: var(--status-found); color: white; }
+  .checklist-content { flex: 1; }
+  .checklist-title { font-size: 14px; font-weight: 600; margin-bottom: 3px; }
+  .checklist-sub { font-size: 12px; color: var(--ink-3); line-height: 1.5; }
+
+  /* Success */
+  .success-confetti { text-align: center; padding: 36px 20px 20px; }
+  .success-circle { width: 100px; height: 100px; background: linear-gradient(135deg, var(--status-found), #10B981); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 50px; color: white; margin: 0 auto 22px; box-shadow: 0 8px 24px rgba(5,150,105,0.3); position: relative; }
+  .success-circle::after { content: ''; position: absolute; inset: -10px; border-radius: 50%; border: 2px solid var(--status-found); opacity: 0.3; }
+  .success-title { font-size: 22px; font-weight: 700; margin-bottom: 8px; }
+  .success-sub { font-size: 14px; color: var(--ink-3); line-height: 1.5; padding: 0 16px; }
+  .reward-card { margin: 22px 18px 14px; background: linear-gradient(135deg, var(--primary), #FF8E5C); border-radius: var(--radius-lg); padding: 18px; color: white; position: relative; overflow: hidden; }
+  .reward-card::before { content: '🪷'; position: absolute; top: -10px; right: -10px; font-size: 100px; opacity: 0.15; }
+  .reward-label { font-size: 12px; opacity: 0.9; }
+  .reward-value { font-size: 32px; font-weight: 700; margin: 4px 0 8px; }
+  .reward-detail { font-size: 12.5px; opacity: 0.95; line-height: 1.5; }
+  .thanks-cta-card { margin: 0 18px 14px; background: var(--surface); border-radius: var(--radius-md); padding: 16px; border: 1px solid var(--border-soft); display: flex; gap: 12px; align-items: center; cursor: pointer; }
+  .thanks-cta-icon { width: 44px; height: 44px; background: var(--primary-soft); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 22px; }
+  .thanks-cta-content { flex: 1; }
+  .thanks-cta-title { font-size: 14px; font-weight: 600; }
+  .thanks-cta-sub { font-size: 11.5px; color: var(--ink-3); margin-top: 2px; }
+
+  /* Profile */
+  .profile-scroll { flex: 1; overflow-y: auto; padding-bottom: 100px; }
+  .profile-hero { background: linear-gradient(135deg, #FF6B35, #FF8E5C); padding: 20px 18px 60px; color: white; }
+  .profile-user { display: flex; align-items: center; gap: 12px; margin-bottom: 18px; }
+  .profile-avatar { width: 56px; height: 56px; border-radius: 50%; background: linear-gradient(135deg, #FED7AA, #FDBA74); border: 3px solid rgba(255,255,255,0.4); display: flex; align-items: center; justify-content: center; font-size: 24px; }
+  .profile-name { font-size: 17px; font-weight: 600; margin-bottom: 3px; display: flex; align-items: center; gap: 8px; }
+  .profile-handle { font-size: 12px; opacity: 0.85; }
+  .level-badge { background: rgba(255,255,255,0.2); padding: 2px 8px; border-radius: var(--radius-full); font-size: 11px; backdrop-filter: blur(8px); }
+  .points-card { background: rgba(255,255,255,0.15); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.25); border-radius: var(--radius-lg); padding: 16px; }
+  .points-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+  .points-label { font-size: 12px; opacity: 0.9; }
+  .points-detail-link { font-size: 12px; opacity: 0.85; }
+  .points-value { font-size: 36px; font-weight: 700; line-height: 1; margin-bottom: 6px; letter-spacing: -1px; }
+  .points-meta { font-size: 11.5px; opacity: 0.85; }
+  .points-divider { height: 1px; background: rgba(255,255,255,0.2); margin: 14px 0; }
+  .points-stats { display: flex; justify-content: space-between; }
+  .points-stat-item { text-align: center; flex: 1; }
+  .points-stat-num { font-size: 17px; font-weight: 600; }
+  .points-stat-label { font-size: 10.5px; opacity: 0.8; margin-top: 2px; }
+  .profile-content { margin-top: -40px; padding: 0 16px; }
+  .quick-actions { background: var(--surface); border-radius: var(--radius-lg); padding: 16px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; box-shadow: var(--shadow-md); margin-bottom: 14px; }
+  .quick-action { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 6px; cursor: pointer; }
+  .qa-icon { width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; }
+  .qa-icon.orange { background: var(--primary-soft); }
+  .qa-icon.green { background: #ECFDF5; }
+  .qa-icon.blue { background: #E0F2FE; }
+  .qa-icon.purple { background: #F3E8FF; }
+  .qa-label { font-size: 11.5px; color: var(--ink-2); }
+  .menu-section { background: var(--surface); border-radius: var(--radius-lg); overflow: hidden; margin-bottom: 14px; box-shadow: var(--shadow-sm); }
+  .menu-row { padding: 14px 16px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid var(--border-soft); cursor: pointer; }
+  .menu-row:last-child { border-bottom: none; }
+  .menu-icon { font-size: 18px; width: 24px; text-align: center; }
+  .menu-label { flex: 1; font-size: 14px; }
+  .menu-meta { font-size: 12px; color: var(--ink-4); }
+  .menu-arrow { color: var(--ink-4); font-size: 14px; }
+
+  /* Map view */
+  .map-container { flex: 1; position: relative; overflow: hidden; background: linear-gradient(180deg, #DCE9F5 0%, #E8F0F8 100%); }
+  .map-grid { position: absolute; inset: 0; background-image: linear-gradient(rgba(100,116,139,0.08) 1px, transparent 1px), linear-gradient(90deg, rgba(100,116,139,0.08) 1px, transparent 1px); background-size: 40px 40px; }
+  .map-roads { position: absolute; inset: 0; pointer-events: none; }
+  .map-road { position: absolute; background: rgba(255,255,255,0.6); border-radius: 2px; }
+  .map-pin { position: absolute; transform: translate(-50%, -100%); display: flex; flex-direction: column; align-items: center; cursor: pointer; }
+  .map-pin .pin-head { width: 32px; height: 32px; border-radius: 50% 50% 50% 0; transform: rotate(-45deg); display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(0,0,0,0.2); border: 2px solid white; }
+  .map-pin .pin-head span { transform: rotate(45deg); color: white; font-size: 14px; }
+  .map-pin.lost .pin-head { background: #DC2626; }
+  .map-pin.found .pin-head { background: #059669; }
+  .map-pin.care .pin-head { background: #D97706; }
+  .map-label { position: absolute; font-size: 11px; color: var(--ink-3); background: rgba(255,255,255,0.85); padding: 2px 6px; border-radius: 4px; backdrop-filter: blur(4px); pointer-events: none; }
+  .map-fab { position: absolute; right: 16px; top: 12px; display: flex; flex-direction: row; gap: 8px; z-index: 16; align-items: center; }
+  .map-fab .btn { width: 40px; height: 40px; background: white; border-radius: 50%; box-shadow: var(--shadow-md); display: flex; align-items: center; justify-content: center; font-size: 17px; cursor: pointer; transition: background 0.2s, color 0.2s, height 0.2s, border-radius 0.2s; }
+
+  /* 宠物搜索面板 */
+  .map-search-panel { position: absolute; top: 62px; right: 16px; left: 16px; z-index: 22; background: white; border-radius: 14px; box-shadow: 0 8px 28px rgba(0,0,0,0.18); padding: 12px; display: none; }
+  .map-search-panel.show { display: block; }
+  .map-search-input { width: 100%; border: 1.5px solid var(--border); border-radius: 8px; padding: 8px 12px; font-size: 14px; outline: none; box-sizing: border-box; font-family: inherit; }
+  .map-search-input:focus { border-color: var(--primary); }
+  .map-search-results { margin-top: 8px; }
+  .map-search-item { display: flex; align-items: center; gap: 10px; padding: 8px 6px; border-radius: 8px; cursor: pointer; }
+  .map-search-item:hover { background: var(--bg); }
+  .si-emoji { font-size: 20px; flex-shrink: 0; }
+  .si-info { flex: 1; min-width: 0; }
+  .si-name { font-size: 13px; font-weight: 600; }
+  .si-meta { font-size: 11px; color: var(--ink-3); }
+  .si-tag { font-size: 10px; padding: 2px 7px; border-radius: 5px; color: white; font-weight: 600; flex-shrink: 0; }
+  .si-tag.lost { background: #DC2626; }
+  .si-tag.found { background: #059669; }
+  .si-tag.care { background: #D97706; }
+  .map-search-empty { font-size: 12px; color: var(--ink-4); text-align: center; padding: 8px 0; }
+  .map-bottom-sheet {
+    position: absolute; bottom: 78px; left: 0; right: 0;
+    background: white; border-radius: 20px 20px 0 0;
+    box-shadow: 0 -8px 24px rgba(0,0,0,0.1);
+    height: 210px;
+    display: flex; flex-direction: column;
+    transition: height 0.32s cubic-bezier(0.34,1.2,0.64,1);
+    user-select: none;
+  }
+  .sheet-drag-area {
+    flex-shrink: 0; padding: 10px 0 4px; cursor: grab; display: flex; flex-direction: column; align-items: center; gap: 5px;
+  }
+  .sheet-drag-area:active { cursor: grabbing; }
+  .sheet-handle { width: 40px; height: 4px; background: var(--border); border-radius: 2px; transition: background 0.2s; }
+  .sheet-drag-area:hover .sheet-handle { background: var(--ink-4); }
+  .sheet-drag-hint { font-size: 10px; color: var(--ink-4); letter-spacing: 0.3px; }
+  .sheet-header { padding: 0 16px 8px; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
+  .sheet-title { font-size: 14px; font-weight: 600; }
+  .sheet-filter-toggle { font-size: 11px; color: var(--primary); font-weight: 600; cursor: pointer; padding: 2px 6px; border-radius: 6px; }
+  .sheet-filter-toggle.active { background: var(--primary-soft); }
+  .sheet-filter-row { display: none; flex-direction: row; gap: 6px; padding: 0 12px 8px; flex-shrink: 0; }
+  .sheet-filter-row.show { display: flex; }
+  .sfc { padding: 5px 12px; border-radius: 20px; font-size: 12px; border: 1px solid var(--border); cursor: pointer; white-space: nowrap; color: var(--ink-3); font-weight: 500; }
+  .sfc.active { background: var(--ink-1); color: white; border-color: var(--ink-1); }
+  .sheet-content { flex: 1; overflow-y: auto; padding: 0 12px 14px; overscroll-behavior: contain; }
+  .sheet-content::-webkit-scrollbar { display: none; }
+  /* 折叠态隐藏内容，展开态显示全部 */
+  .map-bottom-sheet.collapsed .sheet-header,
+  .map-bottom-sheet.collapsed .sheet-filter-row,
+  .map-bottom-sheet.collapsed .sheet-content { visibility: hidden; }
+  .map-bottom-sheet.collapsed .sheet-drag-hint { content: '上滑查看宠物信息 ↑'; }
+  .sheet-card { display: flex; gap: 10px; padding: 10px; background: var(--bg); border-radius: var(--radius-md); margin-bottom: 8px; }
+  .sheet-thumb { width: 48px; height: 48px; border-radius: 10px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 22px; }
+  .sheet-info { flex: 1; min-width: 0; }
+  .sheet-pet-name { font-size: 13px; font-weight: 600; margin-bottom: 2px; }
+  .sheet-pet-meta { font-size: 11px; color: var(--ink-3); }
+  .map-view-toggle { position: absolute; top: 12px; left: 16px; z-index: 15; background: white; border-radius: var(--radius-full); padding: 4px; box-shadow: var(--shadow-md); display: flex; }
+  .map-view-toggle .vt { font-size: 12px; padding: 6px 12px; border-radius: var(--radius-full); cursor: pointer; color: var(--ink-3); font-weight: 500; }
+  .map-view-toggle .vt.active { background: var(--ink-1); color: white; }
+
+  /* 可拖拽地图层 */
+  .map-layer { position: absolute; inset: 0; will-change: transform; touch-action: none; }
+  .map-layer.dragging { cursor: grabbing !important; }
+  .map-container { cursor: grab; }
+
+  /* 当前位置蓝点 */
+  .loc-dot { position: absolute; display: flex; align-items: center; justify-content: center; pointer-events: none; }
+  .loc-ring { position: absolute; width: 40px; height: 40px; border-radius: 50%; background: rgba(59,130,246,0.15); animation: locPulse 2.5s ease-out infinite; }
+  .loc-center { width: 14px; height: 14px; border-radius: 50%; background: #3B82F6; border: 3px solid white; box-shadow: 0 2px 8px rgba(59,130,246,0.55); z-index: 1; }
+  @keyframes locPulse { 0%{transform:scale(1);opacity:0.8} 100%{transform:scale(3);opacity:0} }
+
+  /* 回到定位按钮激活态 */
+  .map-fab .btn.locating { background: #EFF6FF; color: #3B82F6; }
+  /* 禁用筛选按钮 hover 态 */
+  #btn-filter:hover,
+  #btn-filter:active { background: inherit !important; outline: none; -webkit-tap-highlight-color: transparent; }
+  #btn-filter { -webkit-tap-highlight-color: transparent; transition: none; }
+
+  /* Pin 名字标签 */
+  .pin-label { font-size: 10px; font-weight: 700; background: white; padding: 2px 7px; border-radius: 5px; margin-top: 4px; box-shadow: 0 1px 4px rgba(0,0,0,0.15); white-space: nowrap; letter-spacing: 0.2px; }
+  .map-pin.lost .pin-label { color: #DC2626; }
+  .map-pin.found .pin-label { color: #059669; }
+  .map-pin.care .pin-label { color: #D97706; }
+
+  /* 紧急 pin 脉冲：放在 pin-head 内部，自动继承父元素的旋转和形状 */
+  .map-pin .pin-head { position: relative; }
+  .pin-pulse { position: absolute; inset: -3px; border-radius: 50% 50% 50% 0; border: 2.5px solid #DC2626; opacity: 0; animation: pinPulse 2s ease-out infinite; pointer-events: none; transform-origin: center; }
+  @keyframes pinPulse { 0%{opacity:0.7;transform:scale(1)} 100%{opacity:0;transform:scale(2.6)} }
+
+  /* 点击 pin 后弹出的预览卡 */
+  .pin-popup { position: absolute; background: white; border-radius: 14px; box-shadow: 0 8px 28px rgba(0,0,0,0.18); padding: 12px 14px 10px; width: 190px; z-index: 25; display: none; transform: translate(-50%, calc(-100% - 46px)); }
+  .pin-popup.show { display: block; }
+  .pin-popup::after { content:''; position:absolute; bottom:-8px; left:50%; transform:translateX(-50%); border:8px solid transparent; border-top:8px solid white; border-bottom:none; filter: drop-shadow(0 2px 2px rgba(0,0,0,0.08)); }
+  .popup-top { display:flex; align-items:center; gap:8px; margin-bottom:7px; }
+  .popup-emoji { font-size:24px; }
+  .popup-meta-col { flex:1; min-width:0; }
+  .popup-name { font-size:14px; font-weight:700; color:var(--ink-1); }
+  .popup-type { font-size:11px; color:var(--ink-3); margin-top:1px; }
+  .popup-status-tag { font-size:10.5px; padding:2px 7px; border-radius:5px; font-weight:600; flex-shrink:0; }
+  .popup-status-tag.lost { background:#FEE2E2; color:#DC2626; }
+  .popup-status-tag.found { background:#D1FAE5; color:#059669; }
+  .popup-status-tag.care { background:#FEF3C7; color:#D97706; }
+  .popup-dist-row { font-size:11.5px; color:var(--ink-3); margin-bottom:8px; display:flex; gap:10px; }
+  .popup-dist-row .hl { font-weight:700; color:var(--primary); }
+  .popup-go { width:100%; background:var(--primary); color:white; border:none; border-radius:9px; padding:8px; font-size:13px; font-weight:600; cursor:pointer; }
+
+  /* 底部卡片距离增强 */
+  .sheet-dist-row { font-size:11.5px; color:var(--ink-3); margin-top:4px; display:flex; gap:8px; flex-wrap:wrap; }
+  .sheet-dist-row .dist-hl { color:var(--primary); font-weight:700; }
+  .sheet-status-tag { font-size:10.5px; padding:1.5px 6px; border-radius:5px; font-weight:600; margin-left:4px; }
+  .sheet-status-tag.lost { background:#FEE2E2; color:#DC2626; }
+  .sheet-status-tag.found { background:#D1FAE5; color:#059669; }
+  .sheet-status-tag.care { background:#FEF3C7; color:#D97706; }
+
+  /* 详情页距离条 */
+  .detail-dist-bar { background: linear-gradient(135deg, #FFF1E9, #FFE4D4); border: 1px solid var(--primary-border); border-radius: var(--radius-md); padding: 10px 14px; margin-bottom: 14px; display: flex; align-items: center; gap: 10px; cursor: pointer; transition: filter 0.15s; }
+  .detail-dist-bar:hover { filter: brightness(0.96); }
+  .dist-bar-icon { font-size: 20px; }
+  .dist-bar-text { flex:1; }
+  .dist-bar-main { font-size: 14px; font-weight: 700; color: var(--primary); }
+  .dist-bar-sub { font-size: 11.5px; color: var(--ink-3); margin-top: 2px; }
+  .dist-bar-map-btn { display:flex; flex-direction:column; align-items:center; gap:2px; color:var(--primary); flex-shrink:0; }
+  .dist-bar-map-btn .map-icon { font-size:18px; }
+  .dist-bar-map-btn .map-label { font-size:10px; font-weight:600; }
+
+  /* Messages */
+  .msg-list { flex: 1; overflow-y: auto; padding: 6px 0 100px; }
+  .msg-row { padding: 12px 16px; display: flex; gap: 12px; align-items: center; cursor: pointer; border-bottom: 1px solid var(--border-soft); }
+  .msg-avatar { width: 48px; height: 48px; border-radius: 50%; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 22px; }
+  .msg-body { flex: 1; min-width: 0; }
+  .msg-name-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 3px; }
+  .msg-name { font-size: 14px; font-weight: 600; }
+  .msg-time { font-size: 11px; color: var(--ink-4); }
+  .msg-preview { font-size: 12.5px; color: var(--ink-3); display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; }
+  .msg-unread { display: inline-block; width: 16px; height: 16px; background: var(--primary); border-radius: 50%; color: white; font-size: 10px; font-weight: 600; text-align: center; line-height: 16px; margin-left: 8px; flex-shrink: 0; }
+  .msg-meta-right { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }
+  .msg-context { font-size: 11px; color: var(--ink-4); margin-top: 2px; padding: 1px 6px; background: var(--bg); border-radius: 4px; display: inline-block; }
+
+  /* Chat */
+  .chat-header { padding: 8px 16px; display: flex; align-items: center; gap: 12px; }
+  .chat-pet-card { background: var(--primary-soft); border: 1px solid var(--primary-border); border-radius: var(--radius-md); margin: 0 14px 8px; padding: 10px 12px; display: flex; gap: 10px; align-items: center; cursor: pointer; }
+  .chat-pet-thumb { width: 38px; height: 38px; border-radius: 8px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 20px; }
+  .chat-pet-info { flex: 1; }
+  .chat-pet-name { font-size: 13px; font-weight: 600; color: var(--ink-1); }
+  .chat-pet-meta { font-size: 11px; color: var(--ink-3); margin-top: 1px; }
+  .chat-pet-status { font-size: 11px; padding: 2px 8px; border-radius: var(--radius-full); background: var(--status-found); color: white; font-weight: 600; }
+  .chat-msgs { flex: 1; overflow-y: auto; padding: 12px 16px 140px; }
+  .chat-msg { margin-bottom: 14px; display: flex; gap: 8px; }
+  .chat-msg.me { flex-direction: row-reverse; }
+  .chat-avatar { width: 32px; height: 32px; border-radius: 50%; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 16px; background: var(--bg); }
+  .chat-bubble { max-width: 70%; padding: 10px 14px; border-radius: 16px; font-size: 13.5px; line-height: 1.5; }
+  .chat-msg.me .chat-bubble { background: var(--primary); color: white; border-bottom-right-radius: 4px; }
+  .chat-msg.them .chat-bubble { background: var(--surface); color: var(--ink-1); border-bottom-left-radius: 4px; border: 1px solid var(--border-soft); }
+  .chat-time { font-size: 10.5px; color: var(--ink-4); text-align: center; margin: 6px 0; }
+  .chat-input-bar { position: absolute; bottom: 0; left: 0; right: 0; background: var(--surface); border-top: 1px solid var(--border-soft); padding: 12px 16px 24px; display: flex; gap: 8px; align-items: center; z-index: 10; }
+  .chat-input { flex: 1; background: var(--bg); border-radius: var(--radius-full); padding: 10px 14px; font-size: 14px; color: var(--ink-1); }
+  .chat-attach { width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; background: var(--bg); cursor: pointer; }
+
+  /* Thanks edit */
+  .thanks-screen { flex: 1; overflow-y: auto; padding: 14px 16px 120px; }
+  .thanks-textarea-block { background: var(--surface); border: 1px solid var(--border-soft); border-radius: var(--radius-md); padding: 14px; margin-bottom: 14px; }
+  .thanks-greeting { font-size: 14px; color: var(--ink-1); margin-bottom: 6px; }
+  .thanks-textarea { width: 100%; min-height: 120px; border: none; background: transparent; font-size: 14px; line-height: 1.6; resize: none; outline: none; font-family: inherit; color: var(--ink-1); }
+  .nominee-list { background: var(--surface); border: 1px solid var(--border-soft); border-radius: var(--radius-md); margin-bottom: 14px; overflow: hidden; }
+  .nominee-row { padding: 12px 14px; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid var(--border-soft); cursor: pointer; }
+  .nominee-row:last-child { border-bottom: none; }
+  .nominee-row.selected { background: var(--primary-soft); }
+  .nominee-check { width: 22px; height: 22px; border-radius: 6px; border: 2px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 12px; flex-shrink: 0; }
+  .nominee-row.selected .nominee-check { background: var(--primary); border-color: var(--primary); color: white; }
+  .nominee-info { flex: 1; }
+  .nominee-name { font-size: 13.5px; font-weight: 600; }
+  .nominee-contrib { font-size: 11px; color: var(--ink-3); margin-top: 1px; }
+  .nominee-points { font-size: 11px; color: var(--primary); font-weight: 600; }
+
+  /* Points history */
+  .points-screen { flex: 1; overflow-y: auto; padding-bottom: 30px; }
+  .points-header-card { margin: 14px 14px 12px; background: linear-gradient(135deg, var(--primary), #FF8E5C); border-radius: var(--radius-lg); padding: 18px; color: white; position: relative; overflow: hidden; }
+  .points-header-card::before { content: '🪷'; position: absolute; top: -16px; right: -10px; font-size: 110px; opacity: 0.15; }
+  .points-history-filters { padding: 0 14px 10px; display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; }
+  .points-history-filters::-webkit-scrollbar { display: none; }
+  .ph-filter { padding: 5px 12px; border-radius: var(--radius-full); background: var(--surface); border: 1px solid var(--border); font-size: 12px; color: var(--ink-3); white-space: nowrap; cursor: pointer; }
+  .ph-filter.active { background: var(--ink-1); color: white; border-color: var(--ink-1); }
+  .point-tx { background: var(--surface); border-bottom: 1px solid var(--border-soft); padding: 14px 16px; display: flex; gap: 12px; align-items: center; }
+  .tx-icon { width: 38px; height: 38px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+  .tx-icon.return { background: #ECFDF5; color: var(--status-found); }
+  .tx-icon.clue { background: var(--primary-soft); color: var(--primary); }
+  .tx-icon.care { background: #FFFBEB; color: var(--status-care); }
+  .tx-icon.thanks { background: #F3E8FF; color: #8B5CF6; }
+  .tx-body { flex: 1; min-width: 0; }
+  .tx-title { font-size: 14px; font-weight: 500; margin-bottom: 2px; }
+  .tx-meta { font-size: 11.5px; color: var(--ink-4); }
+  .tx-amount { font-size: 15px; font-weight: 700; }
+  .tx-amount.plus { color: var(--status-found); }
+  .tx-date-label { padding: 10px 16px 4px; font-size: 11px; color: var(--ink-4); font-weight: 600; }
+
+  /* My posts */
+  .myposts-tabs { display: flex; background: var(--surface); padding: 4px 14px 14px; gap: 6px; }
+  .mp-tab { padding: 6px 14px; border-radius: var(--radius-full); font-size: 13px; background: var(--bg); color: var(--ink-3); cursor: pointer; }
+  .mp-tab.active { background: var(--ink-1); color: white; font-weight: 600; }
+  .myposts-list { flex: 1; overflow-y: auto; padding: 0 14px 30px; }
+  .myposts-card { background: var(--surface); border-radius: var(--radius-lg); margin-bottom: 10px; border: 1px solid var(--border-soft); overflow: hidden; }
+  .mp-row { display: flex; padding: 12px; gap: 12px; }
+  .mp-actions { display: flex; padding: 8px 12px; border-top: 1px solid var(--border-soft); gap: 8px; }
+  .mp-action { font-size: 12px; padding: 5px 12px; border-radius: var(--radius-full); border: 1px solid var(--border); color: var(--ink-2); background: white; }
+  .mp-action.primary { background: var(--primary-soft); border-color: var(--primary-border); color: var(--primary); font-weight: 600; }
+
+  /* Dispute */
+  .dispute-screen { flex: 1; overflow-y: auto; padding: 14px 16px 120px; }
+  .dispute-hero { text-align: center; padding: 20px 12px 24px; }
+  .dispute-icon { width: 68px; height: 68px; background: linear-gradient(135deg, #FEF2F2, #FEE2E2); border: 1px solid #FCA5A5; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 30px; margin: 0 auto 12px; }
+  .dispute-block { background: var(--surface); border-radius: var(--radius-md); border: 1px solid var(--border-soft); padding: 14px 16px; margin-bottom: 12px; }
+  .dispute-type-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; }
+  .dispute-type { padding: 12px; border: 1px solid var(--border); border-radius: var(--radius-md); font-size: 13px; text-align: center; cursor: pointer; background: white; color: var(--ink-2); }
+  .dispute-type.selected { border-color: var(--status-lost); background: #FEF2F2; color: var(--status-lost); font-weight: 600; }
+
+  /* Admin */
+  .admin-tabs { display: flex; background: var(--surface); border-bottom: 1px solid var(--border-soft); }
+  .admin-tab { flex: 1; padding: 12px; text-align: center; font-size: 13px; color: var(--ink-3); cursor: pointer; border-bottom: 2px solid transparent; }
+  .admin-tab.active { color: var(--primary); border-color: var(--primary); font-weight: 600; }
+  .admin-stats { padding: 14px 16px; display: flex; gap: 10px; }
+  .admin-stat { flex: 1; background: var(--surface); border-radius: var(--radius-md); padding: 10px 12px; border: 1px solid var(--border-soft); }
+  .admin-stat-num { font-size: 20px; font-weight: 700; color: var(--ink-1); }
+  .admin-stat-label { font-size: 11px; color: var(--ink-3); }
+  .admin-list { flex: 1; overflow-y: auto; padding: 0 14px 100px; }
+  .admin-item { background: var(--surface); border-radius: var(--radius-md); border: 1px solid var(--border-soft); padding: 12px; margin-bottom: 10px; }
+  .admin-item-header { display: flex; gap: 10px; align-items: flex-start; margin-bottom: 10px; }
+  .admin-item-thumb { width: 48px; height: 48px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
+  .admin-item-info { flex: 1; min-width: 0; }
+  .admin-item-title { font-size: 13.5px; font-weight: 600; }
+  .admin-item-meta { font-size: 11.5px; color: var(--ink-3); margin-top: 2px; }
+  .admin-item-actions { display: flex; gap: 6px; }
+  .admin-btn { flex: 1; padding: 7px 0; border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer; text-align: center; }
+  .admin-btn.pass { background: var(--status-found); color: white; }
+  .admin-btn.del { background: #FEF2F2; color: var(--status-lost); border: 1px solid #FECACA; }
+  .admin-btn.flag { background: var(--surface); color: var(--ink-2); border: 1px solid var(--border); }
+
+  /* Generic sub-page header (no tabs) */
+  .sub-list { flex: 1; overflow-y: auto; padding-bottom: 30px; }
+
+  /* Annotations */
+  .annotations { max-width: 720px; margin: 24px auto 0; padding: 24px; background: var(--surface); border-radius: var(--radius-lg); border: 1px solid var(--border); }
+  .annotations h4 { margin: 0 0 12px; font-size: 14px; }
+  .annotations h4:not(:first-child) { margin-top: 22px; }
+  .annotations ul { margin: 0; padding-left: 20px; font-size: 13px; line-height: 1.75; color: var(--ink-2); }
+  .nav-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 14px; }
+  .nav-jump { padding: 10px 12px; background: var(--bg); border-radius: 8px; font-size: 12.5px; color: var(--ink-2); cursor: pointer; display: flex; align-items: center; gap: 8px; border: 1px solid var(--border-soft); }
+  .nav-jump:hover { background: var(--primary-soft); color: var(--primary); border-color: var(--primary-border); }
+
+  /* ── 搜索屏 ── */
+  .search-input-header { display:flex; align-items:center; height:54px; padding:0 14px; gap:10px; flex-shrink:0; background:var(--surface); border-bottom:1px solid var(--border-soft); }
+  .search-input-wrap { flex:1; display:flex; align-items:center; background:var(--border-soft); border-radius:var(--radius-full); padding:0 12px; gap:6px; height:36px; border:1.5px solid transparent; transition:border-color 0.15s, background 0.15s; }
+  .search-input-wrap.has-text { border-color:var(--primary-border); background:var(--primary-soft); }
+  .search-input-icon { font-size:14px; color:var(--ink-3); flex-shrink:0; }
+  .search-input { flex:1; border:none; background:transparent; font-size:14px; color:var(--ink-1); outline:none; font-family:inherit; }
+  .search-input::placeholder { color:var(--ink-4); }
+  .search-input-clear { font-size:18px; color:var(--ink-3); cursor:pointer; visibility:hidden; line-height:1; }
+  .search-input-wrap.has-text .search-input-clear { visibility:visible; }
+  .search-cancel { font-size:14px; font-weight:600; color:var(--primary); cursor:pointer; white-space:nowrap; flex-shrink:0; }
+  .search-scroll { flex:1; overflow-y:auto; }
+  .search-scroll::-webkit-scrollbar { display:none; }
+  .srch-section { padding:16px 18px 8px; display:flex; align-items:baseline; gap:8px; }
+  .srch-section .s-title { font-size:13px; font-weight:600; color:var(--ink-2); }
+  .srch-section .s-right { margin-left:auto; font-size:12px; color:var(--primary); cursor:pointer; font-weight:600; }
+  .search-chips { display:flex; flex-wrap:wrap; gap:8px; padding:0 18px 16px; }
+  .search-chip { padding:6px 14px; background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-full); font-size:13px; color:var(--ink-2); cursor:pointer; box-shadow:var(--shadow-sm); }
+  .search-chip:hover { background:var(--primary-soft); border-color:var(--primary-border); color:var(--primary); }
+  .search-chip.hot { color:var(--primary); border-color:var(--primary-border); background:var(--primary-soft); font-weight:600; }
+  .suggestion-list { padding:0 14px; }
+  .suggestion-item { display:flex; align-items:center; gap:10px; padding:10px 6px; border-radius:8px; cursor:pointer; }
+  .suggestion-item:hover { background:var(--border-soft); }
+  .sug-icon { font-size:16px; width:28px; text-align:center; }
+  .sug-text { flex:1; font-size:13.5px; color:var(--ink-2); }
+  .sug-text mark { background:none; color:var(--primary); font-weight:600; }
+  .sug-tag { font-size:11px; padding:2px 8px; border-radius:5px; background:var(--status-lost); color:white; font-weight:600; }
+  .sug-tag.found { background:var(--status-found); }
+  .search-empty { text-align:center; padding:56px 24px; }
+  .search-empty-icon { font-size:52px; opacity:0.35; line-height:1; margin-bottom:14px; }
+  .search-empty-title { font-size:16px; font-weight:600; color:var(--ink-2); margin-bottom:8px; }
+  .search-empty-sub { font-size:13px; color:var(--ink-3); line-height:1.7; }
+  .search-empty-cta { color:var(--primary); font-weight:600; cursor:pointer; }
+  .search-result-list { padding:0 14px 30px; }
+
+  /* ── 排序 & Action Sheet ── */
+  .as-mask { position:absolute; inset:0; background:rgba(15,23,42,0.45); z-index:50; display:none; }
+  .as-mask.show { display:block; }
+  .action-sheet { position:absolute; bottom:0; left:0; right:0; background:var(--surface); border-radius:20px 20px 0 0; overflow:hidden; }
+  .as-handle { width:36px; height:4px; background:var(--border); border-radius:2px; margin:10px auto 6px; }
+  .as-title { font-size:13px; font-weight:600; color:var(--ink-3); text-align:center; padding:2px 0 12px; }
+  .as-option { display:flex; align-items:center; gap:14px; padding:14px 20px; border-top:1px solid var(--border-soft); cursor:pointer; }
+  .as-option:active { background:var(--border-soft); }
+  .as-ic { width:36px; height:36px; background:var(--bg); border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:18px; flex-shrink:0; }
+  .as-option.selected .as-ic { background:var(--primary-soft); }
+  .as-text { flex:1; }
+  .as-label { font-size:14px; font-weight:600; color:var(--ink-1); }
+  .as-sub { font-size:11.5px; color:var(--ink-3); margin-top:2px; }
+  .as-check { font-size:16px; color:var(--primary); opacity:0; font-weight:700; }
+  .as-option.selected .as-check { opacity:1; }
+  .as-cancel { text-align:center; padding:14px; font-size:14px; font-weight:600; color:var(--ink-3); cursor:pointer; border-top:8px solid var(--bg); }
+
+  /* 地图隐私精度提示 */
+  .map-precision-hint { position:absolute; top:60px; left:16px; right:16px; padding:7px 12px; background:#FFFBEB; border-radius:var(--radius-full); font-size:11px; color:#92400E; display:flex; align-items:center; gap:6px; z-index:16; box-shadow:var(--shadow-sm); border:1px solid #FDE68A; }
+
+  /* 首页卡片位置链接 */
+  .loc-link { cursor:pointer; border-bottom:1px dotted var(--ink-4); transition:color 0.15s, border-color 0.15s; }
+  .loc-link:hover { color:var(--primary); border-color:var(--primary); }
+
+  /* ── 在此区域搜索按钮 ── */
+  .search-area-btn { position:absolute; top:62px; left:50%; transform:translateX(-50%); background:white; border-radius:var(--radius-full); padding:8px 20px; font-size:13px; font-weight:600; color:var(--ink-1); box-shadow:var(--shadow-md); z-index:20; cursor:pointer; white-space:nowrap; border:1px solid var(--border-soft); animation:fadeInDown 0.2s ease; }
+  @keyframes fadeInDown { from{opacity:0;transform:translateX(-50%) translateY(-8px)} to{opacity:1;transform:translateX(-50%) translateY(0)} }
+  /* 视口提示条 */
+  .sheet-viewport-hint { font-size:11px; color:var(--ink-3); padding:0 16px 5px; display:none; }
+  .sheet-viewport-hint.show { display:block; }
+  /* 不在当前视口内的卡片变灰 */
+  .sheet-card.out-of-view { opacity:0.35; }
+</style>
+
+<h2>寻宠 · 大理 — 高保真原型 v7（合规版）</h2>
+<p class="subtitle">基于 v5 的 15 屏（admin 已剥离）· 按 docs/05-risks.md 完整合规化 · 个体工商户 + 工具类目假设</p>
+
+<div class="stage">
+  <div class="device">
+    <div class="status-bar">
+      <span>9:41</span>
+      <span style="font-size:11px">📶 📡 🔋</span>
+    </div>
+
+    <!-- ===== Screen 1: Feed ===== -->
+    <div class="screen active" data-screen="feed">
+      <div class="top-nav">
+        <div class="city-tag"><span class="pulse"></span>大理 ▾</div>
+        <div class="search" onclick="showScreen('search')" style="cursor:pointer"><span>🔍</span><span>搜品种、地点、特征</span></div>
+        <div class="notif-btn" onclick="showScreen('messages')">🔔<div class="dot"></div></div>
+      </div>
+      <div class="filter-strip">
+        <div class="chip active">全部</div>
+        <div class="chip"><span class="chip-dot" style="background:#DC2626"></span>寻宠</div>
+        <div class="chip"><span class="chip-dot" style="background:#059669"></span>招领</div>
+        <div class="chip"><span class="chip-dot" style="background:#D97706"></span>临时照料</div>
+        <div class="filter-divider"></div>
+        <div class="chip sort-chip" id="sort-chip" onclick="openSortSheet()">⏱ 最新 ▾</div>
+      </div>
+
+      <!-- 排序 Action Sheet -->
+      <div class="as-mask" id="sort-sheet" onclick="if(event.target===this)closeSortSheet()">
+        <div class="action-sheet">
+          <div class="as-handle"></div>
+          <div class="as-title">选择排序方式</div>
+          <div class="as-option selected" data-sort="time" onclick="applySort('time')">
+            <div class="as-ic">⏱</div>
+            <div class="as-text"><div class="as-label">最新发布</div><div class="as-sub">按发布时间从新到旧</div></div>
+            <div class="as-check">✓</div>
+          </div>
+          <div class="as-option" data-sort="distance" onclick="applySort('distance')">
+            <div class="as-ic">📍</div>
+            <div class="as-text"><div class="as-label">距离最近</div><div class="as-sub">从当前位置由近到远</div></div>
+            <div class="as-check">✓</div>
+          </div>
+          <div class="as-cancel" onclick="closeSortSheet()">取消</div>
+        </div>
+      </div>
+
+      <div class="feed">
+        <div class="card" onclick="showScreen('detail-found')">
+          <div class="card-row">
+            <div class="photo ph-orange"><span>🐱</span><div class="status-badge found">● 招领</div></div>
+            <div class="info">
+              <div class="pet-title">橘猫 <span class="breed">· 约 2 岁 · ♀</span></div>
+              <div class="pet-meta"><span class="loc-link" onclick="event.stopPropagation();showOnMap('found1')">📍 人民路三月街</span> · <span class="time-tag urgent">⚡ 30 分钟前</span></div>
+              <div class="pet-desc">在咖啡馆门口蹲了一下午，看着像走丢的。亲人，会撒娇，目前在我店里。</div>
+            </div>
+          </div>
+          <div class="card-footer"><span class="distance-pill">📍 1.2 km</span><div class="footer-actions"><span class="footer-action">💬 3</span><span class="footer-action">👀 47</span></div></div>
+        </div>
+        <div class="card" onclick="showScreen('detail-lost')">
+          <div class="card-row">
+            <div class="photo ph-blue"><span>🐱</span><div class="status-badge lost">● 寻找</div></div>
+            <div class="info">
+              <div class="pet-title">胖丁 <span class="breed">· 英短蓝猫 · ♂ 3 岁</span></div>
+              <div class="pet-meta"><span class="loc-link" onclick="event.stopPropagation();showOnMap('lost1')">📍 古城北门</span> · <span class="time-tag urgent">⚡ 10 分钟前</span></div>
+              <div class="pet-desc">穿粉色项圈，左耳缺一小块。主人非常着急，看到请联系或留言 🙏</div>
+            </div>
+          </div>
+          <div class="card-footer"><span class="distance-pill">📍 0.8 km</span><div class="footer-actions"><span class="footer-action">💬 12</span><span class="footer-action" style="color:var(--primary);font-weight:600">📌 我有线索</span></div></div>
+        </div>
+        <div class="card">
+          <div class="card-row">
+            <div class="photo ph-cream"><span>🐶</span><div class="status-badge care">● 照料中</div></div>
+            <div class="info">
+              <div class="pet-title">白色比熊 <span class="breed">· 约 5kg · ♂</span></div>
+              <div class="pet-meta"><span class="loc-link" onclick="event.stopPropagation();showOnMap('care1')">📍 下关泰安路</span> · <span class="time-tag recent">2 小时前</span></div>
+              <div class="pet-desc">在小区门口捡到，毛色干净有人养过。我家可以临时照看 2-3 天。</div>
+            </div>
+          </div>
+          <div class="card-footer"><span class="distance-pill">📍 4.2 km</span><div class="footer-actions"><span class="footer-action">💬 5</span><span class="footer-action">👀 28</span></div></div>
+        </div>
+        <div class="card expired">
+          <div class="card-row">
+            <div class="photo ph-brown"><span>🐶</span><div class="status-badge found">● 招领</div></div>
+            <div class="info">
+              <div class="pet-title">小型犬 <span class="breed">· 棕白色 · 约 6kg</span></div>
+              <div class="pet-meta"><span class="loc-link" onclick="event.stopPropagation();showOnMap('lost2')">📍 苍山门</span> · <span class="time-tag stale">9 天前 · 信息可能过期</span></div>
+              <div class="pet-desc">在山脚捡到，比较瘦，已带去打疫苗。希望主人快点出现。</div>
+            </div>
+          </div>
+          <div class="card-footer"><span class="distance-pill">📍 3.4 km</span><div class="footer-actions"><span class="footer-action">💬 2</span><span class="footer-action">👀 19</span></div></div>
+        </div>
+      </div>
+      <div class="tab-bar">
+        <div class="tab active"><span class="icon">🏠</span><span>首页</span></div>
+        <div class="tab" onclick="showScreen('map')"><span class="icon">🗺️</span><span>地图</span></div>
+        <div class="tab-pub" onclick="showScreen('publish')">
+          <div class="tab-pub-circle">+</div>
+          <span class="tab-pub-label">发布</span>
+        </div>
+        <div class="tab" onclick="showScreen('messages')"><span class="icon">💬</span><span>消息</span></div>
+        <div class="tab" onclick="showScreen('profile')"><span class="icon">👤</span><span>我的</span></div>
+      </div>
+    </div>
+
+    <!-- ===== Screen 2: Map View ===== -->
+    <div class="screen" data-screen="map" onclick="closePinPopup(event)">
+      <div class="map-container" id="map-container">
+
+        <!-- 可拖动地图层：grid / 道路 / 地名 / pin / 定位点 -->
+        <div class="map-layer" id="map-layer">
+          <div class="map-grid"></div>
+          <div class="map-roads">
+            <div class="map-road" style="top:30%;left:0;right:0;height:6px"></div>
+            <div class="map-road" style="top:60%;left:0;right:0;height:4px"></div>
+            <div class="map-road" style="left:40%;top:0;bottom:0;width:5px"></div>
+            <div class="map-road" style="left:70%;top:0;bottom:0;width:3px"></div>
+          </div>
+
+          <!-- 地名标签 -->
+          <div class="map-label" style="top:18%;left:12%">古城北门</div>
+          <div class="map-label" style="top:35%;left:38%">人民路</div>
+          <div class="map-label" style="top:52%;left:60%">下关</div>
+          <div class="map-label" style="top:16%;left:70%">洱海月</div>
+          <div class="map-label" style="top:76%;left:18%">苍山门</div>
+
+          <!-- Pin 1：胖丁（丢失·紧急）→ detail-lost -->
+          <div class="map-pin lost" data-pin-key="lost1" style="top:28%;left:22%" onclick="event.stopPropagation();showPinPopup('lost1',this)">
+            <div class="pin-head"><div class="pin-pulse"></div><span>🐱</span></div>
+            <div class="pin-label">胖丁</div>
+          </div>
+
+          <!-- Pin 2：橘猫（招领）→ detail-found -->
+          <div class="map-pin found" data-pin-key="found1" style="top:45%;left:46%" onclick="event.stopPropagation();showPinPopup('found1',this)">
+            <div class="pin-head"><span>🐱</span></div>
+            <div class="pin-label">橘猫</div>
+          </div>
+
+          <!-- Pin 3：白色比熊（照料中）-->
+          <div class="map-pin care" data-pin-key="care1" style="top:62%;left:68%" onclick="event.stopPropagation();showPinPopup('care1',this)">
+            <div class="pin-head"><span>🐶</span></div>
+            <div class="pin-label">比熊</div>
+          </div>
+
+          <!-- Pin 4：小型犬（丢失）-->
+          <div class="map-pin lost" data-pin-key="lost2" style="top:25%;left:78%" onclick="event.stopPropagation();showPinPopup('lost2',this)">
+            <div class="pin-head"><div class="pin-pulse"></div><span>🐶</span></div>
+            <div class="pin-label">小型犬</div>
+          </div>
+
+          <!-- Pin 5：棕白犬（招领）-->
+          <div class="map-pin found" data-pin-key="found2" style="top:75%;left:30%" onclick="event.stopPropagation();showPinPopup('found2',this)">
+            <div class="pin-head"><span>🐶</span></div>
+            <div class="pin-label">棕白犬</div>
+          </div>
+
+          <!-- 当前位置蓝点 -->
+          <div class="loc-dot" id="loc-dot" style="top:50%;left:50%;transform:translate(-50%,-50%)">
+            <div class="loc-ring"></div>
+            <div class="loc-center"></div>
+          </div>
+        </div><!-- /map-layer -->
+
+        <!-- 固定浮层：不跟随地图滚动 -->
+        <div class="map-precision-hint">🛡 位置精度已模糊处理至 500m 以保护用户隐私</div>
+        <div class="map-view-toggle">
+          <div class="vt" onclick="showScreen('feed')">列表</div>
+          <div class="vt active">地图</div>
+        </div>
+
+        <!-- Pin 预览弹出卡 -->
+        <div class="pin-popup" id="pin-popup">
+          <div class="popup-top">
+            <div class="popup-emoji" id="popup-emoji">🐱</div>
+            <div class="popup-meta-col">
+              <div class="popup-name" id="popup-name">胖丁</div>
+              <div class="popup-type" id="popup-type">英短蓝猫 · 公 · 3岁</div>
+            </div>
+            <div class="popup-status-tag" id="popup-status-tag">丢失</div>
+          </div>
+          <div class="popup-dist-row">
+            <span>📍 距你 <span class="hl" id="popup-dist">约 800 米</span></span>
+            <span>🕐 <span id="popup-time">10 分钟前</span></span>
+          </div>
+          <button class="popup-go" id="popup-go-btn">查看详情 →</button>
+        </div>
+
+        <div class="map-fab">
+          <div class="btn" id="btn-locate" title="回到我的位置">📍</div>
+          <div class="btn" id="btn-search" title="查找宠物">🔍</div>
+          <div class="btn" id="btn-filter" title="筛选">≡</div>
+        </div>
+
+        <!-- 宠物搜索面板 -->
+        <div class="map-search-panel" id="map-search-panel">
+          <input class="map-search-input" id="map-search-input" type="text" placeholder="输入宠物名称或特征…">
+          <div class="map-search-results" id="map-search-results"></div>
+        </div>
+
+        <div id="search-area-btn" class="search-area-btn" style="display:none" onclick="searchThisArea()">🔍 在此区域搜索</div>
+
+        <div class="map-bottom-sheet" id="map-sheet">
+          <div class="sheet-drag-area" id="sheet-drag-area">
+            <div class="sheet-handle"></div>
+            <div class="sheet-drag-hint" id="sheet-drag-hint">上滑查看更多 ↑</div>
+          </div>
+          <div class="sheet-header">
+            <div class="sheet-title" id="sheet-title">可见区域 · 5 条信息</div>
+            <span class="sheet-filter-toggle" id="sheet-filter-toggle">筛选 ›</span>
+          </div>
+          <div class="sheet-viewport-hint" id="sheet-viewport-hint">🗺 仅显示当前可见区域的宠物</div>
+          <div class="sheet-filter-row" id="sheet-filter-row">
+            <div class="sfc active" data-sf="" onclick="applySheetFilter(this,'')">全部</div>
+            <div class="sfc" data-sf="lost" onclick="applySheetFilter(this,'lost')">🔴 丢失</div>
+            <div class="sfc" data-sf="found" onclick="applySheetFilter(this,'found')">🟢 招领</div>
+            <div class="sfc" data-sf="care" onclick="applySheetFilter(this,'care')">🟡 照料中</div>
+          </div>
+          <div class="sheet-content" id="sheet-content">
+
+            <div class="sheet-card" data-status="lost" data-pin-key="lost1" onclick="locatePinFromSheet('lost1')">
+              <div class="sheet-thumb ph-blue">🐱</div>
+              <div class="sheet-info">
+                <div class="sheet-pet-name">胖丁 <span class="sheet-status-tag lost">丢失</span></div>
+                <div class="sheet-pet-meta">古城北门 · 10 分钟前</div>
+                <div class="sheet-dist-row">📍 距你 <span class="dist-hl">约 800 米</span> &nbsp;🚶 步行约 10 分钟</div>
+              </div>
+            </div>
+
+            <div class="sheet-card" data-status="found" data-pin-key="found1" onclick="locatePinFromSheet('found1')">
+              <div class="sheet-thumb ph-orange">🐱</div>
+              <div class="sheet-info">
+                <div class="sheet-pet-name">橘猫 <span class="sheet-status-tag found">招领</span></div>
+                <div class="sheet-pet-meta">人民路三月街 · 30 分钟前</div>
+                <div class="sheet-dist-row">📍 距你 <span class="dist-hl">约 1,200 米</span> &nbsp;🚶 步行约 15 分钟</div>
+              </div>
+            </div>
+
+            <div class="sheet-card" data-status="care" data-pin-key="care1" onclick="locatePinFromSheet('care1')">
+              <div class="sheet-thumb ph-cream">🐶</div>
+              <div class="sheet-info">
+                <div class="sheet-pet-name">白色比熊 <span class="sheet-status-tag care">照料中</span></div>
+                <div class="sheet-pet-meta">下关泰安路 · 2 小时前</div>
+                <div class="sheet-dist-row">📍 距你 <span class="dist-hl">约 4,200 米</span> &nbsp;🚗 驾车约 10 分钟</div>
+              </div>
+            </div>
+
+            <div class="sheet-card" data-status="lost" data-pin-key="lost2" onclick="locatePinFromSheet('lost2')">
+              <div class="sheet-thumb ph-brown">🐶</div>
+              <div class="sheet-info">
+                <div class="sheet-pet-name">小型犬 <span class="sheet-status-tag lost">丢失</span></div>
+                <div class="sheet-pet-meta">洱海月 · 9 天前 · 信息可能过期</div>
+                <div class="sheet-dist-row">📍 距你 <span class="dist-hl">约 3,400 米</span> &nbsp;🚗 驾车约 8 分钟</div>
+              </div>
+            </div>
+
+            <div class="sheet-card" data-status="found" onclick="showScreen('feed')">
+              <div class="sheet-thumb ph-brown" style="background:linear-gradient(135deg,#C8956A,#9C6B3F)">🐶</div>
+              <div class="sheet-info">
+                <div class="sheet-pet-name">棕白犬 <span class="sheet-status-tag found">招领</span></div>
+                <div class="sheet-pet-meta">苍山门 · 1 天前</div>
+                <div class="sheet-dist-row">📍 距你 <span class="dist-hl">约 2,800 米</span> &nbsp;🚗 驾车约 6 分钟</div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+      <div class="tab-bar">
+        <div class="tab" onclick="showScreen('feed')"><span class="icon">🏠</span><span>首页</span></div>
+        <div class="tab active"><span class="icon">🗺️</span><span>地图</span></div>
+        <div class="tab-pub" onclick="showScreen('publish')">
+          <div class="tab-pub-circle">+</div>
+          <span class="tab-pub-label">发布</span>
+        </div>
+        <div class="tab" onclick="showScreen('messages')"><span class="icon">💬</span><span>消息</span></div>
+        <div class="tab" onclick="showScreen('profile')"><span class="icon">👤</span><span>我的</span></div>
+      </div>
+    </div>
+
+    <!-- ===== Screen 3: Detail Lost ===== -->
+    <div class="screen" data-screen="detail-lost">
+      <div class="detail-header">
+        <div class="back-btn" onclick="showScreen('feed')">←</div>
+        <div class="detail-title">寻宠详情</div>
+        <div class="detail-spacer"></div>
+        <div class="share-btn">⤴</div>
+      </div>
+      <div class="detail-scroll">
+        <div class="hero-photo ph-blue"><span>🐱</span><div class="hero-status lost">● 寻找中 · 第 6 小时</div></div>
+        <div class="detail-body">
+          <div class="detail-name">胖丁</div>
+          <div class="detail-subtitle">英短蓝猫 · 公 · 3 岁 · 戴粉色项圈</div>
+          <div class="detail-dist-bar" onclick="showOnMap('lost1')">
+            <div class="dist-bar-icon">📍</div>
+            <div class="dist-bar-text">
+              <div class="dist-bar-main">距你约 800 米</div>
+              <div class="dist-bar-sub">古城北门 · 步行约 10 分钟 · 驾车约 3 分钟</div>
+            </div>
+            <div class="dist-bar-map-btn"><span class="map-icon">🗺</span><span class="map-label">查看</span></div>
+          </div>
+          <div class="detail-stats">
+            <div class="stat"><div class="stat-icon">📍</div><div><div class="stat-label">走失地点</div><div class="stat-value">古城北门</div></div></div>
+            <div class="stat-divider"></div>
+            <div class="stat"><div class="stat-icon">🕐</div><div><div class="stat-label">走失时间</div><div class="stat-value">今天 14:30</div></div></div>
+          </div>
+          <div class="section-label">详细描述</div>
+          <div class="desc-block">今天下午带胖丁去人民路咖啡馆，吃完饭出门时它窜出去就不见了。胆小、不会让陌生人碰，听到名字会喵叫一声。看到请尽量拍照不要追 🙏</div>
+          <div class="feature-lock">
+            <span class="feature-lock-icon">🔒</span>
+            <div><b>失主已设置「私有特征」用于认领核对</b><br>如果你捡到了相似的猫，点"我捡到了"会进入沟通建议页。</div>
+          </div>
+          <div class="section-label">线索 · 3 条</div>
+          <div class="clue-list">
+            <div class="clue-item">
+              <div class="clue-avatar">陈</div>
+              <div style="flex:1">
+                <div class="clue-author">陈* <span class="clue-badge">✓ 有用</span></div>
+                <div class="clue-meta">📍 古城北门 · 2 小时前</div>
+                <div class="clue-text">下午 4 点左右在洋人街看到一只蓝灰色英短，戴着粉项圈，往复兴路方向跑了。</div>
+              </div>
+            </div>
+            <div class="clue-item">
+              <div class="clue-avatar">林</div>
+              <div style="flex:1">
+                <div class="clue-author">林*</div>
+                <div class="clue-meta">📍 复兴路 · 1 小时前</div>
+                <div class="clue-text">我家就在复兴路开客栈，让前台留意一下，今晚监控我看看。</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="action-bar">
+        <div class="btn-secondary" onclick="showScreen('chat')">💬 留言</div>
+        <div class="btn-primary" onclick="showScreen('contact-guide')">📌 我捡到了</div>
+      </div>
+    </div>
+
+    <!-- ===== Screen 4: Detail Found ===== -->
+    <div class="screen" data-screen="detail-found">
+      <div class="detail-header">
+        <div class="back-btn" onclick="showScreen('feed')">←</div>
+        <div class="detail-title">招领详情</div>
+        <div class="detail-spacer"></div>
+        <div class="share-btn">⤴</div>
+      </div>
+      <div class="detail-scroll">
+        <div class="hero-photo ph-orange"><span>🐱</span><div class="hero-status found">● 招领中 · 第 1 小时</div></div>
+        <div class="detail-body">
+          <div class="detail-name">橘猫，约 2 岁</div>
+          <div class="detail-subtitle">公开特征：橘色 · ♀ · 戴红色项圈 · 亲人</div>
+          <div class="detail-dist-bar" onclick="showOnMap('found1')">
+            <div class="dist-bar-icon">📍</div>
+            <div class="dist-bar-text">
+              <div class="dist-bar-main">距你约 1,200 米</div>
+              <div class="dist-bar-sub">人民路三月街 · 步行约 15 分钟 · 驾车约 5 分钟</div>
+            </div>
+            <div class="dist-bar-map-btn"><span class="map-icon">🗺</span><span class="map-label">查看</span></div>
+          </div>
+          <div class="detail-stats">
+            <div class="stat"><div class="stat-icon">📍</div><div><div class="stat-label">发现地点</div><div class="stat-value">人民路三月街</div></div></div>
+            <div class="stat-divider"></div>
+            <div class="stat"><div class="stat-icon">🕐</div><div><div class="stat-label">发现时间</div><div class="stat-value">今天 09:00</div></div></div>
+          </div>
+          <div class="section-label">发现者描述</div>
+          <div class="desc-block">我在人民路开咖啡馆，今早开店时这只橘猫蹲在门口不走，看起来很饿。喂了它一点猫粮，目前在店里看店 😺</div>
+          <div class="feature-lock green">
+            <span class="feature-lock-icon">💬</span>
+            <div><b>认领前会拿到一份「沟通建议」</b><br>平台提供与失主沟通的话术和见面建议。<b>核对怎么走由你们自己决定</b>——确认归还时回来打个卡就行。</div>
+          </div>
+        </div>
+      </div>
+      <div class="action-bar">
+        <div class="btn-secondary" onclick="showScreen('chat')">💬 直接联系</div>
+        <div class="btn-primary" onclick="showScreen('contact-guide')">🏠 这是我家的猫</div>
+      </div>
+    </div>
+
+    <!-- ===== Screen 5: Publish ===== -->
+    <div class="screen" data-screen="publish">
+      <div class="detail-header">
+        <div class="back-btn" onclick="showScreen('feed')">←</div>
+        <div class="detail-title">发布</div>
+        <div class="detail-spacer"></div>
+        <div style="font-size:13px;color:var(--ink-3);padding:0 4px">草稿</div>
+      </div>
+      <div class="seg-control">
+        <div class="seg active">🔴 我丢了宠物</div>
+        <div class="seg">🟢 我捡到了宠物</div>
+      </div>
+      <div class="form-scroll">
+        <div class="form-section">
+          <div class="form-row" style="padding-bottom:0">
+            <div class="form-label"><span><span class="required">*</span> 上传照片（建议 3 张以上）</span><span style="font-size:11px;color:var(--ink-4)">2 / 9</span></div>
+          </div>
+          <div class="photo-upload-row">
+            <div class="photo-slot filled ph-blue"><span>🐱</span><div class="x">×</div></div>
+            <div class="photo-slot filled ph-blue" style="background:linear-gradient(135deg,#A5BDDE,#7C9DC9)"><span>🐱</span><div class="x">×</div></div>
+            <div class="photo-slot"><span style="font-size:20px">+</span><span>添加</span></div>
+          </div>
+        </div>
+        <div class="form-section">
+          <div class="form-row">
+            <div class="form-label"><span class="required">*</span> 宠物类型</div>
+            <div class="pet-type-options"><div class="pet-type active">🐱 猫</div><div class="pet-type">🐶 狗</div><div class="pet-type">🐰 其他</div></div>
+          </div>
+          <div class="form-row"><div class="form-label">名字 / 昵称</div><input class="form-input" value="胖丁"></div>
+          <div class="form-row"><div class="form-label">品种 / 外观</div><input class="form-input" value="英短蓝猫"></div>
+          <div class="form-row"><div class="form-label">性别 / 年龄</div><div class="form-value"><span>♂ 公 · 3 岁</span><span class="arrow">›</span></div></div>
+        </div>
+        <div class="form-section">
+          <div class="form-row"><div class="form-label"><span class="required">*</span> 走失地点</div><div class="form-value"><span>📍 古城北门 · 大理</span><span class="arrow">在地图上选 ›</span></div></div>
+          <div class="form-row"><div class="form-label">详细地址</div><input class="form-input" value="北门人民路咖啡馆门口"></div>
+          <div class="form-row"><div class="form-label"><span class="required">*</span> 走失时间</div><div class="form-value"><span>今天 14:30</span><span class="arrow">›</span></div></div>
+        </div>
+        <div class="form-section">
+          <div class="form-row">
+            <div class="form-label"><span><span class="required">*</span> 详细描述（公开）</span><span style="font-size:11px;color:var(--ink-4)">82 / 500</span></div>
+            <textarea class="form-textarea">穿粉色项圈，左耳缺一小块。胆小，不会让陌生人碰，听到名字会喵叫。看到请尽量拍照不要追。</textarea>
+          </div>
+        </div>
+        <div class="private-feature-card">
+          <div class="private-feature-header"><span>🔒</span><b>私有特征（用于认领核对，不公开）</b></div>
+          <div class="private-feature-body">填只有你知道的特征。捡到的人来认领时，你用这个核对，防止冒领。</div>
+          <div class="private-feature-input"><textarea placeholder="比如：肚皮左下方有一个心形黑斑；叫"胖丁"会立刻喵两声…"></textarea></div>
+        </div>
+        <div class="form-section">
+          <div class="form-row" style="padding-bottom:0"><div class="form-label">联系方式</div></div>
+          <div class="contact-radio">
+            <div class="radio-item"><div class="radio-circle selected"></div><div><div class="radio-title">🔒 仅站内消息（推荐）</div><div class="radio-sub">保护隐私，所有消息经审核后送达</div></div></div>
+            <div class="radio-item"><div class="radio-circle"></div><div><div class="radio-title">📞 虚拟号中转拨打</div><div class="radio-sub">隐藏真实号码 · 平台代接通 · 约 0.3 元/分钟</div></div></div>
+          </div>
+        </div>
+        <div style="padding:12px 18px;margin:0 14px 12px;background:#FEF2F2;border:1px solid #FECACA;border-radius:12px;font-size:11.5px;color:#991B1B;line-height:1.6">
+          <b>🛡 发布须知</b><br>
+          • 内容将经平台审核（通常 1 分钟内）<br>
+          • 禁止任何形式的「悬赏金 / 感谢金 / 押金 / 路费」等金钱往来<br>
+          • 禁止留微信号 / QQ 号 / 二维码引导平台外联系<br>
+          • 违规内容将被删除，多次违规将封禁账号
+        </div>
+        <div style="padding:8px 18px 12px;font-size:11px;color:var(--ink-4);line-height:1.5">
+          发布即表示你已阅读并同意 <span style="color:var(--primary)">《用户协议》</span> 和 <span style="color:var(--primary)">《隐私政策》</span>
+        </div>
+      </div>
+      <div class="action-bar">
+        <div class="btn-secondary">保存草稿</div>
+        <div class="btn-primary">📢 发布寻宠</div>
+      </div>
+    </div>
+
+    <!-- ===== Screen 6: Contact Guide ===== -->
+    <div class="screen" data-screen="contact-guide">
+      <div class="detail-header">
+        <div class="back-btn" onclick="showScreen('detail-found')">←</div>
+        <div class="detail-title">联系失主</div>
+        <div class="detail-spacer"></div>
+        <div style="font-size:12px;color:var(--ink-3);padding:0 4px">1 / 2</div>
+      </div>
+      <div class="guide-screen">
+        <div class="guide-hero">
+          <div class="guide-icon">💬</div>
+          <div class="guide-title">联系前的几个建议</div>
+          <div class="guide-sub">下面是帮你和失主顺利完成归还的参考。怎么沟通由你们自己决定。</div>
+        </div>
+        <div class="pet-summary-card">
+          <div class="pet-summary-thumb ph-orange">🐱</div>
+          <div><div style="font-weight:600;font-size:14.5px;margin-bottom:2px">橘猫，约 2 岁</div><div style="font-size:12px;color:var(--ink-3)">招领中 · 人民路三月街 · 30 分钟前</div></div>
+        </div>
+        <div class="info-card-soft">
+          <div style="display:flex;align-items:center;gap:8px"><span style="font-size:16px">🔒</span><b>失主已设置 3 条「私有特征」</b></div>
+          <div class="info-body">见面前让对方主动描述他知道的细节作为初步核对。<b>你不需要填任何东西</b>。</div>
+        </div>
+        <div class="section-label" style="margin-top:6px">参考话术 · 点击复制后随便发哪都行</div>
+        <div class="message-template">
+          <div class="msg-text">你好，我可能在<b>人民路三月街</b>捡到了你家的猫。方便描述一下 ta 身上的<b>特别之处</b>吗？</div>
+          <div class="copy-btn">📋 复制</div>
+        </div>
+        <div class="message-template">
+          <div class="msg-text">你能<b>视频展示一下</b> ta 听到名字的反应吗？</div>
+          <div class="copy-btn">📋 复制</div>
+        </div>
+        <div class="message-template">
+          <div class="msg-text">我们约个安全的地点见面吧。方便你带<b>疫苗本和旧照片</b>过来吗？</div>
+          <div class="copy-btn">📋 复制</div>
+        </div>
+        <div class="safe-places-card">
+          <h5>📍 大理推荐安全见面地点</h5>
+          <div class="sub">建议公共场所、人多的地方</div>
+          <div class="place-chips">
+            <span class="place-chip">古城北门派出所</span>
+            <span class="place-chip">人民路宠物医院</span>
+            <span class="place-chip">下关24h宠物诊所</span>
+            <span class="place-chip">洋人街咖啡馆</span>
+            <span class="place-chip">苍山门停车场</span>
+          </div>
+        </div>
+        <div class="section-label" style="margin-top:18px">见面时建议你这样核对</div>
+        <div class="offline-block">
+          <div class="offline-row"><div class="offline-num">1</div><div><b>看宠物对失主的反应</b><div class="offline-sub">真正的失主，宠物通常立刻识别</div></div></div>
+          <div class="offline-row"><div class="offline-num">2</div><div><b>核对疫苗本 / 旧照片</b><div class="offline-sub">出示与宠物的合影、家里其他场景的旧照片</div></div></div>
+          <div class="offline-row"><div class="offline-num">3</div><div><b>公共安全地点 · 不要私下转账</b><div class="offline-sub">避免任何"押金 / 验证费 / 路费"等金钱往来</div></div></div>
+        </div>
+        <div class="warn-block"><b>⚠️ 如果对方拒绝视频/核对：</b>请立即停止交接，回小程序"⚠️ 争议申诉"。</div>
+      </div>
+      <div class="action-bar">
+        <div class="btn-secondary" onclick="showScreen('detail-found')">取消</div>
+        <div class="btn-primary" onclick="showScreen('return-checklist')">我已联系上失主 · 进入归还</div>
+      </div>
+    </div>
+
+    <!-- ===== Screen 7: Return Checklist ===== -->
+    <div class="screen" data-screen="return-checklist">
+      <div class="detail-header">
+        <div class="back-btn" onclick="showScreen('contact-guide')">←</div>
+        <div class="detail-title">归还确认</div>
+        <div class="detail-spacer"></div>
+        <div style="font-size:12px;color:var(--ink-3);padding:0 4px">2 / 2</div>
+      </div>
+      <div class="checklist-screen">
+        <div class="pet-summary-card">
+          <div class="pet-summary-thumb ph-orange">🐱</div>
+          <div><div style="font-weight:600;font-size:14.5px;margin-bottom:2px">橘猫，约 2 岁</div><div style="font-size:12px;color:var(--ink-3)">即将完成归还</div></div>
+        </div>
+        <div class="self-check-hint"><b>💡 这是自检清单，不是验证条件</b><br>勾选这些是为了帮你回顾——平台信任你的判断。即使一项都不勾，也可以确认归还。</div>
+        <div class="section-label">建议在确认归还前完成</div>
+        <div class="checklist-item done" onclick="this.classList.toggle('done')">
+          <div class="checklist-check">✓</div>
+          <div class="checklist-content"><div class="checklist-title">已和失主核对宠物特征</div><div class="checklist-sub">线上让对方提供匹配项，或见面时观察宠物反应</div></div>
+        </div>
+        <div class="checklist-item done" onclick="this.classList.toggle('done')">
+          <div class="checklist-check">✓</div>
+          <div class="checklist-content"><div class="checklist-title">已看过疫苗本 / 旧照片</div><div class="checklist-sub">真正的失主通常能轻松出示这些</div></div>
+        </div>
+        <div class="checklist-item" onclick="this.classList.toggle('done')">
+          <div class="checklist-check"></div>
+          <div class="checklist-content"><div class="checklist-title">在安全的公共地点交接</div><div class="checklist-sub">派出所 / 宠物医院 / 咖啡馆 等</div></div>
+        </div>
+        <div class="checklist-item" onclick="this.classList.toggle('done')">
+          <div class="checklist-check"></div>
+          <div class="checklist-content"><div class="checklist-title">已亲手交付 / 接回宠物本人</div><div class="checklist-sub">归还的最终标志</div></div>
+        </div>
+      </div>
+      <div class="action-bar">
+        <div class="btn-secondary" onclick="showScreen('dispute')">争议申诉</div>
+        <div class="btn-primary" onclick="showScreen('return-success')">✅ 确认归还</div>
+      </div>
+    </div>
+
+    <!-- ===== Screen 8: Return Success ===== -->
+    <div class="screen" data-screen="return-success">
+      <div style="flex:1;overflow-y:auto;padding-bottom:100px">
+        <div class="success-confetti">
+          <div class="success-circle">✓</div>
+          <div class="success-title">归还成功 🎉</div>
+          <div class="success-sub">橘猫已平安回家。<br>感谢大理的善意，让这个故事有了结局。</div>
+        </div>
+        <div class="reward-card">
+          <div class="reward-label">🪷 发现者「客栈老板娘」获得</div>
+          <div class="reward-value">+ 6 善行值</div>
+          <div class="reward-detail">累计 48 善行值 · 距下一徽章还差 2 · 这是你第 3 次成功归还</div>
+        </div>
+        <div class="thanks-cta-card" onclick="showScreen('thanks-edit')">
+          <div class="thanks-cta-icon">💌</div>
+          <div class="thanks-cta-content"><div class="thanks-cta-title">写一封感谢信</div><div class="thanks-cta-sub">可以点名感谢提供线索的人，他们会各 +1 善行值</div></div>
+          <div style="color:var(--ink-4);font-size:16px">›</div>
+        </div>
+        <div class="thanks-cta-card" style="cursor:default">
+          <div class="thanks-cta-icon" style="background:#F3E8FF">⭐</div>
+          <div class="thanks-cta-content"><div class="thanks-cta-title">为这次救助打分</div><div class="thanks-cta-sub">帮我们改进流程</div></div>
+          <div style="color:var(--ink-4);font-size:16px">›</div>
+        </div>
+      </div>
+      <div class="action-bar">
+        <div class="btn-secondary" onclick="showScreen('feed')">回首页</div>
+        <div class="btn-primary" onclick="showScreen('thanks-edit')">💌 写感谢信</div>
+      </div>
+    </div>
+
+    <!-- ===== Screen 9: Thanks Edit ===== -->
+    <div class="screen" data-screen="thanks-edit">
+      <div class="detail-header">
+        <div class="back-btn" onclick="showScreen('return-success')">←</div>
+        <div class="detail-title">写感谢信</div>
+        <div class="detail-spacer"></div>
+        <div style="font-size:13px;color:var(--ink-3);padding:0 4px">保存</div>
+      </div>
+      <div class="thanks-screen">
+        <div class="pet-summary-card">
+          <div class="pet-summary-thumb ph-orange">🐱</div>
+          <div><div style="font-weight:600;font-size:14.5px;margin-bottom:2px">橘猫，已归还 ✓</div><div style="font-size:12px;color:var(--ink-3)">人民路三月街 · 今天 19:00</div></div>
+        </div>
+        <div class="section-label">感谢信内容</div>
+        <div class="thanks-textarea-block">
+          <textarea class="thanks-textarea">今天下午橘猫走丢了，全家都很慌。没想到 30 分钟后就被人在人民路的咖啡馆里发现，又通过陈姐姐看到的线索一路顺利接回。感谢大理这座小城里所有善意的人 🙏
+
+—— 来自橘猫的家人</textarea>
+        </div>
+        <div class="section-label">点名感谢 · 最多 3 人 · 被点名者 +1 善行值</div>
+        <div class="nominee-list">
+          <div class="nominee-row selected">
+            <div class="nominee-check">✓</div>
+            <div class="nominee-info"><div class="nominee-name">客栈老板娘</div><div class="nominee-contrib">收留宠物 · 等待主人</div></div>
+            <div class="nominee-points">+1</div>
+          </div>
+          <div class="nominee-row selected">
+            <div class="nominee-check">✓</div>
+            <div class="nominee-info"><div class="nominee-name">陈*</div><div class="nominee-contrib">提供线索 · 复兴路目击</div></div>
+            <div class="nominee-points">+1</div>
+          </div>
+          <div class="nominee-row">
+            <div class="nominee-check"></div>
+            <div class="nominee-info"><div class="nominee-name">林*</div><div class="nominee-contrib">客栈监控帮看</div></div>
+            <div class="nominee-points">+1</div>
+          </div>
+        </div>
+        <div class="form-section">
+          <div class="form-row">
+            <div class="form-label">是否公开</div>
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <span style="font-size:13.5px">公开发布到「善意月报」</span>
+              <div style="width:44px;height:26px;background:var(--primary);border-radius:13px;position:relative">
+                <div style="position:absolute;width:22px;height:22px;background:white;border-radius:50%;top:2px;right:2px"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="action-bar">
+        <div class="btn-secondary">保存草稿</div>
+        <div class="btn-primary" onclick="showScreen('feed')">💌 发送感谢信</div>
+      </div>
+    </div>
+
+    <!-- ===== Screen 10: Messages List ===== -->
+    <div class="screen" data-screen="messages">
+      <div class="detail-header">
+        <div class="back-btn" onclick="showScreen('feed')">←</div>
+        <div class="detail-title">消息</div>
+        <div class="detail-spacer"></div>
+        <div class="share-btn">⚙</div>
+      </div>
+      <div class="msg-list">
+        <div class="msg-row" onclick="showScreen('chat')">
+          <div class="msg-avatar ph-orange">🐱</div>
+          <div class="msg-body">
+            <div class="msg-name-row">
+              <span class="msg-name">客栈老板娘</span>
+              <span class="msg-time">17:24</span>
+            </div>
+            <div class="msg-preview">好的我现在过来，您能视频先确认一下吗？</div>
+            <div class="msg-context">关于：橘猫 · 招领</div>
+          </div>
+          <div class="msg-meta-right"><div class="msg-unread">2</div></div>
+        </div>
+        <div class="msg-row">
+          <div class="msg-avatar" style="background:linear-gradient(135deg,#94A3B8,#64748B);color:white;font-size:14px;font-weight:600">系</div>
+          <div class="msg-body">
+            <div class="msg-name-row">
+              <span class="msg-name">系统通知</span>
+              <span class="msg-time">15:10</span>
+            </div>
+            <div class="msg-preview">🪷 陈* 的线索已被你标记为有用，ta 获得 +1 善行值</div>
+          </div>
+        </div>
+        <div class="msg-row">
+          <div class="msg-avatar ph-blue">🐱</div>
+          <div class="msg-body">
+            <div class="msg-name-row">
+              <span class="msg-name">陈*</span>
+              <span class="msg-time">14:50</span>
+            </div>
+            <div class="msg-preview">在洋人街又看到那只猫了，往复兴路跑了</div>
+            <div class="msg-context">关于：胖丁 · 寻宠</div>
+          </div>
+        </div>
+        <div class="msg-row">
+          <div class="msg-avatar" style="background:linear-gradient(135deg,#94A3B8,#64748B);color:white;font-size:14px;font-weight:600">系</div>
+          <div class="msg-body">
+            <div class="msg-name-row">
+              <span class="msg-name">系统通知</span>
+              <span class="msg-time">昨天</span>
+            </div>
+            <div class="msg-preview">📬 你有 2 条新的线索回复</div>
+          </div>
+        </div>
+        <div class="msg-row">
+          <div class="msg-avatar ph-cream">🐶</div>
+          <div class="msg-body">
+            <div class="msg-name-row">
+              <span class="msg-name">王*</span>
+              <span class="msg-time">3 天前</span>
+            </div>
+            <div class="msg-preview">辛苦你了，已经把小黑接回家。回头一定请你喝茶</div>
+            <div class="msg-context">关于：小黑 · 已归还</div>
+          </div>
+        </div>
+      </div>
+      <div class="tab-bar">
+        <div class="tab" onclick="showScreen('feed')"><span class="icon">🏠</span><span>首页</span></div>
+        <div class="tab" onclick="showScreen('map')"><span class="icon">🗺️</span><span>地图</span></div>
+        <div class="tab spacer">·</div>
+        <div class="tab active"><span class="icon">💬</span><span>消息</span></div>
+        <div class="tab" onclick="showScreen('profile')"><span class="icon">👤</span><span>我的</span></div>
+      </div>
+    </div>
+
+    <!-- ===== Screen 11: Chat ===== -->
+    <div class="screen" data-screen="chat">
+      <div class="detail-header">
+        <div class="back-btn" onclick="showScreen('messages')">←</div>
+        <div class="detail-title">客栈老板娘</div>
+        <div class="detail-spacer"></div>
+        <div class="share-btn">⋯</div>
+      </div>
+      <div class="chat-pet-card" onclick="showScreen('detail-found')">
+        <div class="chat-pet-thumb ph-orange">🐱</div>
+        <div class="chat-pet-info">
+          <div class="chat-pet-name">橘猫，约 2 岁</div>
+          <div class="chat-pet-meta">人民路三月街 · 招领中</div>
+        </div>
+        <div class="chat-pet-status">招领</div>
+      </div>
+      <div class="chat-msgs">
+        <div class="chat-time">今天 17:00</div>
+        <div class="chat-msg them">
+          <div class="chat-avatar ph-orange">🐱</div>
+          <div class="chat-bubble">你好，我可能在<b>人民路三月街</b>捡到了你家的猫。方便描述一下 ta 身上的<b>特别之处</b>吗？</div>
+        </div>
+        <div class="chat-msg me">
+          <div class="chat-avatar" style="background:linear-gradient(135deg,#FED7AA,#FDBA74)">😊</div>
+          <div class="chat-bubble">你好！是橘猫吗？我家果儿脖子右侧有一块白色心形斑点，叫它"果儿"会立刻回头。</div>
+        </div>
+        <div class="chat-time">17:15</div>
+        <div class="chat-msg them">
+          <div class="chat-avatar ph-orange">🐱</div>
+          <div class="chat-bubble">对！是你家的没错。心形斑点完全对上，刚试着叫了"果儿"她立刻看过来了 😺</div>
+        </div>
+        <div class="chat-msg them">
+          <div class="chat-avatar ph-orange">🐱</div>
+          <div class="chat-bubble" style="padding:8px;background:var(--bg)"><div style="width:140px;height:140px;border-radius:8px;background:linear-gradient(135deg,#FFD58A,#F5A623);display:flex;align-items:center;justify-content:center;font-size:60px">🐱</div><div style="font-size:11px;color:var(--ink-3);margin-top:4px">店里现在的样子</div></div>
+        </div>
+        <div class="chat-msg me">
+          <div class="chat-avatar" style="background:linear-gradient(135deg,#FED7AA,#FDBA74)">😊</div>
+          <div class="chat-bubble">是她！我马上过来！您店具体在哪个位置？</div>
+        </div>
+        <div class="chat-time">17:24</div>
+        <div class="chat-msg them">
+          <div class="chat-avatar ph-orange">🐱</div>
+          <div class="chat-bubble">人民路 39 号「白桃」咖啡馆，门口绿色门帘。您能视频先确认一下吗？</div>
+        </div>
+      </div>
+      <div style="padding:6px 16px;background:#FFF7ED;border-top:1px solid #FED7AA;font-size:11px;color:#9A3412;text-align:center">
+        🛡 消息经审核后送达 · 含微信号/电话/二维码将被过滤
+      </div>
+      <div class="chat-input-bar">
+        <div class="chat-attach">📷</div>
+        <div class="chat-attach">📍</div>
+        <div class="chat-input">输入消息...</div>
+        <div class="chat-attach" style="background:var(--primary);color:white">↑</div>
+      </div>
+    </div>
+
+    <!-- ===== Screen 12: Profile ===== -->
+    <div class="screen" data-screen="profile">
+      <div class="profile-scroll">
+        <div class="profile-hero">
+          <div class="profile-user">
+            <div class="profile-avatar">😊</div>
+            <div style="flex:1">
+              <div class="profile-name">客栈老板娘 <span class="level-badge">⭐ 守护者</span></div>
+              <div class="profile-handle">大理古城 · 加入 23 天</div>
+            </div>
+          </div>
+          <div class="points-card" onclick="showScreen('points-history')">
+            <div class="points-header"><span class="points-label">🪷 当前善行值</span><span class="points-detail-link">详情 ›</span></div>
+            <div class="points-value">48</div>
+            <div class="points-meta">累计获得 53 · 距下一徽章还差 2</div>
+            <div class="points-divider"></div>
+            <div class="points-stats">
+              <div class="points-stat-item"><div class="points-stat-num">3</div><div class="points-stat-label">成功归还</div></div>
+              <div class="points-stat-item"><div class="points-stat-num">8</div><div class="points-stat-label">有效线索</div></div>
+              <div class="points-stat-item"><div class="points-stat-num">3</div><div class="points-stat-label">临时照料</div></div>
+              <div class="points-stat-item"><div class="points-stat-num">5</div><div class="points-stat-label">收到感谢</div></div>
+            </div>
+          </div>
+        </div>
+        <div class="profile-content">
+          <div class="quick-actions">
+            <div class="quick-action" onclick="showScreen('my-posts')"><div class="qa-icon orange">📝</div><div class="qa-label">我的发布</div></div>
+            <div class="quick-action"><div class="qa-icon green">📌</div><div class="qa-label">我的线索</div></div>
+            <div class="quick-action"><div class="qa-icon blue">💌</div><div class="qa-label">感谢信</div></div>
+            <div class="quick-action"><div class="qa-icon purple">🏅</div><div class="qa-label">徽章墙</div></div>
+          </div>
+          <div class="menu-section">
+            <div class="menu-row" onclick="showScreen('points-history')"><span class="menu-icon">📊</span><span class="menu-label">善行值流水</span><span class="menu-meta">最近 +6</span><span class="menu-arrow">›</span></div>
+            <div class="menu-row"><span class="menu-icon">🏠</span><span class="menu-label">我可以临时照料</span><span class="menu-meta" style="color:var(--status-found)">已开启</span><span class="menu-arrow">›</span></div>
+            <div class="menu-row"><span class="menu-icon">🔔</span><span class="menu-label">订阅消息设置</span><span class="menu-arrow">›</span></div>
+          </div>
+          <div class="menu-section">
+            <div class="menu-row"><span class="menu-icon">🛡️</span><span class="menu-label">安全交接指南</span><span class="menu-arrow">›</span></div>
+            <div class="menu-row" onclick="showScreen('dispute')"><span class="menu-icon">⚠️</span><span class="menu-label">争议申诉</span><span class="menu-arrow">›</span></div>
+            <div class="menu-row"><span class="menu-icon">💡</span><span class="menu-label">建议反馈</span><span class="menu-arrow">›</span></div>
+          </div>
+          <div class="menu-section">
+            <div class="menu-row"><span class="menu-icon">📄</span><span class="menu-label">用户协议</span><span class="menu-arrow">›</span></div>
+            <div class="menu-row"><span class="menu-icon">🔐</span><span class="menu-label">隐私政策</span><span class="menu-arrow">›</span></div>
+            <div class="menu-row"><span class="menu-icon">🆘</span><span class="menu-label">联系客服</span><span class="menu-meta">工作日 9:00-18:00</span><span class="menu-arrow">›</span></div>
+            <div class="menu-row"><span class="menu-icon">🚪</span><span class="menu-label">注销账号</span><span class="menu-arrow">›</span></div>
+          </div>
+          <div class="menu-section">
+            <div class="menu-row"><span class="menu-icon">ℹ️</span><span class="menu-label">关于</span><span class="menu-meta">v1.0.0</span><span class="menu-arrow">›</span></div>
+          </div>
+          <div style="text-align:center;font-size:11px;color:var(--ink-4);padding:14px 0 20px;line-height:1.6">
+            ICP 备案号 XXXXX · 公安备案 XXXXX<br>
+            主体：XX 个体工商户
+          </div>
+        </div>
+      </div>
+      <div class="tab-bar">
+        <div class="tab" onclick="showScreen('feed')"><span class="icon">🏠</span><span>首页</span></div>
+        <div class="tab" onclick="showScreen('map')"><span class="icon">🗺️</span><span>地图</span></div>
+        <div class="tab spacer">·</div>
+        <div class="tab" onclick="showScreen('messages')"><span class="icon">💬</span><span>消息</span></div>
+        <div class="tab active"><span class="icon">👤</span><span>我的</span></div>
+      </div>
+    </div>
+
+    <!-- ===== Screen 13: Points History ===== -->
+    <div class="screen" data-screen="points-history">
+      <div class="detail-header">
+        <div class="back-btn" onclick="showScreen('profile')">←</div>
+        <div class="detail-title">善行值流水</div>
+        <div class="detail-spacer"></div>
+        <div class="share-btn">ⓘ</div>
+      </div>
+      <div class="points-screen">
+        <div class="points-header-card">
+          <div class="points-label" style="opacity:0.9;font-size:12px">🪷 当前 / 累计</div>
+          <div style="font-size:34px;font-weight:700;line-height:1;margin:6px 0">48 / 53</div>
+          <div style="font-size:11.5px;opacity:0.9">距离下一徽章还差 2 · 已贡献 19 次有效行为</div>
+        </div>
+        <div style="margin:0 14px 12px;padding:10px 14px;background:#FFF7ED;border:1px solid #FED7AA;border-radius:10px;font-size:11.5px;color:#9A3412;line-height:1.55">
+          ℹ️ 善行值仅为荣誉激励，<b>不可兑换现金、商品或服务</b>。仅用于展示等级与徽章。
+        </div>
+        <div class="points-history-filters">
+          <div class="ph-filter active">全部</div>
+          <div class="ph-filter">归还</div>
+          <div class="ph-filter">线索</div>
+          <div class="ph-filter">照料</div>
+          <div class="ph-filter">感谢</div>
+        </div>
+        <div class="tx-date-label">今天</div>
+        <div class="point-tx">
+          <div class="tx-icon return">🏠</div>
+          <div class="tx-body"><div class="tx-title">成功归还橘猫 · 失主"橘猫家"</div><div class="tx-meta">人民路三月街 · 19:00</div></div>
+          <div class="tx-amount plus">+6</div>
+        </div>
+        <div class="point-tx">
+          <div class="tx-icon thanks">💌</div>
+          <div class="tx-body"><div class="tx-title">收到「橘猫家」的感谢信</div><div class="tx-meta">"感谢大理这座小城里所有善意的人..." · 19:08</div></div>
+          <div class="tx-amount plus">+1</div>
+        </div>
+        <div class="tx-date-label">昨天</div>
+        <div class="point-tx">
+          <div class="tx-icon clue">📌</div>
+          <div class="tx-body"><div class="tx-title">线索被失主标记为有用 · 寻找小黑</div><div class="tx-meta">洱海月湿地 · 16:30</div></div>
+          <div class="tx-amount plus">+1</div>
+        </div>
+        <div class="tx-date-label">本周</div>
+        <div class="point-tx">
+          <div class="tx-icon care">🏠</div>
+          <div class="tx-body"><div class="tx-title">临时照料完成 · 白色比熊</div><div class="tx-meta">下关泰安路 · 5 天前</div></div>
+          <div class="tx-amount plus">+2</div>
+        </div>
+        <div class="point-tx">
+          <div class="tx-icon return">🏠</div>
+          <div class="tx-body"><div class="tx-title">成功归还黑色拉布拉多 · 失主"王*"</div><div class="tx-meta">洱海月湿地 · 5 天前</div></div>
+          <div class="tx-amount plus">+6</div>
+        </div>
+        <div class="point-tx">
+          <div class="tx-icon thanks">💌</div>
+          <div class="tx-body"><div class="tx-title">收到「王*」的感谢信</div><div class="tx-meta">"辛苦你了，已经把小黑接回家..." · 5 天前</div></div>
+          <div class="tx-amount plus">+1</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== Screen 14: My Posts ===== -->
+    <div class="screen" data-screen="my-posts">
+      <div class="detail-header">
+        <div class="back-btn" onclick="showScreen('profile')">←</div>
+        <div class="detail-title">我的发布</div>
+        <div class="detail-spacer"></div>
+        <div class="share-btn">+</div>
+      </div>
+      <div class="myposts-tabs">
+        <div class="mp-tab active">进行中 · 2</div>
+        <div class="mp-tab">已完成 · 5</div>
+        <div class="mp-tab">草稿 · 1</div>
+      </div>
+      <div class="myposts-list">
+        <div class="myposts-card">
+          <div class="mp-row">
+            <div class="photo ph-orange" style="width:84px;height:84px;font-size:34px"><span>🐱</span><div class="status-badge found">● 招领</div></div>
+            <div class="info">
+              <div class="pet-title">橘猫 <span class="breed">· 约 2 岁</span></div>
+              <div class="pet-meta">📍 人民路三月街 · 发布 30 分钟前</div>
+              <div class="pet-desc">在咖啡馆门口蹲了一下午...</div>
+              <div style="font-size:11.5px;color:var(--ink-4);margin-top:5px">👀 47 浏览 · 💬 3 留言</div>
+            </div>
+          </div>
+          <div class="mp-actions">
+            <div class="mp-action primary">✓ 标记已归还</div>
+            <div class="mp-action">编辑</div>
+            <div class="mp-action">分享</div>
+          </div>
+        </div>
+        <div class="myposts-card">
+          <div class="mp-row">
+            <div class="photo ph-cream" style="width:84px;height:84px;font-size:34px"><span>🐶</span><div class="status-badge care">● 照料中</div></div>
+            <div class="info">
+              <div class="pet-title">白色比熊 <span class="breed">· 约 5kg · ♂</span></div>
+              <div class="pet-meta">📍 下关泰安路 · 发布 2 小时前</div>
+              <div class="pet-desc">在小区门口捡到，毛色干净有人养过...</div>
+              <div style="font-size:11.5px;color:var(--ink-4);margin-top:5px">👀 28 浏览 · 💬 5 留言 · 🏠 临时照料中</div>
+            </div>
+          </div>
+          <div class="mp-actions">
+            <div class="mp-action primary">✓ 标记已归还</div>
+            <div class="mp-action">延长照料</div>
+            <div class="mp-action">编辑</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== Screen 15: Dispute ===== -->
+    <div class="screen" data-screen="dispute">
+      <div class="detail-header">
+        <div class="back-btn" onclick="showScreen('profile')">←</div>
+        <div class="detail-title">争议申诉</div>
+        <div class="detail-spacer"></div>
+        <div class="share-btn">ⓘ</div>
+      </div>
+      <div class="dispute-screen">
+        <div class="dispute-hero">
+          <div class="dispute-icon">⚠️</div>
+          <div class="guide-title">遇到了什么情况？</div>
+          <div class="guide-sub" style="margin-top:6px">平台审核员将在 24 小时内回复，请如实描述并附上证据</div>
+        </div>
+        <div class="section-label">争议类型</div>
+        <div class="dispute-type-grid">
+          <div class="dispute-type selected">🚨 怀疑冒领</div>
+          <div class="dispute-type">😞 对方索要财物</div>
+          <div class="dispute-type">😨 对方威胁/恐吓</div>
+          <div class="dispute-type">⏱ 对方失联</div>
+        </div>
+        <div class="section-label">相关宠物 / 帖子</div>
+        <div class="dispute-block">
+          <div class="form-value"><span>橘猫 招领 · 人民路三月街</span><span style="color:var(--ink-4)">›</span></div>
+        </div>
+        <div class="section-label">详细描述</div>
+        <div class="dispute-block" style="padding:0">
+          <div style="padding:14px 16px">
+            <textarea class="form-textarea" style="min-height:90px" placeholder="请描述对方的可疑行为、沟通过程中的疑点等。志愿者会基于你的描述 + 对话记录进行调查"></textarea>
+          </div>
+        </div>
+        <div class="section-label">证据（聊天截图 / 现场照片）</div>
+        <div class="dispute-block" style="padding:14px 16px">
+          <div class="photo-upload-row" style="padding:0">
+            <div class="photo-slot"><span style="font-size:20px">+</span><span>添加</span></div>
+            <div class="photo-slot"><span style="font-size:20px">+</span><span>添加</span></div>
+          </div>
+        </div>
+        <div class="warn-block">
+          <b>🔒 我们承诺：</b>所有申诉将由平台审核员保密处理，证据材料留存 6 个月。冒领核实后将永久封号处理。
+        </div>
+      </div>
+      <div class="action-bar">
+        <div class="btn-secondary" onclick="showScreen('profile')">取消</div>
+        <div class="btn-primary">提交申诉</div>
+      </div>
+    </div>
+
+    <!-- ===== Screen 16: Search ===== -->
+    <div class="screen" data-screen="search">
+      <div class="search-input-header">
+        <div class="back-btn" onclick="goBack()">←</div>
+        <div class="search-input-wrap" id="search-wrap">
+          <span class="search-input-icon">🔍</span>
+          <input type="text" class="search-input" id="search-box"
+                 placeholder="搜品种、地点、特征..."
+                 oninput="onSearchInput()" autocomplete="off">
+          <span class="search-input-clear" onclick="clearSearchInput()">×</span>
+        </div>
+        <span class="search-cancel" onclick="doSearch()">搜索</span>
+      </div>
+
+      <div class="search-scroll">
+        <!-- 默认：历史 + 热门 -->
+        <div id="search-default">
+          <div class="srch-section">
+            <span class="s-title">最近搜索</span>
+            <span class="s-right" onclick="clearHistory()">清除</span>
+          </div>
+          <div class="search-chips" id="history-chips">
+            <div class="search-chip" onclick="doSearchWith('胖丁')">胖丁</div>
+            <div class="search-chip" onclick="doSearchWith('蓝猫')">蓝猫</div>
+            <div class="search-chip" onclick="doSearchWith('古城北门')">古城北门</div>
+            <div class="search-chip" onclick="doSearchWith('比熊')">比熊</div>
+          </div>
+          <div class="srch-section">
+            <span class="s-title">按品种筛选</span>
+          </div>
+          <div class="search-chips">
+            <div class="search-chip hot" onclick="doSearchWith('英短')">🔥 英短</div>
+            <div class="search-chip hot" onclick="doSearchWith('橘猫')">🔥 橘猫</div>
+            <div class="search-chip hot" onclick="doSearchWith('布偶')">🔥 布偶</div>
+            <div class="search-chip" onclick="doSearchWith('比熊')">比熊</div>
+            <div class="search-chip" onclick="doSearchWith('柯基')">柯基</div>
+            <div class="search-chip" onclick="doSearchWith('金毛')">金毛</div>
+          </div>
+          <div class="srch-section">
+            <span class="s-title">按地点</span>
+          </div>
+          <div class="search-chips">
+            <div class="search-chip" onclick="doSearchWith('古城')">古城</div>
+            <div class="search-chip" onclick="doSearchWith('人民路')">人民路</div>
+            <div class="search-chip" onclick="doSearchWith('下关')">下关</div>
+            <div class="search-chip" onclick="doSearchWith('洱海')">洱海月</div>
+            <div class="search-chip" onclick="doSearchWith('苍山门')">苍山门</div>
+            <div class="search-chip" onclick="doSearchWith('喜洲')">喜洲</div>
+          </div>
+        </div>
+
+        <!-- 输入中：建议 -->
+        <div id="search-suggestion" style="display:none">
+          <div class="srch-section"><span class="s-title">搜索建议</span></div>
+          <div class="suggestion-list">
+            <div class="suggestion-item" onclick="doSearchFromSuggestion()">
+              <span class="sug-icon">🔍</span>
+              <span class="sug-text" id="sug-line-1">关键词</span>
+            </div>
+            <div class="suggestion-item" onclick="doSearchFromSuggestion()">
+              <span class="sug-icon">🐾</span>
+              <span class="sug-text" id="sug-line-2">相关帖子</span>
+              <span class="sug-tag" id="sug-line-2-tag">寻宠</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 结果 -->
+        <div id="search-result" style="display:none">
+          <div class="srch-section">
+            <span class="s-title">附近匹配</span>
+            <span style="font-size:12px;color:var(--ink-3)">· <span id="result-count">0</span> 条 · 最近优先</span>
+            <span class="s-right" id="result-keyword"></span>
+          </div>
+          <div class="search-result-list" id="search-result-list"></div>
+        </div>
+
+        <!-- 空结果 -->
+        <div id="search-empty" class="search-empty" style="display:none">
+          <div class="search-empty-icon">🔍</div>
+          <div class="search-empty-title">附近暂时没有匹配</div>
+          <div class="search-empty-sub">
+            换个关键词试试<br>
+            或者 <span class="search-empty-cta" onclick="showScreen('publish')">立刻发布寻宠</span> 让大家帮你找
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== Screen 16: Admin Review (已剥离至 admin-web-prototype.html) ===== -->
+    <!-- 根据 docs/05-risks.md，管理后台不能放在小程序内，已抽到独立 web 后台。 -->
+
+    <!-- ===== 启动时隐私协议 Modal（首次进入显示） ===== -->
+    <div class="privacy-modal" id="privacy-modal" style="position:absolute;inset:44px 0 0 0;background:rgba(15,23,42,0.55);backdrop-filter:blur(8px);z-index:1000;display:flex;align-items:center;justify-content:center;padding:24px">
+      <div style="background:white;border-radius:18px;padding:24px 22px;width:100%;max-height:90%;overflow-y:auto;box-shadow:0 20px 50px rgba(0,0,0,0.2)">
+        <div style="text-align:center;margin-bottom:14px">
+          <div style="width:54px;height:54px;background:linear-gradient(135deg,#FFF1E9,#FFDCC8);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:26px;margin:0 auto 10px">🐾</div>
+          <div style="font-size:17px;font-weight:700">欢迎使用寻宠 · 大理</div>
+          <div style="font-size:12px;color:var(--ink-3);margin-top:4px">使用前请阅读《用户协议》与《隐私政策》</div>
+        </div>
+        <div style="background:var(--bg);border-radius:12px;padding:14px;font-size:12.5px;color:var(--ink-2);line-height:1.65">
+          <b style="color:var(--ink-1)">我们会收集和使用以下信息：</b>
+          <div style="margin-top:6px">📍 <b>位置</b>：用于发布走失/招领信息、附近匹配（精度模糊至 500m）</div>
+          <div style="margin-top:4px">📷 <b>照片</b>：用于宠物识别匹配，将经平台审核</div>
+          <div style="margin-top:4px">📞 <b>手机号</b>：加密存储，仅通过虚拟号供他人联系</div>
+          <div style="margin-top:4px">💬 <b>聊天内容</b>：经审核送达，留存 6 个月以满足监管要求</div>
+          <div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border-soft);color:var(--ink-3);font-size:11.5px">
+            你可随时在「我的 → 注销账号」中删除所有个人数据。
+          </div>
+        </div>
+        <div style="display:flex;align-items:flex-start;gap:8px;margin:14px 4px 6px;font-size:12.5px;color:var(--ink-2);line-height:1.5">
+          <div style="width:18px;height:18px;border:2px solid var(--primary);border-radius:4px;background:var(--primary);color:white;display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0;margin-top:1px">✓</div>
+          <div>我已阅读并同意 <span style="color:var(--primary)">《用户协议》</span> 和 <span style="color:var(--primary)">《隐私政策》</span></div>
+        </div>
+        <div style="display:flex;gap:10px;margin-top:14px">
+          <div style="flex:1;padding:12px;text-align:center;border-radius:12px;border:1px solid var(--border);font-size:14px;color:var(--ink-3);cursor:pointer" onclick="alert('退出小程序')">不同意</div>
+          <div style="flex:1.6;padding:12px;text-align:center;border-radius:12px;background:linear-gradient(135deg,var(--primary),#FF4A12);color:white;font-size:14px;font-weight:600;cursor:pointer;box-shadow:0 4px 12px rgba(255,107,53,0.3)" onclick="document.getElementById('privacy-modal').style.display='none'">同意并继续</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  // Pin 数据：每个 pin 对应的详情信息
+  const pinData = {
+    lost1:  { emoji:'🐱', name:'胖丁',   type:'英短蓝猫 · 公 · 3岁', status:'丢失',  statusClass:'lost',  dist:'约 800 米',   time:'10 分钟前', screen:'detail-lost'  },
+    found1: { emoji:'🐱', name:'橘猫',   type:'橘色短毛 · ♀ · 约2岁', status:'招领', statusClass:'found', dist:'约 1,200 米', time:'30 分钟前', screen:'detail-found' },
+    care1:  { emoji:'🐶', name:'白色比熊', type:'比熊 · 公 · 约5kg',   status:'照料', statusClass:'care',  dist:'约 4,200 米', time:'2 小时前',  screen:'feed'        },
+    lost2:  { emoji:'🐶', name:'小型犬', type:'棕白色 · 约6kg',        status:'丢失',  statusClass:'lost',  dist:'约 3,400 米', time:'9 天前',    screen:'feed'        },
+    found2: { emoji:'🐶', name:'棕白犬', type:'中华田园犬 · 约12kg',   status:'招领', statusClass:'found', dist:'约 2,800 米', time:'1 天前',    screen:'feed'        },
+  };
+
+  function showPinPopup(key, pinEl) {
+    const d = pinData[key];
+    if (!d) return;
+    const popup = document.getElementById('pin-popup');
+    document.getElementById('popup-emoji').textContent = d.emoji;
+    document.getElementById('popup-name').textContent = d.name;
+    document.getElementById('popup-type').textContent = d.type;
+    document.getElementById('popup-dist').textContent = d.dist;
+    document.getElementById('popup-time').textContent = d.time;
+    const tag = document.getElementById('popup-status-tag');
+    tag.textContent = d.status;
+    tag.className = 'popup-status-tag ' + d.statusClass;
+    document.getElementById('popup-go-btn').onclick = function() { showScreen(d.screen); popup.classList.remove('show'); };
+    // 定位弹卡到 pin 上方
+    const rect = pinEl.getBoundingClientRect();
+    const containerRect = pinEl.closest('.map-container').getBoundingClientRect();
+    popup.style.left = (rect.left - containerRect.left + rect.width / 2) + 'px';
+    popup.style.top  = (rect.top  - containerRect.top) + 'px';
+    popup.classList.add('show');
+  }
+
+  function closePinPopup(e) {
+    const popup = document.getElementById('pin-popup');
+    if (popup && !popup.contains(e.target)) popup.classList.remove('show');
+  }
+
+  // ── 底部面板拖拽逻辑 ──
+  (function() {
+    const sheet   = document.getElementById('map-sheet');
+    const dragEl  = document.getElementById('sheet-drag-area');
+    const hint    = document.getElementById('sheet-drag-hint');
+    const content = document.getElementById('sheet-content');
+    if (!sheet || !dragEl) return;
+
+    const SNAPS = [52, 240, 420];   // 折叠 / 默认 / 展开
+    const LABELS = ['上滑查看更多 ↑', '上滑查看更多 ↑', '已展开 · 下滑收起 ↓'];
+    let curSnap = 1;   // 默认展开到 240px
+    let startY = 0, startH = 0, dragging = false;
+
+    function applySnap(idx) {
+      curSnap = Math.max(0, Math.min(SNAPS.length - 1, idx));
+      sheet.style.transition = 'height 0.32s cubic-bezier(0.34,1.2,0.64,1)';
+      sheet.style.height = SNAPS[curSnap] + 'px';
+      hint.textContent = LABELS[curSnap];
+      // 折叠时隐藏内容
+      const collapsed = curSnap === 0;
+      sheet.querySelector('.sheet-header').style.visibility = collapsed ? 'hidden' : '';
+      content.style.visibility = collapsed ? 'hidden' : '';
+    }
+
+    function nearestSnap(h) {
+      return SNAPS.reduce((best, s, i) =>
+        Math.abs(s - h) < Math.abs(SNAPS[best] - h) ? i : best, 0);
+    }
+
+    function onStart(e) {
+      dragging = true;
+      startY = e.touches ? e.touches[0].clientY : e.clientY;
+      startH = sheet.offsetHeight;
+      sheet.style.transition = 'none';
+      document.addEventListener('mousemove', onMove);
+      document.addEventListener('mouseup', onEnd);
+      document.addEventListener('touchmove', onMove, { passive: false });
+      document.addEventListener('touchend', onEnd);
+    }
+
+    function onMove(e) {
+      if (!dragging) return;
+      if (e.cancelable) e.preventDefault();
+      const y = e.touches ? e.touches[0].clientY : e.clientY;
+      const dy = startY - y;               // 上拉为正
+      const newH = Math.max(SNAPS[0], Math.min(SNAPS[SNAPS.length - 1], startH + dy));
+      sheet.style.height = newH + 'px';
+    }
+
+    function onEnd() {
+      if (!dragging) return;
+      dragging = false;
+      applySnap(nearestSnap(sheet.offsetHeight));
+      document.removeEventListener('mousemove', onMove);
+      document.removeEventListener('mouseup', onEnd);
+      document.removeEventListener('touchmove', onMove);
+      document.removeEventListener('touchend', onEnd);
+    }
+
+    dragEl.addEventListener('mousedown', onStart);
+    dragEl.addEventListener('touchstart', onStart, { passive: true });
+
+    // 点击拖动条在三个档位间切换
+    dragEl.addEventListener('click', function() {
+      applySnap((curSnap + 1) % SNAPS.length);
+    });
+
+    applySnap(1);   // 初始为默认档
+    window._expandSheet = function(i) { applySnap(i !== undefined ? i : 1); };
+
+    // 供地图拖拽调用：自动收起面板
+    window._collapseSheet = function() {
+      if (curSnap > 0) applySnap(0);
+    };
+  })();
+
+  // ── 地图拖拽逻辑 ──
+  (function() {
+    const container = document.getElementById('map-container');
+    const layer     = document.getElementById('map-layer');
+    if (!container || !layer) return;
+
+    let tx = 0, ty = 0;           // 当前偏移量
+    let startX, startY;           // 拖拽起点
+    let startTx, startTy;         // 拖拽起点时的偏移量
+    let dragging = false;
+    let hasMoved = false;         // 区分点击与拖拽
+
+    const BOUND = 180;            // 最大拖拽距离（px）
+
+    window._getMapOffset = function() { return { tx: tx, ty: ty }; };
+    window._setMapOffset = function(x, y) { tx = x; ty = y; };
+
+    function applyTransform(x, y, animate) {
+      layer.style.transition = animate ? 'transform 0.4s cubic-bezier(0.25,1,0.5,1)' : 'none';
+      layer.style.transform  = `translate(${x}px, ${y}px)`;
+    }
+
+    function clamp(v, min, max) { return Math.max(min, Math.min(max, v)); }
+
+    function onStart(e) {
+      if (e.target.closest('.map-pin') || e.target.closest('.sheet-drag-area')) return;
+      const pt = e.touches ? e.touches[0] : e;
+      startX  = pt.clientX; startY = pt.clientY;
+      startTx = tx;         startTy = ty;
+      dragging = true; hasMoved = false;
+      layer.classList.add('dragging');
+      container.style.cursor = 'grabbing';
+    }
+
+    function onMove(e) {
+      if (!dragging) return;
+      const pt = e.touches ? e.touches[0] : e;
+      const dx = pt.clientX - startX;
+      const dy = pt.clientY - startY;
+      if (Math.abs(dx) > 4 || Math.abs(dy) > 4) {
+        if (!hasMoved) {
+          // 首次移动：收起底部面板 + 关闭弹窗
+          if (window._collapseSheet) window._collapseSheet();
+          document.getElementById('pin-popup').classList.remove('show');
+        }
+        hasMoved = true;
+      }
+      tx = clamp(startTx + dx, -BOUND, BOUND);
+      ty = clamp(startTy + dy, -BOUND, BOUND);
+      applyTransform(tx, ty, false);
+      if (e.cancelable) e.preventDefault();
+    }
+
+    function onEnd() {
+      if (!dragging) return;
+      dragging = false;
+      layer.classList.remove('dragging');
+      container.style.cursor = '';
+      // 若移动距离超过阈值，显示「在此区域搜索」按钮
+      var sab = document.getElementById('search-area-btn');
+      if (sab) {
+        if (hasMoved && (Math.abs(tx) > 15 || Math.abs(ty) > 15)) {
+          sab.style.animation = 'none';
+          sab.style.display = '';
+          requestAnimationFrame(function() { sab.style.animation = ''; });
+        } else {
+          sab.style.display = 'none';
+        }
+      }
+    }
+
+    container.addEventListener('mousedown',  onStart);
+    window.addEventListener('mousemove',     onMove);
+    window.addEventListener('mouseup',       onEnd);
+    container.addEventListener('touchstart', onStart, { passive: true });
+    container.addEventListener('touchmove',  onMove,  { passive: false });
+    container.addEventListener('touchend',   onEnd);
+
+    // 防止拖拽后触发 pin 点击
+    container.addEventListener('click', function(e) {
+      if (hasMoved) { e.stopPropagation(); hasMoved = false; }
+    }, true);
+
+    // 📍 定位按钮：回到原点并闪烁蓝点
+    const locBtn = document.getElementById('btn-locate');
+    if (locBtn) {
+      locBtn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        tx = 0; ty = 0;
+        applyTransform(0, 0, true);
+        if (typeof resetMapView === 'function') resetMapView();
+        locBtn.classList.add('locating');
+        // 蓝点跳动反馈
+        const locDot = document.getElementById('loc-dot');
+        if (locDot) {
+          locDot.style.transition = 'transform 0.2s';
+          locDot.style.transform  = 'translate(-50%,-50%) scale(1.6)';
+          setTimeout(() => { locDot.style.transform = 'translate(-50%,-50%) scale(1)'; }, 250);
+        }
+        setTimeout(() => locBtn.classList.remove('locating'), 1400);
+      });
+    }
+  })();
+
+  // ── 宠物搜索面板 ──
+  (function() {
+    const allPinData = {
+      lost1:  { emoji:'🐱', name:'胖丁',   type:'英短蓝猫 · 公 · 3岁',       statusClass:'lost',  statusLabel:'丢失' },
+      found1: { emoji:'🐱', name:'橘猫',   type:'橘色短毛 · ♀ · 约2岁',       statusClass:'found', statusLabel:'招领' },
+      care1:  { emoji:'🐶', name:'白色比熊', type:'比熊 · 公 · 约5kg',         statusClass:'care',  statusLabel:'照料中' },
+      lost2:  { emoji:'🐶', name:'小型犬', type:'棕白色 · 约6kg',              statusClass:'lost',  statusLabel:'丢失' },
+      found2: { emoji:'🐶', name:'棕白犬', type:'中华田园犬 · 约12kg',         statusClass:'found', statusLabel:'招领' },
+    };
+
+    const searchBtn   = document.getElementById('btn-search');
+    const panel       = document.getElementById('map-search-panel');
+    const input       = document.getElementById('map-search-input');
+    const results     = document.getElementById('map-search-results');
+    const container   = document.getElementById('map-container');
+
+    if (!searchBtn || !panel) return;
+
+    function renderResults(query) {
+      const q = query.trim().toLowerCase();
+      const keys = Object.keys(allPinData).filter(k => {
+        const d = allPinData[k];
+        return !q || d.name.includes(query) || d.type.toLowerCase().includes(q) || d.statusLabel.includes(query);
+      });
+      if (!keys.length) {
+        results.innerHTML = '<div class="map-search-empty">未找到匹配宠物</div>';
+        return;
+      }
+      results.innerHTML = keys.map(k => {
+        const d = allPinData[k];
+        return `<div class="map-search-item" onclick="selectSearchPin('${k}')">
+          <div class="si-emoji">${d.emoji}</div>
+          <div class="si-info">
+            <div class="si-name">${d.name}</div>
+            <div class="si-meta">${d.type}</div>
+          </div>
+          <div class="si-tag ${d.statusClass}">${d.statusLabel}</div>
+        </div>`;
+      }).join('');
+    }
+
+    searchBtn.addEventListener('click', function(e) {
+      e.stopPropagation();
+      panel.classList.toggle('show');
+      if (panel.classList.contains('show')) {
+        renderResults('');
+        input.value = '';
+        input.focus();
+      }
+    });
+
+    input.addEventListener('input', function() { renderResults(this.value); });
+
+    // 点击地图其他区域关闭搜索面板
+    if (container) {
+      container.addEventListener('click', function(e) {
+        if (!panel.contains(e.target) && e.target !== searchBtn) {
+          panel.classList.remove('show');
+        }
+      });
+    }
+
+    window.selectSearchPin = function(key) {
+      panel.classList.remove('show');
+      // 重置地图到原点（让 pin 在可见区域内）
+      const mapLayer = document.getElementById('map-layer');
+      if (mapLayer) {
+        mapLayer.style.transition = 'transform 0.4s cubic-bezier(0.25,1,0.5,1)';
+        mapLayer.style.transform  = 'translate(0px,0px)';
+      }
+      // 高亮显示 pin 弹卡
+      setTimeout(function() {
+        const pinEl = document.querySelector(`[data-pin-key="${key}"]`);
+        if (pinEl) showPinPopup(key, pinEl);
+      }, 420);
+    };
+  })();
+
+  // ── 筛选按钮：1上2下三色 pin → 丢失 → 招领 → 照料中 → 循环 ──
+  (function() {
+    const filterBtn = document.getElementById('btn-filter');
+    if (!filterBtn) return;
+
+    // 泪滴形 pin 路径（和地图 pin-head 同款）
+    var P = 'M8 0C4.7 0 2 2.7 2 6c0 4.5 6 13 6 13S14 10.5 14 6C14 2.7 11.3 0 8 0z';
+
+    // 单色大 pin（激活态）
+    function pinSVG(fill) {
+      return '<svg width="20" height="24" viewBox="0 0 16 19" style="display:block;pointer-events:none">'
+        + '<path d="' + P + '" fill="' + fill + '"></path>'
+        + '</svg>';
+    }
+
+    // 1上(红) 2下(绿+橙) 紧凑三角，适配 40×40 圆形按钮
+    var allSVG = '<svg width="28" height="24" viewBox="0 0 28 24" style="display:block;pointer-events:none">'
+      + '<g transform="translate(9,0) scale(0.64)"><path d="' + P + '" fill="#DC2626"></path></g>'
+      + '<g transform="translate(1,12) scale(0.64)"><path d="' + P + '" fill="#059669"></path></g>'
+      + '<g transform="translate(16,12) scale(0.64)"><path d="' + P + '" fill="#D97706"></path></g>'
+      + '</svg>';
+
+    var states = [
+      { html: allSVG,            bg: 'white',   cls: null,   label: '筛选（点击切换）' },
+      { html: pinSVG('#DC2626'), bg: '#FEE2E2', cls: 'lost',  label: '当前：丢失' },
+      { html: pinSVG('#059669'), bg: '#D1FAE5', cls: 'found', label: '当前：招领' },
+      { html: pinSVG('#D97706'), bg: '#FEF3C7', cls: 'care',  label: '当前：照料中' },
+    ];
+    var cur = 0;
+
+    var statusLabel = { lost: '丢失', found: '招领', care: '照料中' };
+
+    function applyState(s) {
+      filterBtn.innerHTML        = s.html;
+      filterBtn.style.background = s.bg;
+      filterBtn.title            = s.label;
+
+      // 同步地图 pin
+      document.querySelectorAll('.map-pin').forEach(function(pin) {
+        pin.style.display = (!s.cls || pin.classList.contains(s.cls)) ? '' : 'none';
+      });
+
+      // 同步底部面板卡片
+      var cards = document.querySelectorAll('.sheet-card');
+      var visible = 0;
+      cards.forEach(function(card) {
+        var show = !s.cls || card.dataset.status === s.cls;
+        card.style.display = show ? '' : 'none';
+        if (show) visible++;
+      });
+
+      // 同步全局状态
+      window._currentStatusFilter = s.cls || '';
+
+      // 更新面板标题（视口模式下由 applyViewportDimming 接管）
+      if (window._isViewportMode && typeof applyViewportDimming === 'function') {
+        var offset2 = window._getMapOffset ? window._getMapOffset() : {tx:0,ty:0};
+        applyViewportDimming(getPinsInViewport(offset2.tx, offset2.ty));
+      } else if (typeof updateSheetTitle === 'function') {
+        updateSheetTitle(s.cls || '', visible);
+      } else {
+        var titleEl = document.getElementById('sheet-title');
+        if (titleEl) {
+          var sfx = s.cls ? ('· ' + statusLabel[s.cls] + ' ') : '';
+          titleEl.textContent = '可见区域 ' + sfx + '· ' + visible + ' 条信息';
+        }
+      }
+
+      // 同步底部面板筛选 chip
+      if (window._syncSheetChips) window._syncSheetChips(s.cls || '');
+
+      document.getElementById('pin-popup').classList.remove('show');
+    }
+
+    filterBtn.addEventListener('click', function(e) {
+      e.stopPropagation();
+      cur = (cur + 1) % states.length;
+      applyState(states[cur]);
+    });
+
+    applyState(states[0]); // 初始态
+
+    // 暴露：底部面板 chip 可通过此接口驱动 fab + pin 同步更新
+    window._applyFilter = function(cls) {
+      var idx = 0;
+      for (var i = 0; i < states.length; i++) {
+        if ((states[i].cls || '') === (cls || '')) { idx = i; break; }
+      }
+      cur = idx;
+      applyState(states[cur]);
+    };
+  })();
+
+  // ────── 全局工具函数 ──────
+
+  window._currentStatusFilter = '';
+  window._isViewportMode = false;
+
+  // 筛选 › 展开/折叠
+  (function() {
+    var toggle = document.getElementById('sheet-filter-toggle');
+    var row    = document.getElementById('sheet-filter-row');
+    if (!toggle || !row) return;
+    toggle.addEventListener('click', function() {
+      row.classList.toggle('show');
+      toggle.classList.toggle('active');
+      toggle.textContent = row.classList.contains('show') ? '筛选 ×' : '筛选 ›';
+    });
+  })();
+
+  // chip 同步（供 filter IIFE 调用）
+  window._syncSheetChips = function(cls) {
+    document.querySelectorAll('.sfc').forEach(function(c) {
+      c.classList.toggle('active', c.dataset.sf === (cls || ''));
+    });
+  };
+
+  // 底部面板筛选 chip 点击 → 驱动 fab + 地图 pin 同步
+  function applySheetFilter(el, cls) {
+    if (window._applyFilter) window._applyFilter(cls || '');
+  }
+
+  // 点击底部卡片 → 地图动画定位到对应 pin 并弹出预览
+  function locatePinFromSheet(key) {
+    var pinEl = document.querySelector('[data-pin-key="' + key + '"]');
+    if (!pinEl) return;
+    var containerEl = document.getElementById('map-container');
+    var mapLayer    = document.getElementById('map-layer');
+    if (!containerEl || !mapLayer) return;
+    var cw = containerEl.offsetWidth;
+    var ch = containerEl.offsetHeight;
+    var leftPct = parseFloat(pinEl.style.left);
+    var topPct  = parseFloat(pinEl.style.top);
+    var BOUND = 180;
+    var targetTx = Math.max(-BOUND, Math.min(BOUND, cw * (0.5 - leftPct / 100)));
+    var targetTy = Math.max(-BOUND, Math.min(BOUND, ch * (0.5 - topPct / 100)));
+    mapLayer.style.transition = 'transform 0.4s cubic-bezier(0.25,1,0.5,1)';
+    mapLayer.style.transform  = 'translate(' + targetTx + 'px,' + targetTy + 'px)';
+    if (window._setMapOffset) window._setMapOffset(targetTx, targetTy);
+    var sab = document.getElementById('search-area-btn');
+    if (sab) sab.style.display = 'none';
+    if (window._expandSheet) window._expandSheet(1);
+    setTimeout(function() { showPinPopup(key, pinEl); }, 420);
+  }
+
+  // 计算当前地图层视口内的 pin 键集合
+  function getPinsInViewport(tx, ty) {
+    var containerEl = document.getElementById('map-container');
+    if (!containerEl) return new Set();
+    var cw = containerEl.offsetWidth;
+    var ch = containerEl.offsetHeight;
+    var visKeys = new Set();
+    document.querySelectorAll('.map-pin[data-pin-key]').forEach(function(pin) {
+      if (pin.style.display === 'none') return;
+      var sx = (parseFloat(pin.style.left) / 100) * cw + tx;
+      var sy = (parseFloat(pin.style.top)  / 100) * ch + ty;
+      if (sx >= 0 && sx <= cw && sy >= 0 && sy <= ch) visKeys.add(pin.dataset.pinKey);
+    });
+    return visKeys;
+  }
+
+  // 对视口外的卡片加 out-of-view 并更新标题计数
+  function applyViewportDimming(visKeys) {
+    var count = 0;
+    document.querySelectorAll('.sheet-card').forEach(function(card) {
+      if (card.style.display === 'none') return;
+      var inView = visKeys.has(card.dataset.pinKey);
+      card.classList.toggle('out-of-view', !inView);
+      if (inView) count++;
+    });
+    updateSheetTitle(window._currentStatusFilter || '', count);
+  }
+
+  // 更新底部面板标题
+  function updateSheetTitle(cls, count) {
+    var titleEl = document.getElementById('sheet-title');
+    if (!titleEl) return;
+    var statusLabel = { lost: '丢失', found: '招领', care: '照料中' };
+    var prefix = window._isViewportMode ? '此区域' : '可见区域';
+    var filterPart = cls ? (' · ' + statusLabel[cls]) : '';
+    titleEl.textContent = prefix + filterPart + ' · ' + count + ' 条信息';
+  }
+
+  // 点击「在此区域搜索」
+  function searchThisArea() {
+    window._isViewportMode = true;
+    var btn = document.getElementById('search-area-btn');
+    if (btn) btn.style.display = 'none';
+    var hint = document.getElementById('sheet-viewport-hint');
+    if (hint) hint.classList.add('show');
+    var offset = window._getMapOffset ? window._getMapOffset() : { tx: 0, ty: 0 };
+    applyViewportDimming(getPinsInViewport(offset.tx, offset.ty));
+    if (window._expandSheet) window._expandSheet(1);
+  }
+
+  // 首页卡片位置联动地图
+  function showOnMap(pinKey) {
+    showScreen('map');
+    var pinEl = document.querySelector('[data-pin-key="' + pinKey + '"]');
+    if (!pinEl) return;
+    var containerEl = document.getElementById('map-container');
+    var mapLayer    = document.getElementById('map-layer');
+    if (!containerEl || !mapLayer) return;
+    var cw = containerEl.offsetWidth;
+    var ch = containerEl.offsetHeight;
+    var BOUND = 180;
+    var targetTx = Math.max(-BOUND, Math.min(BOUND, cw * (0.5 - parseFloat(pinEl.style.left) / 100)));
+    var targetTy = Math.max(-BOUND, Math.min(BOUND, ch * (0.5 - parseFloat(pinEl.style.top)  / 100)));
+    mapLayer.style.transition = 'transform 0.5s cubic-bezier(0.25,1,0.5,1)';
+    mapLayer.style.transform  = 'translate(' + targetTx + 'px,' + targetTy + 'px)';
+    if (window._setMapOffset) window._setMapOffset(targetTx, targetTy);
+    var sab = document.getElementById('search-area-btn');
+    if (sab) sab.style.display = 'none';
+    if (window._expandSheet) window._expandSheet(1);
+    setTimeout(function() { showPinPopup(pinKey, pinEl); }, 520);
+  }
+
+  // 重置地图视图（定位按钮调用）
+  function resetMapView() {
+    window._isViewportMode = false;
+    var btn = document.getElementById('search-area-btn');
+    if (btn) btn.style.display = 'none';
+    var hint = document.getElementById('sheet-viewport-hint');
+    if (hint) hint.classList.remove('show');
+    document.querySelectorAll('.sheet-card').forEach(function(c) { c.classList.remove('out-of-view'); });
+    var count = 0;
+    document.querySelectorAll('.sheet-card').forEach(function(c) {
+      if (c.style.display !== 'none') count++;
+    });
+    updateSheetTitle(window._currentStatusFilter || '', count);
+    if (window._expandSheet) window._expandSheet(1);
+  }
+
+  // ── 导航历史栈 ──
+  const _navHistory = ['feed'];
+  function showScreen(name) {
+    document.getElementById('pin-popup').classList.remove('show');
+    document.querySelectorAll('.screen').forEach(el => el.classList.remove('active'));
+    const t = document.querySelector(`[data-screen="${name}"]`);
+    if (t) t.classList.add('active');
+    if (_navHistory[_navHistory.length - 1] !== name) _navHistory.push(name);
+    if (name === 'search') {
+      setTimeout(() => { const b = document.getElementById('search-box'); if (b) b.focus(); }, 80);
+    }
+  }
+  function goBack() {
+    _navHistory.pop();
+    const prev = _navHistory[_navHistory.length - 1] || 'feed';
+    document.querySelectorAll('.screen').forEach(el => el.classList.remove('active'));
+    const t = document.querySelector(`[data-screen="${prev}"]`);
+    if (t) t.classList.add('active');
+  }
+
+  // ── 排序 ──
+  function openSortSheet() { document.getElementById('sort-sheet').classList.add('show'); }
+  function closeSortSheet() { document.getElementById('sort-sheet').classList.remove('show'); }
+  function applySort(method) {
+    document.querySelectorAll('#sort-sheet .as-option').forEach(o => {
+      o.classList.toggle('selected', o.dataset.sort === method);
+    });
+    const labels = { time: '⏱ 最新 ▾', distance: '📍 最近 ▾' };
+    const chip = document.getElementById('sort-chip');
+    if (chip) chip.textContent = labels[method] || '⏱ 最新 ▾';
+    closeSortSheet();
+  }
+
+  // ── 搜索数据（与首页卡片同源）──
+  const SEARCH_DATA = [
+    { name:'橘猫',   breed:'约 2 岁 · ♀',      loc:'人民路三月街', status:'found', statusLabel:'招领', time:'30 分钟前', urgent:true,  screen:'detail-found' },
+    { name:'胖丁',   breed:'英短蓝猫 · ♂ 3 岁', loc:'古城北门',     status:'lost',  statusLabel:'寻宠', time:'10 分钟前', urgent:true,  screen:'detail-lost'  },
+    { name:'白色比熊', breed:'约 5kg · ♂',      loc:'下关泰安路',   status:'found', statusLabel:'招领', time:'2 小时前',  urgent:false, screen:'feed'         },
+    { name:'小型犬', breed:'棕白色 · 约 6kg',    loc:'苍山门',       status:'lost',  statusLabel:'寻宠', time:'9 天前',    urgent:false, screen:'feed'         },
+    { name:'棕白犬', breed:'中华田园犬 · 约12kg', loc:'苍山门',      status:'found', statusLabel:'招领', time:'1 天前',    urgent:false, screen:'feed'         },
+  ];
+  function matchSearch(keyword) {
+    const k = keyword.trim().toLowerCase();
+    if (!k) return [];
+    return SEARCH_DATA.filter(d =>
+      [d.name, d.breed, d.loc, d.statusLabel].join(' ').toLowerCase().includes(k)
+    );
+  }
+  function escapeHtml(s) {
+    return s.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]);
+  }
+  function showSearchState(state) {
+    ['default','suggestion','result','empty'].forEach(s => {
+      const el = document.getElementById('search-' + s);
+      if (el) el.style.display = s === state ? '' : 'none';
+    });
+  }
+  function onSearchInput() {
+    const box = document.getElementById('search-box');
+    const wrap = document.getElementById('search-wrap');
+    const v = box.value.trim();
+    wrap.classList.toggle('has-text', !!v);
+    if (!v) { showSearchState('default'); return; }
+    const matches = matchSearch(v);
+    document.getElementById('sug-line-1').innerHTML = `搜 "<mark>${escapeHtml(v)}</mark>" · ${matches.length} 条`;
+    if (matches.length > 0) {
+      const first = matches[0];
+      document.getElementById('sug-line-2').innerHTML = `<mark>${escapeHtml(first.name)}</mark> · ${first.loc}`;
+      const tag = document.getElementById('sug-line-2-tag');
+      tag.textContent = first.statusLabel;
+      tag.className = 'sug-tag' + (first.status === 'found' ? ' found' : '');
+    }
+    showSearchState('suggestion');
+  }
+  function doSearch() {
+    const v = document.getElementById('search-box').value.trim();
+    if (v) showResultsFor(v);
+  }
+  function doSearchWith(keyword) {
+    const box = document.getElementById('search-box');
+    box.value = keyword;
+    document.getElementById('search-wrap').classList.add('has-text');
+    showResultsFor(keyword);
+  }
+  function doSearchFromSuggestion() {
+    const v = document.getElementById('search-box').value.trim();
+    if (v) showResultsFor(v);
+  }
+  function showResultsFor(keyword) {
+    const matches = matchSearch(keyword);
+    document.getElementById('result-keyword').textContent = `关于 "${keyword}"`;
+    if (!matches.length) { showSearchState('empty'); return; }
+    document.getElementById('result-count').textContent = matches.length;
+    document.getElementById('search-result-list').innerHTML = matches.map(d => `
+      <div class="card" style="margin-bottom:10px" onclick="showScreen('${d.screen}')">
+        <div class="card-row">
+          <div class="info">
+            <div class="pet-title">${escapeHtml(d.name)} <span class="breed">· ${escapeHtml(d.breed)}</span></div>
+            <div class="pet-meta">📍 ${escapeHtml(d.loc)} · <span class="time-tag ${d.urgent?'urgent':''}">${d.urgent?'⚡ ':''}${escapeHtml(d.time)}</span></div>
+          </div>
+        </div>
+      </div>`).join('');
+    showSearchState('result');
+  }
+  function clearSearchInput() {
+    const box = document.getElementById('search-box');
+    box.value = '';
+    document.getElementById('search-wrap').classList.remove('has-text');
+    box.focus();
+    showSearchState('default');
+  }
+  function clearHistory() {
+    document.getElementById('history-chips').innerHTML =
+      '<div style="font-size:12px;color:var(--ink-4);padding:4px 0">暂无搜索历史</div>';
+  }
+</script>
+
+<div class="annotations">
+  <h4>🗂 15 屏全景（admin 已独立）</h4>
+  <ul>
+    <li><b>主流程 8 屏</b>：信息流 / 地图 / 寻宠详情 / 招领详情 / 发布表单 / 联系失主 / 归还自检 / 归还成功</li>
+    <li><b>用户辅助 5 屏</b>：感谢信编辑 / 消息列表 / 消息对话 / 个人中心 / 善行值流水</li>
+    <li><b>管理辅助 2 屏</b>：我的发布 / 争议申诉</li>
+    <li><b>已剥离</b>：后台审核 → 见独立文件 <code>admin-web-prototype.html</code>（独立 web 后台，不在小程序内）</li>
+  </ul>
+
+  <h4>🛡 合规改造点（详见 docs/05-risks.md）</h4>
+  <ul>
+    <li>✅ admin 屏从小程序剥离 → 独立 web 后台</li>
+    <li>✅ 联系方式改为「站内消息」或「虚拟号中转」，禁止明文手机号 / 微信号</li>
+    <li>✅ 发布表单加内容审核提示 + 禁止悬赏金/感谢金等金钱往来声明</li>
+    <li>✅ 个人中心增加：用户协议 / 隐私政策 / 联系客服 / 注销账号 + ICP 备案信息</li>
+    <li>✅ 争议申诉文案：志愿者 → 平台审核员，去除"公示"等隐私风险</li>
+    <li>✅ 善行值顶部加"仅荣誉激励，不可兑换现金/商品"提示</li>
+    <li>✅ 启动时显示隐私协议确认 modal（见首屏）</li>
+  </ul>
+
+  <h4>📲 点这里直接跳转任一屏（debug 用）</h4>
+  <div class="nav-grid">
+    <div class="nav-jump" onclick="showScreen('feed')">🏠 首页信息流</div>
+    <div class="nav-jump" onclick="showScreen('map')">🗺 地图视图</div>
+    <div class="nav-jump" onclick="showScreen('detail-lost')">🔴 寻宠详情</div>
+    <div class="nav-jump" onclick="showScreen('detail-found')">🟢 招领详情</div>
+    <div class="nav-jump" onclick="showScreen('publish')">📝 发布表单</div>
+    <div class="nav-jump" onclick="showScreen('contact-guide')">💬 联系失主</div>
+    <div class="nav-jump" onclick="showScreen('return-checklist')">✅ 归还自检</div>
+    <div class="nav-jump" onclick="showScreen('return-success')">🎉 归还成功</div>
+    <div class="nav-jump" onclick="showScreen('thanks-edit')">💌 感谢信编辑</div>
+    <div class="nav-jump" onclick="showScreen('messages')">💬 消息列表</div>
+    <div class="nav-jump" onclick="showScreen('chat')">🗨️ 消息对话</div>
+    <div class="nav-jump" onclick="showScreen('profile')">👤 个人中心</div>
+    <div class="nav-jump" onclick="showScreen('points-history')">📊 善行值流水</div>
+    <div class="nav-jump" onclick="showScreen('my-posts')">📝 我的发布</div>
+    <div class="nav-jump" onclick="showScreen('dispute')">⚠️ 争议申诉</div>
+  </div>
+
+  <div class="nav-hint" style="margin-top: 20px">
+    <b>🛤 自然路径</b>：首页 → 卡片 → 详情 → 联系失主 → 归还自检 → 归还成功 → 感谢信编辑<br>
+    <b>🛤 信息查看</b>：首页 → 通知按钮/我的 → 消息列表/个人中心 → 善行值流水/我的发布<br>
+    <b>🛤 管理路径</b>：管理后台已独立 → 见 <code>admin-web-prototype.html</code>
+  </div>
+
+  <p style="margin-top: 20px; font-size: 13px; color: var(--ink-2)"><b>💬 v7 合规化版本</b>：基于 v5 的 16 屏，按 <code>docs/05-risks.md</code> 完整合规改造。
+  admin 屏已剥离至独立 <code>admin-web-prototype.html</code>（独立 web 后台，不进小程序）。
+  本版按"个体工商户主体 + 工具类目"假设设计，可平滑升级至公益类目。
+  </p>
+</div>
+</body>
+</html>
