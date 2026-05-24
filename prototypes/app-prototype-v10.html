@@ -202,31 +202,7 @@
     .pc-name { font-size: 16px; font-weight: 700; letter-spacing: -0.005em; }
     .pc-name .breed { font-size: 11.5px; color: var(--ink-3); font-weight: 500; }
     .pc-meta { font-size: 12px; color: var(--ink-3); margin-bottom: 6px; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
-    .pc-meta .time { font-family: var(--font-en); font-weight: 600; }
-    .pc-meta .urgent {
-      color: var(--apricot-deep); background: var(--apricot-soft);
-      padding: 1px 7px; border-radius: var(--radius-pill); font-size: 11px; font-weight: 700;
-      cursor: help;
-    }
-    /* 找回窗口徽章（自动派生 · 不可手动设置） */
-    .phase-badge {
-      display: inline-flex; align-items: center; gap: 4px;
-      font-size: 10px; font-weight: 700;
-      padding: 1.5px 7px 2px; border-radius: 999px;
-      letter-spacing: 0.02em; line-height: 1.35;
-      white-space: nowrap;
-    }
-    .phase-badge .pd { width: 5px; height: 5px; border-radius: 50%; }
-    .phase-badge.green  { background: rgba(91,184,159,0.14);  color: #2F8C75; }
-    .phase-badge.green  .pd { background: var(--mint); }
-    .phase-badge.yellow { background: rgba(240,172,50,0.16);  color: #B97F1E; }
-    .phase-badge.yellow .pd { background: var(--honey); }
-    .phase-badge.orange { background: rgba(255,133,82,0.14);  color: var(--apricot-deep); }
-    .phase-badge.orange .pd { background: var(--apricot); }
-    .phase-badge.red    { background: rgba(220,80,80,0.14);   color: #A03838; }
-    .phase-badge.red    .pd { background: #DC5050; }
-    .phase-badge.gray   { background: rgba(120,120,120,0.10); color: #767676; }
-    .phase-badge.gray   .pd { background: #888; }
+    .pc-meta .time { font-family: var(--font-en); font-weight: 600; color: var(--ink-3); }
     .pc-desc { font-size: 12.5px; color: var(--ink-2); line-height: 1.55; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
     .pc-footer { display: flex; align-items: center; padding: 10px 14px 12px; gap: 8px; border-top: 1px solid var(--divider-soft); }
     .distance-tag {
@@ -1937,37 +1913,24 @@
       opacity: 1; transform: translateX(-50%) translateY(0);
     }
 
-    /* 卡片左侧状态彩边 */
-    .pet-card.urgent-card {
-      border-left: 3px solid var(--apricot);
-      box-shadow: 0 8px 22px rgba(255,133,82,0.16), 0 0 0 1px rgba(255,133,82,0.10);
-      position: relative;
-    }
-    .pet-card.urgent-card::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 16px; right: 16px;
-      height: 2px;
-      background: linear-gradient(90deg, transparent 0%, var(--apricot) 50%, transparent 100%);
-      border-radius: 2px;
-      opacity: 0.85;
-    }
-    /* "附近的人也在找" 社区暗示（仅 urgent 卡） */
+    /* 卡片左侧状态彩边（极简版 · 不强化任何一类卡） */
+    .pet-card.lost-card   { border-left: 3px solid var(--apricot); }
+    .pet-card.found-card  { border-left: 3px solid var(--mint); }
+    .pet-card.care-card   { border-left: 3px solid var(--plum); }
+    /* "附近的人也在帮"社区暗示 · 希望叙事主力（距离 ≤ 5km 都显示） */
     .nearby-helpers {
       display: flex; align-items: center; gap: 5px;
       margin-top: 7px;
       padding: 5px 9px 6px;
-      background: linear-gradient(90deg, rgba(255,133,82,0.08), rgba(255,133,82,0.02));
+      background: linear-gradient(90deg, rgba(91,184,159,0.10), rgba(91,184,159,0.03));
       border-radius: 7px;
       font-size: 10.5px;
-      color: var(--apricot-deep);
+      color: #2F8C75;
       font-weight: 600;
       letter-spacing: 0.01em;
     }
     .nearby-helpers .nh-ic { font-size: 11px; }
     .nearby-helpers .nh-num { font-family: var(--font-en); font-weight: 800; }
-    .pet-card.found-card  { border-left: 3px solid var(--mint); }
-    .pet-card.care-card   { border-left: 3px solid var(--plum); }
 
     /* 卡片顶部提示条 */
     .card-hint-strip {
@@ -3821,74 +3784,28 @@
     });
   }
 
-  /* ============== 找回窗口 · 紧迫度自动判定 ==============
-   * 「⚡ 急」不再硬编码，由两个客观信号派生：
-   *   1) 黄金窗口（动物行为学共识 · 找回率随时间衰减）
-   *   2) 地理临近（你能帮上忙）+ 健康危急（仅招领可勾）
-   * 用户无法手动设置 → 防滥用，保持 ⚡ 信号稀缺性
+  /* ============== 情感安全设计 · 不做时间倒计时 ==============
+   * 删除 phase / isUrgent / ⚡ 紧迫度系统 —— 原因：
+   * 「剩余时间」是损失框架，触发损失厌恶心理 → 反而制造焦虑
+   * 「黄金/第二/关键/长期」是平台对失主处境的"评判"，是俯视姿态
+   * 失主已经在自己计算时间，不需要平台再次提醒
+   *
+   * 替代方案：nearby-helpers 升级为"希望叙事"主力
+   * 距离 ≤ 5km 都显示「附近有同行者」—— 失主情绪锚定在被支持
    * ====================================================== */
-  function getRecoveryPhase(d) {
-    if (d.expired) return { name:'expired', label:'已过期', color:'gray', remaining:0 };
-    const t = d.timeMins;
-    if (d.status === 'lost') {
-      if (t < 360)  return { name:'golden',   label:'黄金时段', color:'green',  remaining:360 - t };
-      if (t < 1440) return { name:'second',   label:'第二窗口', color:'yellow', remaining:1440 - t };
-      if (t < 4320) return { name:'critical', label:'关键期',   color:'orange', remaining:4320 - t };
-      return { name:'longterm', label:'长期跟踪', color:'red', remaining:0 };
-    }
-    if (t < 1440) return { name:'fresh',  label:'新发现', color:'green',  remaining:1440 - t };
-    if (t < 4320) return { name:'recent', label:'近期',   color:'yellow', remaining:4320 - t };
-    return { name:'old', label:'陈旧', color:'gray', remaining:0 };
-  }
-
-  function isUrgent(d) {
-    if (d.expired) return false;
-    const phase = getRecoveryPhase(d);
-    if (d.status === 'lost' && phase.name === 'golden' && d.distanceKm <= 5) return true;
-    if (d.distanceKm <= 1 && d.timeMins <= 120) return true;
-    if (d.status === 'found' && d.health === 'urgent') return true;
-    return false;
-  }
-
-  function formatRemaining(mins) {
-    if (mins <= 0) return '';
-    if (mins < 60) return `剩 ${mins}min`;
-    const h = Math.floor(mins / 60);
-    const m = mins % 60;
-    return m === 0 ? `剩 ${h}h` : `剩 ${h}h${m}m`;
-  }
-
-  function urgentReason(d) {
-    if (!isUrgent(d)) return '';
-    const reasons = [];
-    const phase = getRecoveryPhase(d);
-    if (d.status === 'lost' && phase.name === 'golden' && d.distanceKm <= 5) {
-      reasons.push(`黄金时段${formatRemaining(phase.remaining)}`);
-    }
-    if (d.distanceKm <= 1) reasons.push(`距你 ${Math.round(d.distanceKm * 1000)}m`);
-    if (d.health === 'urgent') reasons.push('健康危急');
-    return reasons.join(' · ');
-  }
-
-  function renderTimeAndPhase(d) {
-    // 奥卡姆剃刀：时间感由 phase 的「剩余时间」承载，删除精确"10 min"字样避免与 phase 重复
-    // ⚡ 不再绑定时间，独立 chip 表达「对你来说急」（地理+时间双维度）
-    const urgent = isUrgent(d);
-    const phase = getRecoveryPhase(d);
-    const urgentHTML = urgent
-      ? `<span class="urgent" title="⚡ ${urgentReason(d)}">⚡</span>`
-      : '';
-    const remainTxt = phase.remaining > 0 ? ' · ' + formatRemaining(phase.remaining) : '';
-    const phaseHTML = `<span class="phase-badge ${phase.color}" title="${phase.label}${remainTxt}"><span class="pd"></span>${phase.label}${remainTxt}</span>`;
-    return urgentHTML + phaseHTML;
-  }
-
-  // "附近的人也在找" mock：基于 distance 推区域接力人数
   function renderNearbyHelpers(d) {
-    if (d.distanceKm > 5) return '';
-    const n = Math.max(1, Math.round((6 - d.distanceKm) * 0.8 + d.comments * 0.3));
-    const radius = d.distanceKm < 1 ? 1 : (d.distanceKm < 2 ? 2 : 5);
-    return `<div class="nearby-helpers"><span class="nh-ic">🤝</span>你 <span class="nh-num">${radius}</span>km 内还有 <span class="nh-num">${n}</span> 人正在帮忙找</div>`;
+    if (d.expired || d.distanceKm > 5) return '';
+    // mock：基于距离推一个区域接力人数
+    const n = Math.max(2, Math.round((6 - d.distanceKm) * 1.2 + d.comments * 0.4));
+    let copy;
+    if (d.distanceKm < 1) {
+      copy = `你附近还有 <span class="nh-num">${n}</span> 位邻居在留意`;
+    } else if (d.distanceKm < 3) {
+      copy = `古城 <span class="nh-num">${Math.ceil(d.distanceKm)}</span> 公里内 <span class="nh-num">${n}</span> 人在帮 ta 找`;
+    } else {
+      copy = `大理本地 <span class="nh-num">${n}</span> 人在接力转发`;
+    }
+    return `<div class="nearby-helpers"><span class="nh-ic">🤝</span>${copy}</div>`;
   }
 
   let currentFilter = 'all';
@@ -3980,8 +3897,8 @@
     const effStatus = d.mapStatus || d.status;
     const statusCls = d.expired ? 'expired' : effStatus;
     const statusLabel = d.expired ? '已过期' : d.statusLabel;
-    const borderClass = !d.expired ? (effStatus === 'lost' && isUrgent(d) ? ' urgent-card' : ' found-card') : '';
-    const timeSpan = renderTimeAndPhase(d);
+    const borderClass = !d.expired ? (effStatus === 'lost' ? ' lost-card' : ' found-card') : '';
+    const timeSpan = `<span class="time">${d.time}</span>`;
     const hint = CARD_HINTS[d.id];
     const hintHtml = hint ? `<div class="card-hint-strip ${effStatus}">${hint}<span class="hint-arrow">›</span></div>` : '';
     return `<div class="pet-card${borderClass}" ${expiredCardStyle} onclick="showScreen('${detailScreen}')">
@@ -3992,7 +3909,7 @@
           <div class="pc-name-row"><span class="pc-name">${d.name}</span><span class="breed">· ${d.breed}</span></div>
           <div class="pc-meta"><span>📍 ${d.loc} · ${distanceStr} km</span>${timeSpan}</div>
           <div class="pc-desc">${d.desc}</div>
-          ${isUrgent(d) ? renderNearbyHelpers(d) : ''}
+          ${renderNearbyHelpers(d)}
         </div>
       </div>
       <div class="pc-footer">
@@ -4189,14 +4106,14 @@
       const effStatus = d.mapStatus || d.status;
       const statusCls = d.expired ? 'expired' : effStatus;
       const statusLabel = d.expired ? '已过期' : d.statusLabel;
-      const urgentClass = !d.expired
-        ? (effStatus === 'lost' && isUrgent(d) ? ' urgent-card' : ' found-card')
+      const borderClass = !d.expired
+        ? (effStatus === 'lost' ? ' lost-card' : ' found-card')
         : '';
-      const timeSpan = renderTimeAndPhase(d);
+      const timeSpan = `<span class="time">${d.time}</span>`;
       const hint = CARD_HINTS[d.id];
       const hintHtml = hint ? `<div class="card-hint-strip ${effStatus}" onclick="event.stopPropagation();showScreen('${detailScreen}')">${hint}<span class="hint-arrow">›</span></div>` : '';
       return `
-        <div class="pet-card${urgentClass}" ${expiredCardStyle} onclick="showScreen('${detailScreen}')">
+        <div class="pet-card${borderClass}" ${expiredCardStyle} onclick="showScreen('${detailScreen}')">
           ${hintHtml}
           <div class="pc-body">
             <div class="pc-photo ${d.photoClass}">
@@ -4213,7 +4130,7 @@
                 ${timeSpan}
               </div>
               <div class="pc-desc">${d.desc}</div>
-              ${isUrgent(d) ? renderNearbyHelpers(d) : ''}
+              ${renderNearbyHelpers(d)}
             </div>
           </div>
           <div class="pc-footer">
@@ -5105,12 +5022,12 @@
       const expiredStyle = d.expired ? 'style="opacity:0.55"' : '';
       const statusCls = d.expired ? 'expired' : d.status;
       const statusLabel = d.expired ? '已过期' : d.statusLabel;
-      const urgentClass = !d.expired
-        ? (d.status === 'lost' && isUrgent(d) ? ' urgent-card' : ' found-card')
+      const borderClass = !d.expired
+        ? (d.status === 'lost' ? ' lost-card' : ' found-card')
         : '';
-      const timeSpan = renderTimeAndPhase(d);
+      const timeSpan = `<span class="time">${d.time}</span>`;
       return `
-        <div class="pet-card${urgentClass}" ${expiredStyle} onclick="showScreen('${detailScreen}')">
+        <div class="pet-card${borderClass}" ${expiredStyle} onclick="showScreen('${detailScreen}')">
           <div class="pc-body">
             <div class="pc-photo ${d.photoClass}">
               <span>${d.emoji}</span>
@@ -5126,7 +5043,7 @@
                 ${timeSpan}
               </div>
               <div class="pc-desc">${d.desc}</div>
-              ${isUrgent(d) ? renderNearbyHelpers(d) : ''}
+              ${renderNearbyHelpers(d)}
             </div>
           </div>
           <div class="pc-footer">
