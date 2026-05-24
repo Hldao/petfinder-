@@ -225,6 +225,19 @@
       display: flex;
       align-items: center;
       gap: 11px;
+      overflow: hidden;
+      max-height: 200px;
+      transition: opacity 0.5s ease, max-height 0.55s ease, margin 0.5s ease, padding 0.5s ease, border-width 0.5s ease;
+    }
+    .feed-stat-bar.dismissed {
+      opacity: 0;
+      max-height: 0;
+      margin-top: 0;
+      margin-bottom: 0;
+      padding-top: 0;
+      padding-bottom: 0;
+      border-width: 0;
+      pointer-events: none;
     }
     .fsb-ic {
       width: 28px; height: 28px;
@@ -4257,10 +4270,34 @@
     };
   }
 
+  /* ============== 自我介绍条 · 5s 后自动隐退（一次性教育）==============
+   * 产品哲学：告诉一次就够，不强加重复信息
+   * Prototype 阶段每次打开都演示；上线时改为 localStorage 永久隐退
+   * 用户滚动 feed 即立即收起（说明已开始使用，无需再"介绍"）
+   * ====================================================== */
+  function initStatBarAutoDismiss() {
+    const bar = document.querySelector('.feed-stat-bar');
+    if (!bar) return;
+    let dismissed = false;
+    const dismiss = () => {
+      if (dismissed) return;
+      dismissed = true;
+      bar.classList.add('dismissed');
+    };
+    // 5s 后自动收起
+    setTimeout(dismiss, 5000);
+    // 用户主动滚动 feed → 立即收起
+    const scrollArea = bar.closest('.scroll-area');
+    if (scrollArea) {
+      scrollArea.addEventListener('scroll', dismiss, { once: true, passive: true });
+    }
+  }
+
   // 初次渲染
   function initApp() {
     renderFeed(); renderArchive(); renderMapPins(); renderSheetCards();
     document.querySelectorAll('.filter-row').forEach(enableDragScroll);
+    initStatBarAutoDismiss();
   }
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', initApp);
