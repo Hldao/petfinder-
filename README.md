@@ -28,6 +28,7 @@
 | [`docs/03-mvp-scope.md`](./docs/03-mvp-scope.md) | **★ MVP 范围与功能规格**（6 大模块详细规格 + 接口清单 + 跨模块依赖）|
 | `docs/04-database.md` | 数据库表结构 — 🚧 待补 |
 | [`docs/05-risks.md`](./docs/05-risks.md) | **★ 合规风险与逐屏标注**（v5 的 16 屏 × 风险等级 + 上线 Checklist） |
+| [`docs/07-team-workflow.md`](./docs/07-team-workflow.md) | **★ 团队协作工作流**（真实事故复盘 + Merge checklist + Commit 习惯 · 新人必读） |
 
 ## 原型 / Prototypes
 
