@@ -754,14 +754,6 @@
       width: 18px; height: 18px; background: rgba(0,0,0,0.6); border-radius: 50%;
       color: white; font-size: 11px; display: flex; align-items: center; justify-content: center;
     }
-    .private-card { margin: 0 16px 12px; background: var(--honey-soft); border-radius: var(--radius-md); padding: 14px; }
-    .private-card-h { display: flex; align-items: center; gap: 6px; color: var(--honey-deep); font-size: 13.5px; font-weight: 700; margin-bottom: 4px; }
-    .private-card-sub { font-size: 11.5px; color: var(--honey-deep); line-height: 1.55; margin-bottom: 10px; }
-    .private-card textarea {
-      width: 100%; background: var(--surface); border: none; border-radius: var(--radius-sm);
-      padding: 10px 12px; font-family: var(--font-cn); font-size: 13px; color: var(--ink-1);
-      outline: none; resize: none; min-height: 50px;
-    }
     .radio-list { padding: 4px 16px 12px; }
     .radio-item { display: flex; align-items: flex-start; gap: 10px; padding: 8px 0; cursor: pointer; }
     .radio-circle {
@@ -797,23 +789,6 @@
       font-weight: 500;
     }
     .breed-chip:hover { background: var(--apricot); color: white; }
-
-    /* 私有特征示例 chips */
-    .pf-examples {
-      display: flex; flex-wrap: wrap; gap: 5px;
-      margin-top: 8px;
-    }
-    .pf-example {
-      font-size: 11px;
-      padding: 3px 9px;
-      background: white;
-      color: var(--honey-deep);
-      border: 1px solid var(--honey);
-      border-radius: var(--radius-pill);
-      cursor: pointer;
-      font-weight: 500;
-    }
-    .pf-example:hover { background: var(--honey); color: white; }
 
     /* Contact Guide */
     .guide-scroll { flex: 1; overflow-y: auto; padding: 16px 18px 110px; }
@@ -2601,11 +2576,6 @@
             <div class="poster-report" onclick="openReportSheet()">举报</div>
           </div>
 
-          <div class="feature-card">
-            <span class="ic">🔒</span>
-            <div><b>失主已设置「私有特征」用于认领核对</b><br>如果你确认捡到了相似的猫，点底部「我看到 ta 了」沟通核对。</div>
-          </div>
-
           <div class="leave-clue" onclick="showScreen('chat')">
             <div class="lc-icon">📌</div>
             <div class="lc-content">
@@ -2835,17 +2805,6 @@
           </div>
         </div>
 
-        <!-- 私有特征（仅 lost 显示） -->
-        <div class="private-card" id="private-feature-card">
-          <div class="private-card-h">🔒 私有特征（不公开 · 用于认领核对）</div>
-          <div class="private-card-sub">填只有你知道的特征。捡到的人来认领时，你用这个核对，防止冒领。</div>
-          <textarea id="publish-private" placeholder="比如：肚皮左下方有一个心形黑斑；叫'胖丁'会立刻喵两声…"></textarea>
-          <div class="pf-examples">
-            <span class="pf-example" onclick="appendPrivateExample('项圈装饰：')">💍 项圈装饰</span>
-            <span class="pf-example" onclick="appendPrivateExample('独特斑纹：')">🐾 独特斑纹</span>
-          </div>
-        </div>
-
         <!-- 联系方式 -->
         <div class="form-section">
           <div class="form-row" style="padding-bottom:0"><div class="form-label">联系方式</div></div>
@@ -2899,8 +2858,8 @@
           </div>
         </div>
         <div class="info-soft">
-          <b>🔒 失主已设置 3 条「私有特征」</b>
-          <div class="body">见面前让对方主动描述他知道的细节作为初步核对。<b>你不需要填任何东西</b>。</div>
+          <b>💡 关于「核对」</b>
+          <div class="body">不需要让对方先描述细节。<b>最可靠的核对发生在见面时</b>——宠物对失主的反应、疫苗本、家里旧照片，比"考特征"准得多。</div>
         </div>
         <div class="section-label">参考话术 <span class="count">· 点击复制</span></div>
         <div class="template">
@@ -5531,14 +5490,12 @@
       show('fields-lost', true);
       show('fields-found', false);
       show('fields-found-extra', false);
-      show('private-feature-card', true);
       show('name-row', true);
       document.getElementById('publish-title').textContent = '发布寻宠信息';
     } else {
       show('fields-lost', false);
       show('fields-found', true);
       show('fields-found-extra', true);
-      show('private-feature-card', false);
       show('name-row', false); // 捡到的不知道名字
       document.getElementById('publish-title').textContent = '发布招领信息';
     }
@@ -5594,15 +5551,6 @@
     el.remove();
     const count = document.querySelectorAll('#photo-row .photo-slot.filled').length;
     document.getElementById('photo-count').textContent = count;
-  }
-
-  // 私有特征追加示例前缀
-  function appendPrivateExample(prefix) {
-    const ta = document.getElementById('publish-private');
-    if (!ta) return;
-    const cur = ta.value.trim();
-    ta.value = (cur ? cur + '\n' : '') + prefix;
-    ta.focus();
   }
 
   // 地点选择 sheet

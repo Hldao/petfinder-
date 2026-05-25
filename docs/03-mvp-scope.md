@@ -147,7 +147,6 @@ posts (帖子)
 ├── location: { city, district, address, lat, lng, geohash }
 ├── time: timestamp
 ├── description (公开)
-├── private_features (仅失主可见，加密存储)
 ├── contact_method: 'im' | 'virtual_phone'
 ├── poster_id → users
 ├── stats: { views, comments, shares, clues }
@@ -185,7 +184,7 @@ posts (帖子)
 | 信息网格 | 中文标签（走失地点 / 走失时间，或 发现地点 / 发现时间）|
 | 描述卡 | 失主 / 拾主原话 |
 | **发布者信息卡** | 头像 + 昵称 + 守护者徽章 + ✓ 实名 + 善行值 + 大理古城 + 历史归还次数 + **举报按钮** |
-| 提示卡 | 黄色（私有特征提示）/ 绿色（沟通建议提示）|
+| 提示卡 | 绿色（沟通建议提示）|
 | 底部 action-bar | 双按钮 |
 
 #### 2.2 detail-lost 专属
@@ -224,9 +223,10 @@ posts (帖子)
 
 #### 2.6 合规要点
 
-- 私有特征**仅失主自己能看**（API 鉴权）
 - 编辑后需**重新进入审核队列**（feed 上消失）
 - 举报留存 ≥ 6 个月（电信条例）
+
+> ⚠ 原方案的「私有特征」字段已在 v10 r6 砍掉（详见 `docs/06-product-philosophy.md` 第 2 条 + 奥卡姆案例库）：真实使用 < 5% 且严重误伤真实好心人。反冒领防御由 `contact-guide` 核对指南（宠物反应 + 疫苗本 + 24h 冷却）承载。
 
 ---
 
@@ -257,8 +257,9 @@ seg: [🥺 我丢了宠物] [🤗 我捡到了]
 | **目前位置** | ❌ | ✅ |
 | **健康状况** | ❌ | 选填 |
 | 公开描述 | ✅ ≥ 10 字 | ✅ ≥ 10 字 |
-| **私有特征**（防冒领）| ✅ + 4 个示例 chip | ❌（路人没独家信息）|
 | 联系方式 | ✅ radio | ✅ radio |
+
+> ⚠ 原方案有「私有特征」字段（仅 lost 模式 + 4 个示例 chip），v10 r6 已砍。详见 `docs/06-product-philosophy.md` 第 2 条。
 
 #### 3.3 联想数据
 
@@ -278,12 +279,6 @@ seg: [🥺 我丢了宠物] [🤗 我捡到了]
 
 - 刚刚（5 分钟内）/ 1 小时前 / 今天上午 / 今天下午 / 昨天 / 自定义
 
-**私有特征示例 chip**：
-
-- 💍 项圈装饰
-- 🐾 独特斑纹
-- 😺 行为习惯
-- 🩹 隐藏伤疤
 
 #### 3.4 校验规则（前端）
 
@@ -486,7 +481,7 @@ messages (单条消息)
 
 | 入口 | API |
 |------|-----|
-| publish | `msgSecCheck` (描述、私有特征) + `imgSecCheck` (照片) |
+| publish | `msgSecCheck` (描述) + `imgSecCheck` (照片) |
 | chat | `msgSecCheck` (每条) + `imgSecCheck` (图片消息) |
 | thanks-edit | `msgSecCheck` (感谢信) + `imgSecCheck` (合影) |
 | dispute | `msgSecCheck` (申诉描述) + `imgSecCheck` (证据照) |
