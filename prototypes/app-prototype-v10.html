@@ -723,6 +723,13 @@
       font-weight: 500;
     }
     .breed-chip:hover { background: var(--apricot); color: white; }
+    .breed-chip.other {
+      background: white;
+      color: var(--apricot-deep);
+      border: 1px dashed var(--apricot);
+      font-weight: 600;
+    }
+    .breed-chip.other:hover { background: var(--apricot-soft); color: var(--apricot-deep); }
 
     /* Contact Guide */
     .guide-scroll { flex: 1; overflow-y: auto; padding: 16px 18px 110px; }
@@ -2591,21 +2598,20 @@
       <div class="sub-header">
         <div class="back-btn" onclick="goBack()">✕</div>
         <div class="sub-title" id="publish-title">发布寻宠信息</div>
-        <span class="sub-action" onclick="alert('草稿已保存')">草稿</span>
       </div>
 
       <div class="seg">
-        <div class="seg-item active" data-mode="lost" onclick="switchPublishMode('lost', this)">🥺 我丢了宠物</div>
-        <div class="seg-item" data-mode="found" onclick="switchPublishMode('found', this)">🤗 我捡到了</div>
+        <div class="seg-item active" data-mode="lost" onclick="switchPublishMode('lost', this)">🔍 我丢了宠物</div>
+        <div class="seg-item" data-mode="found" onclick="switchPublishMode('found', this)">🏠 我捡到了</div>
       </div>
 
       <div class="scroll-area" style="padding-top:0">
 
-        <!-- 发布须知（前置告知） -->
+        <!-- 发布须知（合规告知 + 价值观声明） -->
         <div class="compliance-note">
           <b>🛡 发布前请知悉</b><br>
           · 内容将经平台审核（约 1 分钟）<br>
-          · <b>禁止悬赏金 / 感谢金 / 微信号引导</b>，违规将删除
+          · 这里是「<b>邻里互助网络</b>」— 不展示悬赏金额、不撮合金钱交易
         </div>
 
         <!-- 照片 -->
@@ -2641,12 +2647,12 @@
             <div class="form-label">品种 / 外观</div>
             <input class="form-input" id="publish-breed" value="英短蓝猫" placeholder="比如：英短蓝猫">
             <div class="breed-chips" id="breed-chips">
+              <span class="breed-chip" onclick="fillBreed('橘猫')">橘猫</span>
+              <span class="breed-chip" onclick="fillBreed('田园猫')">田园猫</span>
               <span class="breed-chip" onclick="fillBreed('英短')">英短</span>
               <span class="breed-chip" onclick="fillBreed('美短')">美短</span>
-              <span class="breed-chip" onclick="fillBreed('橘猫')">橘猫</span>
               <span class="breed-chip" onclick="fillBreed('布偶')">布偶</span>
-              <span class="breed-chip" onclick="fillBreed('田园猫')">田园猫</span>
-              <span class="breed-chip" onclick="fillBreed('加菲')">加菲</span>
+              <span class="breed-chip other" onclick="focusBreedInput()">+ 其他品种</span>
             </div>
           </div>
         </div>
@@ -5406,21 +5412,28 @@
     }
   }
 
-  // 宠物类型切换（联动品种 chips）
+  // 宠物类型切换（联动品种 chips · 5 常用 + 1 「其他」自由输入）
   function selectPetType(type, el) {
     document.querySelectorAll('[data-screen="publish"] .pet-type').forEach(p => p.classList.remove('active'));
     el.classList.add('active');
     const chips = document.getElementById('breed-chips');
     if (!chips) return;
     const data = {
-      cat: ['英短', '美短', '橘猫', '布偶', '田园猫', '加菲'],
-      dog: ['金毛', '柯基', '比熊', '泰迪', '中华田园犬', '拉布拉多'],
-      other: ['兔子', '鸟', '仓鼠', '龙猫']
+      cat: ['橘猫', '田园猫', '英短', '美短', '布偶'],
+      dog: ['中华田园犬', '金毛', '柯基', '泰迪', '比熊'],
+      other: ['兔子', '仓鼠', '龙猫']
     };
-    chips.innerHTML = data[type].map(b => `<span class="breed-chip" onclick="fillBreed('${b}')">${b}</span>`).join('');
+    const presetChips = data[type].map(b => `<span class="breed-chip" onclick="fillBreed('${b}')">${b}</span>`).join('');
+    chips.innerHTML = presetChips + `<span class="breed-chip other" onclick="focusBreedInput()">+ 其他品种</span>`;
   }
   function fillBreed(breed) {
     document.getElementById('publish-breed').value = breed;
+  }
+  function focusBreedInput() {
+    const input = document.getElementById('publish-breed');
+    if (!input) return;
+    input.value = '';
+    input.focus();
   }
 
   // 联系方式 radio 切换
