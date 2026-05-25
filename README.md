@@ -20,11 +20,12 @@
 
 | 文档 | 内容 |
 |------|------|
+| **[`CLAUDE.md`](./CLAUDE.md)** | **★★ 新人 / AI 协作入口**（必读速查版 · 含 8 条哲学 / 12 条反例 / 5 个判断问题 / Merge checklist）|
 | [`STATUS.md`](./STATUS.md) | **★ 切回项目入口：进度速查 + 下一步 + 文件位置** |
 | `docs/00-overview.md` | 项目背景、目标市场（大理）、团队与技术栈、核心流程 |
-| `docs/01-points-system.md` | 善行值激励体系（已二轮调优） |
+| `docs/01-points-system.md` | 善行值激励体系（V2 设计参考 · MVP 不启用）|
 | `docs/02-state-machines.md` | 三张核心表的状态机（含 24h 冷却） |
-| `docs/06-product-philosophy.md` | **★ 产品哲学**：5 条核心判断 + 不做清单 + 决策演进 |
+| `docs/06-product-philosophy.md` | **★★ 产品哲学**：8 条核心 + 奥卡姆案例库 + 不做清单 + 决策演进 |
 | [`docs/03-mvp-scope.md`](./docs/03-mvp-scope.md) | **★ MVP 范围与功能规格**（6 大模块详细规格 + 接口清单 + 跨模块依赖）|
 | `docs/04-database.md` | 数据库表结构 — 🚧 待补 |
 | [`docs/05-risks.md`](./docs/05-risks.md) | **★ 合规风险与逐屏标注**（v5 的 16 屏 × 风险等级 + 上线 Checklist） |
