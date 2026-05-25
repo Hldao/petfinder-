@@ -1005,7 +1005,6 @@
     .profile-user { display: flex; align-items: center; gap: 12px; margin-bottom: 18px; position: relative; }
     .profile-avatar { width: 58px; height: 58px; border-radius: 18px; background: var(--surface); color: var(--apricot-deep); font-weight: 700; font-size: 26px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
     .profile-name { font-size: 17px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
-    .level-badge { background: rgba(255,255,255,0.25); color: white; padding: 2px 8px; font-size: 10.5px; font-weight: 700; border-radius: var(--radius-pill); backdrop-filter: blur(8px); }
     .profile-handle { font-size: 11.5px; opacity: 0.85; margin-top: 3px; font-family: var(--font-en); font-weight: 500; }
     .points-card { background: rgba(255,255,255,0.18); border: 1px solid rgba(255,255,255,0.22); backdrop-filter: blur(12px); border-radius: var(--radius-md); padding: 14px 16px; cursor: pointer; }
     .points-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
@@ -1778,9 +1777,6 @@
     .dist-bar-text { flex:1; }
     .dist-bar-main { font-size:14px; font-weight:700; color:var(--apricot-deep); }
     .dist-bar-sub { font-size:11.5px; color:var(--ink-3); margin-top:2px; }
-    .dist-bar-map-btn { display:flex; flex-direction:column; align-items:center; gap:2px; color:var(--apricot-deep); flex-shrink:0; }
-    .dist-bar-map-btn .map-icon { font-size:18px; }
-    .dist-bar-map-btn .map-label { font-size:10px; font-weight:700; }
     #btn-filter:hover,#btn-filter:active { background:inherit!important; outline:none; -webkit-tap-highlight-color:transparent; }
     #btn-filter { -webkit-tap-highlight-color:transparent; transition:none; }
 
@@ -2490,7 +2486,6 @@
               <div class="dist-bar-main">距你约 800 米</div>
               <div class="dist-bar-sub">古城北门 · 步行约 10 分钟 · 驾车约 3 分钟</div>
             </div>
-            <div class="dist-bar-map-btn"><span class="map-icon">🗺</span><span class="map-label">查看</span></div>
           </div>
           <div class="info-grid">
             <div class="info-cell"><div class="label">走失地点</div><div class="value">古城北门</div></div>
@@ -2556,7 +2551,6 @@
               <div class="dist-bar-main">距你约 1,200 米</div>
               <div class="dist-bar-sub">人民路三月街 · 步行约 15 分钟 · 驾车约 5 分钟</div>
             </div>
-            <div class="dist-bar-map-btn"><span class="map-icon">🗺</span><span class="map-label">查看</span></div>
           </div>
           <div class="info-grid">
             <div class="info-cell"><div class="label">发现地点</div><div class="value">人民路三月街</div></div>
@@ -2826,7 +2820,7 @@
         <div class="reward-card">
           <div class="reward-label">致 · 客栈老板娘</div>
           <div class="reward-value" style="font-size:24px;font-style:normal">第 3 次成功归还 ✓</div>
-          <div class="reward-detail">大理因为你这样的守护者，变得更温暖 💛</div>
+          <div class="reward-detail">谢谢你帮 ta 回家 · 大理因为你变得更温暖 💛</div>
         </div>
         <div class="cta-card" onclick="alert('🙏 感谢已自动发送\n\n所有提供线索的人 + 拾主都会收到「失主感谢您」的通知。')">
           <div class="cta-icon apricot">🙏</div>
@@ -3077,7 +3071,7 @@
           <div class="profile-user">
             <div class="profile-avatar">客</div>
             <div style="flex:1">
-              <div class="profile-name">客栈老板娘 <span class="level-badge">⭐ 守护者</span></div>
+              <div class="profile-name">客栈老板娘</div>
               <div class="profile-handle">大理古城 · JOINED 23 days</div>
             </div>
           </div>
