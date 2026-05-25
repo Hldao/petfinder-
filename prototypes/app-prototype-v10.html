@@ -555,72 +555,6 @@
     .clue-meta { font-family: var(--font-en); font-size: 10.5px; color: var(--ink-4); font-weight: 600; margin-bottom: 4px; letter-spacing: 0.02em; }
     .clue-text { font-size: 12.5px; color: var(--ink-2); line-height: 1.55; }
 
-    /* 发布者信息卡 */
-    .poster-card {
-      background: var(--surface);
-      border-radius: var(--radius-md);
-      padding: 12px 14px;
-      margin-bottom: 16px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      box-shadow: var(--shadow-card);
-    }
-    .poster-avatar {
-      width: 42px; height: 42px;
-      border-radius: 14px;
-      background: linear-gradient(135deg, var(--apricot), #FF6B35);
-      color: white;
-      font-weight: 700;
-      font-size: 17px;
-      display: flex; align-items: center; justify-content: center;
-      flex-shrink: 0;
-    }
-    .poster-avatar.mint { background: linear-gradient(135deg, var(--mint), var(--mint-deep)); }
-    .poster-info { flex: 1; min-width: 0; }
-    .poster-name-row {
-      font-size: 13.5px;
-      font-weight: 700;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      margin-bottom: 4px;
-      flex-wrap: wrap;
-    }
-    .poster-badge {
-      font-size: 10px;
-      padding: 1px 7px;
-      background: var(--honey-soft);
-      color: var(--honey-deep);
-      border-radius: var(--radius-pill);
-      font-weight: 700;
-    }
-    .poster-verified {
-      font-size: 10px;
-      padding: 1px 7px;
-      background: var(--mint-soft);
-      color: var(--mint-deep);
-      border-radius: var(--radius-pill);
-      font-weight: 700;
-    }
-    .poster-meta {
-      font-size: 11px;
-      color: var(--ink-3);
-      font-family: var(--font-en);
-      font-weight: 500;
-    }
-    .poster-report {
-      padding: 6px 10px;
-      background: var(--bg);
-      border-radius: var(--radius-pill);
-      font-size: 11px;
-      font-weight: 600;
-      color: var(--ink-3);
-      cursor: pointer;
-      flex-shrink: 0;
-    }
-    .poster-report:hover { color: var(--warn); background: var(--warn-soft); }
-
     /* 拾主额外信息（招领详情用） */
     .info-extra {
       background: var(--surface);
@@ -2538,7 +2472,8 @@
       <div class="sub-header">
         <div class="back-btn" onclick="goBack()">←</div>
         <div class="sub-title">寻宠详情</div>
-        <div class="sub-icon" onclick="openShare(1)">↗</div>
+        <div class="sub-icon" onclick="openShare(1)" title="转发">↗</div>
+        <div class="sub-icon" onclick="openReportSheet()" title="举报">⚠</div>
       </div>
       <div class="detail-scroll">
         <div class="hero-photo ph-blue">
@@ -2563,18 +2498,6 @@
           </div>
           <div class="section-label">特征描述</div>
           <div class="desc-card">今天下午带胖丁去人民路咖啡馆，吃完饭出门时它窜出去就不见了。胆小、不会让陌生人碰，听到名字会喵叫一声。看到请尽量拍照不要追 🙏</div>
-
-          <div class="poster-card">
-            <div class="poster-avatar">王</div>
-            <div class="poster-info">
-              <div class="poster-name-row">
-                <span>王*（胖丁妈妈）</span>
-                <span class="poster-verified">✓ 实名</span>
-              </div>
-              <div class="poster-meta">大理古城 · JOINED 8 days · 已发布 1 条</div>
-            </div>
-            <div class="poster-report" onclick="openReportSheet()">举报</div>
-          </div>
 
           <div class="leave-clue" onclick="showScreen('chat')">
             <div class="lc-icon">📌</div>
@@ -2615,7 +2538,8 @@
       <div class="sub-header">
         <div class="back-btn" onclick="goBack()">←</div>
         <div class="sub-title">招领详情</div>
-        <div class="sub-icon" onclick="openShare(0)">↗</div>
+        <div class="sub-icon" onclick="openShare(0)" title="转发">↗</div>
+        <div class="sub-icon" onclick="openReportSheet()" title="举报">⚠</div>
       </div>
       <div class="detail-scroll">
         <div class="hero-photo ph-orange">
@@ -2655,19 +2579,6 @@
 
           <div class="section-label">发现者描述</div>
           <div class="desc-card">我在人民路开咖啡馆，今早开店时这只橘猫蹲在门口不走，看起来很饿。喂了它一点猫粮，目前在店里看店 😺</div>
-
-          <div class="poster-card">
-            <div class="poster-avatar mint">客</div>
-            <div class="poster-info">
-              <div class="poster-name-row">
-                <span>客栈老板娘</span>
-                <span class="poster-badge">⭐ 守护者</span>
-                <span class="poster-verified">✓ 实名</span>
-              </div>
-              <div class="poster-meta">大理古城 · 已成功归还 3 次 · 收到 5 封感谢信</div>
-            </div>
-            <div class="poster-report" onclick="openReportSheet()">举报</div>
-          </div>
 
           <div class="feature-card green">
             <span class="ic">💬</span>
