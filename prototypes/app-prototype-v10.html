@@ -159,6 +159,8 @@
       display: inline-flex; align-items: center; gap: 6px;
       box-shadow: var(--shadow-pill);
     }
+    #feed-filter-row { overflow-x: visible; gap: 6px; }
+    #feed-filter-row .chip { flex: 1; justify-content: center; padding: 6px 4px; font-size: 12px; gap: 4px; }
     .chip.active { background: var(--ink-1); color: var(--surface); }
     .chip-dot { width: 6px; height: 6px; border-radius: 50%; }
     .chip-sort { color: var(--apricot-deep); background: var(--apricot-soft); font-weight: 600; box-shadow: none; }
@@ -496,6 +498,8 @@
     }
     .hero-status.lost { background: rgba(255,133,82,0.95); }
     .hero-status.found { background: rgba(91,184,159,0.95); }
+    [data-screen="detail-lost"]  .hero-photo { background: linear-gradient(135deg, var(--apricot-soft) 0%, #FFCDA8 100%); }
+    [data-screen="detail-found"] .hero-photo { background: linear-gradient(135deg, var(--mint-soft)   0%, #ABDDCB 100%); }
     .hero-time {
       position: absolute; top: 14px; right: 14px;
       padding: 4px 12px; background: rgba(255,255,255,0.95);
@@ -1195,6 +1199,10 @@
       box-shadow: var(--shadow-pill); font-weight: 500;
     }
     .search-chip.hot { color: var(--apricot-deep); font-weight: 600; }
+    .color-chip-row { display:flex; gap:8px; flex-wrap:wrap; padding:0 20px 4px; }
+    .color-chip { display:inline-flex; align-items:center; gap:6px; padding:6px 12px; background:var(--surface); border-radius:var(--radius-pill); font-size:13px; color:var(--ink-2); cursor:pointer; box-shadow:var(--shadow-pill); font-weight:500; }
+    .color-chip:active { opacity:0.7; }
+    .color-dot { width:12px; height:12px; border-radius:50%; flex-shrink:0; }
     .suggestion-list {
       background: var(--surface); border-radius: var(--radius-md);
       margin: 0 16px 12px; overflow: hidden; box-shadow: var(--shadow-card);
@@ -1244,6 +1252,8 @@
       transition: background 0.15s;
     }
     .pc-action.share:hover { background: var(--apricot); color: white; }
+    .pet-card.found-card .pc-action.share { color: var(--mint-deep); background: var(--mint-soft); }
+    .pet-card.found-card .pc-action.share:hover { background: var(--mint); color: white; }
 
     /* Share Modal · 帮忙转发 */
     .share-modal {
@@ -1706,7 +1716,11 @@
     .loc-ring { position:absolute; width:40px; height:40px; border-radius:50%; background:rgba(59,130,246,0.15); animation:locPulse 2.5s ease-out infinite; }
     .loc-center { width:14px; height:14px; border-radius:50%; background:#3B82F6; border:3px solid white; box-shadow:0 2px 8px rgba(59,130,246,0.55); z-index:1; }
     @keyframes locPulse { 0%{transform:scale(1);opacity:0.8} 100%{transform:scale(3);opacity:0} }
+    .dist-ring { position:absolute; border-radius:50%; pointer-events:none; border:1.5px dashed rgba(59,130,246,0.22); transform:translate(-50%,-50%); }
+    .dist-ring-label { position:absolute; font-size:9px; font-weight:700; color:rgba(59,130,246,0.45); pointer-events:none; transform:translateX(-50%); white-space:nowrap; }
     .map-fab .btn.locating { background:#EFF6FF; color:#3B82F6; }
+    .map-pin.selected .pin-head { box-shadow:0 0 0 3px var(--apricot), 0 4px 12px rgba(0,0,0,0.25); }
+    .sheet-back-btn { font-size:12px; color:var(--apricot-deep); font-weight:700; cursor:pointer; padding:2px 8px; border-radius:6px; background:var(--apricot-soft); }
     .pin-label { font-size:10px; font-weight:700; background:white; padding:2px 7px; border-radius:5px; margin-top:4px; box-shadow:0 1px 4px rgba(0,0,0,0.15); white-space:nowrap; letter-spacing:0.2px; }
     .map-pin.lost .pin-label { color:var(--apricot-deep); }
     .map-pin.found .pin-label { color:var(--mint-deep); }
@@ -1728,7 +1742,9 @@
     .popup-status-tag.care { background:var(--plum-soft); color:var(--plum-deep); }
     .popup-dist-row { font-size:11.5px; color:var(--ink-3); margin-bottom:8px; display:flex; gap:10px; }
     .popup-dist-row .hl { font-weight:700; color:var(--apricot-deep); }
-    .popup-go { width:100%; background:var(--apricot); color:white; border:none; border-radius:9px; padding:8px; font-size:13px; font-weight:700; cursor:pointer; font-family:var(--font-cn); }
+    .popup-btns { display:flex; gap:7px; }
+    .popup-call { background:var(--mint-soft); color:var(--mint-deep); border:none; border-radius:9px; padding:8px 11px; font-size:15px; cursor:pointer; flex-shrink:0; }
+    .popup-go { flex:1; background:var(--apricot); color:white; border:none; border-radius:9px; padding:8px; font-size:13px; font-weight:700; cursor:pointer; font-family:var(--font-cn); }
     /* 可拖拽底部面板 */
     .map-bottom-sheet { position:absolute; bottom:82px; left:0; right:0; background:var(--surface); border-radius:20px 20px 0 0; box-shadow:0 -8px 24px rgba(0,0,0,0.08); height:210px; display:flex; flex-direction:column; transition:height 0.32s cubic-bezier(0.34,1.2,0.64,1); user-select:none; }
     .sheet-drag-area { flex-shrink:0; padding:10px 0 4px; cursor:grab; display:flex; flex-direction:column; align-items:center; gap:5px; }
@@ -1754,9 +1770,6 @@
     @keyframes handlePulse { 0%,100%{transform:scaleX(1);opacity:0.4} 55%{transform:scaleX(1.6);opacity:1} }
     .sheet-viewport-hint { font-size:11px; color:var(--ink-3); padding:0 16px 5px; display:none; }
     .sheet-viewport-hint.show { display:block; }
-    /* 在此区域搜索按钮 */
-    .search-area-btn { position:absolute; top:62px; left:50%; transform:translateX(-50%); background:var(--surface); border-radius:var(--radius-pill); padding:8px 20px; font-size:13px; font-weight:700; color:var(--ink-1); box-shadow:var(--shadow-card); z-index:20; cursor:pointer; white-space:nowrap; animation:fadeInDown 0.2s ease; }
-    @keyframes fadeInDown { from{opacity:0;transform:translateX(-50%) translateY(-8px)} to{opacity:1;transform:translateX(-50%) translateY(0)} }
     /* 地图内搜索面板 */
     .map-search-panel { position:absolute; top:62px; right:16px; left:16px; z-index:22; background:var(--surface); border-radius:var(--radius-md); box-shadow:var(--shadow-card); padding:12px; display:none; }
     .map-search-panel.show { display:block; }
@@ -1840,10 +1853,8 @@
       opacity: 1; transform: translateX(-50%) translateY(0);
     }
 
-    /* 卡片左侧状态彩边（极简版 · 不强化任何一类卡） */
-    .pet-card.lost-card   { border-left: 3px solid var(--apricot); }
-    .pet-card.found-card  { }
-    .pet-card.care-card   { }
+    .pet-card.lost-card  .pc-photo { background: linear-gradient(135deg, var(--apricot-soft) 0%, #FFCDA8 100%); }
+    .pet-card.found-card .pc-photo { background: linear-gradient(135deg, var(--mint-soft) 0%, #ABDDCB 100%); }
     /* "附近的人也在帮"社区暗示 · 希望叙事主力（距离 ≤ 5km 都显示） */
     .nearby-helpers {
       display: flex; align-items: center; gap: 5px;
@@ -1875,13 +1886,16 @@
     .fsb-tagline.fading { opacity:0; }
     /* === 卡片左滑快捷操作 === */
     .card-swipe-wrapper { position:relative; border-radius:var(--radius-lg); overflow:hidden; box-shadow:var(--shadow-card); }
-    .card-swipe-wrapper .pet-card { box-shadow:none; border-radius:0; position:relative; z-index:2; transform:translateX(0); transition:transform 0.26s cubic-bezier(0.25,1,0.5,1); width:calc(100% - 10px); }
-    .card-swipe-wrapper.open .pet-card { transform:translateX(-120px); }
-    .swipe-actions { position:absolute; right:0; top:0; bottom:0; width:120px; z-index:1; display:flex; align-items:center; gap:6px; padding:0 10px; background:var(--apricot-soft); }
-    .card-swipe-wrapper::after { content:'‹'; position:absolute; right:2px; top:50%; transform:translateY(-50%); font-size:14px; color:var(--apricot-deep); z-index:3; pointer-events:none; opacity:0.7; }
-    .card-swipe-wrapper.open::after { opacity:0; }
-    /* 右侧滑动图标提示 */
-    .swipe-hint-icon { font-size:10px; color:var(--apricot); letter-spacing:-1px; margin-left:auto; flex-shrink:0; }
+    .card-swipe-wrapper .pet-card { box-shadow:none; border-radius:0; position:relative; z-index:2; transform:translateX(0); transition:transform 0.26s cubic-bezier(0.25,1,0.5,1); width:100%; }
+    .card-swipe-wrapper.open .pet-card { transform:translateX(-96px); }
+    .swipe-actions { position:absolute; right:0; top:0; bottom:0; width:96px; z-index:1; display:flex; align-items:center; justify-content:center; background:linear-gradient(135deg, var(--honey-soft), var(--apricot-soft)); cursor:pointer; }
+    .swipe-home { display:flex; flex-direction:column; align-items:center; gap:5px; }
+    .swipe-home .sh-icons { position:relative; width:38px; height:38px; display:flex; align-items:center; justify-content:center; }
+    .swipe-home .sh-house { font-size:30px; line-height:1; }
+    .swipe-home .sh-paw { position:absolute; bottom:-4px; right:-8px; }
+    .swipe-home .sh-label { font-size:10.5px; font-weight:700; color:var(--apricot-deep); letter-spacing:0.02em; }
+    /* 右侧滑动图标提示（footer 内） */
+    .swipe-hint-icon { display:flex; align-items:center; margin-left:auto; flex-shrink:0; opacity:0.45; }
     .swa-btn { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:3px; padding:8px 4px; border-radius:9px; cursor:pointer; background:white; box-shadow:var(--shadow-pill); font-size:10.5px; font-weight:700; color:var(--ink-2); }
     .swa-btn .swa-ic { font-size:18px; line-height:1.2; }
     .swa-btn:active { opacity:0.7; }
@@ -2206,6 +2220,47 @@
     .picker-row:hover { background: var(--bg); }
     .picker-row.new-folder { color: var(--apricot-deep); font-weight: 700; }
     .picker-row.skip { color: var(--ink-3); border-top: 1px solid var(--divider); margin-top: 4px; padding-top: 14px; }
+
+    /* === 发帖情绪托住 === */
+    .publish-warmth { margin:0 16px 12px; padding:12px 14px; background:linear-gradient(135deg,var(--apricot-soft),var(--honey-soft)); border-radius:var(--radius-md); }
+    .publish-warmth .pw-title { font-size:13.5px; font-weight:700; color:var(--apricot-deep); margin-bottom:4px; }
+    .publish-warmth .pw-body { font-size:12px; color:#A05020; line-height:1.65; }
+    /* === 关注按钮 === */
+    .follow-btn { display:inline-flex; align-items:center; gap:4px; padding:4px 9px; border-radius:99px; font-size:11.5px; font-weight:700; border:1.5px solid var(--apricot); color:var(--apricot-deep); background:white; cursor:pointer; transition:all 0.18s; white-space:nowrap; flex-shrink:0; }
+    .follow-btn.following { background:var(--apricot-soft); border-color:transparent; }
+    /* === 失主快报条 === */
+    .owner-update-bar { display:flex; align-items:center; gap:10px; margin:12px 0; padding:11px 13px; background:var(--honey-soft); border-radius:12px; border:1.5px solid var(--honey); cursor:pointer; }
+    .owner-update-bar .oub-icon { font-size:20px; }
+    .owner-update-bar .oub-body { flex:1; }
+    .owner-update-bar .oub-title { font-size:13px; font-weight:700; color:#7A5800; }
+    .owner-update-bar .oub-sub { font-size:11.5px; color:#A07820; margin-top:1px; }
+    .owner-update-bar .oub-arrow { font-size:14px; color:var(--ink-4); }
+    /* === 快速目击上报按钮（feed 卡片） === */
+    .pc-action.sighting { color:var(--mint-deep); background:var(--mint-soft); border-radius:99px; padding:3px 8px; }
+    /* === 目击上报弹层 === */
+    .sighting-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.38); z-index:9000; }
+    .sighting-overlay.open { display:flex; align-items:flex-end; }
+    .sighting-sheet { background:white; border-radius:20px 20px 0 0; padding:20px 16px 34px; width:100%; max-height:78vh; overflow-y:auto; box-sizing:border-box; }
+    .sighting-sheet .ss-drag { width:36px; height:4px; background:var(--divider); border-radius:2px; margin:0 auto 16px; }
+    .sighting-sheet h3 { font-size:16px; font-weight:700; margin:0 0 4px; }
+    .sighting-sheet .ss-sub { font-size:12px; color:var(--ink-3); margin-bottom:16px; }
+    .sighting-field { margin-bottom:14px; }
+    .sighting-field label { display:block; font-size:12px; font-weight:700; color:var(--ink-2); margin-bottom:6px; }
+    .sighting-field input,.sighting-field textarea { width:100%; box-sizing:border-box; border:1.5px solid var(--divider); border-radius:10px; padding:10px 12px; font-size:14px; font-family:inherit; background:var(--bg); color:var(--ink-1); outline:none; }
+    .sighting-field textarea { height:72px; resize:none; }
+    .sighting-field input:focus,.sighting-field textarea:focus { border-color:var(--mint); }
+    .sighting-dir-row { display:flex; gap:8px; flex-wrap:wrap; }
+    .sighting-dir { padding:6px 12px; border-radius:99px; font-size:12px; border:1.5px solid var(--divider); background:white; cursor:pointer; color:var(--ink-2); }
+    .sighting-dir.sel { border-color:var(--mint); background:var(--mint-soft); color:var(--mint-deep); font-weight:700; }
+    /* === 归还仪式感统计 === */
+    .reunion-stats { display:flex; margin:0 16px 14px; background:white; border-radius:14px; overflow:hidden; box-shadow:0 1px 6px rgba(0,0,0,0.07); }
+    .reunion-stat { flex:1; display:flex; flex-direction:column; align-items:center; padding:14px 8px; gap:2px; border-right:1px solid var(--divider); }
+    .reunion-stat:last-child { border-right:none; }
+    .reunion-stat .rs-num { font-size:22px; font-weight:800; color:var(--apricot-deep); }
+    .reunion-stat .rs-label { font-size:11px; color:var(--ink-3); }
+    .reunion-share-card { margin:0 16px 14px; padding:14px; background:var(--apricot-soft); border-radius:14px; text-align:center; cursor:pointer; }
+    .reunion-share-card .rsc-title { font-size:14px; font-weight:700; color:var(--apricot-deep); margin-bottom:4px; }
+    .reunion-share-card .rsc-sub { font-size:12px; color:#A05020; }
   </style>
 </head>
 <body>
@@ -2240,10 +2295,11 @@
         </div>
       </div>
       <div class="filter-region">
-        <div class="filter-row">
+        <div class="filter-row" id="feed-filter-row">
           <div class="chip active" data-filter="all" onclick="applyFilter('all', this)">全部</div>
           <div class="chip" data-filter="lost" onclick="applyFilter('lost', this)"><span class="chip-dot" style="background:var(--apricot)"></span>寻宠</div>
           <div class="chip" data-filter="found" onclick="applyFilter('found', this)"><span class="chip-dot" style="background:var(--mint)"></span>招领</div>
+          <div class="chip" data-filter="urgent" onclick="applyFilter('urgent', this)"><span class="chip-dot" style="background:var(--warn)"></span>紧急</div>
           <div class="chip chip-sort" id="sort-chip" onclick="openSortSheet()">⏱ 最新</div>
         </div>
       </div>
@@ -2392,6 +2448,11 @@
 
           <!-- map pins 由 renderMapPins() 动态注入 -->
 
+          <!-- 距离环 -->
+          <div class="dist-ring" style="width:100px;height:100px;top:50%;left:50%"></div>
+          <div class="dist-ring-label" style="top:calc(50% - 52px);left:50%">500m</div>
+          <div class="dist-ring" style="width:190px;height:190px;top:50%;left:50%"></div>
+          <div class="dist-ring-label" style="top:calc(50% - 97px);left:50%">1km</div>
           <!-- 当前位置蓝点 -->
           <div class="loc-dot" id="loc-dot" style="top:50%;left:50%;transform:translate(-50%,-50%)">
             <div class="loc-ring"></div>
@@ -2420,7 +2481,10 @@
             <span>📍 距你 <span class="hl" id="popup-dist">约 800 米</span></span>
             <span>🕐 <span id="popup-time">10 分钟前</span></span>
           </div>
-          <button class="popup-go" id="popup-go-btn">查看详情 →</button>
+          <div class="popup-btns">
+            <button class="popup-call" id="popup-call-btn">📞</button>
+            <button class="popup-go" id="popup-go-btn">查看详情 →</button>
+          </div>
         </div>
 
         <!-- 地图工具按钮 -->
@@ -2435,9 +2499,6 @@
           <input class="map-search-input" id="map-search-input" type="text" placeholder="输入宠物名称或特征…">
           <div class="map-search-results" id="map-search-results"></div>
         </div>
-
-        <!-- 在此区域搜索 -->
-        <div id="search-area-btn" class="search-area-btn" style="display:none" onclick="searchThisArea()">🔍 在此区域搜索</div>
 
         <!-- 可拖拽底部面板 -->
         <div class="map-bottom-sheet" id="map-sheet">
@@ -2475,6 +2536,7 @@
       <div class="sub-header">
         <div class="back-btn" onclick="goBack()">←</div>
         <div class="sub-title">寻宠详情</div>
+        <div class="follow-btn" id="detail-follow-btn" onclick="toggleFollow(this)">♡ 关注</div>
         <div class="sub-icon" onclick="openShare(1)" title="转发">↗</div>
         <div class="sub-icon" onclick="openReportSheet()" title="举报">⚠</div>
       </div>
@@ -2500,6 +2562,15 @@
           </div>
           <div class="section-label">特征描述</div>
           <div class="desc-card">今天下午带胖丁去人民路咖啡馆，吃完饭出门时它窜出去就不见了。胆小、不会让陌生人碰，听到名字会喵叫一声。看到请尽量拍照不要追 🙏</div>
+
+          <div class="owner-update-bar" onclick="postOwnerUpdate()">
+            <div class="oub-icon">📢</div>
+            <div class="oub-body">
+              <div class="oub-title">失主发进展</div>
+              <div class="oub-sub">让关注的人第一时间知道搜寻动态</div>
+            </div>
+            <div class="oub-arrow">›</div>
+          </div>
 
           <div class="leave-clue" onclick="showScreen('chat')">
             <div class="lc-icon">📌</div>
@@ -2606,6 +2677,16 @@
       </div>
 
       <div class="scroll-area" style="padding-top:0">
+
+        <!-- 情绪支撑横幅 -->
+        <div class="publish-warmth" id="publish-warmth-lost">
+          <div class="pw-title">🐾 别担心，你不是一个人</div>
+          <div class="pw-body">大理有很多热心邻居，发出去就有更多眼睛帮你找。发布只需 1 分钟，ta 等不及了。</div>
+        </div>
+        <div class="publish-warmth" id="publish-warmth-found" style="display:none;background:linear-gradient(135deg,var(--mint-soft),#DDF6EC)">
+          <div class="pw-title" style="color:var(--mint-deep)">🏠 谢谢你伸出援手</div>
+          <div class="pw-body" style="color:#2D7060">你的一个发布，可能让一个家庭团圆。ta 的主人一定很着急，我们一起帮 ta 回家。</div>
+        </div>
 
         <!-- 发布须知（合规告知 + 价值观声明） -->
         <div class="compliance-note">
@@ -2823,6 +2904,18 @@
           <div class="success-title">小橘子顺利回家了 🎉</div>
           <div class="success-sub">感谢大理的善意，<br>让这个故事有了温暖的结局。</div>
         </div>
+
+        <div class="reunion-stats">
+          <div class="reunion-stat"><div class="rs-num">3</div><div class="rs-label">走失天数</div></div>
+          <div class="reunion-stat"><div class="rs-num">12</div><div class="rs-label">爱心接力</div></div>
+          <div class="reunion-stat"><div class="rs-num">4</div><div class="rs-label">有效线索</div></div>
+        </div>
+
+        <div class="reunion-share-card" onclick="alert('📤 生成归来故事卡\n\n「小橘子走失 3 天后，在大理 12 位邻居的帮助下回家了 🏠」\n\n分享给朋友，让更多人看到大理的温暖。')">
+          <div class="rsc-title">📤 分享「小橘子的归来故事」</div>
+          <div class="rsc-sub">让更多人看到大理社区的温暖 · 吸引更多守护者</div>
+        </div>
+
         <div class="reward-card">
           <div class="reward-label">致 · 客栈老板娘</div>
           <div class="reward-value" style="font-size:24px;font-style:normal">第 3 次成功归还 ✓</div>
@@ -3420,6 +3513,19 @@
           </div>
 
           <div class="section-header" style="padding-top:14px">
+            <span class="title">按颜色</span>
+          </div>
+          <div class="color-chip-row">
+            <div class="color-chip" onclick="doSearchWith('橘色')"><span class="color-dot" style="background:#FF8C42"></span>橘色</div>
+            <div class="color-chip" onclick="doSearchWith('白色')"><span class="color-dot" style="background:#F0EDE4;border:1px solid #DDD6C0"></span>白色</div>
+            <div class="color-chip" onclick="doSearchWith('黑色')"><span class="color-dot" style="background:#3D3D3D"></span>黑色</div>
+            <div class="color-chip" onclick="doSearchWith('灰色')"><span class="color-dot" style="background:#9E9E9E"></span>灰色</div>
+            <div class="color-chip" onclick="doSearchWith('棕色')"><span class="color-dot" style="background:#8B5E3C"></span>棕色</div>
+            <div class="color-chip" onclick="doSearchWith('奶色')"><span class="color-dot" style="background:#F5DEB3"></span>奶色</div>
+            <div class="color-chip" onclick="doSearchWith('虎斑')"><span class="color-dot" style="background:linear-gradient(135deg,#C8894A,#7A5230)"></span>虎斑</div>
+          </div>
+
+          <div class="section-header" style="padding-top:14px">
             <span class="title">按地点</span>
           </div>
           <div class="search-chips">
@@ -3903,6 +4009,7 @@
       }, 80);
     }
     if (name === 'all-posts') initAllPosts();
+    if (name === 'map' && window._applyFilter) window._applyFilter(currentFilter);
   }
 
   function goBack() {
@@ -3938,85 +4045,85 @@
   // 14 张大理本地化数据（id 与 SHARE 同源）
   const FEED_DATA = [
     { id: 0, emoji:'🐱', photoClass:'ph-orange', status:'found', statusLabel:'招领',
-      name:'小橘子', breed:'约 2 岁 · ♀', loc:'人民路三月街',
+      name:'小橘子', breed:'约 2 岁 · ♀', loc:'人民路三月街', color:'橘色 橘黄',
       time:'30 min 前', timeMins:30, distanceKm:1.2,
       comments:3, tall:false,
       desc:'在咖啡馆门口蹲了一下午，看着像走丢的。亲人，会撒娇 ☕️',
       mapPos:{top:38,left:43} },
     { id: 1, emoji:'🐱', photoClass:'ph-blue', status:'lost', statusLabel:'寻宠',
-      name:'胖丁', breed:'英短蓝猫 · ♂ 3 岁', loc:'古城北门',
+      name:'胖丁', breed:'英短蓝猫 · ♂ 3 岁', loc:'古城北门', color:'蓝灰 灰色',
       time:'10 min 前', timeMins:10, distanceKm:0.8,
       comments:12, tall:true,
       desc:'穿粉色项圈，左耳缺一小块。胆小，听到名字会喵叫。看到请拍照不要追 🙏',
       mapPos:{top:25,left:20} },
     { id: 2, emoji:'🐶', photoClass:'ph-cream', status:'found', statusLabel:'招领',
-      name:'小白', breed:'比熊 · ♂ 5kg', loc:'下关泰安路',
+      name:'小白', breed:'比熊 · ♂ 5kg', loc:'下关泰安路', color:'白色',
       time:'2 hr 前', timeMins:120, distanceKm:4.2,
       comments:5, tall:false,
       desc:'在小区门口捡到，毛色干净有人养过，正在寻找主人 🐾',
       mapPos:{top:52,left:65} },
     { id: 3, emoji:'🐈', photoClass:'ph-mint', status:'lost', statusLabel:'寻宠',
-      name:'咖啡', breed:'美短 · ♀ 1 岁半', loc:'洋人街',
+      name:'咖啡', breed:'美短 · ♀ 1 岁半', loc:'洋人街', color:'棕色 虎斑 咖啡色',
       time:'1 hr 前', timeMins:60, distanceKm:1.5,
       comments:8, tall:true,
       desc:'咖啡色虎斑，右后腿有疤。胆小，可能躲在车底下，看到请轻声呼唤',
       mapPos:{top:30,left:36} },
     { id: 4, emoji:'🐕', photoClass:'ph-dark', status:'lost', statusLabel:'寻宠',
-      name:'黑豆', breed:'中华田园犬 · ♂', loc:'才村码头',
+      name:'黑豆', breed:'中华田园犬 · ♂', loc:'才村码头', color:'黑色',
       time:'3 hr 前', timeMins:180, distanceKm:6.8,
       comments:7, tall:false,
       desc:'全身黑色，颈部白毛。在洱海边走丢，主人正在沿环海路找',
       mapPos:{top:42,left:80} },
     { id: 5, emoji:'🐱', photoClass:'ph-pink', status:'found', statusLabel:'招领',
-      name:'布偶宝宝', breed:'布偶猫 · ♀ 6 个月', loc:'人民路民宿区',
+      name:'布偶宝宝', breed:'布偶猫 · ♀ 6 个月', loc:'人民路民宿区', color:'白色 奶色',
       time:'45 min 前', timeMins:45, distanceKm:2.1,
       comments:6, tall:true,
       desc:'蓝眼睛，长毛，戴金色铃铛项圈。在客栈大堂被发现 🛋️',
       mapPos:{top:44,left:50} },
     { id: 6, emoji:'🐶', photoClass:'ph-cream', status:'lost', statusLabel:'寻宠',
-      name:'柯基屁屁', breed:'柯基 · ♀ 4 岁', loc:'苍山门',
+      name:'柯基屁屁', breed:'柯基 · ♀ 4 岁', loc:'苍山门', color:'棕色 白色',
       time:'昨天', timeMins:1440, distanceKm:3.6,
       comments:22, tall:false,
       desc:'短腿圆屁股的小可爱，戴红色背带。容易认出来',
       mapPos:{top:60,left:16} },
     { id: 7, emoji:'🐶', photoClass:'ph-pink', status:'found', statusLabel:'招领',
-      name:'雪球', breed:'比熊串 · ♂', loc:'喜洲古镇',
+      name:'雪球', breed:'比熊串 · ♂', loc:'喜洲古镇', color:'白色',
       time:'5 hr 前', timeMins:300, distanceKm:18.5,
       comments:4, tall:true,
       desc:'在喜洲扎染店门口被发现，毛色干净，应该是走失的家犬',
       mapPos:{top:18,left:82} },
     { id: 8, emoji:'🐱', photoClass:'ph-orange', status:'found', statusLabel:'招领',
-      name:'虎子', breed:'橘猫 · ♂ 估 4 岁', loc:'叶榆路',
+      name:'虎子', breed:'橘猫 · ♂ 估 4 岁', loc:'叶榆路', color:'橘色 橘黄',
       time:'2 hr 前', timeMins:130, distanceKm:1.9,
       comments:2, tall:false,
       desc:'在饭店后厨发现，胖胖的看起来不缺吃喝，应该有主',
       mapPos:{top:46,left:56} },
     { id: 9, emoji:'🐕', photoClass:'ph-brown', status:'lost', statusLabel:'寻宠',
-      name:'土豆', breed:'杂交犬 · ♂ 中型', loc:'双廊镇',
+      name:'土豆', breed:'杂交犬 · ♂ 中型', loc:'双廊镇', color:'棕色',
       time:'昨天', timeMins:1500, distanceKm:32,
       comments:9, tall:true,
       desc:'在双廊客栈附近走丢，戴蓝色项圈，胆子比较小',
       mapPos:{top:20,left:87} },
     { id: 10, emoji:'🐱', photoClass:'ph-blue', status:'lost', statusLabel:'寻宠',
-      name:'小灰', breed:'蓝白英短 · ♀ 2 岁', loc:'海东',
+      name:'小灰', breed:'蓝白英短 · ♀ 2 岁', loc:'海东', color:'灰色 白色',
       time:'4 hr 前', timeMins:240, distanceKm:12,
       comments:11, tall:false,
       desc:'从海东民宿跑出，怕生。可能在芦苇地或山脚',
       mapPos:{top:55,left:84} },
     { id: 11, emoji:'🐱', photoClass:'ph-cream', status:'lost', statusLabel:'寻宠',
-      name:'奶糖', breed:'金渐层 · ♀ 3 岁', loc:'塔顶玉局公园',
+      name:'奶糖', breed:'金渐层 · ♀ 3 岁', loc:'塔顶玉局公园', color:'奶色 金色',
       time:'6 hr 前', timeMins:360, distanceKm:2.8,
       comments:14, tall:true,
       desc:'体型偏小，毛色奶白带浅金。爱叫，听到罐头声会出现',
       mapPos:{top:58,left:28} },
     { id: 12, emoji:'🐶', photoClass:'ph-dark', status:'found', statusLabel:'招领',
-      name:'小鸭', breed:'阿拉斯加幼犬 · ♂', loc:'凤仪镇',
+      name:'小鸭', breed:'阿拉斯加幼犬 · ♂', loc:'凤仪镇', color:'黑色 棕色',
       time:'3 天前', timeMins:4320, distanceKm:22,
       comments:38, tall:false,
       desc:'在凤仪镇路边发现的小奶狗，疑似走失，正在帮忙找主人 🐾',
       mapPos:{top:62,left:72} },
     { id: 13, emoji:'🐶', photoClass:'ph-pink', status:'found', statusLabel:'招领',
-      name:'小棕', breed:'棕白色 · 约 6kg', loc:'苍山门',
+      name:'小棕', breed:'棕白色 · 约 6kg', loc:'苍山门', color:'棕色 白色',
       time:'9 days', timeMins:12960, distanceKm:3.4,
       comments:2, tall:false, expired:true,
       desc:'在山脚捡到，比较瘦，已带去打疫苗。希望主人快点出现 💛',
@@ -4449,12 +4556,38 @@
       ? `<div class="overdue-badge">${isLongterm ? '⚠ 超3天' : '⚠ 超24h'}</div>` : '';
     const emoTime = formatEmotionalTime(d);
     const emoHtml = emoTime ? `<div class="emotional-time${isLongterm ? ' longterm' : ''}">${emoTime}</div>` : '';
-    return `<div class="card-swipe-wrapper">
-      <div class="swipe-actions">
-        <div class="swa-btn" onclick="handleCardContact(${d.id})"><span class="swa-ic">📞</span>联系</div>
-        <div class="swa-btn" onclick="handleCardMap(${d.id})"><span class="swa-ic">🗺</span>地图</div>
+    const isCat = /🐱|🐈/.test(d.emoji);
+    const isDog = /🐶|🐕|🦮/.test(d.emoji);
+    const pawColor = effStatus === 'lost' ? '#FF8552' : effStatus === 'found' ? '#5BB89F' : '#B0AC9E';
+    const catPaw = `<svg width="16" height="16" viewBox="0 0 20 22" fill="${pawColor}" xmlns="http://www.w3.org/2000/svg">
+      <ellipse cx="10" cy="16.5" rx="5.2" ry="4.2"/>
+      <ellipse cx="3.8" cy="10.5" rx="2" ry="2.6"/>
+      <ellipse cx="7.8" cy="8.2" rx="2" ry="2.6"/>
+      <ellipse cx="12.2" cy="8.2" rx="2" ry="2.6"/>
+      <ellipse cx="16.2" cy="10.5" rx="2" ry="2.6"/>
+    </svg>`;
+    const dogPaw = `<svg width="16" height="16" viewBox="0 0 20 22" fill="${pawColor}" xmlns="http://www.w3.org/2000/svg">
+      <ellipse cx="10" cy="16" rx="6" ry="4.8"/>
+      <circle cx="3.5" cy="10" r="2.6"/>
+      <circle cx="8" cy="7.8" r="2.6"/>
+      <circle cx="12" cy="7.8" r="2.6"/>
+      <circle cx="16.5" cy="10" r="2.6"/>
+    </svg>`;
+    const pawSvg = isCat ? catPaw : isDog ? dogPaw : catPaw;
+    const smallPaw = isCat
+      ? `<svg width="18" height="18" viewBox="0 0 20 22" fill="${pawColor}" xmlns="http://www.w3.org/2000/svg"><ellipse cx="10" cy="16.5" rx="5.2" ry="4.2"/><ellipse cx="3.8" cy="10.5" rx="2" ry="2.6"/><ellipse cx="7.8" cy="8.2" rx="2" ry="2.6"/><ellipse cx="12.2" cy="8.2" rx="2" ry="2.6"/><ellipse cx="16.2" cy="10.5" rx="2" ry="2.6"/></svg>`
+      : `<svg width="18" height="18" viewBox="0 0 20 22" fill="${pawColor}" xmlns="http://www.w3.org/2000/svg"><ellipse cx="10" cy="16" rx="6" ry="4.8"/><circle cx="3.5" cy="10" r="2.6"/><circle cx="8" cy="7.8" r="2.6"/><circle cx="12" cy="7.8" r="2.6"/><circle cx="16.5" cy="10" r="2.6"/></svg>`;
+    return `<div class="card-swipe-wrapper" ${expiredStyle}>
+      <div class="swipe-actions" onclick="event.stopPropagation();alert('🏠 已登记\n我们会联系发帖人，告知你愿意接 ta 回家 🧡')">
+        <div class="swipe-home">
+          <div class="sh-icons">
+            <span class="sh-house">🏠</span>
+            <span class="sh-paw">${smallPaw}</span>
+          </div>
+          <div class="sh-label">接回家</div>
+        </div>
       </div>
-      <div class="pet-card${borderClass}" ${expiredStyle} onclick="showScreen('${detailScreen}')">
+      <div class="pet-card${borderClass}" onclick="showScreen('${detailScreen}')">
         ${overdueHtml}${hintHtml}
         <div class="pc-body">
           <div class="pc-photo ${d.photoClass}"><span>${d.emoji}</span><div class="status-bubble ${statusCls}">${statusLabel}</div></div>
@@ -4468,9 +4601,10 @@
         <div class="pc-footer">
           <div class="pc-actions">
             <span class="pc-action">🤝 ${d.comments} 接力</span>
+            ${effStatus === 'lost' && !d.expired ? `<span class="pc-action sighting" onclick="event.stopPropagation();openSightingSheet(${d.id},'${d.name}')">👁 看到了</span>` : ''}
             <span class="pc-action share" onclick="event.stopPropagation();openShare(${d.id})">⤴ 转发</span>
           </div>
-          <span class="swipe-hint-icon">‹‹</span>
+          <span class="swipe-hint-icon">${pawSvg}<span style="font-size:10px;font-weight:700;margin-left:2px;color:var(--ink-4)">‹</span></span>
         </div>
       </div>
     </div>`;
@@ -4484,6 +4618,7 @@
 
     let items = getActiveFeedData().filter(d => {
       if (currentFilter === 'all') return true;
+      if (currentFilter === 'urgent') return d.status === 'lost' && d.timeMins >= 1440 && !d.expired;
       return d.status === currentFilter;
     });
     items.sort((a, b) => currentSort === 'distance' ? a.distanceKm - b.distanceKm : a.timeMins - b.timeMins);
@@ -4593,7 +4728,7 @@
         }
         if (!swiping) return;
         const card = wrapper.querySelector('.pet-card');
-        if (card) { card.style.transition = 'none'; card.style.transform = `translateX(${Math.max(-120, Math.min(0, e.clientX - sx))}px)`; }
+        if (card) { card.style.transition = 'none'; card.style.transform = `translateX(${Math.max(-96, Math.min(0, e.clientX - sx))}px)`; }
       });
       wrapper.addEventListener('pointerup', e => {
         const card = wrapper.querySelector('.pet-card');
@@ -4895,33 +5030,47 @@
   }
 
   function showPinPopup(key, pinEl) {
-    const d = pinData[key];
-    if (!d) return;
-    const popup = document.getElementById('pin-popup');
-    document.getElementById('popup-emoji').textContent = d.emoji;
-    document.getElementById('popup-name').textContent = d.name;
-    document.getElementById('popup-type').textContent = d.type;
-    document.getElementById('popup-dist').textContent = d.dist;
-    document.getElementById('popup-time').textContent = d.time;
-    const tag = document.getElementById('popup-status-tag');
-    tag.textContent = d.status;
-    tag.className = 'popup-status-tag ' + d.statusClass;
-    document.getElementById('popup-go-btn').onclick = function() { showScreen(d.screen); popup.classList.remove('show'); };
-    const rect = pinEl.getBoundingClientRect();
-    const containerRect = pinEl.closest('.map-container').getBoundingClientRect();
-    popup.style.left = (rect.left - containerRect.left + rect.width / 2) + 'px';
-    popup.style.top  = (rect.top  - containerRect.top) + 'px';
-    popup.classList.add('show');
-    // 展开面板并高亮对应底部列表卡片
-    if (window._ensureExpanded) window._ensureExpanded();
-    const sc = document.getElementById('sheet-content');
-    const card = sc && sc.querySelector('[data-pin-key="' + key + '"]');
-    if (card) {
-      sc.scrollTo({ top: card.offsetTop - 8, behavior: 'smooth' });
-      card.classList.remove('highlighted');
-      void card.offsetWidth;
-      card.classList.add('highlighted');
+    if (!pinData[key]) return;
+    // 标记选中 pin
+    document.querySelectorAll('.map-pin.selected').forEach(p => p.classList.remove('selected'));
+    pinEl.classList.add('selected');
+    // 地图平移到 pin 中心
+    const containerEl = document.getElementById('map-container');
+    const mapLayer    = document.getElementById('map-layer');
+    if (containerEl && mapLayer) {
+      const cw = containerEl.offsetWidth, ch = containerEl.offsetHeight, BOUND = 180;
+      const tx = Math.max(-BOUND, Math.min(BOUND, cw * (0.5 - parseFloat(pinEl.style.left) / 100)));
+      const ty = Math.max(-BOUND, Math.min(BOUND, ch * (0.5 - parseFloat(pinEl.style.top)  / 100)));
+      mapLayer.style.transition = 'transform 0.35s cubic-bezier(0.25,1,0.5,1)';
+      mapLayer.style.transform  = `translate(${tx}px,${ty}px)`;
+      if (window._setMapOffset) window._setMapOffset(tx, ty);
     }
+    // 底部 sheet 展示完整卡片
+    const petId   = parseInt(key.replace('pin_', ''));
+    const petData = getActiveFeedData().find(p => p.id === petId);
+    if (petData) showSheetPetDetail(petData);
+  }
+
+  function showSheetPetDetail(d) {
+    const content      = document.getElementById('sheet-content');
+    const titleEl      = document.getElementById('sheet-title');
+    const filterToggle = document.getElementById('sheet-filter-toggle');
+    const vpHint       = document.getElementById('sheet-viewport-hint');
+    if (!content) return;
+    if (titleEl) titleEl.innerHTML = '<span class="sheet-back-btn" onclick="restoreSheetList()">← 全部</span>';
+    if (filterToggle) filterToggle.style.display = 'none';
+    if (vpHint) vpHint.classList.remove('show');
+    content.innerHTML = `<div style="padding:6px 4px 12px">${renderCard(d)}</div>`;
+    if (window._expandSheet) window._expandSheet(1);
+  }
+
+  function restoreSheetList() {
+    document.querySelectorAll('.map-pin.selected').forEach(p => p.classList.remove('selected'));
+    const titleEl      = document.getElementById('sheet-title');
+    const filterToggle = document.getElementById('sheet-filter-toggle');
+    if (titleEl) titleEl.innerHTML = '可见区域 · 条信息<span class="sheet-filter-label" id="sheet-filter-label"></span>';
+    if (filterToggle) filterToggle.style.display = '';
+    renderSheetCards();
   }
 
   function closePinPopup(e) {
@@ -5049,16 +5198,6 @@
       dragging = false;
       layer.classList.remove('dragging');
       container.style.cursor = '';
-      const sab = document.getElementById('search-area-btn');
-      if (sab) {
-        if (hasMoved && (Math.abs(tx) > 15 || Math.abs(ty) > 15)) {
-          sab.style.animation = 'none';
-          sab.style.display = '';
-          requestAnimationFrame(() => { sab.style.animation = ''; });
-        } else {
-          sab.style.display = 'none';
-        }
-      }
     }
 
     container.addEventListener('mousedown',  onStart);
@@ -5101,7 +5240,8 @@
         name: d.name,
         type: d.breed,
         statusClass: sc,
-        statusLabel: d.statusLabel
+        statusLabel: d.statusLabel,
+        color: d.color || ''
       };
     });
 
@@ -5116,7 +5256,7 @@
       const q = query.trim().toLowerCase();
       const keys = Object.keys(allPinData).filter(k => {
         const d = allPinData[k];
-        return !q || d.name.includes(query) || d.type.toLowerCase().includes(q) || d.statusLabel.includes(query);
+        return !q || d.name.includes(query) || d.type.toLowerCase().includes(q) || d.statusLabel.includes(query) || d.color.includes(query);
       });
       if (!keys.length) { results.innerHTML = '<div class="map-search-empty">未找到匹配宠物</div>'; return; }
       results.innerHTML = keys.map(k => {
@@ -5246,8 +5386,6 @@
     mapLayer.style.transition = 'transform 0.4s cubic-bezier(0.25,1,0.5,1)';
     mapLayer.style.transform  = `translate(${targetTx}px,${targetTy}px)`;
     if (window._setMapOffset) window._setMapOffset(targetTx, targetTy);
-    const sab = document.getElementById('search-area-btn');
-    if (sab) sab.style.display = 'none';
     if (window._expandSheet) window._expandSheet(1);
     setTimeout(() => showPinPopup(key, pinEl), 420);
   }
@@ -5286,21 +5424,9 @@
     titleEl.textContent = prefix + filterPart + ' · ' + count + ' 条信息';
   }
 
-  function searchThisArea() {
-    window._isViewportMode = true;
-    const btn = document.getElementById('search-area-btn');
-    if (btn) btn.style.display = 'none';
-    const hint = document.getElementById('sheet-viewport-hint');
-    if (hint) hint.classList.add('show');
-    const off = window._getMapOffset ? window._getMapOffset() : { tx:0, ty:0 };
-    applyViewportDimming(getPinsInViewport(off.tx, off.ty));
-    if (window._expandSheet) window._expandSheet(1);
-  }
 
   function resetMapView() {
     window._isViewportMode = false;
-    const btn = document.getElementById('search-area-btn');
-    if (btn) btn.style.display = 'none';
     const hint = document.getElementById('sheet-viewport-hint');
     if (hint) hint.classList.remove('show');
     document.querySelectorAll('.sheet-card').forEach(c => c.classList.remove('out-of-view'));
@@ -5323,8 +5449,6 @@
     mapLayer.style.transition = 'transform 0.5s cubic-bezier(0.25,1,0.5,1)';
     mapLayer.style.transform  = `translate(${targetTx}px,${targetTy}px)`;
     if (window._setMapOffset) window._setMapOffset(targetTx, targetTy);
-    const sab = document.getElementById('search-area-btn');
-    if (sab) sab.style.display = 'none';
     if (window._expandSheet) window._expandSheet(1);
     setTimeout(() => showPinPopup(pinKey, pinEl), 520);
   }
@@ -5402,12 +5526,16 @@
       show('fields-found', false);
       show('fields-found-extra', false);
       show('name-row', true);
+      show('publish-warmth-lost', true);
+      show('publish-warmth-found', false);
       document.getElementById('publish-title').textContent = '发布寻宠信息';
     } else {
       show('fields-lost', false);
       show('fields-found', true);
       show('fields-found-extra', true);
       show('name-row', false); // 捡到的不知道名字
+      show('publish-warmth-lost', false);
+      show('publish-warmth-found', true);
       document.getElementById('publish-title').textContent = '发布招领信息';
     }
   }
@@ -5540,7 +5668,7 @@
     if (!k) return [];
     // 从 FEED_DATA 模糊匹配（name/breed/loc/desc/status）
     return FEED_DATA.filter(d => {
-      const haystack = [d.name, d.breed, d.loc, d.desc, d.statusLabel]
+      const haystack = [d.name, d.breed, d.loc, d.desc, d.statusLabel, d.color || '']
         .join(' ').toLowerCase();
       return haystack.includes(k);
     });
@@ -6296,7 +6424,83 @@
     t.classList.add('show');
     setTimeout(() => t.classList.remove('show'), 2200);
   }
+
+  /* ============== 我看到了 · 目击上报 ============== */
+  function openSightingSheet(petId, petName) {
+    const overlay = document.getElementById('sighting-overlay');
+    const sub = document.getElementById('sighting-pet-name');
+    if (sub) sub.textContent = petName ? `正在上报关于「${petName}」的目击信息` : '正在上报目击信息';
+    overlay.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeSightingSheet() {
+    document.getElementById('sighting-overlay').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+  function selectSightingDir(el) {
+    el.classList.toggle('sel');
+  }
+  function submitSighting() {
+    const loc = document.getElementById('sighting-loc').value.trim();
+    if (!loc) { alert('请填写目击地点'); return; }
+    closeSightingSheet();
+    setTimeout(() => {
+      alert('✅ 目击信息已上报\n\n失主和平台志愿者将收到通知\n感谢你的善意，ta 的回家路又近了一步 🐾');
+    }, 200);
+  }
+
+  /* ============== 关注宠物 ============== */
+  function toggleFollow(btn) {
+    const isFollowing = btn.classList.toggle('following');
+    btn.textContent = isFollowing ? '★ 已关注' : '♡ 关注';
+    if (isFollowing) {
+      setTimeout(() => alert('🔔 关注成功\n\n有新线索或失主发进展时，你会收到通知'), 150);
+    }
+  }
+
+  /* ============== 失主快报 ============== */
+  function postOwnerUpdate() {
+    const msg = prompt('📢 发布最新进展\n\n向关注者同步搜寻动态（直接发送，无需审核）：', '今天下午在洋人街附近再次找到线索，正在跟进中 🙏');
+    if (msg && msg.trim()) {
+      alert('✅ 进展已发布\n\n「' + msg.trim() + '」\n\n12 位关注者将收到通知');
+    }
+  }
+
+  /* ============== 发布暖语联动 ============== */
+  const _origSwitchPublishMode = typeof switchPublishMode === 'function' ? switchPublishMode : null;
 </script>
+
+<!-- ===== 目击上报弹层 ===== -->
+<div class="sighting-overlay" id="sighting-overlay" onclick="if(event.target===this)closeSightingSheet()">
+  <div class="sighting-sheet">
+    <div class="ss-drag"></div>
+    <h3>👁 我看到 ta 了</h3>
+    <div class="ss-sub" id="sighting-pet-name">正在上报目击信息</div>
+    <div class="sighting-field">
+      <label>📍 你在哪里看到的？</label>
+      <input id="sighting-loc" placeholder="比如：洋人街咖啡馆旁边" />
+    </div>
+    <div class="sighting-field">
+      <label>⏰ 大概什么时候？</label>
+      <input id="sighting-time" placeholder="比如：今天下午 3 点左右" />
+    </div>
+    <div class="sighting-field">
+      <label>🧭 往哪个方向走的？</label>
+      <div class="sighting-dir-row">
+        <div class="sighting-dir" onclick="selectSightingDir(this)">↑ 向北</div>
+        <div class="sighting-dir" onclick="selectSightingDir(this)">↓ 向南</div>
+        <div class="sighting-dir" onclick="selectSightingDir(this)">← 向西</div>
+        <div class="sighting-dir" onclick="selectSightingDir(this)">→ 向东</div>
+        <div class="sighting-dir" onclick="selectSightingDir(this)">不确定</div>
+      </div>
+    </div>
+    <div class="sighting-field">
+      <label>📝 补充描述（可选）</label>
+      <textarea id="sighting-note" placeholder="比如：状态看起来还好，在垃圾桶旁边觅食..."></textarea>
+    </div>
+    <div class="btn-primary" style="margin-top:4px;cursor:pointer" onclick="submitSighting()">📤 提交目击信息</div>
+  </div>
+</div>
 
 </body>
 </html>
