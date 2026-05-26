@@ -692,17 +692,20 @@
       width: 18px; height: 18px; background: rgba(0,0,0,0.6); border-radius: 50%;
       color: white; font-size: 11px; display: flex; align-items: center; justify-content: center;
     }
-    .radio-list { padding: 4px 16px 12px; }
-    .radio-item { display: flex; align-items: flex-start; gap: 10px; padding: 8px 0; cursor: pointer; }
-    .radio-circle {
-      width: 18px; height: 18px; border-radius: 50%;
-      border: 2px solid var(--ink-5); flex-shrink: 0; margin-top: 1px;
-      display: flex; align-items: center; justify-content: center;
+    /* 通知保障卡（替代「联系方式」radio · 不让用户做技术选择） */
+    .notify-card {
+      margin: 0 16px 12px;
+      padding: 10px 14px;
+      background: rgba(91,184,159,0.10);
+      border: 1px solid rgba(91,184,159,0.25);
+      border-radius: var(--radius-md);
+      font-size: 12.5px;
+      color: #2F8C75;
+      font-weight: 600;
+      display: flex; align-items: center; gap: 8px;
+      line-height: 1.5;
     }
-    .radio-circle.selected { border-color: var(--apricot); }
-    .radio-circle.selected::after { content: ''; width: 8px; height: 8px; background: var(--apricot); border-radius: 50%; }
-    .radio-title { font-size: 14px; font-weight: 600; }
-    .radio-sub { font-size: 11.5px; color: var(--ink-3); margin-top: 2px; line-height: 1.5; }
+    .notify-card .nc-ic { font-size: 16px; flex-shrink: 0; }
     .compliance-note {
       margin: 0 16px 12px; padding: 12px 14px;
       background: var(--warn-soft); border-radius: var(--radius-md);
@@ -2797,25 +2800,10 @@
           </div>
         </div>
 
-        <!-- 联系方式 -->
-        <div class="form-section">
-          <div class="form-row" style="padding-bottom:0"><div class="form-label">联系方式</div></div>
-          <div class="radio-list">
-            <div class="radio-item" onclick="selectContact(this)" data-contact="im">
-              <div class="radio-circle selected"></div>
-              <div>
-                <div class="radio-title">🔒 仅站内消息（推荐）</div>
-                <div class="radio-sub">保护隐私，所有消息经审核后送达</div>
-              </div>
-            </div>
-            <div class="radio-item" onclick="selectContact(this)" data-contact="virtual">
-              <div class="radio-circle"></div>
-              <div>
-                <div class="radio-title">📞 虚拟号中转拨打</div>
-                <div class="radio-sub">隐藏真实号码 · 平台代接通 · 约 0.3 元/分钟</div>
-              </div>
-            </div>
-          </div>
+        <!-- 通知保障 · 不让用户做技术选择，直接告诉 ta「我们已经安排好了」 -->
+        <div class="notify-card">
+          <span class="nc-ic">💚</span>
+          <span>有人留线索时，立刻在小程序 / 微信内通知你</span>
         </div>
 
         <div class="terms-note">
@@ -3200,7 +3188,7 @@
             <div class="menu-row" onclick="alert('打开《用户协议》')"><span class="menu-icon">📄</span><span class="menu-label">用户协议</span><span class="menu-arrow">›</span></div>
             <div class="menu-row" onclick="alert('打开《隐私政策》')"><span class="menu-icon">🔐</span><span class="menu-label">隐私政策</span><span class="menu-arrow">›</span></div>
             <div class="menu-row" onclick="alert('客服电话：400-XXX-XXXX\n邮箱：support@petfinder.xxx')"><span class="menu-icon">🆘</span><span class="menu-label">联系客服</span><span class="menu-meta">工作日 9-18</span><span class="menu-arrow">›</span></div>
-            <div class="menu-row" onclick="if(confirm('将清除你的位置 / 手机号 / 聊天记录 / 发布的帖子，确定？')) alert('已提交清除请求 · 30 天内完成（合规冷却期）· 期间可撤销')"><span class="menu-icon">🗑</span><span class="menu-label">清除我的数据</span><span class="menu-arrow">›</span></div>
+            <div class="menu-row" onclick="if(confirm('将清除你的位置 / 聊天记录 / 发布的帖子，确定？')) alert('已提交清除请求 · 30 天内完成（合规冷却期）· 期间可撤销')"><span class="menu-icon">🗑</span><span class="menu-label">清除我的数据</span><span class="menu-arrow">›</span></div>
           </div>
           <div class="menu-section">
             <div class="menu-row"><span class="menu-icon">ⓘ</span><span class="menu-label">关于</span><span class="menu-meta">v1.0.0</span><span class="menu-arrow">›</span></div>
@@ -3928,8 +3916,7 @@
           <b style="display:block;margin-bottom:6px">我们会收集和使用以下信息：</b>
           <div class="privacy-item"><span class="privacy-item-ic">①</span><span><b>位置</b> · 用于发布走失/招领、附近匹配（精度模糊至 500m）</span></div>
           <div class="privacy-item"><span class="privacy-item-ic">②</span><span><b>照片</b> · 用于宠物识别匹配，将经平台审核</span></div>
-          <div class="privacy-item"><span class="privacy-item-ic">③</span><span><b>手机号</b> · 加密存储，仅通过虚拟号供他人联系</span></div>
-          <div class="privacy-item"><span class="privacy-item-ic">④</span><span><b>聊天内容</b> · 经审核送达，留存 6 个月以满足监管</span></div>
+          <div class="privacy-item"><span class="privacy-item-ic">③</span><span><b>聊天内容</b> · 经审核送达，留存 6 个月以满足监管</span></div>
           <div class="privacy-list-footer">你可随时在「我的 → 清除我的数据」中删除所有个人数据。</div>
         </div>
         <div class="privacy-agree">
@@ -5562,14 +5549,6 @@
     if (!input) return;
     input.value = '';
     input.focus();
-  }
-
-  // 联系方式 radio 切换
-  function selectContact(el) {
-    document.querySelectorAll('[data-screen="publish"] .radio-item').forEach(r => {
-      r.querySelector('.radio-circle').classList.remove('selected');
-    });
-    el.querySelector('.radio-circle').classList.add('selected');
   }
 
   // 描述字数计数

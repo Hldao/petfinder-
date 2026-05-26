@@ -147,7 +147,6 @@ posts (帖子)
 ├── location: { city, district, address, lat, lng, geohash }
 ├── time: timestamp
 ├── description (公开)
-├── contact_method: 'im' | 'virtual_phone'
 ├── poster_id → users
 ├── stats: { views, comments, shares, clues }
 └── created_at / updated_at
@@ -307,8 +306,8 @@ seg: [🥺 我丢了宠物] [🤗 我捡到了]
 - **发布须知前置告知**（顶部红色卡片）
 - 提交后调用 `security.msgSecCheck`（文字）+ `security.imgSecCheck`（图片）
 - 未通过审核**不入库 / 不出现在 feed**
-- 手机号字段加密（AES-256）存储
-- 联系方式默认推荐"仅站内消息"
+
+> ⚠ MVP 不收集手机号、不做虚拟号——所有联系统一走站内 IM。详见 `docs/06-product-philosophy.md` 奥卡姆案例库「联系方式 radio」反例。
 
 ---
 
@@ -451,8 +450,9 @@ messages (单条消息)
 |----|------|----------|
 | 📍 位置 | 发布走失/招领、附近匹配 | **精度模糊至 500m**（geohash 加密）|
 | 📷 照片 | 宠物识别匹配 | **经平台审核** |
-| 📞 手机号 | 联系（虚拟号转接）| **加密存储**，仅虚拟号供他人联系 |
 | 💬 聊天内容 | 双方沟通 | **经审核送达，留存 6 个月** 满足监管 |
+
+> ⚠ MVP 不收集手机号 · 不做虚拟号 —— 所有联系统一走站内 IM。详见 `docs/06-product-philosophy.md` 奥卡姆案例库。
 
 #### 6.2 流程
 
