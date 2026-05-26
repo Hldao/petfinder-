@@ -1960,6 +1960,29 @@
     .pin-popup.lost  .popup-go { background:var(--apricot); }
     .pin-popup.found .popup-go { background:var(--mint-deep); }
     .pin-popup.care  .popup-go { background:var(--plum-deep); }
+    /* 地图底部迷你详情卡 */
+    .sheet-detail-card { padding:12px 14px 4px; }
+    .sdc-hero { display:flex; align-items:center; gap:12px; margin-bottom:10px; }
+    .sdc-emoji { width:52px; height:52px; border-radius:14px; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:28px; position:relative; }
+    .sdc-emoji.lost  { background:linear-gradient(135deg,var(--apricot-soft),#FFCDA8); }
+    .sdc-emoji.found { background:linear-gradient(135deg,var(--mint-soft),#ABDDCB); }
+    .sdc-emoji.care  { background:linear-gradient(135deg,var(--plum-soft),#D8B4FE); }
+    .sdc-meta { flex:1; min-width:0; }
+    .sdc-name { font-size:17px; font-weight:700; letter-spacing:-0.01em; }
+    .sdc-breed { font-size:12px; color:var(--ink-3); margin-top:2px; }
+    .sdc-status { font-size:11px; font-weight:700; padding:3px 8px; border-radius:6px; flex-shrink:0; align-self:flex-start; }
+    .sdc-status.lost  { background:var(--apricot-soft); color:var(--apricot-deep); }
+    .sdc-status.found { background:var(--mint-soft);    color:var(--mint-deep); }
+    .sdc-status.care  { background:var(--plum-soft);    color:var(--plum-deep); }
+    .sdc-loc { font-size:12px; color:var(--ink-3); margin-bottom:8px; display:flex; gap:6px; align-items:center; }
+    .sdc-loc .hl { font-weight:600; color:var(--ink-2); }
+    .sdc-desc { font-size:13px; color:var(--ink-2); line-height:1.55; margin-bottom:12px; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; }
+    .sdc-actions { display:flex; gap:8px; padding-bottom:10px; }
+    .sdc-btn-primary { flex:1; border:none; border-radius:10px; padding:10px; font-size:13px; font-weight:700; cursor:pointer; font-family:var(--font-cn); color:white; }
+    .sdc-btn-primary.lost  { background:var(--apricot); }
+    .sdc-btn-primary.found { background:var(--mint-deep); }
+    .sdc-btn-primary.care  { background:var(--plum-deep); }
+    .sdc-btn-detail { flex:1; border:1.5px solid var(--divider); background:var(--surface); border-radius:10px; padding:10px; font-size:13px; font-weight:700; cursor:pointer; font-family:var(--font-cn); color:var(--ink-2); }
     /* 可拖拽底部面板 */
     .map-bottom-sheet { position:absolute; bottom:82px; left:0; right:0; background:var(--surface); border-radius:20px 20px 0 0; box-shadow:0 -8px 24px rgba(0,0,0,0.08); height:210px; display:flex; flex-direction:column; transition:height 0.32s cubic-bezier(0.34,1.2,0.64,1); user-select:none; }
     .sheet-drag-area { flex-shrink:0; padding:10px 0 4px; cursor:grab; display:flex; flex-direction:column; align-items:center; gap:5px; }
@@ -5226,26 +5249,25 @@
     document.getElementById('dyn-desc').textContent = d.desc;
 
     document.getElementById('dyn-extra').innerHTML = isLost
-        ? `<div class="owner-update-bar" onclick="postOwnerUpdate()">
-             <div class="oub-icon">📢</div>
-             <div class="oub-body"><div class="oub-title">失主发进展</div><div class="oub-sub">让关注的人第一时间知道搜寻动态</div></div>
-             <div class="oub-arrow">›</div>
-           </div>
-           <div class="leave-clue" onclick="showScreen('chat')">
-             <div class="lc-icon">📌</div>
-             <div class="lc-content"><div class="lc-title">看到过 ta？留下线索</div><div class="lc-sub">用话术模板快速描述时间、地点、方向</div></div>
-             <div class="lc-arrow">›</div>
-           </div>`
+        ? ''
         : `<div class="feature-card green">
              <span class="ic">💬</span>
              <div><b>认领前会拿到一份「沟通建议」</b><br>平台提供与失主沟通的话术和见面建议。<b>核对怎么走由你们自己决定</b>——确认归还时回来打个卡就行。</div>
            </div>`;
 
+    // 视角：失主看到 owner 操作栏，其他人看 public 操作栏
+    const dynScreen = document.querySelector('[data-screen="detail"]');
+    if (dynScreen) {
+      dynScreen.classList.remove('view-public', 'view-owner');
+      dynScreen.classList.add(d._isMine ? 'view-owner' : 'view-public');
+    }
     document.getElementById('dyn-action-bar').innerHTML = isLost
-        ? `<div class="btn-secondary" onclick="openClueModal('lost')">📌 留一条公开线索</div>
-           <div class="btn-primary" onclick="showScreen('chat')">💬 私聊失主</div>`
-        : `<div class="btn-secondary" onclick="openClueModal('found')">📌 我也见过 ta</div>
-           <div class="btn-primary" onclick="showScreen('chat')">🏠 这是我家的猫</div>`;
+        ? `<div class="btn-secondary view-public-only" onclick="openClueModal('lost')">📌 留一条公开线索</div>
+           <div class="btn-primary view-public-only" onclick="openChatAs('finder')">💬 私聊失主</div>
+           <div class="btn-secondary view-owner-only" onclick="openClueModal('owner')">📌 补充一条线索</div>
+           <div class="btn-primary view-owner-only" onclick="postOwnerUpdate()">📢 发布新进展</div>`
+        : `<div class="btn-secondary view-public-only" onclick="openClueModal('found')">📌 我也见过 ta</div>
+           <div class="btn-primary view-public-only" onclick="showScreen('chat')">🏠 这是我家的猫</div>`;
 
     showScreen('detail');
   }
@@ -5256,11 +5278,36 @@
     const filterToggle = document.getElementById('sheet-filter-toggle');
     const vpHint       = document.getElementById('sheet-viewport-hint');
     if (!content) return;
-    const sc = d.mapStatus || d.status;
+    const sc      = d.mapStatus || d.status;
+    const isLost  = sc === 'lost';
     if (titleEl) titleEl.innerHTML = `<span class="sheet-back-btn ${sc}" onclick="restoreSheetList()">← 全部</span>`;
     if (filterToggle) filterToggle.style.display = 'none';
     if (vpHint) vpHint.classList.remove('show');
-    content.innerHTML = `<div style="padding:6px 4px 12px">${renderCard(d)}</div>`;
+    const distStr = d.distanceKm < 1
+        ? '约 ' + Math.round(d.distanceKm * 1000) + ' 米'
+        : '约 ' + d.distanceKm.toFixed(1) + ' 公里';
+    const primaryLabel  = isLost ? '💬 私聊失主'     : '🏠 这是我家的猫';
+    const statusLabel   = isLost ? '寻宠中'           : '招领中';
+    const locLabel      = isLost ? '走失地点'          : '发现地点';
+    content.innerHTML = `
+      <div class="sheet-detail-card">
+        <div class="sdc-hero">
+          <div class="sdc-emoji ${sc}">${d.emoji}</div>
+          <div class="sdc-meta">
+            <div class="sdc-name">${d.name}</div>
+            <div class="sdc-breed">${d.breed}</div>
+          </div>
+          <div class="sdc-status ${sc}">${statusLabel}</div>
+        </div>
+        <div class="sdc-loc">
+          📍 <span class="hl">${d.loc}</span> · ${distStr} · <span>${d.time}</span>
+        </div>
+        <div class="sdc-desc">${d.desc}</div>
+        <div class="sdc-actions">
+          <button class="sdc-btn-primary ${sc}" onclick="showScreen('chat')">${primaryLabel}</button>
+          <button class="sdc-btn-detail" onclick="showDetailScreen(${d.id})">查看完整详情 →</button>
+        </div>
+      </div>`;
     if (window._expandSheet) window._expandSheet(1);
   }
 
