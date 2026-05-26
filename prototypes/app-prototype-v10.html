@@ -1286,6 +1286,67 @@
     .pet-card.found-card .pc-action.share { color: var(--mint-deep); background: var(--mint-soft); }
     .pet-card.found-card .pc-action.share:hover { background: var(--mint); color: white; }
 
+    /* Clue Modal · 留一条公开线索（轻量 textarea · 非表单） */
+    .clue-modal {
+      position: absolute; inset: 0;
+      background: rgba(0,0,0,0.55);
+      backdrop-filter: blur(6px);
+      display: none;
+      align-items: flex-end;
+      justify-content: center;
+      z-index: 60;
+    }
+    .clue-modal.show { display: flex; }
+    .clue-modal-box {
+      background: var(--surface);
+      border-radius: 20px 20px 0 0;
+      width: 100%;
+      padding: 20px 18px 24px;
+      animation: sheetSlideUp 0.32s cubic-bezier(0.32, 0.72, 0, 1) forwards;
+    }
+    .clue-modal-head {
+      display: flex; align-items: center;
+      justify-content: space-between;
+      margin-bottom: 6px;
+    }
+    .clue-modal-title { font-size: 16px; font-weight: 700; letter-spacing: -0.005em; }
+    .clue-modal-sub { font-size: 11.5px; color: var(--ink-3); margin-bottom: 14px; }
+    .clue-modal-close {
+      font-size: 18px; color: var(--ink-3);
+      cursor: pointer;
+      width: 32px; height: 32px;
+      display: flex; align-items: center; justify-content: center;
+      border-radius: 50%;
+    }
+    .clue-modal-close:hover { background: var(--bg); }
+    .clue-modal-body textarea {
+      width: 100%;
+      min-height: 110px;
+      background: var(--bg);
+      border: none;
+      border-radius: 12px;
+      padding: 12px 14px;
+      font-size: 13.5px;
+      font-family: var(--font-cn);
+      color: var(--ink-1);
+      outline: none;
+      resize: none;
+      line-height: 1.65;
+      box-sizing: border-box;
+    }
+    .clue-modal-body textarea:focus { background: var(--apricot-soft); }
+    .clue-modal-hint {
+      font-size: 11px;
+      color: var(--apricot-deep);
+      margin-top: 10px;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      line-height: 1.5;
+    }
+    .clue-modal-actions { display: flex; gap: 10px; }
+
     /* Share Modal · 帮忙转发 */
     .share-modal {
       position: absolute;
@@ -2647,7 +2708,8 @@
         </div>
       </div>
       <div class="action-bar">
-        <div class="btn-primary" onclick="showScreen('chat')" style="flex:1">📌 我看到 ta 了</div>
+        <div class="btn-secondary" onclick="openClueModal('lost')">📌 留一条公开线索</div>
+        <div class="btn-primary" onclick="showScreen('chat')">💬 私聊失主</div>
       </div>
     </div>
 
@@ -2704,7 +2766,8 @@
         </div>
       </div>
       <div class="action-bar">
-        <div class="btn-primary" onclick="showScreen('chat')" style="flex:1">🏠 这是我家的猫</div>
+        <div class="btn-secondary" onclick="openClueModal('found')">📌 我也见过 ta</div>
+        <div class="btn-primary" onclick="showScreen('chat')">🏠 这是我家的猫</div>
       </div>
     </div>
 
@@ -3694,6 +3757,25 @@
           </div>
         </div>
         <div class="as-cancel" onclick="closeReportSheet()">取消</div>
+      </div>
+    </div>
+
+    <!-- ===== Clue Modal · 留一条公开线索 ===== -->
+    <div class="clue-modal" id="clue-modal" onclick="if(event.target===this) closeClueModal()">
+      <div class="clue-modal-box">
+        <div class="clue-modal-head">
+          <div class="clue-modal-title">留下你看到的</div>
+          <div class="clue-modal-close" onclick="closeClueModal()">✕</div>
+        </div>
+        <div class="clue-modal-sub">不用纠结格式 · 一句话也可以</div>
+        <div class="clue-modal-body">
+          <textarea id="clue-modal-textarea" placeholder="在哪儿？什么时候？看到什么？地点和时间会很有帮助。" rows="4"></textarea>
+          <div class="clue-modal-hint">ℹ️ 这条会公开展示给所有帮忙的人</div>
+        </div>
+        <div class="clue-modal-actions">
+          <div class="btn-secondary" onclick="closeClueModal()" style="flex:1">取消</div>
+          <div class="btn-primary" onclick="submitClue()" style="flex:1.4">发布线索</div>
+        </div>
       </div>
     </div>
 
@@ -5499,6 +5581,35 @@
       msgsArea.scrollTop = msgsArea.scrollHeight;
     }
     input.value = '';
+  }
+
+  /* ============== 留一条公开线索（v10 r17）==============
+   * 用户主动发布的"我看到了"信息 · 写完直接公开
+   * 不依赖失主"事后筛选"——闭环不依赖人类情绪驱动行为
+   * 详见 docs/06-product-philosophy.md「机制 vs 行为」原则
+   * ====================================================== */
+  function openClueModal(mode) {
+    document.getElementById('clue-modal').classList.add('show');
+    setTimeout(() => {
+      const ta = document.getElementById('clue-modal-textarea');
+      if (ta) ta.focus();
+    }, 100);
+  }
+  function closeClueModal() {
+    document.getElementById('clue-modal').classList.remove('show');
+    const ta = document.getElementById('clue-modal-textarea');
+    if (ta) ta.value = '';
+  }
+  function submitClue() {
+    const ta = document.getElementById('clue-modal-textarea');
+    const text = (ta && ta.value || '').trim();
+    if (!text) {
+      alert('请说一下你看到的');
+      if (ta) ta.focus();
+      return;
+    }
+    closeClueModal();
+    alert('✅ 线索已发布\n（mock · 真实场景下经审核后展示到线索区，失主会收到通知）');
   }
 
   /* ============== 帮忙转发（数据从 FEED_DATA 取） ============== */
