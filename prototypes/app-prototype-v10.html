@@ -97,6 +97,18 @@
     }
     .screen.active { display: flex; z-index: 2; }
 
+    /* ============== 视角自动推导 · v10 r19 ==============
+     * 不需要任何用户操作 · 由"入口路径"自动决定视角：
+     * - feed / 搜索 / 地图卡 → showScreen('detail-X', false, 'public')
+     * - my-posts 卡 → showScreen('detail-X', false, 'owner')
+     * 生产环境真实推导：is_owner = (post.poster_id === currentUser.openid)
+     * ====================================================== */
+    .screen.view-owner .view-public-only { display: none !important; }
+    .screen.view-public .view-owner-only { display: none !important; }
+    /* chat 特殊 · 根据"我和对方的关系"切换 Quick Reply */
+    .screen.view-as-owner .qr-finder { display: none !important; }
+    .screen.view-as-finder .qr-owner { display: none !important; }
+
     /* ============== 通用：顶部导航 ============== */
     .nav-region {
       background: var(--surface); padding: 12px 18px 14px;
@@ -199,6 +211,14 @@
     .status-bubble.found { background: var(--mint); }
     .status-bubble.care { background: var(--plum); }
     .status-bubble.expired { background: var(--ink-4); }
+    /* 自己发布的帖子标识（v10 r19 · 仅在 feed 等公开列表中显示）*/
+    .my-post-badge {
+      position: absolute; top: 7px; left: 7px;
+      padding: 2px 6px; background: rgba(0,0,0,0.55);
+      color: white; font-size: 9.5px; font-weight: 700;
+      border-radius: 4px; letter-spacing: 0.02em;
+      backdrop-filter: blur(4px);
+    }
     .pc-info { flex: 1; min-width: 0; padding-top: 2px; }
     .pc-name-row { display: flex; align-items: baseline; gap: 6px; margin-bottom: 4px; }
     .pc-name { font-size: 16px; font-weight: 700; letter-spacing: -0.005em; }
@@ -2364,11 +2384,11 @@
     </div>
 
     <!-- ===== 屏 3 · Detail Lost ===== -->
-    <div class="screen" data-screen="detail-lost">
+    <div class="screen view-public" data-screen="detail-lost">
       <div class="sub-header">
         <div class="back-btn" onclick="goBack()">←</div>
         <div class="sub-title">寻宠详情</div>
-        <div class="follow-btn" id="detail-follow-btn" onclick="toggleFollow(this)">♡ 关注</div>
+        <div class="follow-btn view-public-only" id="detail-follow-btn" onclick="toggleFollow(this)">♡ 关注</div>
         <div class="sub-icon" onclick="openShare(1)" title="转发">↗</div>
         <div class="sub-icon" onclick="openReportSheet()" title="举报">⚠</div>
       </div>
@@ -2395,7 +2415,7 @@
           <div class="section-label">特征描述</div>
           <div class="desc-card">今天下午带胖丁去人民路咖啡馆，吃完饭出门时它窜出去就不见了。胆小、不会让陌生人碰，听到名字会喵叫一声。看到请尽量拍照不要追 🙏</div>
 
-          <div class="owner-update-bar" onclick="postOwnerUpdate()">
+          <div class="owner-update-bar view-owner-only" onclick="postOwnerUpdate()">
             <div class="oub-icon">📢</div>
             <div class="oub-body">
               <div class="oub-title">失主发进展</div>
@@ -2447,14 +2467,17 @@
           </div>
         </div>
       </div>
-      <div class="action-bar">
+      <div class="action-bar view-public-only">
         <div class="btn-secondary" onclick="openClueModal('lost')">📌 留一条公开线索</div>
-        <div class="btn-primary" onclick="showScreen('chat')">💬 私聊失主</div>
+        <div class="btn-primary" onclick="openChatAs('finder')">💬 私聊失主</div>
+      </div>
+      <div class="action-bar view-owner-only">
+        <div class="btn-primary" onclick="postOwnerUpdate()" style="flex:1">📢 发布新进展</div>
       </div>
     </div>
 
     <!-- ===== 屏 4 · Detail Found ===== -->
-    <div class="screen" data-screen="detail-found">
+    <div class="screen view-public" data-screen="detail-found">
       <div class="sub-header">
         <div class="back-btn" onclick="goBack()">←</div>
         <div class="sub-title">招领详情</div>
@@ -2505,9 +2528,12 @@
           </div>
         </div>
       </div>
-      <div class="action-bar">
+      <div class="action-bar view-public-only">
         <div class="btn-secondary" onclick="openClueModal('found')">📌 我也见过 ta</div>
-        <div class="btn-primary" onclick="showScreen('chat')">🏠 这是我家的猫</div>
+        <div class="btn-primary" onclick="openChatAs('owner')">🏠 这是我家的猫</div>
+      </div>
+      <div class="action-bar view-owner-only">
+        <div class="btn-primary" onclick="postOwnerUpdate()" style="flex:1">📢 发布新进展</div>
       </div>
     </div>
 
@@ -2811,7 +2837,7 @@
     </div>
 
     <!-- ===== 屏 11 · Chat ===== -->
-    <div class="screen" data-screen="chat">
+    <div class="screen view-as-finder" data-screen="chat">
       <div class="sub-header">
         <div class="back-btn" onclick="goBack()">←</div>
         <div class="sub-title">客栈老板娘</div>
@@ -2855,8 +2881,13 @@
 
       <div class="quick-replies">
         <span class="qr-label">快捷</span>
-        <span class="qr-chip primary" onclick="setQuickReply('📍 我在 ')">📍 我看到了</span>
-        <span class="qr-chip action" onclick="setQuickReply('🏠 ta 现在在我这里，方便见面吗？')">🏠 我收着 ta</span>
+        <!-- 拾主视角：我看到了某只 / 我捡到了某只 -->
+        <span class="qr-chip primary qr-finder" onclick="setQuickReply('📍 我在 ')">📍 我看到了</span>
+        <span class="qr-chip action qr-finder" onclick="setQuickReply('🏠 ta 现在在我这里，方便见面吗？')">🏠 我收着 ta</span>
+        <!-- 失主视角：我是 ta 的主人 -->
+        <span class="qr-chip primary qr-owner" onclick="setQuickReply('📍 我马上过来！请告诉我具体位置')">📍 马上过来</span>
+        <span class="qr-chip action qr-owner" onclick="setQuickReply('📹 能视频看一下 ta 的状态吗？')">📹 视频确认</span>
+        <!-- 通用 -->
         <span class="qr-chip" onclick="setQuickReply('🙏 谢谢你！')">🙏 谢谢</span>
       </div>
 
@@ -2950,7 +2981,7 @@
         <!-- 进行中 -->
         <div id="mp-section-active">
           <div class="mp-card">
-            <div class="pc-body" onclick="showScreen('detail-found')">
+            <div class="pc-body" onclick="showScreen('detail-found', false, 'owner')">
               <div class="pc-photo ph-orange"><span>🐱</span><div class="status-bubble found">招领</div></div>
               <div class="pc-info">
                 <div class="pc-name-row"><span class="pc-name">小橘子</span><span class="breed">· 约 2 岁</span></div>
@@ -2966,7 +2997,7 @@
             </div>
           </div>
           <div class="mp-card">
-            <div class="pc-body" onclick="showScreen('detail-found')">
+            <div class="pc-body" onclick="showScreen('detail-found', false, 'owner')">
               <div class="pc-photo ph-cream"><span>🐶</span><div class="status-bubble found">招领</div></div>
               <div class="pc-info">
                 <div class="pc-name-row"><span class="pc-name">小白</span><span class="breed">· 比熊 · ♂</span></div>
@@ -3001,7 +3032,7 @@
             </div>
           </div>
           <div class="mp-card" style="opacity:0.75">
-            <div class="pc-body" onclick="showScreen('detail-found')">
+            <div class="pc-body" onclick="showScreen('detail-found', false, 'owner')">
               <div class="pc-photo ph-pink"><span>🐱</span><div class="status-bubble" style="background:var(--mint-deep)">已归还</div></div>
               <div class="pc-info">
                 <div class="pc-name-row"><span class="pc-name">布偶宝宝</span><span class="breed">· 布偶猫 · ♀</span></div>
@@ -3011,11 +3042,11 @@
               </div>
             </div>
             <div class="mp-actions">
-              <div class="mp-action" onclick="showScreen('detail-found')">查看详情</div>
+              <div class="mp-action" onclick="showScreen('detail-found', false, 'owner')">查看详情</div>
             </div>
           </div>
           <div class="mp-card" style="opacity:0.75">
-            <div class="pc-body" onclick="showScreen('detail-found')">
+            <div class="pc-body" onclick="showScreen('detail-found', false, 'owner')">
               <div class="pc-photo ph-cream"><span>🐶</span><div class="status-bubble" style="background:var(--mint-deep)">已归还</div></div>
               <div class="pc-info">
                 <div class="pc-name-row"><span class="pc-name">雪球</span><span class="breed">· 比熊串 · ♂</span></div>
@@ -3025,11 +3056,11 @@
               </div>
             </div>
             <div class="mp-actions">
-              <div class="mp-action" onclick="showScreen('detail-found')">查看详情</div>
+              <div class="mp-action" onclick="showScreen('detail-found', false, 'owner')">查看详情</div>
             </div>
           </div>
           <div class="mp-card" style="opacity:0.75">
-            <div class="pc-body" onclick="showScreen('detail-found')">
+            <div class="pc-body" onclick="showScreen('detail-found', false, 'owner')">
               <div class="pc-photo ph-orange"><span>🐱</span><div class="status-bubble" style="background:var(--mint-deep)">已归还</div></div>
               <div class="pc-info">
                 <div class="pc-name-row"><span class="pc-name">虎子</span><span class="breed">· 橘猫 · ♂</span></div>
@@ -3039,11 +3070,11 @@
               </div>
             </div>
             <div class="mp-actions">
-              <div class="mp-action" onclick="showScreen('detail-found')">查看详情</div>
+              <div class="mp-action" onclick="showScreen('detail-found', false, 'owner')">查看详情</div>
             </div>
           </div>
           <div class="mp-card" style="opacity:0.75">
-            <div class="pc-body" onclick="showScreen('detail-lost')">
+            <div class="pc-body" onclick="showScreen('detail-lost', false, 'owner')">
               <div class="pc-photo ph-mint"><span>🐈</span><div class="status-bubble" style="background:var(--mint-deep)">已找到</div></div>
               <div class="pc-info">
                 <div class="pc-name-row"><span class="pc-name">咖啡</span><span class="breed">· 美短 · ♀</span></div>
@@ -3053,7 +3084,7 @@
               </div>
             </div>
             <div class="mp-actions">
-              <div class="mp-action" onclick="showScreen('detail-lost')">查看详情</div>
+              <div class="mp-action" onclick="showScreen('detail-lost', false, 'owner')">查看详情</div>
               <div class="mp-action" onclick="alert('🙏 已发送一键致谢')">感谢信</div>
             </div>
           </div>
@@ -3745,7 +3776,7 @@
   // 屏切换 + 简单 history stack
   const history = ['feed'];
 
-  function showScreen(name, reset) {
+  function showScreen(name, reset, role) {
     // 关闭 pin 弹卡
     const pp = document.getElementById('pin-popup');
     if (pp) pp.classList.remove('show');
@@ -3760,7 +3791,14 @@
     }
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
     const t = document.querySelector(`[data-screen="${name}"]`);
-    if (t) t.classList.add('active');
+    if (t) {
+      t.classList.add('active');
+      // v10 r19 · 视角自动推导：详情页用 view-owner / view-public
+      if (name === 'detail-lost' || name === 'detail-found') {
+        t.classList.remove('view-owner', 'view-public');
+        t.classList.add('view-' + (role || 'public'));
+      }
+    }
     if (name === 'search') {
       setTimeout(() => {
         const box = document.getElementById('search-box');
@@ -3769,6 +3807,18 @@
     }
     if (name === 'all-posts') initAllPosts();
     if (name === 'map' && window._applyFilter) window._applyFilter(currentFilter);
+  }
+
+  // v10 r19 · 进 chat 时设置 chat 视角（根据"我和对方的关系"）
+  // - 'finder' = 我是拾主，对方是失主（拾主 Quick Reply）
+  // - 'owner'  = 我是失主，对方是拾主（失主 Quick Reply）
+  function openChatAs(role) {
+    const chat = document.querySelector('[data-screen="chat"]');
+    if (chat) {
+      chat.classList.remove('view-as-finder', 'view-as-owner');
+      chat.classList.add('view-as-' + (role || 'finder'));
+    }
+    showScreen('chat');
   }
 
   function goBack() {
@@ -3814,7 +3864,7 @@
       time:'10 min 前', timeMins:10, distanceKm:0.8,
       comments:12, tall:true,
       desc:'穿粉色项圈，左耳缺一小块。胆小，听到名字会喵叫。看到请拍照不要追 🙏',
-      mapPos:{top:25,left:20} },
+      mapPos:{top:25,left:20}, _isMine:true },
     { id: 2, emoji:'🐶', photoClass:'ph-cream', status:'found', statusLabel:'招领',
       name:'小白', breed:'比熊 · ♂ 5kg', loc:'下关泰安路', color:'白色',
       time:'2 hr 前', timeMins:120, distanceKm:4.2,
@@ -4091,7 +4141,7 @@
     return `<div class="pet-card${borderClass}" ${expiredCardStyle} onclick="showScreen('${detailScreen}')">
       ${hintHtml}
       <div class="pc-body">
-        <div class="pc-photo ${d.photoClass}"><span>${d.emoji}</span><div class="status-bubble ${statusCls}">${statusLabel}</div></div>
+        <div class="pc-photo ${d.photoClass}"><span>${d.emoji}</span><div class="status-bubble ${statusCls}">${statusLabel}</div>${d._isMine ? '<div class="my-post-badge">✏ 你的帖子</div>' : ''}</div>
         <div class="pc-info">
           <div class="pc-name-row"><span class="pc-name">${d.name}</span><span class="breed">· ${d.breed}</span></div>
           <div class="pc-meta"><span>📍 ${d.loc} · ${distanceStr} km</span>${timeSpan}</div>
@@ -4349,7 +4399,7 @@
       <div class="pet-card${borderClass}" onclick="showScreen('${detailScreen}')">
         ${overdueHtml}${hintHtml}
         <div class="pc-body">
-          <div class="pc-photo ${d.photoClass}"><span>${d.emoji}</span><div class="status-bubble ${statusCls}">${statusLabel}</div></div>
+          <div class="pc-photo ${d.photoClass}"><span>${d.emoji}</span><div class="status-bubble ${statusCls}">${statusLabel}</div>${d._isMine ? '<div class="my-post-badge">✏ 你的帖子</div>' : ''}</div>
           <div class="pc-info">
             <div class="pc-name-row"><span class="pc-name">${d.name}</span><span class="breed">· ${d.breed}</span></div>
             <div class="pc-meta"><span class="loc-link" onclick="event.stopPropagation();showOnMapByLoc(${d.id})">📍 ${d.loc} · ${distanceStr} km</span>${timeSpan}</div>
