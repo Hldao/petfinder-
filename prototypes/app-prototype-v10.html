@@ -115,7 +115,7 @@
       border-bottom: 1px solid var(--divider); flex-shrink: 0;
     }
     .nav-row { display: flex; align-items: center; gap: 10px; }
-    /* 大理本地服务身份标识 · v10 r25 改为纯展示（无交互 · 不再支持城市切换）*/
+    /* 位置标签 · v10 r26 · 点击触发位置授权 / 刷新（仅限大理范围内更精确）*/
     .city-tag {
       display: flex; align-items: center; gap: 6px;
       padding: 7px 12px 7px 8px;
@@ -123,13 +123,19 @@
       color: var(--apricot-deep);
       border-radius: var(--radius-pill);
       font-size: 13px; font-weight: 700;
-      cursor: default;
+      cursor: pointer;
       flex-shrink: 0;
+      transition: filter 0.15s, transform 0.1s;
     }
+    .city-tag:hover { filter: brightness(0.97); }
+    .city-tag:active { transform: scale(0.97); }
     .city-tag .pin {
       width: 20px; height: 20px; background: var(--apricot); color: white;
       border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px;
+      transition: transform 0.3s;
     }
+    .city-tag.loading .pin { animation: locSpin 0.9s linear infinite; }
+    @keyframes locSpin { to { transform: rotate(360deg); } }
     .search-pill {
       flex: 1; height: 36px; background: var(--bg);
       border-radius: var(--radius-pill); padding: 0 14px;
@@ -2298,7 +2304,7 @@
     <div class="screen active" data-screen="feed">
       <div class="nav-region">
         <div class="nav-row">
-          <div class="city-tag"><span class="pin">📍</span><span>大理本地</span></div>
+          <div class="city-tag" onclick="handleLocationRequest()"><span class="pin">📍</span><span id="city-name">大理</span></div>
           <div class="search-pill" onclick="showScreen('search')"><span>🔍</span><span>搜品种、地点、特征...</span></div>
           <div class="icon-btn" onclick="showScreen('messages')">🔔<div class="dot"></div></div>
         </div>
@@ -4524,6 +4530,40 @@
     el.classList.add('show');
     if (_toastTimer) clearTimeout(_toastTimer);
     _toastTimer = setTimeout(() => el.classList.remove('show'), 2200);
+  }
+
+  /* ============== 位置授权 · v10 r26 ==============
+   * 顶部 [📍 大理] 按钮：从纯标识升级为功能入口
+   * - 未授权（默认）：📍 大理 · 点击触发授权
+   * - 定位中：📍 定位中...
+   * - 已授权：📍 古城北门 · 点击刷新
+   *
+   * 生产环境调 wx.getLocation
+   * 位置精度模糊到 500m（合规 · 同 privacy modal 第①项）
+   * 地理服务仍仅限大理 · 不在大理时仍展示大理本地内容
+   * ============================================== */
+  let _hasLocation = false;
+  // mock 街道地标池（用户在大理的可能位置）
+  const _mockLocations = ['古城北门', '人民路三月街', '洋人街', '下关泰安路', '喜洲扎染巷'];
+
+  function handleLocationRequest() {
+    const tag = document.querySelector('.city-tag');
+    const name = document.getElementById('city-name');
+    if (!tag || !name) return;
+    tag.classList.add('loading');
+    const prevText = name.textContent;
+    name.textContent = '定位中...';
+    const isFirstTime = !_hasLocation;
+    setTimeout(() => {
+      tag.classList.remove('loading');
+      // 随机抽一个 mock 地标（模拟真实位置变化）
+      const loc = _mockLocations[Math.floor(Math.random() * _mockLocations.length)];
+      name.textContent = loc;
+      _hasLocation = true;
+      showToast(isFirstTime
+        ? '📍 已为你获取附近内容 · 大理 · ' + loc
+        : '📍 位置已刷新 · ' + loc);
+    }, isFirstTime ? 1200 : 800);
   }
 
   function switchMpTab(el, section) {
