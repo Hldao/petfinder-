@@ -2656,7 +2656,7 @@
       </div>
       <div class="action-bar view-public-only">
         <div class="btn-secondary" onclick="openClueModal('found')">📌 我也见过 ta</div>
-        <div class="btn-primary" onclick="openChatAs('owner')">🏠 这是我家的猫</div>
+        <div class="btn-primary" onclick="openChatAs('owner')">💬 私聊发现者</div>
       </div>
       <div class="action-bar view-owner-only">
         <div class="btn-primary" onclick="postOwnerUpdate()" style="flex:1">📢 发布新进展</div>
@@ -5270,7 +5270,7 @@
            <div class="btn-primary view-public-only" onclick="openChatAs('finder')">💬 私聊失主</div>
            <div class="btn-primary view-owner-only" onclick="postOwnerUpdate()" style="flex:1">📢 发布新进展</div>`
         : `<div class="btn-secondary view-public-only" onclick="openClueModal('found')">📌 我也见过 ta</div>
-           <div class="btn-primary view-public-only" onclick="openChatAs('owner')">🏠 这是我家的猫</div>
+           <div class="btn-primary view-public-only" onclick="openChatAs('owner')">💬 私聊发现者</div>
            <div class="btn-primary view-owner-only" onclick="postOwnerUpdate()" style="flex:1">📢 发布新进展</div>`;
 
     showScreen('detail');
@@ -5290,7 +5290,7 @@
     const distStr = d.distanceKm < 1
         ? '约 ' + Math.round(d.distanceKm * 1000) + ' 米'
         : '约 ' + d.distanceKm.toFixed(1) + ' 公里';
-    const primaryLabel  = isLost ? '💬 私聊失主'     : '🏠 这是我家的猫';
+    const primaryLabel  = isLost ? '💬 私聊失主'     : '💬 私聊发现者';
     const statusLabel   = isLost ? '寻宠中'           : '招领中';
     const locLabel      = isLost ? '走失地点'          : '发现地点';
     content.innerHTML = `
