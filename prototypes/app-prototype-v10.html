@@ -4676,7 +4676,7 @@
     const nearbyTxt = getNearbyHelpersText(d);
     const firstMsg = hint || nearbyTxt;
     const hintHtml = firstMsg
-      ? `<div class="card-hint-strip ${effStatus}" id="hint-${d.id}" onclick="event.stopPropagation();showScreen('${detailScreen}')">${firstMsg}<span class="hint-arrow">›</span></div>`
+      ? `<div class="card-hint-strip ${effStatus}" id="hint-${d.id}" onclick="event.stopPropagation();showScreen('${detailScreen}', false, '${d._isMine ? 'owner' : 'public'}')">${firstMsg}<span class="hint-arrow">›</span></div>`
       : '';
     // 超时角标：直接基于 timeMins 判断（剥离对 getRecoveryPhase 的依赖）
     const isLongterm = d.timeMins >= 4320;  // ≥ 3 天
@@ -6023,7 +6023,8 @@
     const badge = row.querySelector('.msg-unread');
     if (badge) badge.remove();
     updateMsgBadge();
-    showScreen(screen);
+    // 「帖子回复」tab 下的所有 row 都是别人对我自己发的帖子的回复 → 视角必然是 owner
+    showScreen(screen, false, 'owner');
   }
 
   /* ============== 举报 / 拉黑用户 ============== */
