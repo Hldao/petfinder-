@@ -216,8 +216,10 @@
      * 用品牌色（杏橘）传达"持续关注感"，不用红色避免焦虑 */
     .pet-card.my-card {
       background: linear-gradient(135deg, #FFFAF4 0%, white 35%);
-      box-shadow: 0 8px 22px rgba(255,133,82,0.16), 0 0 0 1px rgba(255,133,82,0.15);
-      border-left: 5px solid var(--apricot);
+      /* 用 inset 模拟 5px 左边条 · 不挤压内部 strip 宽度（border-left 会导致左上角露白）*/
+      box-shadow: inset 5px 0 0 var(--apricot),
+                  0 8px 22px rgba(255,133,82,0.16),
+                  0 0 0 1px rgba(255,133,82,0.15);
     }
     .my-post-strip {
       padding: 7px 14px 8px;
@@ -962,6 +964,66 @@
       transition: color 0.15s, background 0.15s;
     }
     .chat-tip-link:hover { color: var(--apricot-deep); background: var(--apricot-soft); }
+
+    /* 归还菜单 · v10 r22 · 右上角 ⋯ 弹出 */
+    .chat-menu {
+      position: absolute; top: 44px; right: 8px;
+      background: white; border-radius: 12px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.18), 0 0 0 1px rgba(0,0,0,0.05);
+      padding: 6px; min-width: 200px;
+      display: none; z-index: 50;
+      animation: menuPop 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    .chat-menu.show { display: block; }
+    @keyframes menuPop {
+      from { opacity: 0; transform: translateY(-4px) scale(0.96); }
+      to   { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    .chat-menu-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 12px; border-radius: 8px;
+      font-size: 13.5px; color: var(--ink-1); cursor: pointer;
+      transition: background 0.12s;
+    }
+    .chat-menu-item:hover { background: var(--bg); }
+    .chat-menu-item.primary { color: var(--mint-deep); font-weight: 700; }
+    .chat-menu-item.primary:hover { background: var(--mint-soft); }
+    .chat-menu-item .cm-ic { font-size: 15px; width: 18px; text-align: center; }
+    .chat-menu-divider { height: 1px; background: var(--divider-soft); margin: 4px 8px; }
+
+    /* 归还冷却状态条（标记归还后显示） */
+    .cooldown-bar {
+      margin: 10px 16px;
+      padding: 10px 14px;
+      background: linear-gradient(135deg, rgba(91,184,159,0.12), rgba(91,184,159,0.04));
+      border: 1px solid rgba(91,184,159,0.25);
+      border-radius: 12px;
+      font-size: 12.5px;
+      color: var(--mint-deep);
+      display: flex; align-items: center; gap: 8px;
+      font-weight: 600;
+    }
+    .cooldown-bar .cb-ic { font-size: 15px; }
+    .cooldown-bar .cb-text { flex: 1; }
+    .cooldown-bar .cb-link {
+      color: var(--apricot-deep); font-weight: 700; cursor: pointer;
+      padding: 2px 8px; border-radius: 999px;
+    }
+    .cooldown-bar .cb-link:hover { background: var(--apricot-soft); }
+
+    /* 系统消息（如归还提示）*/
+    .chat-system-msg {
+      text-align: center;
+      font-size: 11px;
+      color: var(--ink-3);
+      padding: 8px 12px;
+      margin: 12px auto;
+      max-width: 80%;
+      background: var(--bg);
+      border-radius: 10px;
+    }
+    .chat-system-msg .sys-ic { margin-right: 4px; color: var(--mint-deep); }
+
     .chat-msgs { flex: 1; overflow-y: auto; padding: 8px 16px 0; }
     .chat-msg { margin-bottom: 12px; display: flex; gap: 8px; }
     .chat-msg.me { flex-direction: row-reverse; }
@@ -2448,8 +2510,7 @@
         <div class="btn-primary" onclick="openChatAs('finder')">💬 私聊失主</div>
       </div>
       <div class="action-bar view-owner-only">
-        <div class="btn-secondary" onclick="openClueModal('owner')">📌 补充一条线索</div>
-        <div class="btn-primary" onclick="postOwnerUpdate()">📢 发布新进展</div>
+        <div class="btn-primary" onclick="postOwnerUpdate()" style="flex:1">📢 发布新进展</div>
       </div>
     </div>
 
@@ -2510,8 +2571,7 @@
         <div class="btn-primary" onclick="openChatAs('owner')">🏠 这是我家的猫</div>
       </div>
       <div class="action-bar view-owner-only">
-        <div class="btn-secondary" onclick="openClueModal('owner')">📌 补充一条线索</div>
-        <div class="btn-primary" onclick="postOwnerUpdate()">📢 发布新进展</div>
+        <div class="btn-primary" onclick="postOwnerUpdate()" style="flex:1">📢 发布新进展</div>
       </div>
     </div>
 
@@ -2853,7 +2913,26 @@
       <div class="sub-header">
         <div class="back-btn" onclick="goBack()">←</div>
         <div class="sub-title">客栈老板娘</div>
-        <div class="sub-icon">⋯</div>
+        <div class="sub-icon" onclick="toggleChatMenu(event)" title="更多">⋯</div>
+        <!-- 右上角 menu · v10 r22 归还闭环入口 -->
+        <div class="chat-menu" id="chat-menu" onclick="event.stopPropagation()">
+          <div class="chat-menu-item primary" onclick="confirmReturn()">
+            <span class="cm-ic">✓</span>
+            <span class="cm-label qr-finder">我把 ta 交给主人了</span>
+            <span class="cm-label qr-owner">ta 已经回到我身边</span>
+          </div>
+          <div class="chat-menu-divider"></div>
+          <div class="chat-menu-item" onclick="closeChatMenu();openReportSheet()">
+            <span class="cm-ic">⚠</span>
+            <span class="cm-label">举报这条对话</span>
+          </div>
+        </div>
+      </div>
+      <!-- 归还冷却状态条 · 标记后才显示 mock -->
+      <div class="cooldown-bar" id="cooldown-bar" style="display:none">
+        <span class="cb-ic">⏳</span>
+        <span class="cb-text" id="cooldown-text">归还冷却中 · 剩 23h59min</span>
+        <span class="cb-link" onclick="undoReturn()">撤销</span>
       </div>
       <div class="chat-pet" onclick="showScreen('detail-found')">
         <div class="chat-pet-thumb ph-orange">🐱</div>
@@ -3831,6 +3910,71 @@
       chat.classList.add('view-as-' + (role || 'finder'));
     }
     showScreen('chat');
+  }
+
+  /* ============== 归还闭环 · v10 r22 ===============
+   * 单方标记 + 24h 隐性同意（不拒绝即通过）
+   * 不依赖对方主动确认（符合「机制 vs 行为」原则）
+   * 24h 冷却是平台层最后一道反冒领防线
+   * ================================================ */
+  function toggleChatMenu(e) {
+    if (e) e.stopPropagation();
+    const menu = document.getElementById('chat-menu');
+    if (!menu) return;
+    menu.classList.toggle('show');
+    if (menu.classList.contains('show')) {
+      setTimeout(() => document.addEventListener('click', closeChatMenuOnce, { once: true }), 0);
+    }
+  }
+  function closeChatMenu() {
+    const menu = document.getElementById('chat-menu');
+    if (menu) menu.classList.remove('show');
+  }
+  function closeChatMenuOnce() { closeChatMenu(); }
+
+  function confirmReturn() {
+    closeChatMenu();
+    const chat = document.querySelector('[data-screen="chat"]');
+    const isOwner = chat && chat.classList.contains('view-as-owner');
+    const txt = isOwner
+      ? 'ta 已经回到你身边了吗？\n\n标记后另一方（拾主）可在 24h 内撤销 · 之后帖子将关闭'
+      : '你已经把 ta 交给主人了吗？\n\n标记后另一方（失主）可在 24h 内撤销 · 之后帖子将关闭';
+    if (!confirm(txt)) return;
+    // mock：显示 cooldown bar + 在 chat 末尾加系统消息 + 跳 return-success
+    showCooldownBar(isOwner);
+    appendReturnSystemMsg(isOwner);
+    showScreen('return-success');
+  }
+
+  function showCooldownBar(isOwner) {
+    const bar = document.getElementById('cooldown-bar');
+    if (!bar) return;
+    bar.style.display = 'flex';
+    const text = document.getElementById('cooldown-text');
+    if (text) text.textContent = '归还冷却中 · 剩 23h59min · 期满后帖子将关闭';
+  }
+
+  function appendReturnSystemMsg(isOwner) {
+    const msgs = document.querySelector('[data-screen="chat"] .chat-msgs');
+    if (!msgs) return;
+    // 防重复添加
+    if (msgs.querySelector('.chat-system-msg.return-mark')) return;
+    const div = document.createElement('div');
+    div.className = 'chat-system-msg return-mark';
+    const who = isOwner ? '失主' : '拾主';
+    const otherCanUndo = isOwner ? '拾主' : '失主';
+    div.innerHTML = `<span class="sys-ic">✓</span>${who}标记了归还完成 · ${otherCanUndo}可在 24h 内撤销`;
+    msgs.appendChild(div);
+    msgs.scrollTop = msgs.scrollHeight;
+  }
+
+  function undoReturn() {
+    if (!confirm('撤销归还标记？\n\n帖子将恢复进行中状态')) return;
+    const bar = document.getElementById('cooldown-bar');
+    if (bar) bar.style.display = 'none';
+    const mark = document.querySelector('[data-screen="chat"] .chat-system-msg.return-mark');
+    if (mark) mark.remove();
+    alert('✓ 已撤销 · 归还标记取消');
   }
 
   function goBack() {
