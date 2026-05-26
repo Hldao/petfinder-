@@ -666,34 +666,6 @@
       margin-left: 4px;
     }
 
-    /* 留线索快捷入口（寻宠详情用） */
-    .leave-clue {
-      background: linear-gradient(135deg, var(--apricot-soft), #FFD8C0);
-      border-radius: var(--radius-md);
-      padding: 12px 14px;
-      margin-bottom: 14px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      cursor: pointer;
-      border: 1px solid rgba(255,133,82,0.25);
-    }
-    .leave-clue:hover { background: linear-gradient(135deg, #FFD8C0, #FFC6A0); }
-    .lc-icon {
-      width: 38px; height: 38px;
-      background: white;
-      border-radius: 12px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 18px;
-      color: var(--apricot-deep);
-      box-shadow: 0 2px 6px rgba(255,133,82,0.2);
-      flex-shrink: 0;
-    }
-    .lc-content { flex: 1; }
-    .lc-title { font-size: 13.5px; font-weight: 700; color: var(--apricot-deep); }
-    .lc-sub { font-size: 11px; color: var(--apricot-deep); opacity: 0.8; margin-top: 2px; }
-    .lc-arrow { color: var(--apricot-deep); font-size: 18px; }
-
     /* 底部按钮 */
     .action-bar {
       position: absolute; bottom: 0; left: 0; right: 0;
@@ -2095,12 +2067,6 @@
     .follow-btn { display:inline-flex; align-items:center; gap:4px; padding:4px 9px; border-radius:99px; font-size:11.5px; font-weight:700; border:1.5px solid var(--apricot); color:var(--apricot-deep); background:white; cursor:pointer; transition:all 0.18s; white-space:nowrap; flex-shrink:0; }
     .follow-btn.following { background:var(--apricot-soft); border-color:transparent; }
     /* === 失主快报条 === */
-    .owner-update-bar { display:flex; align-items:center; gap:10px; margin:12px 0; padding:11px 13px; background:var(--honey-soft); border-radius:12px; border:1.5px solid var(--honey); cursor:pointer; }
-    .owner-update-bar .oub-icon { font-size:20px; }
-    .owner-update-bar .oub-body { flex:1; }
-    .owner-update-bar .oub-title { font-size:13px; font-weight:700; color:#7A5800; }
-    .owner-update-bar .oub-sub { font-size:11.5px; color:#A07820; margin-top:1px; }
-    .owner-update-bar .oub-arrow { font-size:14px; color:var(--ink-4); }
     /* === 快速目击上报按钮（feed 卡片） === */
     .pc-action.sighting { color:var(--mint-deep); background:var(--mint-soft); border-radius:99px; padding:3px 8px; }
     /* === 目击上报弹层 === */
@@ -2428,24 +2394,6 @@
           </div>
           <div class="section-label">特征描述</div>
           <div class="desc-card">今天下午带胖丁去人民路咖啡馆，吃完饭出门时它窜出去就不见了。胆小、不会让陌生人碰，听到名字会喵叫一声。看到请尽量拍照不要追 🙏</div>
-
-          <div class="owner-update-bar view-owner-only" onclick="postOwnerUpdate()">
-            <div class="oub-icon">📢</div>
-            <div class="oub-body">
-              <div class="oub-title">失主发进展</div>
-              <div class="oub-sub">让关注的人第一时间知道搜寻动态</div>
-            </div>
-            <div class="oub-arrow">›</div>
-          </div>
-
-          <div class="leave-clue" onclick="showScreen('chat')">
-            <div class="lc-icon">📌</div>
-            <div class="lc-content">
-              <div class="lc-title">看到过 ta？留下线索</div>
-              <div class="lc-sub">用话术模板快速描述时间、地点、方向</div>
-            </div>
-            <div class="lc-arrow">›</div>
-          </div>
 
           <div class="section-label">2 条线索 <span class="count">· 都在你附近</span></div>
           <div class="clue-card">
