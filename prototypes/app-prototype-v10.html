@@ -539,25 +539,51 @@
     .feature-card.green { background: var(--mint-soft); color: var(--mint-deep); }
     .feature-card .ic { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
     .feature-card b { font-weight: 700; }
+    /* 线索卡 · 升级为「真实瞬间 + 行动启动器」(v10 r14) */
     .clue-card {
       background: var(--surface); border-radius: var(--radius-md);
-      padding: 12px 14px; margin-bottom: 8px;
-      display: flex; gap: 12px; box-shadow: var(--shadow-card);
+      padding: 12px 14px; margin-bottom: 10px;
+      display: flex; flex-direction: column;
+      box-shadow: var(--shadow-card);
     }
+    .clue-body { display: flex; gap: 11px; margin-bottom: 10px; }
     .clue-avatar {
       width: 32px; height: 32px; border-radius: 50%;
       background: linear-gradient(135deg, #B0B7BF, #7A828B); color: white;
       font-weight: 700; font-size: 13px;
       display: flex; align-items: center; justify-content: center; flex-shrink: 0;
     }
-    .clue-author { font-size: 13px; font-weight: 700; display: flex; align-items: center; gap: 6px; margin-bottom: 2px; }
+    .clue-info { flex: 1; min-width: 0; }
+    .clue-top {
+      display: flex; align-items: center; gap: 8px; margin-bottom: 5px;
+      flex-wrap: wrap;
+    }
+    .clue-loc-time {
+      font-size: 12.5px; font-weight: 700; color: var(--ink-1);
+      letter-spacing: -0.005em;
+    }
     .clue-badge {
       font-size: 10px; padding: 1px 7px;
       background: var(--mint-soft); color: var(--mint-deep);
       border-radius: var(--radius-pill); font-weight: 700;
     }
-    .clue-meta { font-family: var(--font-en); font-size: 10.5px; color: var(--ink-4); font-weight: 600; margin-bottom: 4px; letter-spacing: 0.02em; }
-    .clue-text { font-size: 12.5px; color: var(--ink-2); line-height: 1.55; }
+    .clue-text {
+      font-size: 12.5px; color: var(--ink-2); line-height: 1.6;
+    }
+    .clue-actions { display: flex; gap: 8px; }
+    .clue-action {
+      flex: 1; padding: 7px 12px;
+      background: var(--bg); color: var(--ink-2);
+      border-radius: var(--radius-pill);
+      font-size: 12px; font-weight: 600;
+      text-align: center; cursor: pointer;
+      transition: filter 0.15s;
+    }
+    .clue-action:hover { filter: brightness(0.95); }
+    .clue-action.primary {
+      background: var(--apricot-soft); color: var(--apricot-deep);
+      font-weight: 700;
+    }
 
     /* 拾主额外信息（招领详情用） */
     .info-extra {
@@ -2575,21 +2601,36 @@
             <div class="lc-arrow">›</div>
           </div>
 
-          <div class="section-label">已有线索 <span class="count">· 2 条</span></div>
+          <div class="section-label">2 条线索 <span class="count">· 都在你附近</span></div>
           <div class="clue-card">
-            <div class="clue-avatar">陈</div>
-            <div style="flex:1">
-              <div class="clue-author">陈* <span class="clue-badge">✓ 有用</span></div>
-              <div class="clue-meta">📍 古城北门 · 2 hr ago</div>
-              <div class="clue-text">下午 4 点左右在洋人街看到一只蓝灰色英短，戴着粉项圈，往复兴路方向跑了。</div>
+            <div class="clue-body">
+              <div class="clue-avatar">陈</div>
+              <div class="clue-info">
+                <div class="clue-top">
+                  <span class="clue-loc-time">📍 洋人街 · 2 小时前</span>
+                  <span class="clue-badge">✓ 有用</span>
+                </div>
+                <div class="clue-text">"下午 4 点左右看见一只蓝灰色英短，戴粉项圈，往复兴路方向跑了"</div>
+              </div>
+            </div>
+            <div class="clue-actions">
+              <div class="clue-action primary" onclick="alert('🗺 即将打开地图导航到「洋人街」（生产环境调起微信内置地图）')">🗺 现在去看</div>
+              <div class="clue-action" onclick="showScreen('chat')">💬 问陈*</div>
             </div>
           </div>
           <div class="clue-card">
-            <div class="clue-avatar">林</div>
-            <div style="flex:1">
-              <div class="clue-author">林*</div>
-              <div class="clue-meta">📍 复兴路 · 1 hr ago</div>
-              <div class="clue-text">我家就在复兴路开客栈，让前台留意一下，今晚监控我看看。</div>
+            <div class="clue-body">
+              <div class="clue-avatar">林</div>
+              <div class="clue-info">
+                <div class="clue-top">
+                  <span class="clue-loc-time">📍 复兴路 · 1 小时前</span>
+                </div>
+                <div class="clue-text">"我家就在复兴路开客栈，让前台留意一下，今晚监控我看看"</div>
+              </div>
+            </div>
+            <div class="clue-actions">
+              <div class="clue-action primary" onclick="alert('🗺 即将打开地图导航到「复兴路」（生产环境调起微信内置地图）')">🗺 现在去看</div>
+              <div class="clue-action" onclick="showScreen('chat')">💬 问林*</div>
             </div>
           </div>
         </div>
