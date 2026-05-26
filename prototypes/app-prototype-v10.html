@@ -6360,9 +6360,9 @@
 
   /* 进入反馈页时渲染列表 */
   const _origShowScreen = showScreen;
-  showScreen = function(s) {
-    _origShowScreen(s);
-    if (s === 'feedback') renderFeedbackList();
+  showScreen = function(...args) {
+    _origShowScreen(...args);
+    if (args[0] === 'feedback') renderFeedbackList();
   };
 </script>
 
