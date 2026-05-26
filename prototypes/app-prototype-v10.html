@@ -115,16 +115,21 @@
       border-bottom: 1px solid var(--divider); flex-shrink: 0;
     }
     .nav-row { display: flex; align-items: center; gap: 10px; }
+    /* 大理本地服务身份标识 · v10 r25 改为纯展示（无交互 · 不再支持城市切换）*/
     .city-tag {
       display: flex; align-items: center; gap: 6px;
-      padding: 7px 12px 7px 8px; background: var(--bg);
-      border-radius: var(--radius-pill); font-size: 13px; font-weight: 600; cursor: pointer;
+      padding: 7px 12px 7px 8px;
+      background: var(--apricot-soft);
+      color: var(--apricot-deep);
+      border-radius: var(--radius-pill);
+      font-size: 13px; font-weight: 700;
+      cursor: default;
+      flex-shrink: 0;
     }
     .city-tag .pin {
       width: 20px; height: 20px; background: var(--apricot); color: white;
       border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px;
     }
-    .city-tag .arrow { color: var(--ink-3); font-size: 8px; margin-left: 1px; }
     .search-pill {
       flex: 1; height: 36px; background: var(--bg);
       border-radius: var(--radius-pill); padding: 0 14px;
@@ -250,6 +255,21 @@
     .pc-action { font-size: 11.5px; color: var(--ink-3); display: flex; align-items: center; gap: 3px; font-family: var(--font-en); font-weight: 600; }
     .pc-action.clue { color: var(--apricot-deep); background: var(--apricot-soft); padding: 4px 10px; border-radius: var(--radius-pill); font-family: var(--font-cn); font-weight: 700; }
     .feed-list { padding: 0 16px; display: flex; flex-direction: column; gap: 12px; }
+
+    /* 通用 Toast · v10 r25 从 city-toast 改名 */
+    .toast {
+      position: absolute; left: 50%; transform: translateX(-50%) translateY(20px);
+      bottom: 100px; white-space: nowrap;
+      background: rgba(31,31,31,0.88); color: white;
+      padding: 9px 18px; border-radius: var(--radius-pill);
+      font-size: 13px; font-weight: 600;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.2s ease, transform 0.2s ease;
+      z-index: 50;
+    }
+    .toast.show {
+      opacity: 1; transform: translateX(-50%) translateY(0);
+    }
 
     /* 顶部数据条 */
     .feed-stat-bar {
@@ -2038,58 +2058,6 @@
     #btn-filter:hover,#btn-filter:active { background:inherit!important; outline:none; -webkit-tap-highlight-color:transparent; }
     #btn-filter { -webkit-tap-highlight-color:transparent; transition:none; }
 
-    /* 城市选择弹窗 */
-    .city-search-wrap {
-      display: flex; align-items: center; gap: 8px;
-      background: var(--bg); border-radius: var(--radius-pill);
-      padding: 8px 14px;
-    }
-    .city-search-input {
-      flex: 1; border: none; background: transparent; outline: none;
-      font-family: var(--font-cn); font-size: 13.5px; color: var(--ink-1);
-    }
-    .city-search-input::placeholder { color: var(--ink-4); }
-    .city-option {
-      padding: 12px 20px; display: flex; align-items: center; gap: 12px;
-      cursor: pointer; border-bottom: 1px solid var(--divider-soft);
-    }
-    .city-option:last-child { border-bottom: none; }
-    .city-option:hover { background: var(--bg); }
-    .city-option.selected { background: var(--apricot-soft); }
-    .city-ic { font-size: 18px; width: 24px; text-align: center; flex-shrink: 0; }
-    .city-opt-name { flex: 1; font-size: 14px; font-weight: 600; color: var(--ink-1); }
-    .city-opt-sub { font-size: 11px; color: var(--mint-deep); font-weight: 600; }
-    .city-list { overflow-y: auto; max-height: 200px; }
-    .city-list::-webkit-scrollbar { display: none; }
-    .city-section-label {
-      padding: 8px 16px 6px; font-size: 11px; color: var(--ink-4);
-      font-weight: 700; letter-spacing: 0.06em;
-    }
-    .city-relocate-btn {
-      margin: 0 16px 12px;
-      padding: 10px 14px;
-      background: var(--mint-soft); border-radius: var(--radius-md);
-      display: flex; align-items: center; gap: 8px;
-      cursor: pointer; color: var(--mint-deep);
-    }
-    .city-relocate-btn:hover { background: var(--mint); color: white; }
-    .city-relocate-btn .reloc-label { font-size: 13px; font-weight: 700; flex: 1; }
-    .city-relocate-btn .reloc-status { font-size: 11px; opacity: 0.8; font-family: var(--font-en); font-weight: 600; }
-
-    /* 城市切换 Toast */
-    .city-toast {
-      position: absolute; left: 50%; transform: translateX(-50%) translateY(20px);
-      bottom: 100px; white-space: nowrap;
-      background: rgba(31,31,31,0.88); color: white;
-      padding: 9px 18px; border-radius: var(--radius-pill);
-      font-size: 13px; font-weight: 600;
-      opacity: 0; pointer-events: none;
-      transition: opacity 0.2s ease, transform 0.2s ease;
-      z-index: 50;
-    }
-    .city-toast.show {
-      opacity: 1; transform: translateX(-50%) translateY(0);
-    }
 
     .pet-card.lost-card  .pc-photo { background: linear-gradient(135deg, var(--apricot-soft) 0%, #FFCDA8 100%); }
     .pet-card.found-card .pc-photo { background: linear-gradient(135deg, var(--mint-soft) 0%, #ABDDCB 100%); }
@@ -2251,7 +2219,7 @@
 <!-- ============== 主舞台 ============== -->
 <div class="stage">
   <div class="device">
-    <div class="city-toast" id="city-toast"></div>
+    <div class="toast" id="global-toast"></div>
     <div class="status-bar"><span>9:41</span><span style="font-size:11px">📶 5G 🔋</span></div>
 
     <!-- 顶部消息通知横幅 -->
@@ -2268,7 +2236,7 @@
     <div class="screen active" data-screen="feed">
       <div class="nav-region">
         <div class="nav-row">
-          <div class="city-tag" id="city-tag" onclick="openCityPicker()"><span class="pin">📍</span><span id="city-name">大理</span><span class="arrow">▾</span></div>
+          <div class="city-tag"><span class="pin">📍</span><span>大理本地</span></div>
           <div class="search-pill" onclick="showScreen('search')"><span>🔍</span><span>搜品种、地点、特征...</span></div>
           <div class="icon-btn" onclick="showScreen('messages')">🔔<div class="dot"></div></div>
         </div>
@@ -2331,43 +2299,6 @@
             <div class="meta">共 <strong style="color:var(--mint);font-family:var(--font-en);font-weight:800">47</strong> 个家庭团聚</div>
           </div>
           <div class="archive-list" id="archive-list"></div>
-        </div>
-
-        <!-- 城市选择弹窗 -->
-        <div class="as-mask" id="city-sheet" onclick="if(event.target===this) closeCityPicker()">
-          <div class="action-sheet" style="max-height:75%">
-            <div class="as-handle"></div>
-            <div class="as-title" style="font-size:15px;color:var(--ink-1);font-weight:700;padding-bottom:10px">选择城市</div>
-            <div style="padding:0 16px 12px">
-              <div class="city-search-wrap">
-                <span style="font-size:14px;color:var(--ink-3)">🔍</span>
-                <input class="city-search-input" id="city-search-input" placeholder="搜索城市..." oninput="filterCities(this.value)">
-              </div>
-            </div>
-            <div class="city-section-label">当前位置</div>
-            <div class="city-relocate-btn" onclick="simulateRelocate()">
-              <span>📍</span>
-              <span class="reloc-label">重新定位</span>
-              <span class="reloc-status" id="reloc-status">大理 · 已定位</span>
-            </div>
-            <div id="recent-cities-section" style="display:none">
-              <div class="city-section-label">最近使用</div>
-              <div id="recent-cities-list"></div>
-            </div>
-            <div class="city-section-label">云南热门城市</div>
-            <div class="city-list" id="city-list">
-              <div class="city-option" onclick="selectCity('丽江','🏔')"><span class="city-ic">🏔</span><span class="city-opt-name">丽江</span></div>
-              <div class="city-option" onclick="selectCity('昆明','🌆')"><span class="city-ic">🌆</span><span class="city-opt-name">昆明</span></div>
-              <div class="city-option" onclick="selectCity('西双版纳','🌿')"><span class="city-ic">🌿</span><span class="city-opt-name">西双版纳</span></div>
-              <div class="city-option" onclick="selectCity('香格里拉','🏔')"><span class="city-ic">🏔</span><span class="city-opt-name">香格里拉</span></div>
-              <div class="city-option" onclick="selectCity('腾冲','♨️')"><span class="city-ic">♨️</span><span class="city-opt-name">腾冲</span></div>
-              <div class="city-option" onclick="selectCity('保山','🌄')"><span class="city-ic">🌄</span><span class="city-opt-name">保山</span></div>
-              <div class="city-option" onclick="selectCity('楚雄','🦕')"><span class="city-ic">🦕</span><span class="city-opt-name">楚雄</span></div>
-              <div class="city-option" onclick="selectCity('曲靖','🏞')"><span class="city-ic">🏞</span><span class="city-opt-name">曲靖</span></div>
-              <div class="city-option" onclick="selectCity('玉溪','🌊')"><span class="city-ic">🌊</span><span class="city-opt-name">玉溪</span></div>
-            </div>
-            <div class="as-cancel" onclick="closeCityPicker()">取消</div>
-          </div>
         </div>
 
         <!-- 排序 Action Sheet -->
@@ -4488,93 +4419,15 @@
     '曲靖':   { count:19, desc:'麒麟区周边',         ic:'🏞' },
     '玉溪':   { count:13, desc:'红塔区周边',         ic:'🌊' },
   };
-  let currentCity = '大理';
-  let recentCities = [];
+  // v10 r25 · MVP 锁定大理 · 不再支持城市切换
+  // CITY_FEEDS / CITY_DATA 保留作为地图模块的多城市展示数据（不动队友模块）
+  // getActiveFeedData 永远返回 FEED_DATA（大理本地）
+  const currentCity = '大理';
 
-  function openCityPicker() {
-    document.getElementById('city-sheet').classList.add('show');
-    const input = document.getElementById('city-search-input');
-    if (input) { input.value = ''; filterCities(''); }
-    updateRecentCities();
-    enableDragScroll(document.getElementById('city-list'), 'y');
-  }
-  function closeCityPicker() {
-    document.getElementById('city-sheet').classList.remove('show');
-  }
-  function selectCity(name, ic) {
-    if (name === currentCity) { closeCityPicker(); return; }
-    // 加入最近城市
-    recentCities = [currentCity, ...recentCities.filter(c => c !== currentCity)].slice(0, 3);
-    currentCity = name;
-    // 更新顶部标签
-    document.getElementById('city-name').textContent = name;
-    // 更新定位状态
-    const relocStatus = document.getElementById('reloc-status');
-    if (relocStatus) relocStatus.textContent = name + ' · 已切换';
-    // 联动首页内容
-    applyCityToFeed(name);
-    closeCityPicker();
-    showCityToast('📍 已切换到 ' + name);
-  }
-  function applyCityToFeed(name) {
-    // 更新 section 标题
-    const sectionTitle = document.querySelector('[data-screen="feed"] .section-header .title');
-    if (sectionTitle) sectionTitle.textContent = name + '的小朋友';
-    // 大理专属提示条
-    const banner = document.getElementById('update-banner');
-    if (banner) banner.style.display = name === '大理' ? '' : 'none';
-    // 重渲染卡片、地图 pins、地图标签、底部卡片列表
-    renderFeed();
-    renderMapPins();
-    renderSheetCards();
-    updateMapLabels(name);
-  }
-  function simulateRelocate() {
-    const btn = document.querySelector('.city-relocate-btn');
-    const status = document.getElementById('reloc-status');
-    if (status) status.textContent = '定位中...';
-    if (btn) btn.style.opacity = '0.6';
-    setTimeout(() => {
-      if (btn) btn.style.opacity = '';
-      if (status) status.textContent = '大理 · 已定位';
-      if (currentCity !== '大理') {
-        recentCities = [currentCity, ...recentCities.filter(c => c !== currentCity)].slice(0, 3);
-        currentCity = '大理';
-        document.getElementById('city-name').textContent = '大理';
-        applyCityToFeed('大理');
-        closeCityPicker();
-        showCityToast('📍 已重新定位到大理');
-      } else {
-        closeCityPicker();
-        showCityToast('📍 当前位置：大理');
-      }
-    }, 1200);
-  }
-  function updateRecentCities() {
-    const section = document.getElementById('recent-cities-section');
-    const list = document.getElementById('recent-cities-list');
-    if (!section || !list) return;
-    if (recentCities.length === 0) { section.style.display = 'none'; return; }
-    section.style.display = '';
-    list.innerHTML = recentCities.map(name => {
-      const d = CITY_DATA[name] || { ic: '🏙' };
-      return `<div class="city-option" onclick="selectCity('${name}','${d.ic}')">
-        <span class="city-ic">${d.ic}</span>
-        <span class="city-opt-name">${name}</span>
-        <span class="city-opt-sub" style="color:var(--ink-4)">最近使用</span>
-      </div>`;
-    }).join('');
-  }
-  function filterCities(q) {
-    const list = document.getElementById('city-list');
-    if (!list) return;
-    list.querySelectorAll('.city-option').forEach(o => {
-      o.style.display = o.querySelector('.city-opt-name').textContent.includes(q) ? '' : 'none';
-    });
-  }
+  // 通用 toast（原 showCityToast · 解耦自城市切换功能）
   let _toastTimer = null;
-  function showCityToast(msg) {
-    const el = document.getElementById('city-toast');
+  function showToast(msg) {
+    const el = document.getElementById('global-toast');
     if (!el) return;
     el.textContent = msg;
     el.classList.add('show');
@@ -4888,7 +4741,7 @@
 
   function handleCardContact(id) {
     closeAllSwipeCards();
-    showCityToast('📞 联系功能开发中...');
+    showToast('📞 联系功能开发中...');
   }
 
   function handleCardMap(id) {
@@ -4926,7 +4779,7 @@
           wrap.classList.remove('visible', 'spinning');
           txt.textContent = '下拉刷新';
           refreshing = false;
-          showCityToast('✅ 已是最新');
+          showToast('✅ 已是最新');
         }, 1100);
       } else {
         wrap.classList.remove('visible');
