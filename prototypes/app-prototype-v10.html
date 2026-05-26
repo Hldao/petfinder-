@@ -480,6 +480,31 @@
       border-radius: 12px; padding: 5px 0;
     }
     .tab .icon { font-size: 18px; line-height: 1; }
+    .msg-badge-dot {
+      position: absolute; top: -3px; right: -5px;
+      width: 8px; height: 8px; background: var(--warn); border-radius: 50%;
+      border: 2px solid var(--surface); display: none; pointer-events: none;
+    }
+    .msg-badge-dot.show { display: block; }
+
+    /* ===== 顶部消息通知横幅 ===== */
+    .notif-banner {
+      position: absolute; top: 44px; left: 10px; right: 10px; z-index: 200;
+      background: rgba(255,255,255,0.96); backdrop-filter: blur(20px);
+      border-radius: 16px; box-shadow: 0 4px 24px rgba(31,31,31,0.16);
+      padding: 11px 13px; display: flex; align-items: center; gap: 10px;
+      cursor: pointer; transform: translateY(-120%); opacity: 0;
+      transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1), opacity 0.2s;
+    }
+    .notif-banner.show { transform: translateY(8px); opacity: 1; }
+    .notif-avatar {
+      width: 36px; height: 36px; border-radius: 50%; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center; font-size: 17px;
+    }
+    .notif-body { flex: 1; min-width: 0; }
+    .notif-name { font-size: 12.5px; font-weight: 700; color: var(--ink-1); }
+    .notif-preview { font-size: 12px; color: var(--ink-3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 1px; }
+    .notif-close { font-size: 15px; color: var(--ink-4); padding: 4px; flex-shrink: 0; line-height: 1; }
     .tab.active { background: var(--apricot-soft); color: var(--apricot-deep); font-weight: 700; }
     .tab.spacer { pointer-events: none; visibility: hidden; }
 
@@ -926,6 +951,11 @@
 
     /* Messages */
     .msg-list { flex: 1; overflow-y: auto; padding: 4px 0 100px; }
+    .msg-section-title {
+      font-size: 11px; font-weight: 700; color: var(--ink-4);
+      padding: 14px 18px 6px; letter-spacing: 0.06em; text-transform: uppercase;
+      background: var(--bg);
+    }
     .msg-row { padding: 12px 18px; display: flex; gap: 12px; align-items: center; border-bottom: 1px solid var(--divider-soft); cursor: pointer; background: var(--surface); }
     .msg-avatar { width: 46px; height: 46px; border-radius: 14px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 22px; }
     .msg-avatar.system { background: linear-gradient(135deg, #B0B7BF, #7A828B); color: white; font-weight: 700; font-size: 14px; }
@@ -935,6 +965,7 @@
     .msg-time { font-family: var(--font-en); font-size: 10.5px; color: var(--ink-4); font-weight: 600; }
     .msg-preview { font-size: 12px; color: var(--ink-3); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .msg-context { font-size: 10.5px; color: var(--apricot-deep); margin-top: 3px; padding: 1px 7px; background: var(--apricot-soft); border-radius: var(--radius-pill); display: inline-block; font-weight: 600; }
+    .msg-context.reply { color: var(--mint-deep); background: var(--mint-soft); }
     .msg-unread { width: 20px; height: 20px; background: var(--apricot); color: white; border-radius: 50%; font-family: var(--font-en); font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center; margin-left: 8px; flex-shrink: 0; }
 
     /* Chat */
@@ -956,6 +987,19 @@
       transition: color 0.15s, background 0.15s;
     }
     .chat-tip-link:hover { color: var(--apricot-deep); background: var(--apricot-soft); }
+    .meet-hint {
+      margin: 0 12px 6px; padding: 10px 13px;
+      background: linear-gradient(135deg, var(--apricot-soft), var(--honey-soft));
+      border-radius: var(--radius-md); border: 1.5px solid var(--apricot);
+      display: flex; align-items: center; gap: 10px;
+      transform: translateY(12px); opacity: 0;
+      transition: transform 0.25s ease, opacity 0.2s;
+      pointer-events: none;
+    }
+    .meet-hint.show { transform: translateY(0); opacity: 1; pointer-events: auto; }
+    .meet-hint-text { flex: 1; font-size: 12px; color: var(--apricot-deep); font-weight: 600; line-height: 1.4; }
+    .meet-hint-btn { font-size: 11.5px; font-weight: 700; color: white; background: var(--apricot); padding: 5px 11px; border-radius: var(--radius-pill); white-space: nowrap; cursor: pointer; flex-shrink: 0; }
+    .meet-hint-close { font-size: 14px; color: var(--apricot-deep); opacity: 0.5; cursor: pointer; flex-shrink: 0; line-height: 1; }
     .chat-msgs { flex: 1; overflow-y: auto; padding: 8px 16px 0; }
     .chat-msg { margin-bottom: 12px; display: flex; gap: 8px; }
     .chat-msg.me { flex-direction: row-reverse; }
@@ -2117,6 +2161,16 @@
     <div class="city-toast" id="city-toast"></div>
     <div class="status-bar"><span>9:41</span><span style="font-size:11px">📶 5G 🔋</span></div>
 
+    <!-- 顶部消息通知横幅 -->
+    <div class="notif-banner" id="notif-banner" onclick="notifTap()">
+      <div class="notif-avatar ph-orange" id="notif-avatar">🐱</div>
+      <div class="notif-body">
+        <div class="notif-name" id="notif-name">客栈老板娘</div>
+        <div class="notif-preview" id="notif-preview">好的我现在过来，您能视频先确认一下吗？</div>
+      </div>
+      <div class="notif-close" onclick="event.stopPropagation();hideNotif()">✕</div>
+    </div>
+
     <!-- ===== 屏 1 · Feed ===== -->
     <div class="screen active" data-screen="feed">
       <div class="nav-region">
@@ -2252,7 +2306,7 @@
         <div class="tab active"><span class="icon">🏠</span><span>首页</span></div>
         <div class="tab" onclick="showScreen('map')"><span class="icon">🗺️</span><span>地图</span></div>
         <div class="fab-tab" onclick="showScreen('publish')"><div class="fab-bubble"></div></div>
-        <div class="tab" onclick="showScreen('messages')"><span class="icon">💬</span><span>消息</span></div>
+        <div class="tab" onclick="showScreen('messages')"><span class="icon" style="position:relative">💬<i class="msg-badge-dot"></i></span><span>消息</span></div>
         <div class="tab" onclick="showScreen('profile')"><span class="icon">🐾</span><span>我的</span></div>
       </div>
     </div>
@@ -2358,7 +2412,7 @@
         <div class="tab" onclick="showScreen('feed', true)"><span class="icon">🏠</span><span>首页</span></div>
         <div class="tab active"><span class="icon">🗺️</span><span>地图</span></div>
         <div class="fab-tab" onclick="showScreen('publish')"><div class="fab-bubble"></div></div>
-        <div class="tab" onclick="showScreen('messages')"><span class="icon">💬</span><span>消息</span></div>
+        <div class="tab" onclick="showScreen('messages')"><span class="icon" style="position:relative">💬<i class="msg-badge-dot"></i></span><span>消息</span></div>
         <div class="tab" onclick="showScreen('profile')"><span class="icon">🐾</span><span>我的</span></div>
       </div>
     </div>
@@ -2765,7 +2819,34 @@
         <div class="sub-title">消息</div>
         <div class="sub-icon">⚙</div>
       </div>
-      <div class="msg-list">
+      <div class="mp-tabs" style="background:var(--surface);border-bottom:1px solid var(--divider);padding:10px 16px 0;gap:0;flex-shrink:0">
+        <div class="mp-tab active" id="msg-tab-replies" onclick="switchMsgTab('replies')" style="border-radius:var(--radius-pill) var(--radius-pill) 0 0;padding:8px 18px">帖子回复</div>
+        <div class="mp-tab" id="msg-tab-dm" onclick="switchMsgTab('dm')" style="border-radius:var(--radius-pill) var(--radius-pill) 0 0;padding:8px 18px">私信</div>
+      </div>
+
+      <!-- 帖子回复 -->
+      <div class="msg-list" id="msg-panel-replies">
+        <div class="msg-row" onclick="openPostReply(this,'detail-lost')" oncontextmenu="msgRowLongPress(event,'陈*')" ontouchstart="startMsgLongPress(event,'陈*')" ontouchend="cancelMsgLongPress()" ontouchmove="cancelMsgLongPress()">
+          <div class="msg-avatar ph-blue">🐱</div>
+          <div class="msg-body">
+            <div class="msg-row-head"><span class="msg-name">陈*</span><span class="msg-time">16:38</span></div>
+            <div class="msg-preview">下午在洋人街又看到那只猫了，往复兴路跑了</div>
+            <div class="msg-context reply">胖丁 寻宠</div>
+          </div>
+          <div class="msg-unread">1</div>
+        </div>
+        <div class="msg-row" onclick="openPostReply(this,'detail-found')" oncontextmenu="msgRowLongPress(event,'林*')" ontouchstart="startMsgLongPress(event,'林*')" ontouchend="cancelMsgLongPress()" ontouchmove="cancelMsgLongPress()">
+          <div class="msg-avatar ph-mint">🐶</div>
+          <div class="msg-body">
+            <div class="msg-row-head"><span class="msg-name">林*</span><span class="msg-time">15:10</span></div>
+            <div class="msg-preview">这只狗好像是我邻居家的，我帮你问问</div>
+            <div class="msg-context reply">小白 招领</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 私信 -->
+      <div class="msg-list" id="msg-panel-dm" style="display:none">
         <div class="msg-row" onclick="alert('打开公众号通知\n（真实场景下点击会跳到公众号文章页）')">
           <div class="msg-avatar mp">📣</div>
           <div class="msg-body">
@@ -2775,7 +2856,7 @@
           </div>
           <div class="msg-unread">1</div>
         </div>
-        <div class="msg-row" onclick="showScreen('chat')">
+        <div class="msg-row" onclick="openChat(this)" oncontextmenu="msgRowLongPress(event,'客栈老板娘')" ontouchstart="startMsgLongPress(event,'客栈老板娘')" ontouchend="cancelMsgLongPress()" ontouchmove="cancelMsgLongPress()">
           <div class="msg-avatar ph-orange">🐱</div>
           <div class="msg-body">
             <div class="msg-row-head"><span class="msg-name">客栈老板娘</span><span class="msg-time">17:24</span></div>
@@ -2784,7 +2865,7 @@
           </div>
           <div class="msg-unread">2</div>
         </div>
-        <div class="msg-row" onclick="showScreen('chat')">
+        <div class="msg-row" onclick="openChat(this)" oncontextmenu="msgRowLongPress(event,'陈*')" ontouchstart="startMsgLongPress(event,'陈*')" ontouchend="cancelMsgLongPress()" ontouchmove="cancelMsgLongPress()">
           <div class="msg-avatar ph-blue">🐱</div>
           <div class="msg-body">
             <div class="msg-row-head"><span class="msg-name">陈*</span><span class="msg-time">14:50</span></div>
@@ -2792,7 +2873,7 @@
             <div class="msg-context">关于 · 胖丁 寻宠</div>
           </div>
         </div>
-        <div class="msg-row" onclick="showScreen('chat')">
+        <div class="msg-row" onclick="openChat(this)" oncontextmenu="msgRowLongPress(event,'王*')" ontouchstart="startMsgLongPress(event,'王*')" ontouchend="cancelMsgLongPress()" ontouchmove="cancelMsgLongPress()">
           <div class="msg-avatar ph-cream">🐶</div>
           <div class="msg-body">
             <div class="msg-row-head"><span class="msg-name">王*</span><span class="msg-time">3 天前</span></div>
@@ -2801,11 +2882,12 @@
           </div>
         </div>
       </div>
+
       <div class="tab-bar">
         <div class="tab" onclick="showScreen('feed', true)"><span class="icon">🏠</span><span>首页</span></div>
         <div class="tab" onclick="showScreen('map')"><span class="icon">🗺️</span><span>地图</span></div>
         <div class="fab-tab" onclick="showScreen('publish')"><div class="fab-bubble"></div></div>
-        <div class="tab active"><span class="icon">💬</span><span>消息</span></div>
+        <div class="tab active"><span class="icon" style="position:relative">💬<i class="msg-badge-dot"></i></span><span>消息</span></div>
         <div class="tab" onclick="showScreen('profile')"><span class="icon">🐾</span><span>我的</span></div>
       </div>
     </div>
@@ -2815,7 +2897,7 @@
       <div class="sub-header">
         <div class="back-btn" onclick="goBack()">←</div>
         <div class="sub-title">客栈老板娘</div>
-        <div class="sub-icon">⋯</div>
+        <div class="sub-icon" onclick="openUserActionSheet('客栈老板娘')">⋯</div>
       </div>
       <div class="chat-pet" onclick="showScreen('detail-found')">
         <div class="chat-pet-thumb ph-orange">🐱</div>
@@ -2825,8 +2907,8 @@
         </div>
         <div class="chat-pet-status">招领</div>
       </div>
-      <div class="chat-tip-link" onclick="showScreen('contact-guide')">📍 约好见面？查看「见面建议」 →</div>
       <div class="chat-msgs">
+        <div class="chat-audit-bar" style="margin:8px 0 12px;border-radius:var(--radius-md)">🛡 消息经审核后送达 · 含微信号 / 电话 / 二维码将被过滤</div>
         <div class="chat-time">今天 17:00</div>
         <div class="chat-msg them">
           <div class="chat-avatar ph-orange">🐱</div>
@@ -2851,12 +2933,23 @@
           <div class="chat-bubble">人民路 39 号「白桃」咖啡馆，门口绿色门帘。您能视频先确认一下吗？</div>
         </div>
       </div>
-      <div class="chat-audit-bar">🛡 消息经审核后送达 · 含微信号 / 电话 / 二维码将被过滤</div>
+      <div class="meet-hint" id="meet-hint">
+        <span style="font-size:18px;flex-shrink:0">📍</span>
+        <div class="meet-hint-text">聊到见面了？大理安全见面点 + 核对建议</div>
+        <div class="meet-hint-btn" onclick="showScreen('contact-guide');hideMeetHint()">查看建议</div>
+        <div class="meet-hint-close" onclick="hideMeetHint()">✕</div>
+      </div>
 
       <div class="quick-replies">
         <span class="qr-label">快捷</span>
         <span class="qr-chip primary" onclick="setQuickReply('📍 我在 ')">📍 我看到了</span>
         <span class="qr-chip action" onclick="setQuickReply('🏠 ta 现在在我这里，方便见面吗？')">🏠 我收着 ta</span>
+        <span class="qr-chip primary" onclick="setQuickReply('⏰ 我马上过来，请问具体位置在哪里？')">⏰ 马上过来</span>
+        <span class="qr-chip" onclick="setQuickReply('📷 能发一张照片确认一下吗？')">📷 发张照片</span>
+        <span class="qr-chip" onclick="setQuickReply('🐾 能描述一下 ta 的特征吗？比如颜色、花纹、有没有项圈')">🐾 描述特征</span>
+        <span class="qr-chip" onclick="setQuickReply('🤝 方便约个时间当面确认吗？')">🤝 约见面</span>
+        <span class="qr-chip action" onclick="setQuickReply('🎉 太好了！已经找到了，感谢你的帮助！')">🎉 已找到</span>
+        <span class="qr-chip" onclick="setQuickReply('✅ 好的，没问题')">✅ 好的</span>
         <span class="qr-chip" onclick="setQuickReply('🙏 谢谢你！')">🙏 谢谢</span>
       </div>
 
@@ -2904,6 +2997,7 @@
           <div class="menu-section">
             <div class="menu-row" onclick="openMPModal()"><span class="menu-icon">📣</span><span class="menu-label">关注公众号</span><span class="menu-meta" style="color:var(--mint-deep)">推送更及时</span><span class="menu-arrow">›</span></div>
             <div class="menu-row" onclick="showScreen('dispute')"><span class="menu-icon">⚠</span><span class="menu-label">争议申诉</span><span class="menu-arrow">›</span></div>
+            <div class="menu-row" onclick="showScreen('blocklist')"><span class="menu-icon">🚫</span><span class="menu-label">黑名单</span><span class="menu-meta" id="blocklist-count" style="color:var(--ink-4)"></span><span class="menu-arrow">›</span></div>
           </div>
           <div class="menu-section">
             <div class="menu-row" onclick="alert('打开《用户协议》')"><span class="menu-icon">📄</span><span class="menu-label">用户协议</span><span class="menu-arrow">›</span></div>
@@ -2924,9 +3018,18 @@
         <div class="tab" onclick="showScreen('feed', true)"><span class="icon">🏠</span><span>首页</span></div>
         <div class="tab" onclick="showScreen('map')"><span class="icon">🗺️</span><span>地图</span></div>
         <div class="fab-tab" onclick="showScreen('publish')"><div class="fab-bubble"></div></div>
-        <div class="tab" onclick="showScreen('messages')"><span class="icon">💬</span><span>消息</span></div>
+        <div class="tab" onclick="showScreen('messages')"><span class="icon" style="position:relative">💬<i class="msg-badge-dot"></i></span><span>消息</span></div>
         <div class="tab active"><span class="icon">🐾</span><span>我的</span></div>
       </div>
+    </div>
+
+    <!-- ===== 黑名单 ===== -->
+    <div class="screen" data-screen="blocklist">
+      <div class="sub-header">
+        <div class="back-btn" onclick="goBack()">←</div>
+        <div class="sub-title">黑名单</div>
+      </div>
+      <div id="blocklist-content" style="flex:1;overflow-y:auto;padding:12px 16px 32px;display:flex;flex-direction:column;gap:10px;"></div>
     </div>
 
     <!-- 屏 13 · 善行值流水（已移除 · V2 启用）
@@ -3108,7 +3211,7 @@
         <div class="tab active" onclick="showScreen('feed',true)"><span class="icon">🏠</span><span>首页</span></div>
         <div class="tab" onclick="showScreen('map')"><span class="icon">🗺️</span><span>地图</span></div>
         <div class="fab-tab" onclick="showScreen('publish')"><div class="fab-bubble"></div></div>
-        <div class="tab" onclick="showScreen('messages')"><span class="icon">💬</span><span>消息</span></div>
+        <div class="tab" onclick="showScreen('messages')"><span class="icon" style="position:relative">💬<i class="msg-badge-dot"></i></span><span>消息</span></div>
         <div class="tab" onclick="showScreen('profile')"><span class="icon">🐾</span><span>我的</span></div>
       </div>
     </div>
@@ -3395,6 +3498,54 @@
           </div>
         </div>
         <div class="as-cancel" onclick="closeReportSheet()">取消</div>
+      </div>
+    </div>
+
+    <!-- ===== 用户操作 Sheet · 举报 / 拉黑 ===== -->
+    <div class="as-mask" id="user-action-sheet" onclick="if(event.target===this) closeUserActionSheet()">
+      <div class="action-sheet">
+        <div class="as-handle"></div>
+        <div class="as-title" id="user-action-name">客栈老板娘</div>
+        <div class="as-option" onclick="openUserReport()">
+          <div class="as-ic">⚠</div>
+          <div class="as-text">
+            <div class="as-label">举报该用户</div>
+            <div class="as-sub">恶意骚扰 · 虚假身份 · 不当行为</div>
+          </div>
+        </div>
+        <div class="as-option" onclick="confirmBlock()">
+          <div class="as-ic">🚫</div>
+          <div class="as-text">
+            <div class="as-label" style="color:var(--warn-deep)">拉黑</div>
+            <div class="as-sub">对方将无法向你发消息</div>
+          </div>
+        </div>
+        <div class="as-cancel" onclick="closeUserActionSheet()">取消</div>
+      </div>
+    </div>
+
+    <!-- ===== 举报用户原因 Sheet ===== -->
+    <div class="as-mask" id="user-report-sheet" onclick="if(event.target===this) closeUserReportSheet()">
+      <div class="action-sheet">
+        <div class="as-handle"></div>
+        <div class="as-title">举报原因</div>
+        <div class="as-option" onclick="submitUserReport('恶意骚扰')">
+          <div class="as-ic">😤</div>
+          <div class="as-text"><div class="as-label">恶意骚扰</div><div class="as-sub">反复发消息、言语威胁或侮辱</div></div>
+        </div>
+        <div class="as-option" onclick="submitUserReport('虚假身份')">
+          <div class="as-ic">🎭</div>
+          <div class="as-text"><div class="as-label">虚假身份</div><div class="as-sub">冒充失主或好心人、疑似诈骗</div></div>
+        </div>
+        <div class="as-option" onclick="submitUserReport('索要财物')">
+          <div class="as-ic">💸</div>
+          <div class="as-text"><div class="as-label">索要财物</div><div class="as-sub">以归还宠物为由要求付款</div></div>
+        </div>
+        <div class="as-option" onclick="submitUserReport('其他')">
+          <div class="as-ic">⋯</div>
+          <div class="as-text"><div class="as-label">其他</div><div class="as-sub">提交后由平台审核员 24h 内核查</div></div>
+        </div>
+        <div class="as-cancel" onclick="closeUserReportSheet()">取消</div>
       </div>
     </div>
 
@@ -4751,6 +4902,12 @@
     renderFeed(); renderArchive(); renderMapPins(); renderSheetCards();
     document.querySelectorAll('.filter-row').forEach(enableDragScroll);
     initStatBarAutoDismiss();
+    updateMsgBadge();
+    setTimeout(() => showNotif({
+      avatar: '🐱', avatarClass: 'ph-orange',
+      name: '客栈老板娘',
+      preview: '好的我现在过来，您能视频先确认一下吗？'
+    }), 3000);
   }
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', initApp);
@@ -5270,6 +5427,45 @@
       msgsArea.scrollTop = msgsArea.scrollHeight;
     }
     input.value = '';
+    checkMeetKeywords(text);
+  }
+
+  /* ============== 见面提示 ============== */
+  let _meetHintShown = false;
+  let _meetHintTimer = null;
+  const MEET_KEYWORDS = [
+    // 见面安排
+    '见面','碰头','当面','约好','约个','约时间','约一下','约在','见一面',
+    // 位置询问
+    '在哪','哪里','什么地方','位置','地址','怎么走','导航','定位',
+    // 到达状态
+    '过来','来一下','来取','快到','到了','马上到','出发','出门','在路上',
+    // 时间协商
+    '几点','什么时候','方便吗','有空吗','时间','等你','等一下',
+    // 接领行为
+    '接一下','来接','去取','去领','领回','接回','送过来',
+    // 地址标志词（报具体地址时必含）
+    '号','门口','路口','街口','楼下','楼上','附近','旁边','对面','斜对面','里面','前面','后面',
+    // 大理地名
+    '古城','洋人街','人民路','复兴路','博爱路','玉洱路','才村','海边','苍山',
+    '下关','喜洲','双廊','海东','挖色','银桥','凤仪','弥渡','上关',
+    '大理古城','才村码头','洱海','苍山门','北门','南门','西门','东门',
+  ];
+
+  function checkMeetKeywords(text) {
+    if (_meetHintShown) return;
+    const hit = MEET_KEYWORDS.some(kw => text.includes(kw));
+    if (!hit) return;
+    _meetHintShown = true;
+    const el = document.getElementById('meet-hint');
+    el.classList.add('show');
+    clearTimeout(_meetHintTimer);
+    _meetHintTimer = setTimeout(hideMeetHint, 10000);
+  }
+
+  function hideMeetHint() {
+    document.getElementById('meet-hint').classList.remove('show');
+    clearTimeout(_meetHintTimer);
   }
 
   /* ============== 留一条公开线索（v10 r17）==============
@@ -5459,6 +5655,129 @@
   function submitReport(reason) {
     closeReportSheet();
     alert('✓ 举报已提交\n\n原因：' + reason + '\n平台审核员将在 24 小时内核查\n谢谢你的反馈 💛');
+  }
+
+  /* ============== 顶部消息通知横幅 ============== */
+  let _notifTimer = null;
+
+  function showNotif({ avatar, avatarClass, name, preview }) {
+    const banner = document.getElementById('notif-banner');
+    document.getElementById('notif-avatar').textContent = avatar || '💬';
+    document.getElementById('notif-avatar').className = 'notif-avatar ' + (avatarClass || '');
+    document.getElementById('notif-name').textContent = name || '';
+    document.getElementById('notif-preview').textContent = preview || '';
+    banner.classList.add('show');
+    clearTimeout(_notifTimer);
+    _notifTimer = setTimeout(hideNotif, 4000);
+  }
+
+  function hideNotif() {
+    document.getElementById('notif-banner').classList.remove('show');
+    clearTimeout(_notifTimer);
+  }
+
+  function notifTap() {
+    hideNotif();
+    showScreen('chat');
+  }
+
+  /* ============== 消息列表 ============== */
+  function switchMsgTab(tab) {
+    ['replies','dm'].forEach(t => {
+      document.getElementById('msg-tab-' + t).classList.toggle('active', t === tab);
+      document.getElementById('msg-panel-' + t).style.display = t === tab ? '' : 'none';
+    });
+  }
+
+  function updateMsgBadge() {
+    const hasUnread = document.querySelector('#msg-panel-replies .msg-unread, #msg-panel-dm .msg-unread') !== null;
+    document.querySelectorAll('.msg-badge-dot').forEach(dot => {
+      dot.classList.toggle('show', hasUnread);
+    });
+  }
+
+  function openChat(row) {
+    const badge = row.querySelector('.msg-unread');
+    if (badge) badge.remove();
+    updateMsgBadge();
+    showScreen('chat');
+  }
+
+  function openPostReply(row, screen) {
+    const badge = row.querySelector('.msg-unread');
+    if (badge) badge.remove();
+    updateMsgBadge();
+    showScreen(screen);
+  }
+
+  /* ============== 举报 / 拉黑用户 ============== */
+  let _actionTargetName = '';
+  let _msgLongPressTimer = null;
+  let _blockedUsers = [];
+
+  function openUserActionSheet(name) {
+    _actionTargetName = name || '该用户';
+    document.getElementById('user-action-name').textContent = _actionTargetName;
+    document.getElementById('user-action-sheet').classList.add('show');
+  }
+  function closeUserActionSheet() {
+    document.getElementById('user-action-sheet').classList.remove('show');
+  }
+  function openUserReport() {
+    closeUserActionSheet();
+    document.getElementById('user-report-sheet').classList.add('show');
+  }
+  function closeUserReportSheet() {
+    document.getElementById('user-report-sheet').classList.remove('show');
+  }
+  function submitUserReport(reason) {
+    closeUserReportSheet();
+    alert('✓ 已举报「' + _actionTargetName + '」\n\n原因：' + reason + '\n平台审核员将在 24 小时内核查 💛');
+  }
+  function confirmBlock() {
+    closeUserActionSheet();
+    if (confirm('拉黑「' + _actionTargetName + '」后，对方将无法向你发消息。确定？')) {
+      if (!_blockedUsers.includes(_actionTargetName)) {
+        _blockedUsers.push(_actionTargetName);
+        renderBlocklist();
+      }
+      alert('已拉黑「' + _actionTargetName + '」\n可在「我的 → 黑名单」中解除');
+    }
+  }
+
+  function renderBlocklist() {
+    const el = document.getElementById('blocklist-content');
+    const countEl = document.getElementById('blocklist-count');
+    if (countEl) countEl.textContent = _blockedUsers.length ? _blockedUsers.length + ' 人' : '';
+    if (!el) return;
+    if (_blockedUsers.length === 0) {
+      el.innerHTML = '<div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;color:var(--ink-4);padding-bottom:60px"><div style="font-size:40px;opacity:0.3">🚫</div><div style="font-size:13.5px">黑名单为空</div></div>';
+      return;
+    }
+    el.innerHTML = _blockedUsers.map(name => `
+      <div style="display:flex;align-items:center;gap:12px;background:var(--surface);border-radius:var(--radius-md);box-shadow:var(--shadow-card);padding:13px 15px">
+        <div style="width:38px;height:38px;border-radius:50%;background:var(--bg);display:flex;align-items:center;justify-content:center;font-size:16px;color:var(--ink-3);flex-shrink:0">🚫</div>
+        <div style="flex:1;font-size:14px;font-weight:600;color:var(--ink-2)">${name}</div>
+        <div onclick="unblockUser('${name}')" style="font-size:12.5px;font-weight:700;color:var(--apricot-deep);padding:6px 14px;border-radius:var(--radius-pill);border:1.5px solid var(--apricot);cursor:pointer;white-space:nowrap">解除拉黑</div>
+      </div>`).join('');
+  }
+
+  function unblockUser(name) {
+    if (!confirm('解除对「' + name + '」的拉黑？')) return;
+    _blockedUsers = _blockedUsers.filter(n => n !== name);
+    renderBlocklist();
+  }
+
+  /* 消息列表长按 */
+  function msgRowLongPress(e, name) {
+    e.preventDefault();
+    openUserActionSheet(name);
+  }
+  function startMsgLongPress(e, name) {
+    _msgLongPressTimer = setTimeout(() => openUserActionSheet(name), 500);
+  }
+  function cancelMsgLongPress() {
+    clearTimeout(_msgLongPressTimer);
   }
 
   /* ============== 搜索逻辑（基于 FEED_DATA） ============== */
