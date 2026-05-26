@@ -2646,11 +2646,11 @@
     </div>
 
     <!-- ===== 屏 · Detail 动态详情页 ===== -->
-    <div class="screen" data-screen="detail">
+    <div class="screen view-public" data-screen="detail">
       <div class="sub-header">
         <div class="back-btn" onclick="goBack()">←</div>
         <div class="sub-title" id="dyn-title">详情</div>
-        <div class="follow-btn" id="dyn-follow-btn" onclick="toggleFollow(this)">♡ 关注</div>
+        <div class="follow-btn view-public-only" id="dyn-follow-btn" onclick="toggleFollow(this)">♡ 关注</div>
         <div class="sub-icon" id="dyn-share-btn" title="转发">↗</div>
         <div class="sub-icon" onclick="openReportSheet()" title="举报">⚠</div>
       </div>
@@ -5245,13 +5245,15 @@
       dynScreen.classList.remove('view-public', 'view-owner');
       dynScreen.classList.add(d._isMine ? 'view-owner' : 'view-public');
     }
+    // v10 r22 同步：owner action-bar 单 CTA（去除「补充线索」分类 · 都是发文）
+    // v10 r19 视角分离：public（路人）vs owner（失主自己）双套 action-bar
     document.getElementById('dyn-action-bar').innerHTML = isLost
         ? `<div class="btn-secondary view-public-only" onclick="openClueModal('lost')">📌 留一条公开线索</div>
            <div class="btn-primary view-public-only" onclick="openChatAs('finder')">💬 私聊失主</div>
-           <div class="btn-secondary view-owner-only" onclick="openClueModal('owner')">📌 补充一条线索</div>
-           <div class="btn-primary view-owner-only" onclick="postOwnerUpdate()">📢 发布新进展</div>`
+           <div class="btn-primary view-owner-only" onclick="postOwnerUpdate()" style="flex:1">📢 发布新进展</div>`
         : `<div class="btn-secondary view-public-only" onclick="openClueModal('found')">📌 我也见过 ta</div>
-           <div class="btn-primary view-public-only" onclick="showScreen('chat')">🏠 这是我家的猫</div>`;
+           <div class="btn-primary view-public-only" onclick="openChatAs('owner')">🏠 这是我家的猫</div>
+           <div class="btn-primary view-owner-only" onclick="postOwnerUpdate()" style="flex:1">📢 发布新进展</div>`;
 
     showScreen('detail');
   }
