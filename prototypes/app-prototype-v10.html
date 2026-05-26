@@ -2330,8 +2330,8 @@
     /* === 快速目击上报按钮（feed 卡片） === */
     .pc-action.sighting { color:var(--mint-deep); background:var(--mint-soft); border-radius:99px; padding:3px 8px; }
     /* === 目击上报弹层 === */
-    .sighting-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.38); z-index:9000; }
-    .sighting-overlay.open { display:flex; align-items:flex-end; }
+    .sighting-overlay { display:none; position:absolute; inset:0; background:rgba(0,0,0,0.55); backdrop-filter:blur(6px); z-index:60; }
+    .sighting-overlay.open { display:flex; align-items:flex-end; justify-content:center; }
     .sighting-sheet { background:white; border-radius:20px 20px 0 0; padding:20px 16px 34px; width:100%; max-height:78vh; overflow-y:auto; box-sizing:border-box; }
     .sighting-sheet .ss-drag { width:36px; height:4px; background:var(--divider); border-radius:2px; margin:0 auto 16px; }
     .sighting-sheet h3 { font-size:16px; font-weight:700; margin:0 0 4px; }
@@ -4029,6 +4029,38 @@
           <div class="btn-secondary" style="flex:1" onclick="alert('退出小程序')">不同意</div>
           <div class="btn-primary" style="flex:1.6" onclick="closePrivacyModal()">同意并继续</div>
         </div>
+      </div>
+    </div>
+
+    <!-- ===== 目击上报弹层（队友 v10 r10 加 · v10 r18 修位置）===== -->
+    <div class="sighting-overlay" id="sighting-overlay" onclick="if(event.target===this)closeSightingSheet()">
+      <div class="sighting-sheet">
+        <div class="ss-drag"></div>
+        <h3>👁 我看到 ta 了</h3>
+        <div class="ss-sub" id="sighting-pet-name">正在上报目击信息</div>
+        <div class="sighting-field">
+          <label>📍 你在哪里看到的？</label>
+          <input id="sighting-loc" placeholder="比如：洋人街咖啡馆旁边" />
+        </div>
+        <div class="sighting-field">
+          <label>⏰ 大概什么时候？</label>
+          <input id="sighting-time" placeholder="比如：今天下午 3 点左右" />
+        </div>
+        <div class="sighting-field">
+          <label>🧭 往哪个方向走的？</label>
+          <div class="sighting-dir-row">
+            <div class="sighting-dir" onclick="selectSightingDir(this)">↑ 向北</div>
+            <div class="sighting-dir" onclick="selectSightingDir(this)">↓ 向南</div>
+            <div class="sighting-dir" onclick="selectSightingDir(this)">← 向西</div>
+            <div class="sighting-dir" onclick="selectSightingDir(this)">→ 向东</div>
+            <div class="sighting-dir" onclick="selectSightingDir(this)">不确定</div>
+          </div>
+        </div>
+        <div class="sighting-field">
+          <label>📝 补充描述（可选）</label>
+          <textarea id="sighting-note" placeholder="比如：状态看起来还好，在垃圾桶旁边觅食..."></textarea>
+        </div>
+        <div class="btn-primary" style="margin-top:4px;cursor:pointer" onclick="submitSighting()">📤 提交目击信息</div>
       </div>
     </div>
 
@@ -6579,38 +6611,6 @@
   /* ============== 发布暖语联动 ============== */
   const _origSwitchPublishMode = typeof switchPublishMode === 'function' ? switchPublishMode : null;
 </script>
-
-<!-- ===== 目击上报弹层 ===== -->
-<div class="sighting-overlay" id="sighting-overlay" onclick="if(event.target===this)closeSightingSheet()">
-  <div class="sighting-sheet">
-    <div class="ss-drag"></div>
-    <h3>👁 我看到 ta 了</h3>
-    <div class="ss-sub" id="sighting-pet-name">正在上报目击信息</div>
-    <div class="sighting-field">
-      <label>📍 你在哪里看到的？</label>
-      <input id="sighting-loc" placeholder="比如：洋人街咖啡馆旁边" />
-    </div>
-    <div class="sighting-field">
-      <label>⏰ 大概什么时候？</label>
-      <input id="sighting-time" placeholder="比如：今天下午 3 点左右" />
-    </div>
-    <div class="sighting-field">
-      <label>🧭 往哪个方向走的？</label>
-      <div class="sighting-dir-row">
-        <div class="sighting-dir" onclick="selectSightingDir(this)">↑ 向北</div>
-        <div class="sighting-dir" onclick="selectSightingDir(this)">↓ 向南</div>
-        <div class="sighting-dir" onclick="selectSightingDir(this)">← 向西</div>
-        <div class="sighting-dir" onclick="selectSightingDir(this)">→ 向东</div>
-        <div class="sighting-dir" onclick="selectSightingDir(this)">不确定</div>
-      </div>
-    </div>
-    <div class="sighting-field">
-      <label>📝 补充描述（可选）</label>
-      <textarea id="sighting-note" placeholder="比如：状态看起来还好，在垃圾桶旁边觅食..."></textarea>
-    </div>
-    <div class="btn-primary" style="margin-top:4px;cursor:pointer" onclick="submitSighting()">📤 提交目击信息</div>
-  </div>
-</div>
 
 </body>
 </html>
