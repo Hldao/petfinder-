@@ -211,30 +211,29 @@
     .status-bubble.found { background: var(--mint); }
     .status-bubble.care { background: var(--plum); }
     .status-bubble.expired { background: var(--ink-4); }
-    /* 自己发布的帖子卡片 · v10 r20 · 置顶 + 视觉差异化
-     * 失主打开 app 最高频的真实行为就是查看自己帖的进度
-     * 用品牌色（杏橘）传达"持续关注感"，不用红色避免焦虑 */
+    /* 自己发布的帖子卡片 · v10 r23 · 温和差异化
+     * 仅浅杏橘渐变背景 + 阴影 · 不再用强边框 + 顶部 strip（减少视觉压力）
+     * 主标识改为 photo 左下角小角标 · 与右下角 status-bubble 对称 */
     .pet-card.my-card {
-      background: linear-gradient(135deg, #FFFAF4 0%, white 35%);
-      /* 用 inset 模拟 5px 左边条 · 不挤压内部 strip 宽度（border-left 会导致左上角露白）*/
-      box-shadow: inset 5px 0 0 var(--apricot),
-                  0 8px 22px rgba(255,133,82,0.16),
-                  0 0 0 1px rgba(255,133,82,0.15);
+      background: linear-gradient(135deg, #FFFAF4 0%, white 40%);
+      box-shadow: 0 6px 18px rgba(255,133,82,0.12),
+                  0 0 0 1px rgba(255,133,82,0.10);
     }
-    .my-post-strip {
-      padding: 7px 14px 8px;
-      background: linear-gradient(90deg, rgba(255,133,82,0.16) 0%, rgba(255,133,82,0.04) 100%);
-      font-size: 11.5px;
-      color: var(--apricot-deep);
+    /* 「我的帖」小角标 · photo 左下角圆形 */
+    .my-corner {
+      position: absolute;
+      bottom: 6px; left: 6px;
+      width: 20px; height: 20px;
+      background: var(--apricot);
+      color: white;
+      border-radius: 50%;
+      font-size: 10.5px;
       font-weight: 700;
-      letter-spacing: 0.01em;
-      border-top-left-radius: var(--radius-lg);
-      border-top-right-radius: var(--radius-lg);
-      display: flex;
-      align-items: center;
-      gap: 4px;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 2px 6px rgba(255,133,82,0.4);
+      border: 2px solid white;
+      z-index: 2;
     }
-    .my-post-strip .mps-sep { margin: 0 3px; opacity: 0.5; }
     .pc-info { flex: 1; min-width: 0; padding-top: 2px; }
     .pc-name-row { display: flex; align-items: baseline; gap: 6px; margin-bottom: 4px; }
     .pc-name { font-size: 16px; font-weight: 700; letter-spacing: -0.005em; }
@@ -4448,10 +4447,9 @@
     const hint = CARD_HINTS[d.id];
     const hintHtml = hint ? `<div class="card-hint-strip ${effStatus}">${hint}<span class="hint-arrow">›</span></div>` : '';
     return `<div class="pet-card${borderClass}${d._isMine ? ' my-card' : ''}" ${expiredCardStyle} onclick="showDetailScreen(${d.id})">
-      ${d._isMine ? `<div class="my-post-strip">✏ 你发布的<span class="mps-sep">·</span>📌 ${Math.max(1, Math.round(d.comments * 0.3))} 条新线索</div>` : ''}
       ${hintHtml}
       <div class="pc-body">
-        <div class="pc-photo ${d.photoClass}"><span>${d.emoji}</span><div class="status-bubble ${statusCls}">${statusLabel}</div></div>
+        <div class="pc-photo ${d.photoClass}"><span>${d.emoji}</span><div class="status-bubble ${statusCls}">${statusLabel}</div>${d._isMine ? '<div class="my-corner" title="你发布的">✏</div>' : ''}</div>
         <div class="pc-info">
           <div class="pc-name-row"><span class="pc-name">${d.name}</span><span class="breed">· ${d.breed}</span></div>
           <div class="pc-meta"><span>📍 ${d.loc} · ${distanceStr} km</span>${timeSpan}</div>
@@ -4707,10 +4705,9 @@
         </div>
       </div>
       <div class="pet-card${borderClass}${d._isMine ? ' my-card' : ''}" onclick="showScreen('${detailScreen}', false, '${d._isMine ? 'owner' : 'public'}')">
-        ${d._isMine ? `<div class="my-post-strip">✏ 你发布的<span class="mps-sep">·</span>📌 ${Math.max(1, Math.round(d.comments * 0.3))} 条新线索</div>` : ''}
         ${overdueHtml}${hintHtml}
         <div class="pc-body">
-          <div class="pc-photo ${d.photoClass}"><span>${d.emoji}</span><div class="status-bubble ${statusCls}">${statusLabel}</div></div>
+          <div class="pc-photo ${d.photoClass}"><span>${d.emoji}</span><div class="status-bubble ${statusCls}">${statusLabel}</div>${d._isMine ? '<div class="my-corner" title="你发布的">✏</div>' : ''}</div>
           <div class="pc-info">
             <div class="pc-name-row"><span class="pc-name">${d.name}</span><span class="breed">· ${d.breed}</span></div>
             <div class="pc-meta"><span class="loc-link" onclick="event.stopPropagation();showOnMapByLoc(${d.id})">📍 ${d.loc} · ${distanceStr} km</span>${timeSpan}</div>
