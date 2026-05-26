@@ -1226,6 +1226,68 @@
     .mp-note { padding: 12px; font-size: 11px; color: var(--ink-4); text-align: center; line-height: 1.55; }
 
     /* Dispute */
+    /* ===== 意见反馈 ===== */
+    .feedback-list { flex: 1; overflow-y: auto; padding: 12px 16px 100px; display: flex; flex-direction: column; gap: 10px; }
+    .feedback-card {
+      background: var(--surface); border-radius: var(--radius-md);
+      box-shadow: var(--shadow-card); padding: 13px 15px;
+      display: flex; flex-direction: column; gap: 8px;
+    }
+    .feedback-card-head { display: flex; align-items: center; gap: 8px; }
+    .feedback-tag {
+      font-size: 10.5px; font-weight: 700; padding: 2px 9px;
+      border-radius: var(--radius-pill);
+    }
+    .feedback-tag.suggestion { background: var(--mint-soft); color: var(--mint-deep); }
+    .feedback-tag.bug { background: var(--warn-soft); color: var(--warn-deep); }
+    .feedback-tag.experience { background: var(--apricot-soft); color: var(--apricot-deep); }
+    .feedback-tag.other { background: var(--bg); color: var(--ink-3); }
+    .feedback-time { font-size: 10.5px; color: var(--ink-4); margin-left: auto; font-family: var(--font-en); font-weight: 600; }
+    .feedback-content { font-size: 13.5px; color: var(--ink-1); line-height: 1.65; }
+    .feedback-reply {
+      background: var(--bg); border-radius: var(--radius-sm);
+      padding: 10px 12px; border-left: 3px solid var(--mint);
+    }
+    .feedback-reply-label { font-size: 10.5px; font-weight: 700; color: var(--mint-deep); margin-bottom: 4px; }
+    .feedback-reply-text { font-size: 12.5px; color: var(--ink-2); line-height: 1.6; }
+    .feedback-pending { font-size: 11px; color: var(--ink-4); display: flex; align-items: center; gap: 5px; }
+
+    /* 提交 sheet */
+    .feedback-sheet-overlay {
+      position: fixed; inset: 0; z-index: 8500;
+      background: rgba(31,31,31,0.42); display: none; align-items: flex-end;
+    }
+    .feedback-sheet-overlay.show { display: flex; }
+    .feedback-sheet {
+      width: 100%; background: var(--surface);
+      border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+      padding: 16px 0 40px; display: flex; flex-direction: column;
+      animation: slideUp 0.2s ease;
+    }
+    .feedback-sheet-head { display: flex; align-items: center; justify-content: space-between; padding: 0 18px 14px; }
+    .feedback-sheet-title { font-size: 16px; font-weight: 700; color: var(--ink-1); }
+    .feedback-sheet-close { font-size: 18px; color: var(--ink-4); cursor: pointer; padding: 4px; }
+    .feedback-cats { display: flex; flex-wrap: wrap; gap: 8px; padding: 0 16px 14px; }
+    .feedback-cat {
+      padding: 6px 14px; border-radius: var(--radius-pill); font-size: 12.5px;
+      font-weight: 600; cursor: pointer; border: 1.5px solid var(--divider);
+      background: var(--bg); color: var(--ink-3); transition: all 0.15s;
+    }
+    .feedback-cat.active { background: var(--apricot-soft); color: var(--apricot-deep); border-color: var(--apricot); }
+    .feedback-textarea {
+      margin: 0 16px; font-size: 14px; font-family: var(--font-cn);
+      color: var(--ink-1); border: 1.5px solid var(--divider); outline: none; resize: none;
+      background: var(--bg); border-radius: var(--radius-md);
+      padding: 12px 14px; min-height: 120px; line-height: 1.7;
+    }
+    .feedback-textarea:focus { border-color: var(--apricot); }
+    .feedback-submit {
+      margin: 12px 16px 0; padding: 14px; border-radius: var(--radius-md);
+      background: var(--apricot); color: white; font-size: 15px; font-weight: 700;
+      text-align: center; cursor: pointer;
+    }
+    .feedback-submit:hover { background: var(--apricot-deep); }
+
     .dispute-scroll { flex: 1; overflow-y: auto; padding: 14px 16px 110px; }
     .dispute-hero { text-align: center; padding: 18px 12px 20px; }
     .dispute-icon { width: 60px; height: 60px; background: var(--warn-soft); color: var(--warn-deep); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 26px; margin: 0 auto 12px; }
@@ -3138,6 +3200,7 @@
           </div>
           <div class="menu-section">
             <div class="menu-row" onclick="openMPModal()"><span class="menu-icon">📣</span><span class="menu-label">关注公众号</span><span class="menu-meta" style="color:var(--mint-deep)">推送更及时</span><span class="menu-arrow">›</span></div>
+            <div class="menu-row" onclick="showScreen('feedback')"><span class="menu-icon">💬</span><span class="menu-label">意见反馈</span><span class="menu-arrow">›</span></div>
             <div class="menu-row" onclick="showScreen('dispute')"><span class="menu-icon">⚠</span><span class="menu-label">争议申诉</span><span class="menu-arrow">›</span></div>
             <div class="menu-row" onclick="showScreen('blocklist')"><span class="menu-icon">🚫</span><span class="menu-label">黑名单</span><span class="menu-meta" id="blocklist-count" style="color:var(--ink-4)"></span><span class="menu-arrow">›</span></div>
           </div>
@@ -3172,6 +3235,34 @@
         <div class="sub-title">黑名单</div>
       </div>
       <div id="blocklist-content" style="flex:1;overflow-y:auto;padding:12px 16px 32px;display:flex;flex-direction:column;gap:10px;"></div>
+    </div>
+
+    <!-- ===== 意见反馈页 ===== -->
+    <div class="screen" data-screen="feedback">
+      <div class="sub-header">
+        <div class="back-btn" onclick="goBack()">←</div>
+        <div class="sub-title">意见反馈</div>
+        <div class="sub-icon" onclick="openFeedbackSheet()">＋</div>
+      </div>
+      <div class="feedback-list" id="feedback-list"></div>
+    </div>
+
+    <!-- 提交反馈 sheet -->
+    <div class="feedback-sheet-overlay" id="feedback-sheet-overlay" onclick="if(event.target===this)closeFeedbackSheet()">
+      <div class="feedback-sheet" onclick="event.stopPropagation()">
+        <div class="feedback-sheet-head">
+          <div class="feedback-sheet-title">提交反馈</div>
+          <div class="feedback-sheet-close" onclick="closeFeedbackSheet()">✕</div>
+        </div>
+        <div class="feedback-cats">
+          <div class="feedback-cat active" id="fcat-suggestion" onclick="selectFeedbackCat('suggestion',this)">💡 功能建议</div>
+          <div class="feedback-cat" id="fcat-bug" onclick="selectFeedbackCat('bug',this)">🐛 问题反馈</div>
+          <div class="feedback-cat" id="fcat-experience" onclick="selectFeedbackCat('experience',this)">😤 体验吐槽</div>
+          <div class="feedback-cat" id="fcat-other" onclick="selectFeedbackCat('other',this)">💬 其他</div>
+        </div>
+        <textarea class="feedback-textarea" id="feedback-textarea" placeholder="请详细描述你的想法或遇到的问题，我们会认真阅读每一条反馈 💛"></textarea>
+        <div class="feedback-submit" onclick="submitFeedback()">提交反馈</div>
+      </div>
     </div>
 
     <!-- 屏 13 · 善行值流水（已移除 · V2 启用）
@@ -6280,6 +6371,85 @@
 
   /* ============== 发布暖语联动 ============== */
   const _origSwitchPublishMode = typeof switchPublishMode === 'function' ? switchPublishMode : null;
+
+  /* ============== 意见反馈 ============== */
+  let _feedbackCat = 'suggestion';
+  const _feedbackData = [
+    {
+      id: 1, cat: 'suggestion', text: '希望能加一个"宠物已平安归家"的状态更新提醒，这样关注的人就能知道好消息了。',
+      time: '05-24 14:32',
+      reply: { text: '感谢你的建议 💛 "归还确认"功能正在开发中，完成后关注者会收到通知，预计下个版本上线。', time: '05-25 10:18' }
+    },
+    {
+      id: 2, cat: 'experience', text: '发帖的时候照片上传有点慢，而且选完照片页面会卡一下，希望能优化一下。',
+      time: '05-25 20:07',
+      reply: null
+    }
+  ];
+
+  function renderFeedbackList() {
+    const el = document.getElementById('feedback-list');
+    if (!el) return;
+    if (_feedbackData.length === 0) {
+      el.innerHTML = '<div style="text-align:center;color:var(--ink-4);font-size:13px;padding:40px 0">还没有反馈记录<br><span style="font-size:11px">点右上角 ＋ 提交你的想法</span></div>';
+      return;
+    }
+    const catLabel = { suggestion: '功能建议', bug: '问题反馈', experience: '体验吐槽', other: '其他' };
+    el.innerHTML = _feedbackData.slice().reverse().map(f => `
+      <div class="feedback-card">
+        <div class="feedback-card-head">
+          <span class="feedback-tag ${f.cat}">${catLabel[f.cat] || f.cat}</span>
+          <span class="feedback-time">${f.time}</span>
+        </div>
+        <div class="feedback-content">${f.text}</div>
+        ${f.reply
+          ? `<div class="feedback-reply"><div class="feedback-reply-label">官方回复 · ${f.reply.time}</div><div class="feedback-reply-text">${f.reply.text}</div></div>`
+          : `<div class="feedback-pending">⏳ 待回复 · 通常 3 个工作日内处理</div>`
+        }
+      </div>`).join('');
+  }
+
+  function openFeedbackSheet() {
+    _feedbackCat = 'suggestion';
+    document.querySelectorAll('.feedback-cat').forEach(el => el.classList.remove('active'));
+    const first = document.getElementById('fcat-suggestion');
+    if (first) first.classList.add('active');
+    const ta = document.getElementById('feedback-textarea');
+    if (ta) ta.value = '';
+    document.getElementById('feedback-sheet-overlay').classList.add('show');
+  }
+
+  function closeFeedbackSheet() {
+    document.getElementById('feedback-sheet-overlay').classList.remove('show');
+  }
+
+  function selectFeedbackCat(cat, el) {
+    _feedbackCat = cat;
+    document.querySelectorAll('.feedback-cat').forEach(e => e.classList.remove('active'));
+    el.classList.add('active');
+  }
+
+  function submitFeedback() {
+    const ta = document.getElementById('feedback-textarea');
+    const text = ta ? ta.value.trim() : '';
+    if (!text) { alert('请描述你的想法或遇到的问题 💛'); return; }
+    const now = new Date();
+    const mm = String(now.getMonth() + 1).padStart(2, '0');
+    const dd = String(now.getDate()).padStart(2, '0');
+    const hh = String(now.getHours()).padStart(2, '0');
+    const mi = String(now.getMinutes()).padStart(2, '0');
+    _feedbackData.push({ id: Date.now(), cat: _feedbackCat, text, time: mm + '-' + dd + ' ' + hh + ':' + mi, reply: null });
+    renderFeedbackList();
+    closeFeedbackSheet();
+    alert('✅ 反馈已提交，感谢你的建议 💛');
+  }
+
+  /* 进入反馈页时渲染列表 */
+  const _origShowScreen = showScreen;
+  showScreen = function(s) {
+    _origShowScreen(s);
+    if (s === 'feedback') renderFeedbackList();
+  };
 </script>
 
 </body>
