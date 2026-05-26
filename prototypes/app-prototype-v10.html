@@ -211,14 +211,28 @@
     .status-bubble.found { background: var(--mint); }
     .status-bubble.care { background: var(--plum); }
     .status-bubble.expired { background: var(--ink-4); }
-    /* 自己发布的帖子标识（v10 r19 · 仅在 feed 等公开列表中显示）*/
-    .my-post-badge {
-      position: absolute; top: 7px; left: 7px;
-      padding: 2px 6px; background: rgba(0,0,0,0.55);
-      color: white; font-size: 9.5px; font-weight: 700;
-      border-radius: 4px; letter-spacing: 0.02em;
-      backdrop-filter: blur(4px);
+    /* 自己发布的帖子卡片 · v10 r20 · 置顶 + 视觉差异化
+     * 失主打开 app 最高频的真实行为就是查看自己帖的进度
+     * 用品牌色（杏橘）传达"持续关注感"，不用红色避免焦虑 */
+    .pet-card.my-card {
+      background: linear-gradient(135deg, #FFFAF4 0%, white 35%);
+      box-shadow: 0 8px 22px rgba(255,133,82,0.16), 0 0 0 1px rgba(255,133,82,0.15);
+      border-left: 5px solid var(--apricot);
     }
+    .my-post-strip {
+      padding: 7px 14px 8px;
+      background: linear-gradient(90deg, rgba(255,133,82,0.16) 0%, rgba(255,133,82,0.04) 100%);
+      font-size: 11.5px;
+      color: var(--apricot-deep);
+      font-weight: 700;
+      letter-spacing: 0.01em;
+      border-top-left-radius: var(--radius-lg);
+      border-top-right-radius: var(--radius-lg);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .my-post-strip .mps-sep { margin: 0 3px; opacity: 0.5; }
     .pc-info { flex: 1; min-width: 0; padding-top: 2px; }
     .pc-name-row { display: flex; align-items: baseline; gap: 6px; margin-bottom: 4px; }
     .pc-name { font-size: 16px; font-weight: 700; letter-spacing: -0.005em; }
@@ -2472,7 +2486,8 @@
         <div class="btn-primary" onclick="openChatAs('finder')">💬 私聊失主</div>
       </div>
       <div class="action-bar view-owner-only">
-        <div class="btn-primary" onclick="postOwnerUpdate()" style="flex:1">📢 发布新进展</div>
+        <div class="btn-secondary" onclick="openClueModal('owner')">📌 补充一条线索</div>
+        <div class="btn-primary" onclick="postOwnerUpdate()">📢 发布新进展</div>
       </div>
     </div>
 
@@ -2533,7 +2548,8 @@
         <div class="btn-primary" onclick="openChatAs('owner')">🏠 这是我家的猫</div>
       </div>
       <div class="action-bar view-owner-only">
-        <div class="btn-primary" onclick="postOwnerUpdate()" style="flex:1">📢 发布新进展</div>
+        <div class="btn-secondary" onclick="openClueModal('owner')">📌 补充一条线索</div>
+        <div class="btn-primary" onclick="postOwnerUpdate()">📢 发布新进展</div>
       </div>
     </div>
 
@@ -4138,10 +4154,11 @@
     const timeSpan = `<span class="time">${d.time}</span>`;
     const hint = CARD_HINTS[d.id];
     const hintHtml = hint ? `<div class="card-hint-strip ${effStatus}">${hint}<span class="hint-arrow">›</span></div>` : '';
-    return `<div class="pet-card${borderClass}" ${expiredCardStyle} onclick="showScreen('${detailScreen}')">
+    return `<div class="pet-card${borderClass}${d._isMine ? ' my-card' : ''}" ${expiredCardStyle} onclick="showScreen('${detailScreen}', false, '${d._isMine ? 'owner' : 'public'}')">
+      ${d._isMine ? `<div class="my-post-strip">✏ 你发布的<span class="mps-sep">·</span>📌 ${Math.max(1, Math.round(d.comments * 0.3))} 条新线索</div>` : ''}
       ${hintHtml}
       <div class="pc-body">
-        <div class="pc-photo ${d.photoClass}"><span>${d.emoji}</span><div class="status-bubble ${statusCls}">${statusLabel}</div>${d._isMine ? '<div class="my-post-badge">✏ 你的帖子</div>' : ''}</div>
+        <div class="pc-photo ${d.photoClass}"><span>${d.emoji}</span><div class="status-bubble ${statusCls}">${statusLabel}</div></div>
         <div class="pc-info">
           <div class="pc-name-row"><span class="pc-name">${d.name}</span><span class="breed">· ${d.breed}</span></div>
           <div class="pc-meta"><span>📍 ${d.loc} · ${distanceStr} km</span>${timeSpan}</div>
@@ -4396,10 +4413,11 @@
           <div class="sh-label">接回家</div>
         </div>
       </div>
-      <div class="pet-card${borderClass}" onclick="showScreen('${detailScreen}')">
+      <div class="pet-card${borderClass}${d._isMine ? ' my-card' : ''}" onclick="showScreen('${detailScreen}', false, '${d._isMine ? 'owner' : 'public'}')">
+        ${d._isMine ? `<div class="my-post-strip">✏ 你发布的<span class="mps-sep">·</span>📌 ${Math.max(1, Math.round(d.comments * 0.3))} 条新线索</div>` : ''}
         ${overdueHtml}${hintHtml}
         <div class="pc-body">
-          <div class="pc-photo ${d.photoClass}"><span>${d.emoji}</span><div class="status-bubble ${statusCls}">${statusLabel}</div>${d._isMine ? '<div class="my-post-badge">✏ 你的帖子</div>' : ''}</div>
+          <div class="pc-photo ${d.photoClass}"><span>${d.emoji}</span><div class="status-bubble ${statusCls}">${statusLabel}</div></div>
           <div class="pc-info">
             <div class="pc-name-row"><span class="pc-name">${d.name}</span><span class="breed">· ${d.breed}</span></div>
             <div class="pc-meta"><span class="loc-link" onclick="event.stopPropagation();showOnMapByLoc(${d.id})">📍 ${d.loc} · ${distanceStr} km</span>${timeSpan}</div>
@@ -4410,7 +4428,7 @@
         <div class="pc-footer">
           <div class="pc-actions">
             <span class="pc-action">🤝 ${d.comments} 接力</span>
-            ${effStatus === 'lost' && !d.expired ? `<span class="pc-action sighting" onclick="event.stopPropagation();openSightingSheet(${d.id},'${d.name}')">👁 看到了</span>` : ''}
+            ${effStatus === 'lost' && !d.expired && !d._isMine ? `<span class="pc-action sighting" onclick="event.stopPropagation();openSightingSheet(${d.id},'${d.name}')">👁 看到了</span>` : ''}
             <span class="pc-action share" onclick="event.stopPropagation();openShare(${d.id})">⤴ 转发</span>
           </div>
           <span class="swipe-hint-icon">${pawSvg}<span style="font-size:10px;font-weight:700;margin-left:2px;color:var(--ink-4)">‹</span></span>
@@ -4431,6 +4449,8 @@
       return d.status === currentFilter;
     });
     items.sort((a, b) => currentSort === 'distance' ? a.distanceKm - b.distanceKm : a.timeMins - b.timeMins);
+    // v10 r20 · 自己发布的帖永远置顶（机制 vs 行为：失主最高频的真实行为就是查看自己帖的进度）
+    items.sort((a, b) => (b._isMine ? 1 : 0) - (a._isMine ? 1 : 0));
 
     if (countLabel) countLabel.textContent = items.length;
 
