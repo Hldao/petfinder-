@@ -1820,7 +1820,7 @@
     .map-pin .pin-head { position:relative; }
     .pin-pulse { position:absolute; inset:-3px; border-radius:50% 50% 50% 0; border:2.5px solid var(--apricot); opacity:0; animation:pinPulse 2s ease-out infinite; pointer-events:none; transform-origin:center; }
     @keyframes pinPulse { 0%{opacity:0.7;transform:scale(1)} 100%{opacity:0;transform:scale(2.6)} }
-    .pin-popup { position:absolute; background:var(--surface); border-radius:14px; box-shadow:var(--shadow-card); padding:12px 14px 10px; width:190px; z-index:25; display:none; transform:translate(-50%,calc(-100% - 46px)); }
+    .pin-popup { position:absolute; background:var(--surface); border-radius:14px; box-shadow:var(--shadow-card); padding:12px 14px 10px; width:190px; z-index:25; display:none; transform:translate(-50%,calc(-100% - 4px)); }
     .pin-popup.show { display:block; }
     .pin-popup::after { content:''; position:absolute; bottom:-8px; left:50%; transform:translateX(-50%); border:8px solid transparent; border-top:8px solid var(--surface); border-bottom:none; filter:drop-shadow(0 2px 2px rgba(0,0,0,0.08)); }
     .popup-top { display:flex; align-items:center; gap:8px; margin-bottom:7px; }
@@ -5151,7 +5151,8 @@
   }
 
   function showPinPopup(key, pinEl) {
-    if (!pinData[key]) return;
+    const d = pinData[key];
+    if (!d) return;
     // 标记选中 pin
     document.querySelectorAll('.map-pin.selected').forEach(p => p.classList.remove('selected'));
     pinEl.classList.add('selected');
@@ -5166,6 +5167,25 @@
       mapLayer.style.transform  = `translate(${tx}px,${ty}px)`;
       if (window._setMapOffset) window._setMapOffset(tx, ty);
     }
+    // 浮动气泡
+    const popup = document.getElementById('pin-popup');
+    document.getElementById('popup-emoji').textContent = d.emoji;
+    document.getElementById('popup-name').textContent = d.name;
+    document.getElementById('popup-type').textContent = d.type;
+    document.getElementById('popup-dist').textContent = d.dist;
+    document.getElementById('popup-time').textContent = d.time;
+    const tag = document.getElementById('popup-status-tag');
+    tag.textContent = d.status;
+    tag.className = 'popup-status-tag ' + d.statusClass;
+    document.getElementById('popup-go-btn').onclick = function() { showScreen(d.screen); popup.classList.remove('show'); };
+    popup.classList.remove('show');
+    setTimeout(() => {
+      const rect = pinEl.getBoundingClientRect();
+      const containerRect = pinEl.closest('.map-container').getBoundingClientRect();
+      popup.style.left = (rect.left - containerRect.left + rect.width / 2) + 'px';
+      popup.style.top  = (rect.top  - containerRect.top) + 'px';
+      popup.classList.add('show');
+    }, 370);
     // 底部 sheet 展示完整卡片
     const petId   = parseInt(key.replace('pin_', ''));
     const petData = getActiveFeedData().find(p => p.id === petId);
@@ -5300,7 +5320,7 @@
       if (!dragging) return;
       const pt = e.touches ? e.touches[0] : e;
       const dx = pt.clientX - startX, dy = pt.clientY - startY;
-      if (Math.abs(dx) > 4 || Math.abs(dy) > 4) {
+      if (Math.abs(dx) > 8 || Math.abs(dy) > 8) {
         if (!hasMoved) {
           if (window._collapseSheet) window._collapseSheet();
           const pp = document.getElementById('pin-popup');
