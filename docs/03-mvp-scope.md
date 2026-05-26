@@ -148,9 +148,48 @@ posts (帖子)
 ├── time: timestamp
 ├── description (公开)
 ├── poster_id → users
-├── stats: { views, comments, shares, clues }
+├── stats: { helpers, shares, clues }   ← v10 r24 改：comments → helpers · 删 views
 └── created_at / updated_at
 ```
+
+#### 1.3.1 「接力数」(helpers) 计算规则 · v10 r24 沉淀
+
+**语义**：参与过任一接力行为的**唯一用户数**（OpenID 去重）。
+
+**何为「接力行为」**（必须可追踪 · 按 06 § AI 防呆原则）：
+
+| 行为 | 数据来源 | 计入接力 |
+|---|---|---|
+| 提交公开线索 | `clues` 表 | ✅ |
+| 私聊失主（≥ 1 条消息）| `chats` 表 + `msg_count > 0` | ✅ |
+| 目击上报 | `sightings` 表 | ✅ |
+| 主动点击分享按钮 | `share_logs` 表（`wx.shareAppMessage` 回调）| ✅ |
+| 浏览帖子 | 无 | ❌ 被动行为 |
+| 转发到微信群后被看到 | 无 | ❌ 微信明确禁止追踪 |
+| 关注帖子（V2 概念）| `follows` 表 | ⚠ V2 计入 |
+
+**计算 SQL**（伪代码）：
+```sql
+SELECT COUNT(DISTINCT user_id) FROM (
+  SELECT user_id FROM clues       WHERE post_id = X
+  UNION
+  SELECT user_id FROM chats       WHERE post_id = X AND msg_count > 0
+  UNION
+  SELECT user_id FROM sightings   WHERE post_id = X
+  UNION
+  SELECT user_id FROM share_logs  WHERE post_id = X
+);
+```
+
+**用户视角解读**：「🤝 12 接力」= **12 个不同的人**在帮 ta 回家。
+
+**为什么这样设计**：
+- ✅ **唯一用户数去重** · 不重复计数（同一人留线索 + 又私聊 ≠ 计 2 次）
+- ✅ **仅可追踪行为** · 不捏造数据（v10 r14 沉淀的 AI 防呆原则）
+- ✅ **语义自洽** · "接力人数"的字面解读就是数据本身
+- ✅ **不计浏览量** · 浏览不是主动行为（v10 r12 已砍 👀 浏览量）
+
+**MVP 视觉处理**：仅显示总数 · 点击不展开。V2 可加详情视图（5 条线索 / 3 人私聊 / 12 次分享 的具体分布）。
 
 #### 1.4 接口约定（粗）
 
