@@ -97,6 +97,18 @@
     }
     .screen.active { display: flex; z-index: 2; }
 
+    /* ============== 视角自动推导 · v10 r19 ==============
+     * 不需要任何用户操作 · 由"入口路径"自动决定视角：
+     * - feed / 搜索 / 地图卡 → showScreen('detail-X', false, 'public')
+     * - my-posts 卡 → showScreen('detail-X', false, 'owner')
+     * 生产环境真实推导：is_owner = (post.poster_id === currentUser.openid)
+     * ====================================================== */
+    .screen.view-owner .view-public-only { display: none !important; }
+    .screen.view-public .view-owner-only { display: none !important; }
+    /* chat 特殊 · 根据"我和对方的关系"切换 Quick Reply */
+    .screen.view-as-owner .qr-finder { display: none !important; }
+    .screen.view-as-finder .qr-owner { display: none !important; }
+
     /* ============== 通用：顶部导航 ============== */
     .nav-region {
       background: var(--surface); padding: 12px 18px 14px;
@@ -199,6 +211,30 @@
     .status-bubble.found { background: var(--mint); }
     .status-bubble.care { background: var(--plum); }
     .status-bubble.expired { background: var(--ink-4); }
+    /* 自己发布的帖子卡片 · v10 r20 · 置顶 + 视觉差异化
+     * 失主打开 app 最高频的真实行为就是查看自己帖的进度
+     * 用品牌色（杏橘）传达"持续关注感"，不用红色避免焦虑 */
+    .pet-card.my-card {
+      background: linear-gradient(135deg, #FFFAF4 0%, white 35%);
+      /* 用 inset 模拟 5px 左边条 · 不挤压内部 strip 宽度（border-left 会导致左上角露白）*/
+      box-shadow: inset 5px 0 0 var(--apricot),
+                  0 8px 22px rgba(255,133,82,0.16),
+                  0 0 0 1px rgba(255,133,82,0.15);
+    }
+    .my-post-strip {
+      padding: 7px 14px 8px;
+      background: linear-gradient(90deg, rgba(255,133,82,0.16) 0%, rgba(255,133,82,0.04) 100%);
+      font-size: 11.5px;
+      color: var(--apricot-deep);
+      font-weight: 700;
+      letter-spacing: 0.01em;
+      border-top-left-radius: var(--radius-lg);
+      border-top-right-radius: var(--radius-lg);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .my-post-strip .mps-sep { margin: 0 3px; opacity: 0.5; }
     .pc-info { flex: 1; min-width: 0; padding-top: 2px; }
     .pc-name-row { display: flex; align-items: baseline; gap: 6px; margin-bottom: 4px; }
     .pc-name { font-size: 16px; font-weight: 700; letter-spacing: -0.005em; }
@@ -657,34 +693,6 @@
       margin-left: 4px;
     }
 
-    /* 留线索快捷入口（寻宠详情用） */
-    .leave-clue {
-      background: linear-gradient(135deg, var(--apricot-soft), #FFD8C0);
-      border-radius: var(--radius-md);
-      padding: 12px 14px;
-      margin-bottom: 14px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      cursor: pointer;
-      border: 1px solid rgba(255,133,82,0.25);
-    }
-    .leave-clue:hover { background: linear-gradient(135deg, #FFD8C0, #FFC6A0); }
-    .lc-icon {
-      width: 38px; height: 38px;
-      background: white;
-      border-radius: 12px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 18px;
-      color: var(--apricot-deep);
-      box-shadow: 0 2px 6px rgba(255,133,82,0.2);
-      flex-shrink: 0;
-    }
-    .lc-content { flex: 1; }
-    .lc-title { font-size: 13.5px; font-weight: 700; color: var(--apricot-deep); }
-    .lc-sub { font-size: 11px; color: var(--apricot-deep); opacity: 0.8; margin-top: 2px; }
-    .lc-arrow { color: var(--apricot-deep); font-size: 18px; }
-
     /* 底部按钮 */
     .action-bar {
       position: absolute; bottom: 0; left: 0; right: 0;
@@ -1000,6 +1008,65 @@
     .meet-hint-text { flex: 1; font-size: 12px; color: var(--apricot-deep); font-weight: 600; line-height: 1.4; }
     .meet-hint-btn { font-size: 11.5px; font-weight: 700; color: white; background: var(--apricot); padding: 5px 11px; border-radius: var(--radius-pill); white-space: nowrap; cursor: pointer; flex-shrink: 0; }
     .meet-hint-close { font-size: 14px; color: var(--apricot-deep); opacity: 0.5; cursor: pointer; flex-shrink: 0; line-height: 1; }
+
+    /* 归还菜单 · v10 r22 · 右上角 ⋯ 弹出 */
+    .chat-menu {
+      position: absolute; top: 44px; right: 8px;
+      background: white; border-radius: 12px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.18), 0 0 0 1px rgba(0,0,0,0.05);
+      padding: 6px; min-width: 200px;
+      display: none; z-index: 50;
+      animation: menuPop 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    .chat-menu.show { display: block; }
+    @keyframes menuPop {
+      from { opacity: 0; transform: translateY(-4px) scale(0.96); }
+      to   { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    .chat-menu-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 12px; border-radius: 8px;
+      font-size: 13.5px; color: var(--ink-1); cursor: pointer;
+      transition: background 0.12s;
+    }
+    .chat-menu-item:hover { background: var(--bg); }
+    .chat-menu-item.primary { color: var(--mint-deep); font-weight: 700; }
+    .chat-menu-item.primary:hover { background: var(--mint-soft); }
+    .chat-menu-item .cm-ic { font-size: 15px; width: 18px; text-align: center; }
+    .chat-menu-divider { height: 1px; background: var(--divider-soft); margin: 4px 8px; }
+
+    /* 归还冷却状态条（标记归还后显示） */
+    .cooldown-bar {
+      margin: 10px 16px;
+      padding: 10px 14px;
+      background: linear-gradient(135deg, rgba(91,184,159,0.12), rgba(91,184,159,0.04));
+      border: 1px solid rgba(91,184,159,0.25);
+      border-radius: 12px;
+      font-size: 12.5px;
+      color: var(--mint-deep);
+      display: flex; align-items: center; gap: 8px;
+      font-weight: 600;
+    }
+    .cooldown-bar .cb-ic { font-size: 15px; }
+    .cooldown-bar .cb-text { flex: 1; }
+    .cooldown-bar .cb-link {
+      color: var(--apricot-deep); font-weight: 700; cursor: pointer;
+      padding: 2px 8px; border-radius: 999px;
+    }
+    .cooldown-bar .cb-link:hover { background: var(--apricot-soft); }
+
+    /* 系统消息（如归还提示）*/
+    .chat-system-msg {
+      text-align: center;
+      font-size: 11px;
+      color: var(--ink-3);
+      padding: 8px 12px;
+      margin: 12px auto;
+      max-width: 80%;
+      background: var(--bg);
+      border-radius: 10px;
+    }
+    .chat-system-msg .sys-ic { margin-right: 4px; color: var(--mint-deep); }
     .chat-msgs { flex: 1; overflow-y: auto; padding: 8px 16px 0; }
     .chat-msg { margin-bottom: 12px; display: flex; gap: 8px; }
     .chat-msg.me { flex-direction: row-reverse; }
@@ -1855,8 +1922,13 @@
     .dist-ring { position:absolute; border-radius:50%; pointer-events:none; border:1.5px dashed rgba(59,130,246,0.22); transform:translate(-50%,-50%); }
     .dist-ring-label { position:absolute; font-size:9px; font-weight:700; color:rgba(59,130,246,0.45); pointer-events:none; transform:translateX(-50%); white-space:nowrap; }
     .map-fab .btn.locating { background:#EFF6FF; color:#3B82F6; }
-    .map-pin.selected .pin-head { box-shadow:0 0 0 3px var(--apricot), 0 4px 12px rgba(0,0,0,0.25); }
-    .sheet-back-btn { font-size:12px; color:var(--apricot-deep); font-weight:700; cursor:pointer; padding:2px 8px; border-radius:6px; background:var(--apricot-soft); }
+    .map-pin.lost.selected  .pin-head { box-shadow:0 0 0 3px var(--apricot), 0 4px 12px rgba(0,0,0,0.25); }
+    .map-pin.found.selected .pin-head { box-shadow:0 0 0 3px var(--mint),    0 4px 12px rgba(0,0,0,0.25); }
+    .map-pin.care.selected  .pin-head { box-shadow:0 0 0 3px var(--plum),    0 4px 12px rgba(0,0,0,0.25); }
+    .sheet-back-btn { font-size:12px; font-weight:700; cursor:pointer; padding:2px 8px; border-radius:6px; }
+    .sheet-back-btn.lost  { color:var(--apricot-deep); background:var(--apricot-soft); }
+    .sheet-back-btn.found { color:var(--mint-deep);    background:var(--mint-soft); }
+    .sheet-back-btn.care  { color:var(--plum-deep);    background:var(--plum-soft); }
     .pin-label { font-size:10px; font-weight:700; background:white; padding:2px 7px; border-radius:5px; margin-top:4px; box-shadow:0 1px 4px rgba(0,0,0,0.15); white-space:nowrap; letter-spacing:0.2px; }
     .map-pin.lost .pin-label { color:var(--apricot-deep); }
     .map-pin.found .pin-label { color:var(--mint-deep); }
@@ -1877,10 +1949,19 @@
     .popup-status-tag.found { background:var(--mint-soft); color:var(--mint-deep); }
     .popup-status-tag.care { background:var(--plum-soft); color:var(--plum-deep); }
     .popup-dist-row { font-size:11.5px; color:var(--ink-3); margin-bottom:8px; display:flex; gap:10px; }
-    .popup-dist-row .hl { font-weight:700; color:var(--apricot-deep); }
+    .popup-dist-row .hl { font-weight:700; }
+    .pin-popup.lost  .hl { color:var(--apricot-deep); }
+    .pin-popup.found .hl { color:var(--mint-deep); }
+    .pin-popup.care  .hl { color:var(--plum-deep); }
     .popup-btns { display:flex; gap:7px; }
-    .popup-call { background:var(--mint-soft); color:var(--mint-deep); border:none; border-radius:9px; padding:8px 11px; font-size:15px; cursor:pointer; flex-shrink:0; }
-    .popup-go { flex:1; background:var(--apricot); color:white; border:none; border-radius:9px; padding:8px; font-size:13px; font-weight:700; cursor:pointer; font-family:var(--font-cn); }
+    .popup-call { border:none; border-radius:9px; padding:8px 11px; font-size:15px; cursor:pointer; flex-shrink:0; }
+    .popup-call.lost  { background:var(--apricot-soft); color:var(--apricot-deep); }
+    .popup-call.found { background:var(--mint-soft);    color:var(--mint-deep); }
+    .popup-call.care  { background:var(--plum-soft);    color:var(--plum-deep); }
+    .popup-go { flex:1; color:white; border:none; border-radius:9px; padding:8px; font-size:13px; font-weight:700; cursor:pointer; font-family:var(--font-cn); }
+    .pin-popup.lost  .popup-go { background:var(--apricot); }
+    .pin-popup.found .popup-go { background:var(--mint-deep); }
+    .pin-popup.care  .popup-go { background:var(--plum-deep); }
     /* 可拖拽底部面板 */
     .map-bottom-sheet { position:absolute; bottom:82px; left:0; right:0; background:var(--surface); border-radius:20px 20px 0 0; box-shadow:0 -8px 24px rgba(0,0,0,0.08); height:210px; display:flex; flex-direction:column; transition:height 0.32s cubic-bezier(0.34,1.2,0.64,1); user-select:none; }
     .sheet-drag-area { flex-shrink:0; padding:10px 0 4px; cursor:grab; display:flex; flex-direction:column; align-items:center; gap:5px; }
@@ -2105,12 +2186,6 @@
     .follow-btn { display:inline-flex; align-items:center; gap:4px; padding:4px 9px; border-radius:99px; font-size:11.5px; font-weight:700; border:1.5px solid var(--apricot); color:var(--apricot-deep); background:white; cursor:pointer; transition:all 0.18s; white-space:nowrap; flex-shrink:0; }
     .follow-btn.following { background:var(--apricot-soft); border-color:transparent; }
     /* === 失主快报条 === */
-    .owner-update-bar { display:flex; align-items:center; gap:10px; margin:12px 0; padding:11px 13px; background:var(--honey-soft); border-radius:12px; border:1.5px solid var(--honey); cursor:pointer; }
-    .owner-update-bar .oub-icon { font-size:20px; }
-    .owner-update-bar .oub-body { flex:1; }
-    .owner-update-bar .oub-title { font-size:13px; font-weight:700; color:#7A5800; }
-    .owner-update-bar .oub-sub { font-size:11.5px; color:#A07820; margin-top:1px; }
-    .owner-update-bar .oub-arrow { font-size:14px; color:var(--ink-4); }
     /* === 快速目击上报按钮（feed 卡片） === */
     .pc-action.sighting { color:var(--mint-deep); background:var(--mint-soft); border-radius:99px; padding:3px 8px; }
     /* === 目击上报弹层 === */
@@ -2418,11 +2493,11 @@
     </div>
 
     <!-- ===== 屏 3 · Detail Lost ===== -->
-    <div class="screen" data-screen="detail-lost">
+    <div class="screen view-public" data-screen="detail-lost">
       <div class="sub-header">
         <div class="back-btn" onclick="goBack()">←</div>
         <div class="sub-title">寻宠详情</div>
-        <div class="follow-btn" id="detail-follow-btn" onclick="toggleFollow(this)">♡ 关注</div>
+        <div class="follow-btn view-public-only" id="detail-follow-btn" onclick="toggleFollow(this)">♡ 关注</div>
         <div class="sub-icon" onclick="openShare(1)" title="转发">↗</div>
         <div class="sub-icon" onclick="openReportSheet()" title="举报">⚠</div>
       </div>
@@ -2448,24 +2523,6 @@
           </div>
           <div class="section-label">特征描述</div>
           <div class="desc-card">今天下午带胖丁去人民路咖啡馆，吃完饭出门时它窜出去就不见了。胆小、不会让陌生人碰，听到名字会喵叫一声。看到请尽量拍照不要追 🙏</div>
-
-          <div class="owner-update-bar" onclick="postOwnerUpdate()">
-            <div class="oub-icon">📢</div>
-            <div class="oub-body">
-              <div class="oub-title">失主发进展</div>
-              <div class="oub-sub">让关注的人第一时间知道搜寻动态</div>
-            </div>
-            <div class="oub-arrow">›</div>
-          </div>
-
-          <div class="leave-clue" onclick="showScreen('chat')">
-            <div class="lc-icon">📌</div>
-            <div class="lc-content">
-              <div class="lc-title">看到过 ta？留下线索</div>
-              <div class="lc-sub">用话术模板快速描述时间、地点、方向</div>
-            </div>
-            <div class="lc-arrow">›</div>
-          </div>
 
           <div class="section-label">2 条线索 <span class="count">· 都在你附近</span></div>
           <div class="clue-card">
@@ -2501,14 +2558,17 @@
           </div>
         </div>
       </div>
-      <div class="action-bar">
+      <div class="action-bar view-public-only">
         <div class="btn-secondary" onclick="openClueModal('lost')">📌 留一条公开线索</div>
-        <div class="btn-primary" onclick="showScreen('chat')">💬 私聊失主</div>
+        <div class="btn-primary" onclick="openChatAs('finder')">💬 私聊失主</div>
+      </div>
+      <div class="action-bar view-owner-only">
+        <div class="btn-primary" onclick="postOwnerUpdate()" style="flex:1">📢 发布新进展</div>
       </div>
     </div>
 
     <!-- ===== 屏 4 · Detail Found ===== -->
-    <div class="screen" data-screen="detail-found">
+    <div class="screen view-public" data-screen="detail-found">
       <div class="sub-header">
         <div class="back-btn" onclick="goBack()">←</div>
         <div class="sub-title">招领详情</div>
@@ -2559,10 +2619,47 @@
           </div>
         </div>
       </div>
-      <div class="action-bar">
+      <div class="action-bar view-public-only">
         <div class="btn-secondary" onclick="openClueModal('found')">📌 我也见过 ta</div>
-        <div class="btn-primary" onclick="showScreen('chat')">🏠 这是我家的猫</div>
+        <div class="btn-primary" onclick="openChatAs('owner')">🏠 这是我家的猫</div>
       </div>
+      <div class="action-bar view-owner-only">
+        <div class="btn-primary" onclick="postOwnerUpdate()" style="flex:1">📢 发布新进展</div>
+      </div>
+    </div>
+
+    <!-- ===== 屏 · Detail 动态详情页 ===== -->
+    <div class="screen" data-screen="detail">
+      <div class="sub-header">
+        <div class="back-btn" onclick="goBack()">←</div>
+        <div class="sub-title" id="dyn-title">详情</div>
+        <div class="follow-btn" id="dyn-follow-btn" onclick="toggleFollow(this)">♡ 关注</div>
+        <div class="sub-icon" id="dyn-share-btn" title="转发">↗</div>
+        <div class="sub-icon" onclick="openReportSheet()" title="举报">⚠</div>
+      </div>
+      <div class="detail-scroll">
+        <div class="hero-photo" id="dyn-hero">
+          <span id="dyn-emoji"></span>
+          <div class="hero-status" id="dyn-status-badge"></div>
+          <div class="hero-time" id="dyn-time"></div>
+        </div>
+        <div class="detail-body">
+          <div class="detail-name" id="dyn-name"></div>
+          <div class="detail-subtitle" id="dyn-subtitle"></div>
+          <div class="detail-dist-bar" id="dyn-dist-bar">
+            <div class="dist-bar-icon">📍</div>
+            <div class="dist-bar-text">
+              <div class="dist-bar-main" id="dyn-dist-main"></div>
+              <div class="dist-bar-sub" id="dyn-dist-sub"></div>
+            </div>
+          </div>
+          <div class="info-grid" id="dyn-info-grid"></div>
+          <div class="section-label" id="dyn-desc-label">特征描述</div>
+          <div class="desc-card" id="dyn-desc"></div>
+          <div id="dyn-extra"></div>
+        </div>
+      </div>
+      <div class="action-bar" id="dyn-action-bar"></div>
     </div>
 
     <!-- ===== 屏 5 · Publish ===== -->
@@ -2893,11 +2990,34 @@
     </div>
 
     <!-- ===== 屏 11 · Chat ===== -->
-    <div class="screen" data-screen="chat">
+    <div class="screen view-as-finder" data-screen="chat">
       <div class="sub-header">
         <div class="back-btn" onclick="goBack()">←</div>
         <div class="sub-title">客栈老板娘</div>
-        <div class="sub-icon" onclick="openUserActionSheet('客栈老板娘')">⋯</div>
+        <div class="sub-icon" onclick="toggleChatMenu(event)" title="更多">⋯</div>
+        <!-- 右上角 menu · v10 r22 归还闭环入口 -->
+        <div class="chat-menu" id="chat-menu" onclick="event.stopPropagation()">
+          <div class="chat-menu-item primary" onclick="confirmReturn()">
+            <span class="cm-ic">✓</span>
+            <span class="cm-label qr-finder">我把 ta 交给主人了</span>
+            <span class="cm-label qr-owner">ta 已经回到我身边</span>
+          </div>
+          <div class="chat-menu-divider"></div>
+          <div class="chat-menu-item" onclick="closeChatMenu();openReportSheet()">
+            <span class="cm-ic">⚠</span>
+            <span class="cm-label">举报这条对话</span>
+          </div>
+          <div class="chat-menu-item" onclick="closeChatMenu();openUserActionSheet('客栈老板娘')">
+            <span class="cm-ic">🚫</span>
+            <span class="cm-label">举报 / 拉黑用户</span>
+          </div>
+        </div>
+      </div>
+      <!-- 归还冷却状态条 · 标记后才显示 mock -->
+      <div class="cooldown-bar" id="cooldown-bar" style="display:none">
+        <span class="cb-ic">⏳</span>
+        <span class="cb-text" id="cooldown-text">归还冷却中 · 剩 23h59min</span>
+        <span class="cb-link" onclick="undoReturn()">撤销</span>
       </div>
       <div class="chat-pet" onclick="showScreen('detail-found')">
         <div class="chat-pet-thumb ph-orange">🐱</div>
@@ -2942,9 +3062,13 @@
 
       <div class="quick-replies">
         <span class="qr-label">快捷</span>
-        <span class="qr-chip primary" onclick="setQuickReply('📍 我在 ')">📍 我看到了</span>
-        <span class="qr-chip action" onclick="setQuickReply('🏠 ta 现在在我这里，方便见面吗？')">🏠 我收着 ta</span>
-        <span class="qr-chip primary" onclick="setQuickReply('⏰ 我马上过来，请问具体位置在哪里？')">⏰ 马上过来</span>
+        <!-- 拾主视角 -->
+        <span class="qr-chip primary qr-finder" onclick="setQuickReply('📍 我在 ')">📍 我看到了</span>
+        <span class="qr-chip action qr-finder" onclick="setQuickReply('🏠 ta 现在在我这里，方便见面吗？')">🏠 我收着 ta</span>
+        <!-- 失主视角 -->
+        <span class="qr-chip primary qr-owner" onclick="setQuickReply('📍 我马上过来！请告诉我具体位置')">📍 马上过来</span>
+        <span class="qr-chip action qr-owner" onclick="setQuickReply('📹 能视频看一下 ta 的状态吗？')">📹 视频确认</span>
+        <!-- 通用 -->
         <span class="qr-chip" onclick="setQuickReply('📷 能发一张照片确认一下吗？')">📷 发张照片</span>
         <span class="qr-chip" onclick="setQuickReply('🐾 能描述一下 ta 的特征吗？比如颜色、花纹、有没有项圈')">🐾 描述特征</span>
         <span class="qr-chip" onclick="setQuickReply('🤝 方便约个时间当面确认吗？')">🤝 约见面</span>
@@ -3053,7 +3177,7 @@
         <!-- 进行中 -->
         <div id="mp-section-active">
           <div class="mp-card">
-            <div class="pc-body" onclick="showScreen('detail-found')">
+            <div class="pc-body" onclick="showScreen('detail-found', false, 'owner')">
               <div class="pc-photo ph-orange"><span>🐱</span><div class="status-bubble found">招领</div></div>
               <div class="pc-info">
                 <div class="pc-name-row"><span class="pc-name">小橘子</span><span class="breed">· 约 2 岁</span></div>
@@ -3069,7 +3193,7 @@
             </div>
           </div>
           <div class="mp-card">
-            <div class="pc-body" onclick="showScreen('detail-found')">
+            <div class="pc-body" onclick="showScreen('detail-found', false, 'owner')">
               <div class="pc-photo ph-cream"><span>🐶</span><div class="status-bubble found">招领</div></div>
               <div class="pc-info">
                 <div class="pc-name-row"><span class="pc-name">小白</span><span class="breed">· 比熊 · ♂</span></div>
@@ -3104,7 +3228,7 @@
             </div>
           </div>
           <div class="mp-card" style="opacity:0.75">
-            <div class="pc-body" onclick="showScreen('detail-found')">
+            <div class="pc-body" onclick="showScreen('detail-found', false, 'owner')">
               <div class="pc-photo ph-pink"><span>🐱</span><div class="status-bubble" style="background:var(--mint-deep)">已归还</div></div>
               <div class="pc-info">
                 <div class="pc-name-row"><span class="pc-name">布偶宝宝</span><span class="breed">· 布偶猫 · ♀</span></div>
@@ -3114,11 +3238,11 @@
               </div>
             </div>
             <div class="mp-actions">
-              <div class="mp-action" onclick="showScreen('detail-found')">查看详情</div>
+              <div class="mp-action" onclick="showScreen('detail-found', false, 'owner')">查看详情</div>
             </div>
           </div>
           <div class="mp-card" style="opacity:0.75">
-            <div class="pc-body" onclick="showScreen('detail-found')">
+            <div class="pc-body" onclick="showScreen('detail-found', false, 'owner')">
               <div class="pc-photo ph-cream"><span>🐶</span><div class="status-bubble" style="background:var(--mint-deep)">已归还</div></div>
               <div class="pc-info">
                 <div class="pc-name-row"><span class="pc-name">雪球</span><span class="breed">· 比熊串 · ♂</span></div>
@@ -3128,11 +3252,11 @@
               </div>
             </div>
             <div class="mp-actions">
-              <div class="mp-action" onclick="showScreen('detail-found')">查看详情</div>
+              <div class="mp-action" onclick="showScreen('detail-found', false, 'owner')">查看详情</div>
             </div>
           </div>
           <div class="mp-card" style="opacity:0.75">
-            <div class="pc-body" onclick="showScreen('detail-found')">
+            <div class="pc-body" onclick="showScreen('detail-found', false, 'owner')">
               <div class="pc-photo ph-orange"><span>🐱</span><div class="status-bubble" style="background:var(--mint-deep)">已归还</div></div>
               <div class="pc-info">
                 <div class="pc-name-row"><span class="pc-name">虎子</span><span class="breed">· 橘猫 · ♂</span></div>
@@ -3142,11 +3266,11 @@
               </div>
             </div>
             <div class="mp-actions">
-              <div class="mp-action" onclick="showScreen('detail-found')">查看详情</div>
+              <div class="mp-action" onclick="showScreen('detail-found', false, 'owner')">查看详情</div>
             </div>
           </div>
           <div class="mp-card" style="opacity:0.75">
-            <div class="pc-body" onclick="showScreen('detail-lost')">
+            <div class="pc-body" onclick="showScreen('detail-lost', false, 'owner')">
               <div class="pc-photo ph-mint"><span>🐈</span><div class="status-bubble" style="background:var(--mint-deep)">已找到</div></div>
               <div class="pc-info">
                 <div class="pc-name-row"><span class="pc-name">咖啡</span><span class="breed">· 美短 · ♀</span></div>
@@ -3156,7 +3280,7 @@
               </div>
             </div>
             <div class="mp-actions">
-              <div class="mp-action" onclick="showScreen('detail-lost')">查看详情</div>
+              <div class="mp-action" onclick="showScreen('detail-lost', false, 'owner')">查看详情</div>
               <div class="mp-action" onclick="alert('🙏 已发送一键致谢')">感谢信</div>
             </div>
           </div>
@@ -3896,7 +4020,7 @@
   // 屏切换 + 简单 history stack
   const history = ['feed'];
 
-  function showScreen(name, reset) {
+  function showScreen(name, reset, role) {
     // 关闭 pin 弹卡
     const pp = document.getElementById('pin-popup');
     if (pp) pp.classList.remove('show');
@@ -3911,7 +4035,14 @@
     }
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
     const t = document.querySelector(`[data-screen="${name}"]`);
-    if (t) t.classList.add('active');
+    if (t) {
+      t.classList.add('active');
+      // v10 r19 · 视角自动推导：详情页用 view-owner / view-public
+      if (name === 'detail-lost' || name === 'detail-found') {
+        t.classList.remove('view-owner', 'view-public');
+        t.classList.add('view-' + (role || 'public'));
+      }
+    }
     if (name === 'search') {
       setTimeout(() => {
         const box = document.getElementById('search-box');
@@ -3920,6 +4051,83 @@
     }
     if (name === 'all-posts') initAllPosts();
     if (name === 'map' && window._applyFilter) window._applyFilter(currentFilter);
+  }
+
+  // v10 r19 · 进 chat 时设置 chat 视角（根据"我和对方的关系"）
+  // - 'finder' = 我是拾主，对方是失主（拾主 Quick Reply）
+  // - 'owner'  = 我是失主，对方是拾主（失主 Quick Reply）
+  function openChatAs(role) {
+    const chat = document.querySelector('[data-screen="chat"]');
+    if (chat) {
+      chat.classList.remove('view-as-finder', 'view-as-owner');
+      chat.classList.add('view-as-' + (role || 'finder'));
+    }
+    showScreen('chat');
+  }
+
+  /* ============== 归还闭环 · v10 r22 ===============
+   * 单方标记 + 24h 隐性同意（不拒绝即通过）
+   * 不依赖对方主动确认（符合「机制 vs 行为」原则）
+   * 24h 冷却是平台层最后一道反冒领防线
+   * ================================================ */
+  function toggleChatMenu(e) {
+    if (e) e.stopPropagation();
+    const menu = document.getElementById('chat-menu');
+    if (!menu) return;
+    menu.classList.toggle('show');
+    if (menu.classList.contains('show')) {
+      setTimeout(() => document.addEventListener('click', closeChatMenuOnce, { once: true }), 0);
+    }
+  }
+  function closeChatMenu() {
+    const menu = document.getElementById('chat-menu');
+    if (menu) menu.classList.remove('show');
+  }
+  function closeChatMenuOnce() { closeChatMenu(); }
+
+  function confirmReturn() {
+    closeChatMenu();
+    const chat = document.querySelector('[data-screen="chat"]');
+    const isOwner = chat && chat.classList.contains('view-as-owner');
+    const txt = isOwner
+      ? 'ta 已经回到你身边了吗？\n\n标记后另一方（拾主）可在 24h 内撤销 · 之后帖子将关闭'
+      : '你已经把 ta 交给主人了吗？\n\n标记后另一方（失主）可在 24h 内撤销 · 之后帖子将关闭';
+    if (!confirm(txt)) return;
+    // mock：显示 cooldown bar + 在 chat 末尾加系统消息 + 跳 return-success
+    showCooldownBar(isOwner);
+    appendReturnSystemMsg(isOwner);
+    showScreen('return-success');
+  }
+
+  function showCooldownBar(isOwner) {
+    const bar = document.getElementById('cooldown-bar');
+    if (!bar) return;
+    bar.style.display = 'flex';
+    const text = document.getElementById('cooldown-text');
+    if (text) text.textContent = '归还冷却中 · 剩 23h59min · 期满后帖子将关闭';
+  }
+
+  function appendReturnSystemMsg(isOwner) {
+    const msgs = document.querySelector('[data-screen="chat"] .chat-msgs');
+    if (!msgs) return;
+    // 防重复添加
+    if (msgs.querySelector('.chat-system-msg.return-mark')) return;
+    const div = document.createElement('div');
+    div.className = 'chat-system-msg return-mark';
+    const who = isOwner ? '失主' : '拾主';
+    const otherCanUndo = isOwner ? '拾主' : '失主';
+    div.innerHTML = `<span class="sys-ic">✓</span>${who}标记了归还完成 · ${otherCanUndo}可在 24h 内撤销`;
+    msgs.appendChild(div);
+    msgs.scrollTop = msgs.scrollHeight;
+  }
+
+  function undoReturn() {
+    if (!confirm('撤销归还标记？\n\n帖子将恢复进行中状态')) return;
+    const bar = document.getElementById('cooldown-bar');
+    if (bar) bar.style.display = 'none';
+    const mark = document.querySelector('[data-screen="chat"] .chat-system-msg.return-mark');
+    if (mark) mark.remove();
+    alert('✓ 已撤销 · 归还标记取消');
   }
 
   function goBack() {
@@ -3965,7 +4173,7 @@
       time:'10 min 前', timeMins:10, distanceKm:0.8,
       comments:12, tall:true,
       desc:'穿粉色项圈，左耳缺一小块。胆小，听到名字会喵叫。看到请拍照不要追 🙏',
-      mapPos:{top:25,left:20} },
+      mapPos:{top:25,left:20}, _isMine:true },
     { id: 2, emoji:'🐶', photoClass:'ph-cream', status:'found', statusLabel:'招领',
       name:'小白', breed:'比熊 · ♂ 5kg', loc:'下关泰安路', color:'白色',
       time:'2 hr 前', timeMins:120, distanceKm:4.2,
@@ -4239,7 +4447,8 @@
     const timeSpan = `<span class="time">${d.time}</span>`;
     const hint = CARD_HINTS[d.id];
     const hintHtml = hint ? `<div class="card-hint-strip ${effStatus}">${hint}<span class="hint-arrow">›</span></div>` : '';
-    return `<div class="pet-card${borderClass}" ${expiredCardStyle} onclick="showScreen('${detailScreen}')">
+    return `<div class="pet-card${borderClass}${d._isMine ? ' my-card' : ''}" ${expiredCardStyle} onclick="showDetailScreen(${d.id})">
+      ${d._isMine ? `<div class="my-post-strip">✏ 你发布的<span class="mps-sep">·</span>📌 ${Math.max(1, Math.round(d.comments * 0.3))} 条新线索</div>` : ''}
       ${hintHtml}
       <div class="pc-body">
         <div class="pc-photo ${d.photoClass}"><span>${d.emoji}</span><div class="status-bubble ${statusCls}">${statusLabel}</div></div>
@@ -4497,7 +4706,8 @@
           <div class="sh-label">接回家</div>
         </div>
       </div>
-      <div class="pet-card${borderClass}" onclick="showScreen('${detailScreen}')">
+      <div class="pet-card${borderClass}${d._isMine ? ' my-card' : ''}" onclick="showScreen('${detailScreen}', false, '${d._isMine ? 'owner' : 'public'}')">
+        ${d._isMine ? `<div class="my-post-strip">✏ 你发布的<span class="mps-sep">·</span>📌 ${Math.max(1, Math.round(d.comments * 0.3))} 条新线索</div>` : ''}
         ${overdueHtml}${hintHtml}
         <div class="pc-body">
           <div class="pc-photo ${d.photoClass}"><span>${d.emoji}</span><div class="status-bubble ${statusCls}">${statusLabel}</div></div>
@@ -4511,7 +4721,7 @@
         <div class="pc-footer">
           <div class="pc-actions">
             <span class="pc-action">🤝 ${d.comments} 接力</span>
-            ${effStatus === 'lost' && !d.expired ? `<span class="pc-action sighting" onclick="event.stopPropagation();openSightingSheet(${d.id},'${d.name}')">👁 看到了</span>` : ''}
+            ${effStatus === 'lost' && !d.expired && !d._isMine ? `<span class="pc-action sighting" onclick="event.stopPropagation();openSightingSheet(${d.id},'${d.name}')">👁 看到了</span>` : ''}
             <span class="pc-action share" onclick="event.stopPropagation();openShare(${d.id})">⤴ 转发</span>
           </div>
           <span class="swipe-hint-icon">${pawSvg}<span style="font-size:10px;font-weight:700;margin-left:2px;color:var(--ink-4)">‹</span></span>
@@ -4532,6 +4742,8 @@
       return d.status === currentFilter;
     });
     items.sort((a, b) => currentSort === 'distance' ? a.distanceKm - b.distanceKm : a.timeMins - b.timeMins);
+    // v10 r20 · 自己发布的帖永远置顶（机制 vs 行为：失主最高频的真实行为就是查看自己帖的进度）
+    items.sort((a, b) => (b._isMine ? 1 : 0) - (a._isMine ? 1 : 0));
 
     if (countLabel) countLabel.textContent = items.length;
 
@@ -4971,8 +5183,9 @@
     const tag = document.getElementById('popup-status-tag');
     tag.textContent = d.status;
     tag.className = 'popup-status-tag ' + d.statusClass;
-    document.getElementById('popup-go-btn').onclick = function() { showScreen(d.screen); popup.classList.remove('show'); };
-    popup.classList.remove('show');
+    document.getElementById('popup-call-btn').className = 'popup-call ' + d.statusClass;
+    document.getElementById('popup-go-btn').onclick = function() { showDetailScreen(parseInt(key.replace('pin_', ''))); popup.classList.remove('show'); };
+    popup.className = 'pin-popup ' + d.statusClass;
     setTimeout(() => {
       const rect = pinEl.getBoundingClientRect();
       const containerRect = pinEl.closest('.map-container').getBoundingClientRect();
@@ -4986,13 +5199,80 @@
     if (petData) showSheetPetDetail(petData);
   }
 
+  function showDetailScreen(petId) {
+    const d = getActiveFeedData().find(p => p.id === petId);
+    if (!d) return;
+    const sc     = d.mapStatus || d.status;
+    const isLost = sc === 'lost';
+    const distStr = d.distanceKm < 1
+        ? '约 ' + Math.round(d.distanceKm * 1000) + ' 米'
+        : '约 ' + d.distanceKm.toFixed(1) + ' 公里';
+
+    document.getElementById('dyn-title').textContent = isLost ? '寻宠详情' : '招领详情';
+
+    const followBtn = document.getElementById('dyn-follow-btn');
+    if (followBtn) followBtn.style.display = isLost ? '' : 'none';
+
+    const shareBtn = document.getElementById('dyn-share-btn');
+    if (shareBtn) shareBtn.onclick = () => openShare(d.id);
+
+    const hero = document.getElementById('dyn-hero');
+    hero.className = 'hero-photo ' + d.photoClass;
+    document.getElementById('dyn-emoji').textContent = d.emoji;
+    const badge = document.getElementById('dyn-status-badge');
+    badge.className = 'hero-status ' + sc;
+    badge.textContent = isLost ? '寻宠中' : '招领中';
+    document.getElementById('dyn-time').textContent = d.time;
+
+    document.getElementById('dyn-name').textContent     = d.name;
+    document.getElementById('dyn-subtitle').textContent = d.breed;
+
+    document.getElementById('dyn-dist-main').textContent = '距你 ' + distStr;
+    document.getElementById('dyn-dist-sub').textContent  = d.loc;
+    document.getElementById('dyn-dist-bar').onclick = () => showOnMapByLoc(d.id);
+
+    const locLabel  = isLost ? '走失地点' : '发现地点';
+    const timeLabel = isLost ? '走失时间' : '发现时间';
+    document.getElementById('dyn-info-grid').innerHTML =
+        `<div class="info-cell"><div class="label">${locLabel}</div><div class="value">${d.loc}</div></div>` +
+        `<div class="info-cell"><div class="label">${timeLabel}</div><div class="value">${d.time}</div></div>`;
+
+    document.getElementById('dyn-desc-label').textContent = isLost ? '特征描述' : '发现者描述';
+    document.getElementById('dyn-desc').textContent = d.desc;
+
+    document.getElementById('dyn-extra').innerHTML = isLost
+        ? `<div class="owner-update-bar" onclick="postOwnerUpdate()">
+             <div class="oub-icon">📢</div>
+             <div class="oub-body"><div class="oub-title">失主发进展</div><div class="oub-sub">让关注的人第一时间知道搜寻动态</div></div>
+             <div class="oub-arrow">›</div>
+           </div>
+           <div class="leave-clue" onclick="showScreen('chat')">
+             <div class="lc-icon">📌</div>
+             <div class="lc-content"><div class="lc-title">看到过 ta？留下线索</div><div class="lc-sub">用话术模板快速描述时间、地点、方向</div></div>
+             <div class="lc-arrow">›</div>
+           </div>`
+        : `<div class="feature-card green">
+             <span class="ic">💬</span>
+             <div><b>认领前会拿到一份「沟通建议」</b><br>平台提供与失主沟通的话术和见面建议。<b>核对怎么走由你们自己决定</b>——确认归还时回来打个卡就行。</div>
+           </div>`;
+
+    document.getElementById('dyn-action-bar').innerHTML = isLost
+        ? `<div class="btn-secondary" onclick="openClueModal('lost')">📌 留一条公开线索</div>
+           <div class="btn-primary" onclick="showScreen('chat')">💬 私聊失主</div>`
+        : `<div class="btn-secondary" onclick="openClueModal('found')">📌 我也见过 ta</div>
+           <div class="btn-primary" onclick="showScreen('chat')">🏠 这是我家的猫</div>`;
+
+    showScreen('detail');
+  }
+
   function showSheetPetDetail(d) {
     const content      = document.getElementById('sheet-content');
     const titleEl      = document.getElementById('sheet-title');
     const filterToggle = document.getElementById('sheet-filter-toggle');
     const vpHint       = document.getElementById('sheet-viewport-hint');
     if (!content) return;
-    if (titleEl) titleEl.innerHTML = '<span class="sheet-back-btn" onclick="restoreSheetList()">← 全部</span>';
+    const sc = d.mapStatus || d.status;
+    if (titleEl) titleEl.innerHTML = `<span class="sheet-back-btn ${sc}" onclick="restoreSheetList()">← 全部</span>`;
     if (filterToggle) filterToggle.style.display = 'none';
     if (vpHint) vpHint.classList.remove('show');
     content.innerHTML = `<div style="padding:6px 4px 12px">${renderCard(d)}</div>`;
