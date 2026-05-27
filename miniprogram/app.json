@@ -35,6 +35,10 @@
       { "pagePath": "pages/profile/index", "text": "我的" }
     ]
   },
+  "requiredPrivateInfos": ["chooseLocation", "getLocation"],
+  "permission": {
+    "scope.userLocation": { "desc": "用于发布走失/招领地点与附近匹配（精度模糊到 500m）" }
+  },
   "style": "v2",
   "sitemapLocation": "sitemap.json",
   "lazyCodeLoading": "requiredComponents"

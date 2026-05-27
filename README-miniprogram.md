@@ -61,6 +61,20 @@ cloudfunctions/
 新增云函数：`confirmReturn` · `settleCooldown`（定时触发器）· `myPosts`
 新增集合：`return_confirmations`
 
-## 下一步（Phase 3，见 08 方案）
-感谢信 / 争议申诉 / 意见反馈 / 黑名单 · 服务号注册认证 + 模板消息 ·
-地图选点接入发布（wx.chooseLocation）· 实时消息（db.watch）。
+## 已完成 Phase 3（见 08 方案）
+- ✅ 意见反馈 + 黑名单（chat ⋯ 拉黑写入）+ `submitFeedback`
+- ✅ 争议申诉（描述 + 证据照）+ `submitDispute`（入仲裁队列）
+- ✅ 感谢信（return-success →「写感谢信」）+ `submitThanks`
+- ✅ 发布页地图选点（`wx.chooseLocation` → 经纬度入库）
+- ✅ chat 实时消息（`db.watch` · MVP 不自建 WebSocket）
+
+新增云函数：`submitFeedback` · `submitDispute` · `submitThanks`
+新增集合：`feedback` · `disputes` · `thanks`
+
+## 剩余（运营 / 非纯代码）
+- 服务号注册认证 + 模板消息申请（03 模块 5 · 运营动作，与开发并行）
+- 真机联调：填 AppID + CLOUD_ENV + 上传 11 个云函数 + 建集合
+
+## 工程现状
+**15 页面 + 11 云函数**，覆盖 MVP P0/P1 全部 + P2 主要闭环。
+全 `.js` 过 `node --check`、全 `.json` 合法、离线可跑。

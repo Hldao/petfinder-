@@ -54,6 +54,34 @@ Page({
     });
     wx.setNavigationBarTitle({ title: peerName });
     this.scrollBottom();
+
+    // 实时消息（03 §4.6：MVP 用 db.watch · 不自建 WebSocket）
+    if (app.globalData.cloudReady && cid) this.setupWatch(cid);
+  },
+
+  setupWatch(cid) {
+    try {
+      const db = wx.cloud.database();
+      this._watcher = db.collection('messages').where({ chatId: cid }).watch({
+        onChange: snapshot => {
+          if (snapshot.type === 'init') return; // 初始快照跳过，避免与已显示重复
+          const my = app.globalData.openid;
+          const adds = (snapshot.docChanges || []).filter(c =>
+            c.dataType === 'add' && c.doc && c.doc.sender_id !== my && c.doc.status !== 'blocked');
+          if (!adds.length) return;
+          const newMsgs = adds.map(c => ({ mine: false, content: c.doc.content, time: now() }));
+          this.setData({ messages: this.data.messages.concat(newMsgs) });
+          this.scrollBottom();
+        },
+        onError: e => console.error('[chat] watch error', e),
+      });
+    } catch (e) {
+      console.error('[chat] setupWatch fail', e);
+    }
+  },
+
+  onUnload() {
+    if (this._watcher) { try { this._watcher.close(); } catch (e) {} }
   },
 
   onInput(e) { this.setData({ input: e.detail.value }); },
