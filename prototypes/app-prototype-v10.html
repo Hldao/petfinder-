@@ -2264,8 +2264,6 @@
     .publish-warmth .pw-title { font-size:13.5px; font-weight:700; color:var(--apricot-deep); margin-bottom:4px; }
     .publish-warmth .pw-body { font-size:12px; color:#A05020; line-height:1.65; }
     /* === 关注按钮 === */
-    .follow-btn { display:inline-flex; align-items:center; gap:4px; padding:4px 9px; border-radius:99px; font-size:11.5px; font-weight:700; border:1.5px solid var(--apricot); color:var(--apricot-deep); background:white; cursor:pointer; transition:all 0.18s; white-space:nowrap; flex-shrink:0; }
-    .follow-btn.following { background:var(--apricot-soft); border-color:transparent; }
     /* === 失主快报条 === */
     /* === 快速目击上报按钮（feed 卡片） === */
     .pc-action.sighting { color:var(--mint-deep); background:var(--mint-soft); border-radius:99px; padding:3px 8px; }
@@ -2539,7 +2537,6 @@
       <div class="sub-header">
         <div class="back-btn" onclick="goBack()">←</div>
         <div class="sub-title" id="dyn-title">详情</div>
-        <div class="follow-btn view-public-only" id="dyn-follow-btn" onclick="toggleFollow(this)">♡ 关注</div>
         <div class="sub-icon" id="dyn-share-btn" title="转发">↗</div>
         <div class="sub-icon" onclick="openReportSheet()" title="举报">⚠</div>
       </div>
@@ -5122,9 +5119,6 @@
 
     document.getElementById('dyn-title').textContent = isLost ? '寻宠详情' : '招领详情';
 
-    const followBtn = document.getElementById('dyn-follow-btn');
-    if (followBtn) followBtn.style.display = isLost ? '' : 'none';
-
     const shareBtn = document.getElementById('dyn-share-btn');
     if (shareBtn) shareBtn.onclick = () => openShare(d.id);
 
@@ -6228,20 +6222,13 @@
     }, 200);
   }
 
-  /* ============== 关注宠物 ============== */
-  function toggleFollow(btn) {
-    const isFollowing = btn.classList.toggle('following');
-    btn.textContent = isFollowing ? '★ 已关注' : '♡ 关注';
-    if (isFollowing) {
-      setTimeout(() => alert('🔔 关注成功\n\n有新线索或失主发进展时，你会收到通知'), 150);
-    }
-  }
-
   /* ============== 失主快报 ============== */
   function postOwnerUpdate() {
-    const msg = prompt('📢 发布最新进展\n\n向关注者同步搜寻动态（直接发送，无需审核）：', '今天下午在洋人街附近再次找到线索，正在跟进中 🙏');
+    // v10 r38 · 关注按钮砍掉后 · 通知对象改为「提供过线索/接力的人」
+    // 即真实参与过帮助的人 · 不是按按钮的"低强度关注"用户
+    const msg = prompt('📢 发布最新进展\n\n同步给提供过线索的好心人（直接发送，无需审核）：', '今天下午在洋人街附近再次找到线索，正在跟进中 🙏');
     if (msg && msg.trim()) {
-      alert('✅ 进展已发布\n\n「' + msg.trim() + '」\n\n12 位关注者将收到通知');
+      alert('✅ 进展已发布\n\n「' + msg.trim() + '」\n\n接力中的 12 人将收到通知');
     }
   }
 
@@ -6252,9 +6239,9 @@
   let _feedbackCat = 'suggestion';
   const _feedbackData = [
     {
-      id: 1, cat: 'suggestion', text: '希望能加一个"宠物已平安归家"的状态更新提醒，这样关注的人就能知道好消息了。',
+      id: 1, cat: 'suggestion', text: '希望能加一个"宠物已平安归家"的状态更新提醒，这样提供过线索的人就能知道好消息了。',
       time: '05-24 14:32',
-      reply: { text: '感谢你的建议 💛 "归还确认"功能正在开发中，完成后关注者会收到通知，预计下个版本上线。', time: '05-25 10:18' }
+      reply: { text: '感谢你的建议 💛 "归还确认"功能正在开发中，完成后接力中的人会收到通知，预计下个版本上线。', time: '05-25 10:18' }
     },
     {
       id: 2, cat: 'experience', text: '发帖的时候照片上传有点慢，而且选完照片页面会卡一下，希望能优化一下。',
