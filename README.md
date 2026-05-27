@@ -30,6 +30,7 @@
 | `docs/04-database.md` | 数据库表结构 — 🚧 待补 |
 | [`docs/05-risks.md`](./docs/05-risks.md) | **★ 合规风险与逐屏标注**（v5 的 16 屏 × 风险等级 + 上线 Checklist） |
 | [`docs/07-team-workflow.md`](./docs/07-team-workflow.md) | **★ 团队协作工作流**（真实事故复盘 + Merge checklist + Commit 习惯 · 新人必读） |
+| [`docs/08-miniprogram-migration.md`](./docs/08-miniprogram-migration.md) | **★ HTML 原型 → 小程序原生迁移方案**（页面映射 + 渲染范式转换 + CloudBase 设计 + 合规 checklist + 分期路线图）|
 
 ## 原型 / Prototypes
 
