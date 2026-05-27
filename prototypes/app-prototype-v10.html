@@ -2082,15 +2082,10 @@
 
     /* === 情感化时间文案 === */
     .emotional-time { font-size:11px; color:var(--apricot-deep); font-weight:600; margin:4px 0 3px; line-height:1.4; }
-    .emotional-time.longterm { color:var(--warn-deep); }
     /* === 主人心声 === */
     .owner-voice { font-size:11.5px; color:var(--ink-3); font-style:italic; padding:8px 14px 10px; border-top:1px solid var(--divider-soft); line-height:1.55; }
     /* === 社区温暖插卡 === */
-    .community-card { display:flex; align-items:center; gap:12px; padding:11px 14px; background:var(--surface-warm); border-radius:var(--radius-md); border:1px solid var(--divider-soft); }
-    .cc-ic { font-size:22px; flex-shrink:0; }
-    .cc-body { flex:1; min-width:0; }
-    .cc-text { font-size:12.5px; font-weight:700; color:var(--ink-1); line-height:1.4; }
-    .cc-sub { font-size:11px; color:var(--ink-3); margin-top:2px; }
+    /* v10 r51 · .community-card 已删 · COMMUNITY_MOMENTS 是 AI 协作陷阱原文示例（捏造身份+不可追踪转发）*/
     /* === 顶部情感语轮播 === */
     .fsb-tagline { display:block; font-size:10.5px; color:var(--apricot-deep); font-weight:700; letter-spacing:0.02em; transition:opacity 0.4s ease; }
     .fsb-tagline.fading { opacity:0; }
@@ -2201,7 +2196,7 @@
             <div class="fsb-line">
               今天有小朋友<span class="fsb-soft">在等好心人</span><span class="fsb-sep">·</span><span class="fsb-soft">附近有人在一起找</span>
             </div>
-            <span class="fsb-tagline" id="fsb-tagline">每一次转发，都是一份可能的奇迹</span>
+            <span class="fsb-tagline" id="fsb-tagline">在大理，走失的小朋友正被大家一起找回 🐾</span>
           </div>
         </div>
         <div class="section-header" style="padding-top:16px;padding-bottom:2px">
@@ -4344,25 +4339,20 @@
     closeSortSheet();
   }
 
-  // 主人心声（寻宠帖专属）
-  const OWNER_VOICES = {
-    1:  '「胖丁，你在哪里，家里一直在等你回来 🙏」',
-    3:  '「咖啡胆子小，一个人在外面一定很害怕，快点回来」',
-    4:  '「黑豆，你最爱在才村跑来跑去，怎么就不见了呢」',
-    6:  '「找了一整天了，腿都走酸了，求大家帮忙转发」',
-    9:  '「土豆走丢好几天了，一家人都不知道怎么办 😢」',
-    10: '「小灰，我每天都在海东喊你名字，你在哪里」',
-    11: '「奶糖，如果你看到罐头声，记得出来 — 我们等你」',
-  };
+  // v10 r51 · OWNER_VOICES 已删
+  // 失主刷自己帖会看到第三人称"自己"的哀号 → 焦虑放大器
+  // 反例库 #11「卖惨/过度积极表情」+ 第 7 条「不为焦虑的人增加心理负担」
 
-  // 情感化时间文案（仅寻宠）
+  // v10 r51 · 时间叙述中性化（仅寻宠 · 之前文案"主人急寻中/还没回家/请大家多留意 🙏"
+  // 是失主视角的损失框架 · 失主刷自己帖会看到自己被代言的焦虑 · 第 7 条违背）
+  // 现在仅陈述事实 · 让用户自己感受 · 不加焦虑形容词
   function formatEmotionalTime(d) {
     if (d.status !== 'lost' || d.expired) return '';
     const t = d.timeMins;
-    if (t < 60) return `离家 ${t} 分钟，主人急寻中`;
-    if (t < 1440) { const h = Math.round(t / 60); return `离家已 ${h} 小时，还没回家`; }
+    if (t < 60) return `${t} 分钟前离家`;
+    if (t < 1440) { const h = Math.round(t / 60); return `${h} 小时前离家`; }
     const days = Math.round(t / 1440);
-    return days === 1 ? '走失超过 1 天，主人一直在找' : `已走失 ${days} 天，请大家多留意 🙏`;
+    return `${days} 天前离家`;
   }
 
   // v10 r32 · 招领贴的 d.name 字段直接存「颜色 + 品种」描述（非发现者昵称）
@@ -4400,14 +4390,8 @@
   }
 
   // 社区温暖插卡
-  const COMMUNITY_MOMENTS = [
-    { ic:'🤝', text:'刚刚，有 3 人转发了古城的寻宠帖', sub:'大家都在帮忙找，你也可以' },
-    { ic:'🎉', text:'好消息 · 上周雪球找到了主人 🎊', sub:'走失 5 天，喜洲好心人帮他回家了' },
-    { ic:'💛', text:'有人在洋人街留意到一只虎斑猫', sub:'正在核实中，希望是咖啡' },
-  ];
-  function mkCommunityCardHtml(cm) {
-    return `<div class="community-card"><div class="cc-ic">${cm.ic}</div><div class="cc-body"><div class="cc-text">${cm.text}</div><div class="cc-sub">${cm.sub}</div></div></div>`;
-  }
+  // v10 r51 · COMMUNITY_MOMENTS / mkCommunityCardHtml 已删
+  // 完美命中 CLAUDE.md AI 协作陷阱第 7 条原文示例：身份/转发链路不可追踪 = 捏造
 
   const CARD_HINTS = {
     0:  '🔔 12 人转发扩散中 · 帮忙找到主人',
@@ -4445,10 +4429,9 @@
       ? `<div class="card-hint-strip ${effStatus}" id="hint-${d.id}" onclick="event.stopPropagation();showDetailScreen(${d.id})">${firstMsg}<span class="hint-arrow">›</span></div>`
       : '';
     // v10 r48 · 删「⚠ 超24h/超3天」warn badge · 反例库 #4 紧迫度倒计时同病
-    // 失主帖子上加红色 ⚠ + "超" 字三重损失框架 → 加深焦虑（违背第 7 条 + § 6.7）
-    const isLongterm = d.timeMins >= 4320;  // ≥ 3 天 · 仅控制 emotional-time 颜色
+    // v10 r51 · isLongterm + .emotional-time.longterm 红色变色一并清理 · 同病彻底拔除
     const emoTime = formatEmotionalTime(d);
-    const emoHtml = emoTime ? `<div class="emotional-time${isLongterm ? ' longterm' : ''}">${emoTime}</div>` : '';
+    const emoHtml = emoTime ? `<div class="emotional-time">${emoTime}</div>` : '';
     return `<div class="pet-card${borderClass}${d._isMine ? ' my-card' : ''}" ${expiredStyle} onclick="showDetailScreen(${d.id})">
         ${hintHtml}
         <div class="pc-body">
@@ -4504,7 +4487,7 @@
     ];
     const getGrp = km => DIST_GROUPS.findIndex(g => km <= g.max);
 
-    let html = '', lastGrp = -1, cmIdx = 0;
+    let html = '', lastGrp = -1;
     items.forEach((d, i) => {
       if (currentSort === 'distance') {
         const g = getGrp(d.distanceKm);
@@ -4514,18 +4497,13 @@
         }
       }
       html += mkFeedCardHtml(d);
-      // 每隔 3 张插入一条社区温暖卡
-      if ((i + 1) % 3 === 0 && i < items.length - 1) {
-        html += mkCommunityCardHtml(COMMUNITY_MOMENTS[cmIdx % COMMUNITY_MOMENTS.length]);
-        cmIdx++;
-      }
     });
     container.innerHTML = html;
     // 绑定提示条轮播消息
     items.forEach(d => {
       const el = document.getElementById('hint-' + d.id);
       if (!el) return;
-      const msgs = [CARD_HINTS[d.id], getNearbyHelpersText(d), OWNER_VOICES[d.id]].filter(Boolean);
+      const msgs = [CARD_HINTS[d.id], getNearbyHelpersText(d)].filter(Boolean);
       if (msgs.length > 1) el._hintMsgs = msgs;
     });
     bindHintRotation();
@@ -4727,27 +4705,11 @@
     };
   }
 
-  // 顶部情感语轮播
-  (function() {
-    const el = document.getElementById('fsb-tagline');
-    if (!el) return;
-    const lines = [
-      '每一次转发，都是一份可能的奇迹',
-      '在大理，走失的小朋友正被大家一起找回 🐾',
-      '你的多看一眼，可能就是那个关键线索',
-      '大理人互助，一个都不少',
-      '有时候，一条消息就能让一家人重聚',
-    ];
-    let cur = 0;
-    setInterval(() => {
-      el.classList.add('fading');
-      setTimeout(() => {
-        cur = (cur + 1) % lines.length;
-        el.textContent = lines[cur];
-        el.classList.remove('fading');
-      }, 420);
-    }, 4000);
-  })();
+  // v10 r51 · tagline 轮播 5 条简化为静态 1 条（删 setInterval）
+  // 砍掉 4 条营销话术/心灵鸡汤 · 仅留 1 条中性希望叙事
+  // 反例库类比：营销话术违背第 1 条「不挡用户的路」+ 第 6 条「教育只说一次」
+  // tagline 元素本身保留 · 内容已在 HTML 静态写「每一次转发，都是一份可能的奇迹」
+  // 后续可考虑直接静态化为「在大理，走失的小朋友正被大家一起找回 🐾」（已猫猫 r49 校准的中性版）
 
   /* ============== 自我介绍条 · 5s 后自动隐退（一次性教育）==============
    * 产品哲学：告诉一次就够，不强加重复信息（第 6 条：教育只说一次）
