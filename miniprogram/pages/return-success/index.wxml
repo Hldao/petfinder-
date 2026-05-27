@@ -5,6 +5,7 @@
 
   <view class="cooldown">⏳ 进入 24 小时确认期，期满归还完成</view>
 
-  <view class="cta" bindtap="goHome">回首页</view>
+  <view class="cta" bindtap="writeThanks">✍️ 写封感谢信</view>
+  <view class="cta ghost" bindtap="goHome">回首页</view>
   <view class="undo" bindtap="undo">误操作？撤回归还</view>
 </view>

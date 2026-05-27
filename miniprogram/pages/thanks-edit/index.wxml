@@ -1,0 +1,17 @@
+<view class="page">
+  <view class="head">🐾 {{pet ? pet + ' 回家了' : 'ta 回家了'}}，谢谢一路帮忙的人</view>
+
+  <view class="label">想说的话 <text class="req">*</text></view>
+  <textarea class="textarea" placeholder="谢谢你们的每一次转发、每一条线索…" value="{{text}}" bindinput="onInput" maxlength="300" />
+
+  <view class="label">附张合影（选填）</view>
+  <view class="photo-row">
+    <view wx:if="{{photo}}" class="photo-slot">
+      <image src="{{photo}}" mode="aspectFill" class="photo-img" />
+      <view class="photo-del" catchtap="removePhoto">✕</view>
+    </view>
+    <view wx:else class="photo-add" bindtap="choosePhoto">＋</view>
+  </view>
+
+  <view class="submit {{submitting?'disabled':''}}" bindtap="submit">送出感谢</view>
+</view>

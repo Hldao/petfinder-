@@ -12,7 +12,9 @@
     "pages/my-posts/index",
     "pages/all-posts/index",
     "pages/feedback/index",
-    "pages/blocklist/index"
+    "pages/blocklist/index",
+    "pages/dispute/index",
+    "pages/thanks-edit/index"
   ],
   "window": {
     "navigationBarBackgroundColor": "#F0E9D8",
