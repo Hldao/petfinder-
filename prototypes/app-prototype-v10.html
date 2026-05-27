@@ -149,16 +149,6 @@
       white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
       min-width: 0; flex: 1;
     }
-    .icon-btn {
-      width: 36px; height: 36px; background: var(--bg); border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 15px; cursor: pointer; position: relative;
-    }
-    .icon-btn .dot {
-      position: absolute; top: 6px; right: 8px;
-      width: 8px; height: 8px; background: var(--apricot); border-radius: 50%; border: 2px solid var(--bg);
-    }
-
     /* 通用：详情/子页 header */
     .sub-header {
       background: var(--surface); padding: 10px 16px;
@@ -324,13 +314,6 @@
       color: var(--ink-2);
       font-weight: 600;
     }
-    .fsb-num {
-      color: var(--apricot-deep);
-      font-weight: 800;
-      font-family: var(--font-en);
-      font-size: 13px;
-      letter-spacing: 0.01em;
-    }
     .fsb-sep { color: var(--ink-4); margin: 0 5px; font-weight: 400; }
     .fsb-meta {
       font-size: 10px;
@@ -341,34 +324,6 @@
     }
     .fsb-meta .dot { color: var(--mint); margin: 0 3px; }
     .fsb-soft { color: var(--ink-3); font-weight: 500; margin: 0 1px; }
-    .fsb-total {
-      margin-left: 8px;
-      padding: 6px 10px 7px;
-      background: white;
-      border-radius: 10px;
-      text-align: center;
-      cursor: pointer;
-      flex-shrink: 0;
-      box-shadow: 0 2px 6px rgba(255,133,82,0.18);
-      transition: transform 0.15s;
-    }
-    .fsb-total:hover { transform: translateY(-1px); }
-    .fsb-total-num {
-      font-family: var(--font-en);
-      font-size: 17px;
-      font-weight: 800;
-      color: var(--mint-deep, #2F8C75);
-      line-height: 1;
-      letter-spacing: -0.01em;
-    }
-    .fsb-total-label {
-      font-size: 9px;
-      color: var(--ink-3);
-      font-weight: 700;
-      margin-top: 3px;
-      letter-spacing: 0.06em;
-    }
-
     /* 往期案例区 */
     .archive-section { padding: 22px 0 0; }
     .archive-divider {
@@ -2184,7 +2139,6 @@
     .dist-group-header { display:flex; align-items:center; gap:8px; padding:12px 0 4px; }
     .dgh-label { font-size:11px; font-weight:700; color:var(--ink-3); white-space:nowrap; letter-spacing:0.4px; }
     .dgh-line { flex:1; height:1px; background:var(--divider); }
-    /* === 超时走失紧急角标 === */
     /* === 下拉刷新 === */
     .ptr-wrap { height:0; overflow:hidden; display:flex; align-items:center; justify-content:center; gap:8px; font-size:12px; font-weight:600; color:var(--ink-3); transition:height 0.2s ease; margin:0 16px; }
     .ptr-wrap.visible { height:44px; }
@@ -2206,26 +2160,6 @@
     .card-hint-strip { transition: opacity 0.28s ease; }
     .card-hint-strip.hint-fading { opacity: 0; }
 
-    /* 更新进展提示条 */
-    .update-banner {
-      margin: 0 16px 10px;
-      background: var(--apricot-soft);
-      border: 1px solid rgba(255,133,82,0.3);
-      border-radius: var(--radius-md);
-      padding: 10px 14px;
-      display: flex; align-items: center; gap: 10px;
-      cursor: pointer;
-    }
-    .update-banner:hover { background: #FFD8C0; }
-    .update-banner-icon { font-size: 20px; flex-shrink: 0; }
-    .update-banner-text { flex: 1; min-width: 0; }
-    .update-banner-title { font-size: 13px; font-weight: 700; color: var(--apricot-deep); }
-    .update-banner-sub { font-size: 11px; color: var(--apricot-deep); opacity: 0.8; margin-top: 1px; }
-    .update-banner-close {
-      color: var(--apricot-deep); opacity: 0.5; font-size: 15px;
-      cursor: pointer; padding: 4px; flex-shrink: 0;
-    }
-    .update-banner-close:hover { opacity: 1; }
 
     /* === 发帖情绪托住 === */
     .publish-warmth { margin:0 16px 12px; padding:12px 14px; background:linear-gradient(135deg,var(--apricot-soft),var(--honey-soft)); border-radius:var(--radius-md); }
@@ -2291,7 +2225,6 @@
         <div class="nav-row">
           <div class="city-tag" onclick="handleLocationRequest()"><span class="pin">📍</span><span id="city-name">大理</span></div>
           <div class="search-pill" onclick="showScreen('search')"><span>🔍</span><span>搜品种、地点、特征...</span></div>
-          <div class="icon-btn" onclick="showScreen('messages')">🔔<div class="dot"></div></div>
         </div>
       </div>
       <div class="filter-region">
@@ -2299,33 +2232,19 @@
           <div class="chip active" data-filter="all" onclick="applyFilter('all', this)">全部</div>
           <div class="chip" data-filter="lost" onclick="applyFilter('lost', this)"><span class="chip-dot" style="background:var(--apricot)"></span>寻宠</div>
           <div class="chip" data-filter="found" onclick="applyFilter('found', this)"><span class="chip-dot" style="background:var(--mint)"></span>招领</div>
-          <div class="chip" data-filter="urgent" onclick="applyFilter('urgent', this)"><span class="chip-dot" style="background:var(--warn)"></span>紧急</div>
           <div class="chip chip-sort" id="sort-chip" onclick="openSortSheet()">⏱ 最新</div>
         </div>
       </div>
       <div class="scroll-area">
-        <!-- 顶部数据条 · 叙事化（统计 → 故事）-->
+        <!-- 顶部希望叙事条 · §6.7 去成就数字（dashboard 累计数 → 当下状态 + 希望）-->
         <div class="feed-stat-bar">
           <div class="fsb-ic">🐾</div>
           <div class="fsb-body">
             <div class="fsb-line">
-              今天 <span class="fsb-num">3</span> 只小朋友<span class="fsb-soft">在等好心人</span><span class="fsb-sep">·</span>上周帮 <span class="fsb-num">8</span> 个家庭<span class="fsb-soft">团聚</span>
+              今天有小朋友<span class="fsb-soft">在等好心人</span><span class="fsb-sep">·</span><span class="fsb-soft">附近有人在一起找</span>
             </div>
             <span class="fsb-tagline" id="fsb-tagline">每一次转发，都是一份可能的奇迹</span>
           </div>
-          <div class="fsb-total" onclick="showScreen('all-posts')">
-            <div class="fsb-total-num">47</div>
-            <div class="fsb-total-label">已团聚</div>
-          </div>
-        </div>
-        <!-- 更新进展提示条 -->
-        <div class="update-banner" id="update-banner" onclick="showScreen('my-posts')">
-          <div class="update-banner-icon">🐾</div>
-          <div class="update-banner-text">
-            <div class="update-banner-title">你有 1 条寻宠帖正在进行中</div>
-            <div class="update-banner-sub">胖丁 · 走失 6 小时 · 点击更新状态</div>
-          </div>
-          <div class="update-banner-close" onclick="event.stopPropagation();dismissUpdateBanner()">✕</div>
         </div>
         <div class="section-header" style="padding-top:16px;padding-bottom:2px">
           <span class="title">大理的小朋友</span>
@@ -4454,11 +4373,6 @@
     });
   }
 
-  function dismissUpdateBanner() {
-    const b = document.getElementById('update-banner');
-    if (b) b.style.display = 'none';
-  }
-
   function openSortSheet() { document.getElementById('sort-sheet').classList.add('show'); }
   function closeSortSheet() { document.getElementById('sort-sheet').classList.remove('show'); }
   function applySort(method) {
@@ -4607,7 +4521,6 @@
 
     let items = getActiveFeedData().filter(d => {
       if (currentFilter === 'all') return true;
-      if (currentFilter === 'urgent') return d.status === 'lost' && d.timeMins >= 1440 && !d.expired;
       return d.status === currentFilter;
     });
     items.sort((a, b) => currentSort === 'distance' ? a.distanceKm - b.distanceKm : a.timeMins - b.timeMins);
@@ -4862,7 +4775,7 @@
     if (!el) return;
     const lines = [
       '每一次转发，都是一份可能的奇迹',
-      '大理已有 47 个家庭因为大家团聚了 🐾',
+      '在大理，走失的小朋友正被大家一起找回 🐾',
       '你的多看一眼，可能就是那个关键线索',
       '大理人互助，一个都不少',
       '有时候，一条消息就能让一家人重聚',
