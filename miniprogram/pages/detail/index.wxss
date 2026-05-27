@@ -1,0 +1,63 @@
+.page { min-height: 100vh; background: var(--bg); padding-bottom: 160rpx; }
+.empty { text-align: center; color: var(--ink-3); padding: 120rpx 0; font-size: 28rpx; }
+
+.hero {
+  height: 360rpx; display: flex; align-items: center; justify-content: center;
+  position: relative;
+}
+.hero.lost  { background: linear-gradient(135deg, var(--apricot-soft) 0%, #FFCDA8 100%); }
+.hero.found { background: linear-gradient(135deg, var(--mint-soft) 0%, #ABDDCB 100%); }
+.hero-emoji { font-size: 160rpx; }
+.hero-badge {
+  position: absolute; top: 28rpx; left: 28rpx;
+  padding: 8rpx 22rpx; border-radius: var(--radius-pill);
+  font-size: 23rpx; font-weight: 700; color: #fff;
+}
+.hero-badge.lost { background: var(--apricot); }
+.hero-badge.found { background: var(--mint); }
+.hero-time {
+  position: absolute; top: 28rpx; right: 28rpx;
+  font-size: 23rpx; color: var(--ink-2); background: rgba(255,255,255,0.7);
+  padding: 6rpx 18rpx; border-radius: var(--radius-pill);
+}
+
+.body { padding: 28rpx 32rpx; }
+.name-row { display: flex; align-items: baseline; gap: 16rpx; }
+.name { font-size: 40rpx; font-weight: 800; }
+.sub { font-size: 25rpx; color: var(--ink-3); }
+.emo { font-size: 24rpx; color: var(--apricot-deep); font-weight: 600; margin-top: 8rpx; }
+.emo.longterm { color: var(--warn-deep); }
+
+.grid { display: flex; flex-wrap: wrap; margin: 28rpx 0; }
+.cell { width: 50%; padding: 16rpx 0; }
+.cell .k { font-size: 22rpx; color: var(--ink-3); }
+.cell .v { font-size: 28rpx; font-weight: 700; margin-top: 4rpx; }
+
+.card {
+  background: var(--surface); border-radius: var(--radius-md);
+  padding: 24rpx 28rpx; margin-bottom: 24rpx;
+}
+.card-title { font-size: 26rpx; font-weight: 700; color: var(--ink-1); margin-bottom: 14rpx; }
+.desc { font-size: 27rpx; color: var(--ink-2); line-height: 1.6; }
+
+.kv { display: flex; gap: 20rpx; font-size: 26rpx; color: var(--ink-2); padding: 8rpx 0; }
+.kk { color: var(--ink-3); width: 140rpx; flex-shrink: 0; }
+
+.clue-empty { font-size: 25rpx; color: var(--ink-4); }
+.clue { padding: 16rpx 0; border-top: 2rpx solid var(--divider-soft); }
+.clue:first-child { border-top: none; }
+.clue-meta { font-size: 22rpx; color: var(--ink-3); }
+.clue-text { font-size: 26rpx; color: var(--ink-2); margin-top: 6rpx; line-height: 1.5; }
+
+.action-bar {
+  position: fixed; left: 0; right: 0; bottom: 0;
+  padding: 20rpx 32rpx calc(20rpx + env(safe-area-inset-bottom));
+  background: var(--surface); box-shadow: 0 -4rpx 16rpx rgba(31,31,31,0.06);
+}
+.cta {
+  height: 88rpx; border-radius: var(--radius-pill);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 30rpx; font-weight: 700;
+}
+.cta.primary { background: var(--apricot); color: #fff; }
+.cta.primary:active { background: var(--apricot-deep); }

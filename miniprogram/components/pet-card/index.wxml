@@ -1,0 +1,21 @@
+<view class="pet-card" bindtap="onTap">
+  <view class="pc-body">
+    <view class="pc-photo {{statusCls}}">
+      <text class="emoji">{{post.emoji}}</text>
+      <view class="status-bubble {{statusCls}}">{{post.statusLabel}}</view>
+    </view>
+    <view class="pc-info">
+      <view class="pc-name-row">
+        <text class="pc-name">{{post.name}}</text>
+        <text class="breed">· {{post.breed}}{{post.sex ? ' ' + post.sex : ''}}</text>
+      </view>
+      <view class="pc-meta">{{locLine}}<text class="time"> · {{post.time}}</text></view>
+      <view wx:if="{{emoTime}}" class="emo-time {{longterm ? 'longterm' : ''}}">{{emoTime}}</view>
+      <view class="pc-desc">{{post.desc}}</view>
+    </view>
+  </view>
+  <view class="pc-footer">
+    <text class="pc-action">{{helpersText}}</text>
+    <text class="pc-action share">⤴ 转发</text>
+  </view>
+</view>

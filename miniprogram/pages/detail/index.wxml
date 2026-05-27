@@ -1,0 +1,56 @@
+<view wx:if="{{notFound}}" class="empty">没找到这条信息</view>
+
+<view wx:elif="{{post}}" class="page">
+  <!-- Hero -->
+  <view class="hero {{statusCls}}">
+    <text class="hero-emoji">{{post.emoji}}</text>
+    <view class="hero-badge {{statusCls}}">{{post.statusLabel}}</view>
+    <view class="hero-time">{{post.time}}</view>
+  </view>
+
+  <view class="body">
+    <view class="name-row">
+      <text class="name">{{post.name}}</text>
+      <text class="sub">{{post.breed}}{{post.sex ? ' · ' + post.sex : ''}}</text>
+    </view>
+    <view wx:if="{{emoTime}}" class="emo {{longterm ? 'longterm' : ''}}">{{emoTime}}</view>
+
+    <!-- 信息网格 -->
+    <view class="grid">
+      <view class="cell"><view class="k">{{locLabel}}</view><view class="v">{{post.loc}}</view></view>
+      <view class="cell"><view class="k">{{timeLabel}}</view><view class="v">{{post.time}}</view></view>
+      <view class="cell"><view class="k">距你</view><view class="v">{{post.distanceKm}} km</view></view>
+      <view class="cell"><view class="k">接力</view><view class="v">{{post.helpers}} 人</view></view>
+    </view>
+
+    <!-- 描述 -->
+    <view class="card desc-card">
+      <view class="card-title">{{isLost ? '失主描述' : '发现者描述'}}</view>
+      <view class="desc">{{post.desc}}</view>
+    </view>
+
+    <!-- 招领：目前状况 -->
+    <view wx:if="{{!isLost}}" class="card">
+      <view class="card-title">目前状况</view>
+      <view class="kv"><text class="kk">目前位置</text><text>{{post.currentLocation || '—'}}</text></view>
+      <view class="kv"><text class="kk">健康状况</text><text>{{post.health || '—'}}</text></view>
+    </view>
+
+    <!-- 寻宠：线索区 -->
+    <view wx:if="{{isLost}}" class="card">
+      <view class="card-title">线索板块（{{post.clues.length}}）</view>
+      <view wx:if="{{post.clues.length === 0}}" class="clue-empty">还没有线索，你的一条留言可能就是关键</view>
+      <view wx:for="{{post.clues}}" wx:key="text" class="clue">
+        <view class="clue-meta">{{item.name}} · {{item.loc}} · {{item.timeAgo}}</view>
+        <view class="clue-text">{{item.text}}</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 底部 CTA -->
+  <view class="action-bar">
+    <view class="cta primary" bindtap="onContact">
+      {{isLost ? '💬 我看到 ta 了' : '💬 私聊发现者'}}
+    </view>
+  </view>
+</view>

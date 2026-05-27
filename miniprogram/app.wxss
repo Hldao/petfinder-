@@ -1,0 +1,22 @@
+/* 全局设计 token · 从原型 prototypes/app-prototype-v10.html :root 移植
+ * 迁移期保持视觉一致，改色只改这里 */
+page {
+  --apricot: #FF8552; --apricot-soft: #FFE9DD; --apricot-deep: #E66A38;
+  --mint: #5BB89F; --mint-soft: #DDF1EA; --mint-deep: #3F9079;
+  --honey: #F0AC32; --honey-soft: #FFF3D6; --honey-deep: #D89020;
+  --plum: #A672D4; --plum-soft: #EDE2F8; --plum-deep: #7E4FB5;
+  --warn: #E04E4E; --warn-soft: #FCE5E5; --warn-deep: #B83030;
+  --bg: #F0E9D8; --bg-deeper: #E8DFC8;
+  --surface: #FFFFFF; --surface-warm: #FFFAF2;
+  --divider: #E0D6BD; --divider-soft: #EDE5D0;
+  --ink-1: #1F1F1F; --ink-2: #4A4A4A; --ink-3: #7A7A7A;
+  --ink-4: #B0AC9E; --ink-5: #DDD6C0;
+  --radius-pill: 999rpx; --radius-lg: 36rpx; --radius-md: 24rpx; --radius-sm: 16rpx;
+  --shadow-card: 0 2rpx 4rpx rgba(31,31,31,0.04), 0 16rpx 40rpx rgba(31,31,31,0.06);
+
+  background: var(--bg);
+  font-family: -apple-system, 'PingFang SC', 'Hiragino Sans GB', sans-serif;
+  color: var(--ink-1);
+}
+
+view, text { box-sizing: border-box; }

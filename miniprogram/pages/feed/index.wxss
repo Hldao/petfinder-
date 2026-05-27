@@ -1,0 +1,48 @@
+.page { min-height: 100vh; background: var(--bg); padding-bottom: 40rpx; }
+
+.nav-row { display: flex; align-items: center; gap: 16rpx; padding: 20rpx 32rpx 12rpx; }
+.city-tag {
+  display: flex; align-items: center; gap: 6rpx; flex-shrink: 0;
+  font-size: 28rpx; font-weight: 700; color: var(--ink-1);
+}
+.search-pill {
+  flex: 1; display: flex; align-items: center; gap: 10rpx;
+  background: var(--surface); border-radius: var(--radius-pill);
+  padding: 16rpx 28rpx; font-size: 26rpx; color: var(--ink-4);
+  box-shadow: var(--shadow-card);
+}
+
+.filter-row { display: flex; gap: 16rpx; padding: 8rpx 32rpx 16rpx; }
+.chip {
+  display: flex; align-items: center; gap: 8rpx;
+  padding: 12rpx 28rpx; background: var(--surface); border-radius: var(--radius-pill);
+  font-size: 26rpx; color: var(--ink-2); font-weight: 600;
+}
+.chip.active { background: var(--ink-1); color: #fff; }
+.chip .dot { width: 14rpx; height: 14rpx; border-radius: 50%; }
+
+.stat-bar {
+  margin: 12rpx 32rpx 28rpx; padding: 22rpx 28rpx;
+  background: linear-gradient(135deg, #FFF4EB 0%, #FFFAF3 100%);
+  border-radius: 24rpx; border: 2rpx solid rgba(255,133,82,0.16);
+  display: flex; align-items: center; gap: 22rpx;
+}
+.sb-ic {
+  width: 56rpx; height: 56rpx; background: #fff; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center; font-size: 28rpx;
+  box-shadow: 0 4rpx 12rpx rgba(255,133,82,0.15);
+}
+.sb-body { flex: 1; }
+.sb-line { font-size: 24rpx; color: var(--ink-2); font-weight: 600; }
+.sb-tag { font-size: 21rpx; color: var(--apricot-deep); font-weight: 700; margin-top: 4rpx; }
+
+.section-header { display: flex; align-items: baseline; padding: 8rpx 32rpx 4rpx; }
+.section-header .title { font-size: 30rpx; font-weight: 700; }
+.section-header .count { font-size: 24rpx; color: var(--ink-3); }
+
+.feed-list { display: flex; flex-direction: column; gap: 24rpx; padding: 16rpx 32rpx; }
+
+.hint { text-align: center; color: var(--ink-4); padding: 60rpx 0; font-size: 26rpx; }
+.empty { text-align: center; color: var(--ink-3); padding: 80rpx 0; font-size: 27rpx; }
+.empty .fe-icon { font-size: 72rpx; margin-bottom: 16rpx; }
+.seed-note { text-align: center; color: var(--ink-4); font-size: 21rpx; padding: 24rpx 0; }

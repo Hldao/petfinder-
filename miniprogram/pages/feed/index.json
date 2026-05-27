@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "寻宠·大理",
+  "enablePullDownRefresh": true,
+  "usingComponents": {
+    "pet-card": "/components/pet-card/index"
+  }
+}

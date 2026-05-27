@@ -1,0 +1,9 @@
+{
+  "name": "feedQuery",
+  "version": "1.0.0",
+  "description": "返回 approved 帖列表（feed）",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3"
+  }
+}

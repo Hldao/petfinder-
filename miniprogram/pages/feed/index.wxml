@@ -1,0 +1,46 @@
+<view class="page">
+  <!-- 顶部导航：城市固定大理 + 搜索 -->
+  <view class="nav-row">
+    <view class="city-tag"><text class="pin">📍</text><text>大理</text></view>
+    <view class="search-pill" bindtap="onSearchTap">
+      <text>🔍</text><text class="ph">搜品种、地点、特征...</text>
+    </view>
+  </view>
+
+  <!-- 筛选 chip（全部 / 寻宠 / 招领）· 紧急已砍(r49) -->
+  <view class="filter-row">
+    <view class="chip {{filter==='all'?'active':''}}" data-filter="all" bindtap="applyFilter">全部</view>
+    <view class="chip {{filter==='lost'?'active':''}}" data-filter="lost" bindtap="applyFilter">
+      <text class="dot" style="background:var(--apricot)"></text>寻宠
+    </view>
+    <view class="chip {{filter==='found'?'active':''}}" data-filter="found" bindtap="applyFilter">
+      <text class="dot" style="background:var(--mint)"></text>招领
+    </view>
+  </view>
+
+  <!-- 希望叙事条 · §6.7 去成就数字(r49) -->
+  <view class="stat-bar">
+    <text class="sb-ic">🐾</text>
+    <view class="sb-body">
+      <view class="sb-line">今天有小朋友在等好心人 · 附近有人在一起找</view>
+      <view class="sb-tag">每一次转发，都是一份可能的奇迹</view>
+    </view>
+  </view>
+
+  <view class="section-header">
+    <text class="title">大理的小朋友</text>
+    <text class="count"> · {{posts.length}} 条</text>
+  </view>
+
+  <!-- 列表 -->
+  <view wx:if="{{loading}}" class="hint">加载中…</view>
+  <view wx:elif="{{posts.length === 0}}" class="empty">
+    <view class="fe-icon">🐾</view>
+    <view>附近暂时没有这类信息</view>
+  </view>
+  <view wx:else class="feed-list">
+    <pet-card wx:for="{{posts}}" wx:key="id" post="{{item}}" bindtap="onCardTap" />
+  </view>
+
+  <view wx:if="{{fromSeed}}" class="seed-note">本地示例数据（config.js 填好 CLOUD_ENV 后接入云端）</view>
+</view>
