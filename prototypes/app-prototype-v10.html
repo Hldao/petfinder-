@@ -1198,14 +1198,28 @@
 
     /* Profile */
     .profile-scroll { flex: 1; overflow-y: auto; padding-bottom: 100px; }
-    /* v10 r43 · profile 简化为工具入口列表 · 删 points-card / quick-actions */
-    .profile-hero { background: linear-gradient(135deg, #FFB088 0%, var(--apricot) 100%); color: white; padding: 28px 20px 48px; position: relative; overflow: hidden; }
-    .profile-hero::before { content: '🐾'; position: absolute; top: -10px; right: -10px; font-size: 200px; opacity: 0.08; transform: rotate(-12deg); line-height: 1; }
+    /* v10 r46 · profile 进一步紧凑化 · hero 压缩 + 大号入口 + 分组 label */
+    .profile-hero { background: linear-gradient(135deg, #FFB088 0%, var(--apricot) 100%); color: white; padding: 22px 20px 42px; position: relative; overflow: hidden; }
+    .profile-hero::before { content: '🐾'; position: absolute; top: -10px; right: -10px; font-size: 180px; opacity: 0.08; transform: rotate(-12deg); line-height: 1; }
     .profile-user { display: flex; align-items: center; gap: 14px; position: relative; }
-    .profile-avatar { width: 56px; height: 56px; border-radius: 18px; background: rgba(255,255,255,0.95); font-size: 30px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+    .profile-avatar { width: 52px; height: 52px; border-radius: 16px; background: rgba(255,255,255,0.95); font-size: 28px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
     .profile-name { font-size: 17px; font-weight: 700; }
-    .profile-handle { font-size: 12.5px; opacity: 0.92; margin-top: 4px; }
-    .profile-content { margin-top: -28px; padding: 0 16px 16px; position: relative; z-index: 1; }
+    .profile-handle { font-size: 12.5px; opacity: 0.92; margin-top: 3px; }
+    .profile-content { margin-top: -24px; padding: 0 16px 16px; position: relative; z-index: 1; }
+    /* v10 r46 · 高频入口大号 banner（视觉权重对应使用频率）*/
+    .profile-feature-card { background: var(--surface); border-radius: var(--radius-md); padding: 16px 18px; display: flex; align-items: center; gap: 14px; cursor: pointer; box-shadow: var(--shadow-card); margin-bottom: 18px; transition: transform 0.15s, box-shadow 0.15s; }
+    .profile-feature-card:hover { transform: translateY(-1px); box-shadow: 0 6px 18px rgba(255,133,82,0.12), 0 0 0 1px rgba(255,133,82,0.08); }
+    .profile-feature-card:active { transform: scale(0.99); }
+    .profile-feature-card .pfc-icon { width: 44px; height: 44px; border-radius: 14px; background: var(--apricot-soft); color: var(--apricot-deep); display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; }
+    .profile-feature-card .pfc-body { flex: 1; min-width: 0; }
+    .profile-feature-card .pfc-title { font-size: 15px; font-weight: 700; color: var(--ink-1); }
+    .profile-feature-card .pfc-sub { font-size: 12px; color: var(--ink-3); margin-top: 3px; line-height: 1.5; }
+    .profile-feature-card .pfc-arrow { color: var(--ink-4); font-size: 18px; }
+    /* v10 r46 · menu-section 分组小标题（让杂乱的菜单项有语义聚合）*/
+    .menu-section-label { font-size: 11px; color: var(--ink-4); padding: 0 4px 6px; margin-top: 4px; letter-spacing: 0.04em; }
+    /* v10 r46 · 「关于」合并到 footer · 不再独占 menu-section */
+    .footer-about { font-size: 12px; color: var(--ink-3); padding: 10px 0 12px; cursor: pointer; font-family: var(--font-cn); }
+    .footer-about:hover { color: var(--apricot-deep); }
     .menu-section { background: var(--surface); border-radius: var(--radius-md); overflow: hidden; margin-bottom: 12px; box-shadow: var(--shadow-card); }
     .menu-row { padding: 13px 16px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid var(--divider-soft); cursor: pointer; }
     .menu-row:last-child { border-bottom: none; }
@@ -2970,25 +2984,34 @@
           </div>
         </div>
         <div class="profile-content">
-          <div class="menu-section">
-            <div class="menu-row" onclick="showScreen('my-posts')"><span class="menu-icon">📝</span><span class="menu-label">我的发布</span><span class="menu-arrow">›</span></div>
+          <!-- v10 r46 · 「我的发布」高频入口升级为大号 banner · 视觉权重对应使用频率 -->
+          <div class="profile-feature-card" onclick="showScreen('my-posts')">
+            <div class="pfc-icon">📝</div>
+            <div class="pfc-body">
+              <div class="pfc-title">我的发布</div>
+              <div class="pfc-sub">查看进行中 / 已完成的帖子</div>
+            </div>
+            <div class="pfc-arrow">›</div>
           </div>
+          <div class="menu-section-label">通知</div>
           <div class="menu-section">
             <div class="menu-row" onclick="openMPModal()"><span class="menu-icon">📣</span><span class="menu-label">关注公众号</span><span class="menu-meta" style="color:var(--mint-deep)">推送更及时</span><span class="menu-arrow">›</span></div>
+          </div>
+          <div class="menu-section-label">反馈与申诉</div>
+          <div class="menu-section">
             <div class="menu-row" onclick="showScreen('feedback')"><span class="menu-icon">💬</span><span class="menu-label">意见反馈</span><span class="menu-arrow">›</span></div>
             <div class="menu-row" onclick="showScreen('dispute')"><span class="menu-icon">⚠</span><span class="menu-label">争议申诉</span><span class="menu-arrow">›</span></div>
             <div class="menu-row" onclick="showScreen('blocklist')"><span class="menu-icon">🚫</span><span class="menu-label">黑名单</span><span class="menu-meta" id="blocklist-count" style="color:var(--ink-4)"></span><span class="menu-arrow">›</span></div>
+            <div class="menu-row" onclick="alert('客服电话：400-XXX-XXXX\n邮箱：support@petfinder.xxx')"><span class="menu-icon">🆘</span><span class="menu-label">联系客服</span><span class="menu-meta">工作日 9-18</span><span class="menu-arrow">›</span></div>
           </div>
+          <div class="menu-section-label">合规与设置</div>
           <div class="menu-section">
             <div class="menu-row" onclick="alert('打开《用户协议》')"><span class="menu-icon">📄</span><span class="menu-label">用户协议</span><span class="menu-arrow">›</span></div>
             <div class="menu-row" onclick="alert('打开《隐私政策》')"><span class="menu-icon">🔐</span><span class="menu-label">隐私政策</span><span class="menu-arrow">›</span></div>
-            <div class="menu-row" onclick="alert('客服电话：400-XXX-XXXX\n邮箱：support@petfinder.xxx')"><span class="menu-icon">🆘</span><span class="menu-label">联系客服</span><span class="menu-meta">工作日 9-18</span><span class="menu-arrow">›</span></div>
             <div class="menu-row" onclick="if(confirm('将清除你的位置 / 聊天记录 / 发布的帖子，确定？')) alert('已提交清除请求 · 30 天内完成（合规冷却期）· 期间可撤销')"><span class="menu-icon">🗑</span><span class="menu-label">清除我的数据</span><span class="menu-arrow">›</span></div>
           </div>
-          <div class="menu-section">
-            <div class="menu-row" onclick="showAbout()"><span class="menu-icon">ⓘ</span><span class="menu-label">关于寻宠 · 大理</span><span class="menu-meta">v1.0.0</span><span class="menu-arrow">›</span></div>
-          </div>
           <div class="footer-info">
+            <div class="footer-about" onclick="showAbout()">ⓘ 关于寻宠 · 大理 <span style="font-family:var(--font-en);font-weight:600;letter-spacing:0.04em">v1.0.0</span></div>
             ICP 备案号 XXXXX · 公安备案 XXXXX<br>
             主体 · XX 个体工商户
           </div>
