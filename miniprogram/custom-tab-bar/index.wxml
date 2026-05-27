@@ -1,0 +1,17 @@
+<view class="tab-bar">
+  <view
+    wx:for="{{list}}"
+    wx:key="text"
+    class="tab-item {{selected === index ? 'active' : ''}}"
+    data-path="{{item.pagePath}}"
+    bindtap="switchTab"
+  >
+    <text class="ti-icon">{{item.icon}}</text>
+    <text class="ti-text">{{item.text}}</text>
+  </view>
+
+  <!-- 中央凸起发布 FAB（原型中央凸起键的小程序实现）-->
+  <view class="fab" bindtap="onPublish">
+    <text class="fab-plus">＋</text>
+  </view>
+</view>

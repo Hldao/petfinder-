@@ -1,4 +1,4 @@
-.page { min-height: 100vh; background: var(--bg); padding-bottom: 40rpx; }
+.page { min-height: 100vh; background: var(--bg); padding-bottom: calc(140rpx + env(safe-area-inset-bottom)); }
 
 .nav-row { display: flex; align-items: center; gap: 16rpx; padding: 20rpx 32rpx 12rpx; }
 .city-tag {

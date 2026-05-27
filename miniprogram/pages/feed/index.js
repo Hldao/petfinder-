@@ -16,6 +16,12 @@ Page({
     this.loadFeed();
   },
 
+  onShow() {
+    if (typeof this.getTabBar === 'function' && this.getTabBar()) {
+      this.getTabBar().setData({ selected: 0 });
+    }
+  },
+
   onPullDownRefresh() {
     this.loadFeed(() => wx.stopPullDownRefresh());
   },

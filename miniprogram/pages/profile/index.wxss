@@ -1,0 +1,45 @@
+.page { min-height: 100vh; background: var(--bg); padding: 0 32rpx 160rpx; }
+
+.hero { display: flex; align-items: center; gap: 24rpx; padding: 44rpx 8rpx 32rpx; }
+.avatar {
+  width: 104rpx; height: 104rpx; border-radius: 50%;
+  background: var(--apricot-soft); color: var(--apricot-deep);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 40rpx; font-weight: 700;
+}
+.who .name { font-size: 34rpx; font-weight: 800; color: var(--ink-1); }
+.who .handle { font-size: 24rpx; color: var(--ink-3); margin-top: 6rpx; }
+
+.feature-card {
+  display: flex; align-items: center; gap: 24rpx;
+  background: linear-gradient(135deg, #FFF4EB, #FFFAF3);
+  border: 2rpx solid rgba(255,133,82,0.18);
+  border-radius: var(--radius-lg); padding: 28rpx; margin-bottom: 32rpx;
+}
+.fc-ic {
+  width: 88rpx; height: 88rpx; border-radius: var(--radius-md);
+  background: var(--apricot-soft); display: flex; align-items: center; justify-content: center;
+  font-size: 44rpx; flex-shrink: 0;
+}
+.fc-body { flex: 1; }
+.fc-title { font-size: 30rpx; font-weight: 700; color: var(--ink-1); }
+.fc-sub { font-size: 23rpx; color: var(--ink-3); margin-top: 6rpx; }
+.fc-arrow { color: var(--ink-4); font-size: 36rpx; }
+
+.menu-label {
+  font-size: 22rpx; color: var(--ink-3); font-weight: 600;
+  letter-spacing: 0.04em; padding: 8rpx 8rpx 12rpx;
+}
+.menu {
+  background: var(--surface); border-radius: var(--radius-md);
+  overflow: hidden; margin-bottom: 28rpx;
+}
+.menu-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 28rpx; font-size: 28rpx; color: var(--ink-1);
+  border-top: 2rpx solid var(--divider-soft);
+}
+.menu-row:first-child { border-top: none; }
+.menu-row .arrow { color: var(--ink-4); }
+
+.footer-about { text-align: center; font-size: 21rpx; color: var(--ink-4); padding: 20rpx 0; }

@@ -1,0 +1,5 @@
+<view class="stub">
+  <view class="stub-ic">💬</view>
+  <view class="stub-title">消息</view>
+  <view class="stub-sub">Phase 3 接入站内聊天（列表 + 会话 + 每条过审）</view>
+</view>
