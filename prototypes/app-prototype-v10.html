@@ -2185,7 +2185,6 @@
     .dgh-label { font-size:11px; font-weight:700; color:var(--ink-3); white-space:nowrap; letter-spacing:0.4px; }
     .dgh-line { flex:1; height:1px; background:var(--divider); }
     /* === 超时走失紧急角标 === */
-    .overdue-badge { position:absolute; top:10px; right:12px; background:var(--warn); color:white; font-size:9px; font-weight:800; padding:2px 6px; border-radius:5px; letter-spacing:0.3px; z-index:3; line-height:1.4; }
     /* === 下拉刷新 === */
     .ptr-wrap { height:0; overflow:hidden; display:flex; align-items:center; justify-content:center; gap:8px; font-size:12px; font-weight:600; color:var(--ink-3); transition:height 0.2s ease; margin:0 16px; }
     .ptr-wrap.visible { height:44px; }
@@ -4573,15 +4572,13 @@
     const hintHtml = firstMsg
       ? `<div class="card-hint-strip ${effStatus}" id="hint-${d.id}" onclick="event.stopPropagation();showDetailScreen(${d.id})">${firstMsg}<span class="hint-arrow">›</span></div>`
       : '';
-    // 超时角标：直接基于 timeMins 判断（剥离对 getRecoveryPhase 的依赖）
-    const isLongterm = d.timeMins >= 4320;  // ≥ 3 天
-    const isOverdue  = d.timeMins >= 1440;  // ≥ 24h
-    const overdueHtml = (d.status === 'lost' && !d.expired && isOverdue)
-      ? `<div class="overdue-badge">${isLongterm ? '⚠ 超3天' : '⚠ 超24h'}</div>` : '';
+    // v10 r48 · 删「⚠ 超24h/超3天」warn badge · 反例库 #4 紧迫度倒计时同病
+    // 失主帖子上加红色 ⚠ + "超" 字三重损失框架 → 加深焦虑（违背第 7 条 + § 6.7）
+    const isLongterm = d.timeMins >= 4320;  // ≥ 3 天 · 仅控制 emotional-time 颜色
     const emoTime = formatEmotionalTime(d);
     const emoHtml = emoTime ? `<div class="emotional-time${isLongterm ? ' longterm' : ''}">${emoTime}</div>` : '';
     return `<div class="pet-card${borderClass}${d._isMine ? ' my-card' : ''}" ${expiredStyle} onclick="showDetailScreen(${d.id})">
-        ${overdueHtml}${hintHtml}
+        ${hintHtml}
         <div class="pc-body">
           <div class="pc-photo ${d.photoClass}"><span>${d.emoji}</span><div class="status-bubble ${statusCls}">${statusLabel}</div></div>
           <div class="pc-info">
