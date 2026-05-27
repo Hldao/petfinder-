@@ -507,15 +507,6 @@
     .msg-badge-dot.show { display: block; }
 
     /* ===== 顶部消息通知横幅 ===== */
-    .notif-banner {
-      position: absolute; top: 44px; left: 10px; right: 10px; z-index: 200;
-      background: rgba(255,255,255,0.96); backdrop-filter: blur(20px);
-      border-radius: 16px; box-shadow: 0 4px 24px rgba(31,31,31,0.16);
-      padding: 11px 13px; display: flex; align-items: center; gap: 10px;
-      cursor: pointer; transform: translateY(-120%); opacity: 0;
-      transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1), opacity 0.2s;
-    }
-    .notif-banner.show { transform: translateY(8px); opacity: 1; }
     .notif-avatar {
       width: 36px; height: 36px; border-radius: 50%; flex-shrink: 0;
       display: flex; align-items: center; justify-content: center; font-size: 17px;
@@ -2176,14 +2167,6 @@
     <div class="status-bar"><span>9:41</span><span style="font-size:11px">📶 5G 🔋</span></div>
 
     <!-- 顶部消息通知横幅 -->
-    <div class="notif-banner" id="notif-banner" onclick="notifTap()">
-      <div class="notif-avatar ph-orange" id="notif-avatar">🐱</div>
-      <div class="notif-body">
-        <div class="notif-name" id="notif-name">客栈老板娘</div>
-        <div class="notif-preview" id="notif-preview">好的我现在过来，您能视频先确认一下吗？</div>
-      </div>
-      <div class="notif-close" onclick="event.stopPropagation();hideNotif()">✕</div>
-    </div>
 
     <!-- ===== 屏 1 · Feed ===== -->
     <div class="screen active" data-screen="feed">
@@ -4926,11 +4909,6 @@
     document.querySelectorAll('.filter-row').forEach(enableDragScroll);
     initStatBarAutoDismiss();
     updateMsgBadge();
-    setTimeout(() => showNotif({
-      avatar: '🐱', avatarClass: 'ph-orange',
-      name: '客栈老板娘',
-      preview: '好的我现在过来，您能视频先确认一下吗？'
-    }), 3000);
   }
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', initApp);
@@ -5841,29 +5819,6 @@
   }
 
   /* ============== 顶部消息通知横幅 ============== */
-  let _notifTimer = null;
-
-  function showNotif({ avatar, avatarClass, name, preview }) {
-    const banner = document.getElementById('notif-banner');
-    document.getElementById('notif-avatar').textContent = avatar || '💬';
-    document.getElementById('notif-avatar').className = 'notif-avatar ' + (avatarClass || '');
-    document.getElementById('notif-name').textContent = name || '';
-    document.getElementById('notif-preview').textContent = preview || '';
-    banner.classList.add('show');
-    clearTimeout(_notifTimer);
-    _notifTimer = setTimeout(hideNotif, 4000);
-  }
-
-  function hideNotif() {
-    document.getElementById('notif-banner').classList.remove('show');
-    clearTimeout(_notifTimer);
-  }
-
-  function notifTap() {
-    hideNotif();
-    showDetailScreen(1, 'owner');
-  }
-
   /* ============== 消息列表 ============== */
   function switchMsgTab(tab) {
     ['replies','dm'].forEach(t => {
