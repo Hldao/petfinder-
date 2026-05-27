@@ -2708,7 +2708,7 @@
 
       <!-- 私信 -->
       <div class="msg-list" id="msg-panel-dm" style="display:none">
-        <div class="msg-row" onclick="alert('打开公众号通知\n（真实场景下点击会跳到公众号文章页）')">
+        <div class="msg-row" onclick="openPostReply(this,1)">
           <div class="msg-avatar mp">📣</div>
           <div class="msg-body">
             <div class="msg-row-head"><span class="msg-name">寻宠 · 大理<span class="msg-mp-tag">服务号</span></span><span class="msg-time">18:02</span></div>
@@ -2717,7 +2717,7 @@
           </div>
           <div class="msg-unread">1</div>
         </div>
-        <div class="msg-row" onclick="openChat(this)" oncontextmenu="msgRowLongPress(event,'客栈老板娘')" ontouchstart="startMsgLongPress(event,'客栈老板娘')" ontouchend="cancelMsgLongPress()" ontouchmove="cancelMsgLongPress()">
+        <div class="msg-row" onclick="openChat(this,'owner')" oncontextmenu="msgRowLongPress(event,'客栈老板娘')" ontouchstart="startMsgLongPress(event,'客栈老板娘')" ontouchend="cancelMsgLongPress()" ontouchmove="cancelMsgLongPress()">
           <div class="msg-avatar ph-orange">🐱</div>
           <div class="msg-body">
             <div class="msg-row-head"><span class="msg-name">客栈老板娘</span><span class="msg-time">17:24</span></div>
@@ -2726,18 +2726,18 @@
           </div>
           <div class="msg-unread">2</div>
         </div>
-        <div class="msg-row" onclick="openChat(this)" oncontextmenu="msgRowLongPress(event,'陈*')" ontouchstart="startMsgLongPress(event,'陈*')" ontouchend="cancelMsgLongPress()" ontouchmove="cancelMsgLongPress()">
+        <div class="msg-row" onclick="openChat(this,'owner')" oncontextmenu="msgRowLongPress(event,'陈*')" ontouchstart="startMsgLongPress(event,'陈*')" ontouchend="cancelMsgLongPress()" ontouchmove="cancelMsgLongPress()">
           <div class="msg-avatar ph-blue">🐱</div>
           <div class="msg-body">
             <div class="msg-row-head"><span class="msg-name">陈*</span><span class="msg-time">14:50</span></div>
-            <div class="msg-preview">在洋人街又看到那只猫了，往复兴路跑了</div>
+            <div class="msg-preview">可以帮你留意，ta 有什么明显特征吗？</div>
             <div class="msg-context">关于 · 胖丁 寻宠</div>
           </div>
         </div>
-        <div class="msg-row" onclick="openChat(this)" oncontextmenu="msgRowLongPress(event,'王*')" ontouchstart="startMsgLongPress(event,'王*')" ontouchend="cancelMsgLongPress()" ontouchmove="cancelMsgLongPress()">
+        <div class="msg-row" onclick="openChat(this,'finder')" oncontextmenu="msgRowLongPress(event,'王*')" ontouchstart="startMsgLongPress(event,'王*')" ontouchend="cancelMsgLongPress()" ontouchmove="cancelMsgLongPress()">
           <div class="msg-avatar ph-cream">🐶</div>
           <div class="msg-body">
-            <div class="msg-row-head"><span class="msg-name">王*</span><span class="msg-time">3 天前</span></div>
+            <div class="msg-row-head"><span class="msg-name">王*</span><span class="msg-time">05-24</span></div>
             <div class="msg-preview">辛苦你了，已经把小黑接回家。回头一定请你喝茶</div>
             <div class="msg-context">关于 · 小黑 已归还</div>
           </div>
@@ -2827,14 +2827,10 @@
         <span class="qr-chip action qr-finder" onclick="setQuickReply('🏠 ta 现在在我这里，方便见面吗？')">🏠 我收着 ta</span>
         <!-- 失主视角 -->
         <span class="qr-chip primary qr-owner" onclick="setQuickReply('📍 我马上过来！请告诉我具体位置')">📍 马上过来</span>
-        <span class="qr-chip action qr-owner" onclick="setQuickReply('📹 能视频看一下 ta 的状态吗？')">📹 视频确认</span>
         <!-- 通用 -->
         <span class="qr-chip" onclick="setQuickReply('📷 能发一张照片确认一下吗？')">📷 发张照片</span>
         <span class="qr-chip" onclick="setQuickReply('🐾 能描述一下 ta 的特征吗？比如颜色、花纹、有没有项圈')">🐾 描述特征</span>
         <span class="qr-chip" onclick="setQuickReply('🤝 方便约个时间当面确认吗？')">🤝 约见面</span>
-        <span class="qr-chip action" onclick="setQuickReply('🎉 太好了！已经找到了，感谢你的帮助！')">🎉 已找到</span>
-        <span class="qr-chip" onclick="setQuickReply('✅ 好的，没问题')">✅ 好的</span>
-        <span class="qr-chip" onclick="setQuickReply('🙏 谢谢你！')">🙏 谢谢</span>
       </div>
 
       <div class="chat-input-bar">
@@ -5864,7 +5860,7 @@
 
   function notifTap() {
     hideNotif();
-    showScreen('chat');
+    showDetailScreen(1, 'owner');
   }
 
   /* ============== 消息列表 ============== */
@@ -5882,11 +5878,11 @@
     });
   }
 
-  function openChat(row) {
+  function openChat(row, role) {
     const badge = row.querySelector('.msg-unread');
     if (badge) badge.remove();
     updateMsgBadge();
-    showScreen('chat');
+    openChatAs(role || 'finder');
   }
 
   function openPostReply(row, petId) {
