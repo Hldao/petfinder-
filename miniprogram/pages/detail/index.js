@@ -43,7 +43,12 @@ Page({
   },
 
   onContact() {
-    // 详情页主 CTA → 直接进 chat（无门槛 · r16 信息架构）· Phase 1 接入
-    wx.showToast({ title: '私聊 Phase 1 接入', icon: 'none' });
+    // 详情页主 CTA → 直接进 chat（无门槛 · r16 信息架构）
+    const p = this.data.post;
+    const role = this.data.isLost ? 'finder' : 'owner'; // 寻宠帖→我是拾主/路人；招领帖→我是失主
+    const q = s => encodeURIComponent(s);
+    wx.navigateTo({
+      url: `/pages/chat/index?peer=${q('发布者')}&pet=${q(p.name || '')}&emoji=${q(p.emoji)}&role=${role}&pid=${p.id}`,
+    });
   },
 });
