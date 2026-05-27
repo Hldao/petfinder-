@@ -4,7 +4,8 @@
     "pages/map/index",
     "pages/messages/index",
     "pages/profile/index",
-    "pages/detail/index"
+    "pages/detail/index",
+    "pages/publish/index"
   ],
   "window": {
     "navigationBarBackgroundColor": "#F0E9D8",

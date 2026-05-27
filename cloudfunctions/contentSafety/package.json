@@ -1,0 +1,9 @@
+{
+  "name": "contentSafety",
+  "version": "1.0.0",
+  "description": "统一内容审核 msgSecCheck + imgSecCheck",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3"
+  }
+}

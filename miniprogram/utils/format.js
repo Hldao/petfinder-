@@ -25,10 +25,11 @@ function helpersText(d) {
   return `🤝 ${d.helpers} 接力`;
 }
 
-// 卡片左侧地点行：「在 XX 走失/发现 · 距你 N km」
+// 卡片左侧地点行：「在 XX 走失/发现 · 距你 N km」（无距离时省略距离段）
 function locLine(d) {
   const verb = d.status === 'lost' ? '走失' : '发现';
-  return `📍 在${d.loc}${verb} · 距你 ${distanceStr(d.distanceKm)} km`;
+  const base = `📍 在${d.loc}${verb}`;
+  return d.distanceKm > 0 ? `${base} · 距你 ${distanceStr(d.distanceKm)} km` : base;
 }
 
 module.exports = { distanceStr, emotionalTime, isLongterm, helpersText, locLine };
