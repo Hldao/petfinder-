@@ -136,9 +136,9 @@
     }
     .city-tag.loading .pin { animation: locSpin 0.9s linear infinite; }
     @keyframes locSpin { to { transform: rotate(360deg); } }
-    /* v10 r36 · 固定地名宽度 · city-tag 整体宽度恒定 · 搜索栏不抖动 */
+    /* v10 r36 · city-tag 自适应宽度但限最长 · 短地名不留白 / 长地名截断 */
     #city-name {
-      width: 5em;          /* fixed width · 不是 max-width */
+      max-width: 5em;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
@@ -146,10 +146,16 @@
       vertical-align: middle;
     }
     .search-pill {
-      flex: 1; height: 36px; background: var(--bg);
+      flex: 1; min-width: 0;     /* min-width:0 让 flex item 可以 shrink */
+      height: 36px; background: var(--bg);
       border-radius: var(--radius-pill); padding: 0 14px;
       display: flex; align-items: center; gap: 7px;
       font-size: 12.5px; color: var(--ink-4); cursor: pointer;
+      overflow: hidden;
+    }
+    .search-pill > span:last-child {
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+      min-width: 0; flex: 1;
     }
     .icon-btn {
       width: 36px; height: 36px; background: var(--bg); border-radius: 50%;
