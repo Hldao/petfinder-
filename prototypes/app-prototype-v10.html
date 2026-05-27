@@ -136,6 +136,15 @@
     }
     .city-tag.loading .pin { animation: locSpin 0.9s linear infinite; }
     @keyframes locSpin { to { transform: rotate(360deg); } }
+    /* v10 r36 · 限定地名宽度 · 防止长地名挤压搜索栏 */
+    #city-name {
+      max-width: 5em;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      display: inline-block;
+      vertical-align: middle;
+    }
     .search-pill {
       flex: 1; height: 36px; background: var(--bg);
       border-radius: var(--radius-pill); padding: 0 14px;
@@ -4447,7 +4456,8 @@
    * ============================================== */
   let _hasLocation = false;
   // mock 街道地标池（用户在大理的可能位置）
-  const _mockLocations = ['古城北门', '人民路三月街', '洋人街', '下关泰安路', '喜洲扎染巷'];
+  // 城市标签宽度有限 · 地名控制在 5 字以内（超出会触发省略号）
+  const _mockLocations = ['古城北门', '三月街', '洋人街', '下关泰安路', '喜洲扎染巷'];
 
   function handleLocationRequest() {
     const tag = document.querySelector('.city-tag');
