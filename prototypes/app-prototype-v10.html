@@ -4373,7 +4373,7 @@
         <div class="pc-photo ${d.photoClass}"><span>${d.emoji}</span><div class="status-bubble ${statusCls}">${statusLabel}</div></div>
         <div class="pc-info">
           <div class="pc-name-row"><span class="pc-name">${d.name}</span><span class="breed">· ${d.breed}</span></div>
-          <div class="pc-meta"><span>📍 ${d.loc} · ${distanceStr} km</span>${timeSpan}</div>
+          <div class="pc-meta"><span>📍 在${d.loc}${d.status === 'lost' ? '走失' : '发现'} · 距你 ${distanceStr} km</span>${timeSpan}</div>
           <div class="pc-desc">${d.desc}</div>
           ${renderNearbyHelpers(d)}
         </div>
@@ -4591,7 +4591,7 @@
           <div class="pc-photo ${d.photoClass}"><span>${d.emoji}</span><div class="status-bubble ${statusCls}">${statusLabel}</div></div>
           <div class="pc-info">
             <div class="pc-name-row"><span class="pc-name">${d.name}</span><span class="breed">· ${d.breed}</span></div>
-            <div class="pc-meta"><span class="loc-link" onclick="event.stopPropagation();showOnMapByLoc(${d.id})">📍 ${d.loc} · ${distanceStr} km</span>${timeSpan}</div>
+            <div class="pc-meta"><span class="loc-link" onclick="event.stopPropagation();showOnMapByLoc(${d.id})">📍 在${d.loc}${d.status === 'lost' ? '走失' : '发现'} · 距你 ${distanceStr} km</span>${timeSpan}</div>
             ${emoHtml}
             <div class="pc-desc">${d.desc}</div>
           </div>
@@ -6081,7 +6081,7 @@
                 <span class="breed">· ${d.breed}</span>
               </div>
               <div class="pc-meta">
-                <span>📍 ${d.loc} · ${distanceStr} km</span>
+                <span>📍 在${d.loc}${d.status === 'lost' ? '走失' : '发现'} · 距你 ${distanceStr} km</span>
                 ${timeSpan}
               </div>
               <div class="pc-desc">${d.desc}</div>
