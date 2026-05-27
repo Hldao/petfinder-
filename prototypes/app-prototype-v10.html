@@ -66,7 +66,6 @@
       color: var(--ink-2);
       display: flex; align-items: center; gap: 6px;
     }
-    .head-btn:hover { background: var(--apricot); color: white; }
 
     /* ============== 主舞台 · 单设备居中 ============== */
     .stage {
@@ -127,7 +126,6 @@
       flex-shrink: 0;
       transition: filter 0.15s, transform 0.1s;
     }
-    .city-tag:hover { filter: brightness(0.97); }
     .city-tag:active { transform: scale(0.97); }
     .city-tag .pin {
       width: 20px; height: 20px; background: var(--apricot); color: white;
@@ -379,7 +377,6 @@
       cursor: pointer;
       transition: transform 0.15s;
     }
-    .archive-card:hover { transform: translateY(-1px); }
     .ac-photo {
       width: 52px; height: 52px;
       border-radius: 10px;
@@ -481,7 +478,6 @@
       font-size: 26px; font-weight: 300; line-height: 1;
       margin-top: -2px;
     }
-    .fab-bubble:hover { transform: scale(1.05) rotate(8deg); }
     .fab-bubble:active { transform: scale(0.95); }
     .fab-tab .fab-label {
       position: absolute;
@@ -626,7 +622,6 @@
       text-align: center; cursor: pointer;
       transition: filter 0.15s;
     }
-    .clue-action:hover { filter: brightness(0.95); }
     .clue-action.primary {
       background: var(--apricot-soft); color: var(--apricot-deep);
       font-weight: 700;
@@ -774,14 +769,12 @@
       cursor: pointer;
       font-weight: 500;
     }
-    .breed-chip:hover { background: var(--apricot); color: white; }
     .breed-chip.other {
       background: white;
       color: var(--apricot-deep);
       border: 1px dashed var(--apricot);
       font-weight: 600;
     }
-    .breed-chip.other:hover { background: var(--apricot-soft); color: var(--apricot-deep); }
 
     /* Contact Guide */
     .guide-scroll { flex: 1; overflow-y: auto; padding: 16px 18px 110px; }
@@ -960,10 +953,6 @@
       cursor: pointer;
       transition: transform 0.15s, box-shadow 0.15s;
     }
-    .msg-row:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 6px 18px rgba(0,0,0,0.07), 0 0 0 1px var(--divider-soft);
-    }
     .msg-row:active { transform: scale(0.99); }
     .msg-avatar { width: 46px; height: 46px; border-radius: 14px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 22px; }
     .msg-avatar.system { background: linear-gradient(135deg, #B0B7BF, #7A828B); color: white; font-weight: 700; font-size: 14px; }
@@ -994,7 +983,6 @@
       text-align: center;
       transition: color 0.15s, background 0.15s;
     }
-    .chat-tip-link:hover { color: var(--apricot-deep); background: var(--apricot-soft); }
     .meet-hint {
       margin: 0 12px 6px; padding: 10px 13px;
       background: linear-gradient(135deg, var(--apricot-soft), var(--honey-soft));
@@ -1029,9 +1017,7 @@
       font-size: 13.5px; color: var(--ink-1); cursor: pointer;
       transition: background 0.12s;
     }
-    .chat-menu-item:hover { background: var(--bg); }
     .chat-menu-item.primary { color: var(--mint-deep); font-weight: 700; }
-    .chat-menu-item.primary:hover { background: var(--mint-soft); }
     .chat-menu-item .cm-ic { font-size: 15px; width: 18px; text-align: center; }
     .chat-menu-divider { height: 1px; background: var(--divider-soft); margin: 4px 8px; }
 
@@ -1053,7 +1039,6 @@
       color: var(--apricot-deep); font-weight: 700; cursor: pointer;
       padding: 2px 8px; border-radius: 999px;
     }
-    .cooldown-bar .cb-link:hover { background: var(--apricot-soft); }
 
     /* 系统消息（如归还提示）*/
     .chat-system-msg {
@@ -1118,28 +1103,15 @@
       white-space: nowrap;
       cursor: pointer;
     }
-    .qr-chip:hover {
-      background: var(--apricot-soft);
-      color: var(--apricot-deep);
-      border-color: var(--apricot);
-    }
     .qr-chip.primary {
       background: var(--apricot-soft);
       color: var(--apricot-deep);
       border-color: var(--apricot);
     }
-    .qr-chip.primary:hover {
-      background: var(--apricot);
-      color: white;
-    }
     .qr-chip.action {
       background: var(--mint-soft);
       color: var(--mint-deep);
       border-color: var(--mint);
-    }
-    .qr-chip.action:hover {
-      background: var(--mint);
-      color: white;
     }
     .qr-label {
       flex-shrink: 0;
@@ -1163,7 +1135,6 @@
     .profile-content { margin-top: -24px; padding: 0 16px 16px; position: relative; z-index: 1; }
     /* v10 r46 · 高频入口大号 banner（视觉权重对应使用频率）*/
     .profile-feature-card { background: var(--surface); border-radius: var(--radius-md); padding: 16px 18px; display: flex; align-items: center; gap: 14px; cursor: pointer; box-shadow: var(--shadow-card); margin-bottom: 18px; transition: transform 0.15s, box-shadow 0.15s; }
-    .profile-feature-card:hover { transform: translateY(-1px); box-shadow: 0 6px 18px rgba(255,133,82,0.12), 0 0 0 1px rgba(255,133,82,0.08); }
     .profile-feature-card:active { transform: scale(0.99); }
     .profile-feature-card .pfc-icon { width: 44px; height: 44px; border-radius: 14px; background: var(--apricot-soft); color: var(--apricot-deep); display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; }
     .profile-feature-card .pfc-body { flex: 1; min-width: 0; }
@@ -1174,11 +1145,9 @@
     .menu-section-label { font-size: 11px; color: var(--ink-4); padding: 0 4px 6px; margin-top: 4px; letter-spacing: 0.04em; }
     /* v10 r46 · 「关于」合并到 footer · 不再独占 menu-section */
     .footer-about { font-size: 12px; color: var(--ink-3); padding: 10px 0 12px; cursor: pointer; font-family: var(--font-cn); }
-    .footer-about:hover { color: var(--apricot-deep); }
     .menu-section { background: var(--surface); border-radius: var(--radius-md); overflow: hidden; margin-bottom: 12px; box-shadow: var(--shadow-card); }
     .menu-row { padding: 13px 16px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid var(--divider-soft); cursor: pointer; }
     .menu-row:last-child { border-bottom: none; }
-    .menu-row:hover { background: var(--bg); }
     .menu-icon { font-size: 16px; width: 22px; text-align: center; }
     .menu-label { flex: 1; font-size: 13.5px; }
     .menu-meta { font-size: 11.5px; color: var(--ink-3); font-family: var(--font-en); font-weight: 600; }
@@ -1289,7 +1258,6 @@
       background: var(--apricot); color: white; font-size: 15px; font-weight: 700;
       text-align: center; cursor: pointer;
     }
-    .feedback-submit:hover { background: var(--apricot-deep); }
 
     .dispute-scroll { flex: 1; overflow-y: auto; padding: 14px 16px 110px; }
     .dispute-hero { text-align: center; padding: 18px 12px 20px; }
@@ -1456,9 +1424,7 @@
       font-weight: 700;
       transition: background 0.15s;
     }
-    .pc-action.share:hover { background: var(--apricot); color: white; }
     .pet-card.found-card .pc-action.share { color: var(--mint-deep); background: var(--mint-soft); }
-    .pet-card.found-card .pc-action.share:hover { background: var(--mint); color: white; }
 
     /* Clue Modal · 留一条公开线索（轻量 textarea · 非表单） */
     .clue-modal {
@@ -1492,7 +1458,6 @@
       display: flex; align-items: center; justify-content: center;
       border-radius: 50%;
     }
-    .clue-modal-close:hover { background: var(--bg); }
     .clue-modal-body textarea {
       width: 100%;
       min-height: 110px;
@@ -1567,7 +1532,6 @@
       display: flex; align-items: center; justify-content: center;
       border-radius: 50%;
     }
-    .share-close:hover { background: var(--bg); }
 
     .share-card-wrap {
       padding: 14px 14px 0;
@@ -1957,13 +1921,11 @@
       font-size: 12px; color: var(--ink-2); cursor: pointer;
       display: flex; align-items: center; gap: 8px;
     }
-    .im-jump:hover { background: var(--apricot); color: white; }
     .im-jump .num {
       font-family: var(--font-en); font-weight: 800;
       color: var(--apricot-deep); font-style: italic;
       flex-shrink: 0;
     }
-    .im-jump:hover .num { color: white; }
 
     .flow-list { list-style: none; padding: 0; display: grid; gap: 6px; }
     .flow-item {
@@ -2080,7 +2042,6 @@
     .map-search-input:focus { border-color:var(--apricot); }
     .map-search-results { margin-top:8px; }
     .map-search-item { display:flex; align-items:center; gap:10px; padding:8px 6px; border-radius:8px; cursor:pointer; }
-    .map-search-item:hover { background:var(--bg); }
     .si-emoji { font-size:20px; flex-shrink:0; }
     .si-info { flex:1; min-width:0; }
     .si-name { font-size:13px; font-weight:700; }
@@ -2092,15 +2053,13 @@
     .map-search-empty { font-size:12px; color:var(--ink-4); text-align:center; padding:8px 0; }
     /* 首页卡片位置链接 */
     .loc-link { cursor:pointer; border-bottom:1px dotted var(--ink-4); transition:color 0.15s,border-color 0.15s; display:inline; }
-    .loc-link:hover { color:var(--apricot-deep); border-color:var(--apricot); }
     /* 详情距离条 */
     .detail-dist-bar { background:linear-gradient(135deg,var(--apricot-soft),#FFD8C0); border:1px solid rgba(255,133,82,0.25); border-radius:var(--radius-md); padding:10px 14px; margin-bottom:16px; display:flex; align-items:center; gap:10px; cursor:pointer; transition:filter 0.15s; }
-    .detail-dist-bar:hover { filter:brightness(0.96); }
     .dist-bar-icon { font-size:20px; }
     .dist-bar-text { flex:1; }
     .dist-bar-main { font-size:14px; font-weight:700; color:var(--apricot-deep); }
     .dist-bar-sub { font-size:11.5px; color:var(--ink-3); margin-top:2px; }
-    #btn-filter:hover,#btn-filter:active { background:inherit!important; outline:none; -webkit-tap-highlight-color:transparent; }
+    #btn-filter:active { background:inherit!important; outline:none; -webkit-tap-highlight-color:transparent; }
     #btn-filter { -webkit-tap-highlight-color:transparent; transition:none; }
 
 
@@ -2159,7 +2118,6 @@
     .card-hint-strip .hint-arrow { margin-left: auto; font-size: 13px; opacity: 0.7; }
     .card-hint-strip { transition: opacity 0.28s ease; }
     .card-hint-strip.hint-fading { opacity: 0; }
-
 
     /* === 发帖情绪托住 === */
     .publish-warmth { margin:0 16px 12px; padding:12px 14px; background:linear-gradient(135deg,var(--apricot-soft),var(--honey-soft)); border-radius:var(--radius-md); }
