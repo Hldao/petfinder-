@@ -1,0 +1,24 @@
+.page { min-height: 100vh; background: var(--bg); }
+
+.search-bar { padding: 20rpx 32rpx; }
+.box {
+  display: flex; align-items: center; gap: 14rpx;
+  background: var(--surface); border-radius: var(--radius-pill); padding: 16rpx 28rpx;
+  box-shadow: var(--shadow-card);
+}
+.box .ic { font-size: 28rpx; }
+.box .inp { flex: 1; font-size: 28rpx; color: var(--ink-1); }
+.box .clear { color: var(--ink-4); font-size: 26rpx; padding: 0 8rpx; }
+
+.default { padding: 16rpx 32rpx; }
+.sec-title { font-size: 25rpx; font-weight: 700; color: var(--ink-2); margin-bottom: 20rpx; }
+.hots { display: flex; flex-wrap: wrap; gap: 18rpx; }
+.hot {
+  padding: 14rpx 28rpx; background: var(--surface); border-radius: var(--radius-pill);
+  font-size: 26rpx; color: var(--ink-2); font-weight: 600;
+}
+
+.result-meta { padding: 8rpx 32rpx 12rpx; font-size: 24rpx; color: var(--ink-3); }
+.list { display: flex; flex-direction: column; gap: 24rpx; padding: 8rpx 32rpx 40rpx; }
+.empty { text-align: center; color: var(--ink-3); padding: 100rpx 0; font-size: 27rpx; }
+.empty .fe-icon { font-size: 72rpx; margin-bottom: 16rpx; }

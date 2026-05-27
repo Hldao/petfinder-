@@ -1,0 +1,30 @@
+<view class="page">
+  <!-- 搜索栏 -->
+  <view class="search-bar">
+    <view class="box">
+      <text class="ic">🔍</text>
+      <input class="inp" placeholder="搜品种、地点、特征…" value="{{query}}" bindinput="onInput" focus confirm-type="search" />
+      <text wx:if="{{query}}" class="clear" bindtap="clear">✕</text>
+    </view>
+  </view>
+
+  <!-- 默认态：热门搜索 -->
+  <view wx:if="{{state === 'default'}}" class="default">
+    <view class="sec-title">大理热门</view>
+    <view class="hots">
+      <view wx:for="{{hots}}" wx:key="*this" class="hot" data-q="{{item}}" bindtap="tapHot">{{item}}</view>
+    </view>
+  </view>
+
+  <!-- 结果态 -->
+  <block wx:else>
+    <view class="result-meta">找到 {{results.length}} 条「{{query}}」</view>
+    <view wx:if="{{results.length === 0}}" class="empty">
+      <view class="fe-icon">🐾</view>
+      <view>没有匹配的信息</view>
+    </view>
+    <view wx:else class="list">
+      <pet-card wx:for="{{results}}" wx:key="id" post="{{item}}" bindtap="onCardTap" />
+    </view>
+  </block>
+</view>

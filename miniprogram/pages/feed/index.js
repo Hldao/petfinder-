@@ -63,6 +63,6 @@ Page({
   },
 
   onSearchTap() {
-    wx.showToast({ title: '搜索页 Phase 1 接入', icon: 'none' });
+    wx.navigateTo({ url: '/pages/search/index' });
   },
 });

@@ -1,5 +1,16 @@
-<view class="stub">
-  <view class="stub-ic">💬</view>
-  <view class="stub-title">消息</view>
-  <view class="stub-sub">Phase 3 接入站内聊天（列表 + 会话 + 每条过审）</view>
+<view class="page">
+  <view class="title-bar">消息</view>
+  <view class="chat-list">
+    <view wx:for="{{chats}}" wx:key="id" class="chat-row" data-c="{{item}}" bindtap="openChat">
+      <view class="avatar {{item.system ? 'sys' : ''}}">{{item.avatar}}</view>
+      <view class="body">
+        <view class="row1">
+          <text class="peer">{{item.peerName}}</text>
+          <text wx:if="{{item.petName}}" class="about">关于 {{item.petName}}</text>
+          <text class="time">{{item.lastTime}}</text>
+        </view>
+        <view class="preview">{{item.lastMsg}}</view>
+      </view>
+    </view>
+  </view>
 </view>

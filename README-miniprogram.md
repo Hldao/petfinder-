@@ -41,5 +41,15 @@ cloudfunctions/
 - `posts.type` 仅 lost/found（care 已砍）
 - 客户端**不直接写库**，写操作走云函数（00 架构原则）
 
-## 下一步（Phase 1，见 08 方案）
-发布表单 + postCreate + 内容审核（msgSecCheck/imgSecCheck）· 站内聊天 · 搜索 · 自定义 tabBar（中央发布 FAB）· 图片上传链路。
+## 已完成 Phase 1（见 08 方案）
+- ✅ 自定义 tabBar（首页/地图/消息/我的 + 中央发布 FAB）+ map/profile 页
+- ✅ 发布表单 + `postCreate` + `contentSafety`（msgSecCheck/imgSecCheck）+ 图片上传链路
+- ✅ 站内聊天：消息列表 + chat（审核条 + 角色 Quick Reply + 关键词预筛）+ `sendMessage`
+- ✅ 搜索页（复用 pet-card）
+- 闭环：feed → detail →「私聊」→ chat；FAB → publish → 发布入库
+
+新增云函数（接入云端后需「上传并部署」）：`login` · `feedQuery` · `contentSafety` · `postCreate` · `sendMessage`
+新增云数据库集合（按需在控制台建）：`posts` · `users` · `messages`
+
+## 下一步（Phase 2，见 08 方案）
+地图（腾讯位置服务 + 选点）· 个人中心余项 + 隐私协议流程 + 「清除我的数据」· 归还流程（`confirmReturn` 状态机 + `settleCooldown` 24h 冷却定时触发器）· my-posts/all-posts。

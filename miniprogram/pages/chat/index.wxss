@@ -1,0 +1,48 @@
+.page { display: flex; flex-direction: column; height: 100vh; background: var(--bg); }
+
+.pet-bar {
+  display: flex; align-items: center; gap: 12rpx;
+  padding: 16rpx 32rpx; background: var(--surface-warm); flex-shrink: 0;
+}
+.pet-emoji { font-size: 32rpx; }
+.pet-name { font-size: 24rpx; color: var(--ink-2); font-weight: 600; }
+
+.audit-bar {
+  flex-shrink: 0; font-size: 21rpx; color: var(--mint-deep); background: var(--mint-soft);
+  padding: 12rpx 32rpx; text-align: center;
+}
+
+.stream { flex: 1; padding: 24rpx 32rpx; box-sizing: border-box; }
+.msg { display: flex; flex-direction: column; margin-bottom: 24rpx; max-width: 72%; }
+.msg.mine { margin-left: auto; align-items: flex-end; }
+.msg.peer { margin-right: auto; align-items: flex-start; }
+.bubble {
+  padding: 18rpx 24rpx; border-radius: 20rpx; font-size: 28rpx; line-height: 1.5; word-break: break-all;
+}
+.msg.mine .bubble { background: var(--apricot); color: #fff; border-bottom-right-radius: 6rpx; }
+.msg.peer .bubble { background: var(--surface); color: var(--ink-1); border-bottom-left-radius: 6rpx; box-shadow: var(--shadow-card); }
+.time { font-size: 19rpx; color: var(--ink-4); margin-top: 6rpx; }
+.empty-hint { text-align: center; color: var(--ink-4); font-size: 25rpx; padding: 80rpx 0; }
+.stream-pad { height: 20rpx; }
+
+.quick-row { white-space: nowrap; padding: 12rpx 24rpx; flex-shrink: 0; background: var(--bg); }
+.quick-chip {
+  display: inline-block; padding: 12rpx 24rpx; margin-right: 14rpx;
+  background: var(--surface); border-radius: var(--radius-pill);
+  font-size: 24rpx; color: var(--ink-2); font-weight: 600;
+}
+
+.input-bar {
+  flex-shrink: 0; display: flex; align-items: center; gap: 16rpx;
+  padding: 16rpx 32rpx calc(16rpx + env(safe-area-inset-bottom));
+  background: var(--surface); box-shadow: 0 -2rpx 12rpx rgba(31,31,31,0.05);
+}
+.chat-input {
+  flex: 1; background: var(--bg); border-radius: var(--radius-pill);
+  padding: 18rpx 28rpx; font-size: 28rpx;
+}
+.send-btn {
+  width: 72rpx; height: 72rpx; border-radius: 50%; background: var(--apricot); color: #fff;
+  display: flex; align-items: center; justify-content: center; font-size: 36rpx; flex-shrink: 0;
+}
+.send-btn:active { background: var(--apricot-deep); }

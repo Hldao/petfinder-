@@ -5,7 +5,9 @@
     "pages/messages/index",
     "pages/profile/index",
     "pages/detail/index",
-    "pages/publish/index"
+    "pages/publish/index",
+    "pages/chat/index",
+    "pages/search/index"
   ],
   "window": {
     "navigationBarBackgroundColor": "#F0E9D8",
