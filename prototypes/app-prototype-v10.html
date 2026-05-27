@@ -2553,6 +2553,7 @@
             </div>
           </div>
           <div class="info-grid" id="dyn-info-grid"></div>
+          <div id="dyn-extra-top"></div>
           <div class="section-label" id="dyn-desc-label">特征描述</div>
           <div class="desc-card" id="dyn-desc"></div>
           <div id="dyn-extra"></div>
@@ -4088,18 +4089,26 @@
       time:'30 min 前', timeMins:30, distanceKm:1.2,
       helpers:3, tall:false,
       desc:'在咖啡馆门口蹲了一下午，看着像走丢的。亲人，会撒娇 ☕️',
+      currentLocation:'人民路 39 号「白桃」咖啡馆 · 店主代为照看',
+      health:'亲人 · 已喂食 · 未发现外伤 · 未做疫苗检查',
       mapPos:{top:38,left:43} },
     { id: 1, emoji:'🐱', photoClass:'ph-blue', status:'lost', statusLabel:'寻宠',
       name:'胖丁', breed:'英短蓝猫 · ♂ 3 岁', loc:'古城北门', color:'蓝灰 灰色',
       time:'10 min 前', timeMins:10, distanceKm:0.8,
       helpers:12, tall:true,
       desc:'穿粉色项圈，左耳缺一小块。胆小，听到名字会喵叫。看到请拍照不要追 🙏',
-      mapPos:{top:25,left:20}, _isMine:true },
+      mapPos:{top:25,left:20}, _isMine:true,
+      clues:[
+        { avatar:'陈', name:'陈*', loc:'洋人街', timeAgo:'2 小时前', text:'下午 4 点左右看见一只蓝灰色英短，戴粉项圈，往复兴路方向跑了' },
+        { avatar:'林', name:'林*', loc:'复兴路', timeAgo:'1 小时前', text:'我家就在复兴路开客栈，让前台留意一下，今晚监控我看看' }
+      ] },
     { id: 2, emoji:'🐶', photoClass:'ph-cream', status:'found', statusLabel:'招领',
       name:'白色比熊', breed:'♂ · 约 5kg', loc:'下关泰安路', color:'白色',
       time:'2 hr 前', timeMins:120, distanceKm:4.2,
       helpers:5, tall:false,
       desc:'在小区门口捡到，毛色干净有人养过，正在寻找主人 🐾',
+      currentLocation:'我家暂养 · 下关泰安路某小区',
+      health:'毛色干净 · 看起来有人养过 · 状态正常',
       mapPos:{top:52,left:65} },
     { id: 3, emoji:'🐈', photoClass:'ph-mint', status:'lost', statusLabel:'寻宠',
       name:'咖啡', breed:'美短 · ♀ 1 岁半', loc:'洋人街', color:'棕色 虎斑 咖啡色',
@@ -4118,6 +4127,8 @@
       time:'45 min 前', timeMins:45, distanceKm:2.1,
       helpers:6, tall:true,
       desc:'蓝眼睛，长毛，戴金色铃铛项圈。在客栈大堂被发现 🛋️',
+      currentLocation:'人民路某客栈大堂 · 前台代为照看',
+      health:'亲人 · 已喂食 · 状态良好',
       mapPos:{top:44,left:50} },
     { id: 6, emoji:'🐶', photoClass:'ph-cream', status:'lost', statusLabel:'寻宠',
       name:'柯基屁屁', breed:'柯基 · ♀ 4 岁', loc:'苍山门', color:'棕色 白色',
@@ -4130,12 +4141,16 @@
       time:'5 hr 前', timeMins:300, distanceKm:18.5,
       helpers:4, tall:true,
       desc:'在喜洲扎染店门口被发现，毛色干净，应该是走失的家犬',
+      currentLocation:'喜洲扎染店门口暂留 · 店主留意中',
+      health:'毛色干净 · 体型适中 · 看起来是家犬',
       mapPos:{top:18,left:82} },
     { id: 8, emoji:'🐱', photoClass:'ph-orange', status:'found', statusLabel:'招领',
       name:'橘色短毛猫', breed:'? · 估 4 岁 · 体型偏胖', loc:'叶榆路', color:'橘色 橘黄',
       time:'2 hr 前', timeMins:130, distanceKm:1.9,
       helpers:2, tall:false,
       desc:'在饭店后厨发现，胖胖的看起来不缺吃喝，应该有主',
+      currentLocation:'叶榆路某餐馆后厨 · 老板照看',
+      health:'体型偏胖 · 看起来不缺吃喝',
       mapPos:{top:46,left:56} },
     { id: 9, emoji:'🐕', photoClass:'ph-brown', status:'lost', statusLabel:'寻宠',
       name:'土豆', breed:'杂交犬 · ♂ 中型', loc:'双廊镇', color:'棕色',
@@ -4160,12 +4175,16 @@
       time:'3 天前', timeMins:4320, distanceKm:22,
       helpers:38, tall:false,
       desc:'在凤仪镇路边发现的小奶狗，疑似走失，正在帮忙找主人 🐾',
+      currentLocation:'凤仪镇某居民家暂养',
+      health:'幼犬 · 正在帮忙找主人 · 状态正常',
       mapPos:{top:62,left:72} },
     { id: 13, emoji:'🐶', photoClass:'ph-pink', status:'found', statusLabel:'招领',
       name:'棕白色小型犬', breed:'? · 约 6kg', loc:'苍山门', color:'棕色 白色',
       time:'9 days', timeMins:12960, distanceKm:3.4,
       helpers:2, tall:false, expired:true,
       desc:'在山脚捡到，比较瘦，已带去打疫苗。希望主人快点出现 💛',
+      currentLocation:'苍山门附近某热心人家中',
+      health:'比较瘦 · 已带去打疫苗 · 状态恢复中',
       mapPos:{top:65,left:22} }
   ];
 
@@ -5117,6 +5136,48 @@
 
     document.getElementById('dyn-desc-label').textContent = isLost ? '特征描述' : '发现者描述';
     document.getElementById('dyn-desc').textContent = d.desc;
+
+    // v10 r34 · dyn-extra-top
+    //  · 寻宠：线索板块（他人提供的目击/帮助）
+    //  · 招领：目前状况（位置 + 健康）
+    let extraTopHtml = '';
+    if (isLost) {
+      if (d.clues && d.clues.length > 0) {
+        const clueCards = d.clues.map(c => `
+          <div class="clue-card">
+            <div class="clue-body">
+              <div class="clue-avatar">${c.avatar}</div>
+              <div class="clue-info">
+                <div class="clue-top"><span class="clue-loc-time">📍 ${c.loc} · ${c.timeAgo}</span></div>
+                <div class="clue-text">"${c.text}"</div>
+              </div>
+            </div>
+            <div class="clue-actions">
+              <div class="clue-action primary" onclick="alert('🗺 即将打开地图导航到「${c.loc}」（生产环境调起微信内置地图）')">🗺 现在去看</div>
+              <div class="clue-action" onclick="showScreen('chat')">💬 问${c.name}</div>
+            </div>
+          </div>`).join('');
+        extraTopHtml = `
+          <div class="section-label">${d.clues.length} 条线索 <span class="count">· 都在你附近</span></div>
+          ${clueCards}`;
+      }
+    } else {
+      extraTopHtml = `
+        <div class="section-label">目前状况</div>
+        <div class="info-extra">
+          ${d.currentLocation ? `<div class="info-extra-row">
+            <div class="ie-icon">🏠</div>
+            <div class="ie-label">目前位置</div>
+            <div class="ie-value">${d.currentLocation}</div>
+          </div>` : ''}
+          ${d.health ? `<div class="info-extra-row">
+            <div class="ie-icon">🩺</div>
+            <div class="ie-label">健康</div>
+            <div class="ie-value">${d.health}</div>
+          </div>` : ''}
+        </div>`;
+    }
+    document.getElementById('dyn-extra-top').innerHTML = extraTopHtml;
 
     document.getElementById('dyn-extra').innerHTML = isLost
         ? ''
