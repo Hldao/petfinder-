@@ -2251,20 +2251,6 @@
     }
     .update-banner-close:hover { opacity: 1; }
 
-    /* ===== 长按/右键上下文菜单 ===== */
-    .ctx-menu {
-      position: fixed; z-index: 9999; background: var(--surface);
-      border-radius: var(--radius-md); box-shadow: 0 4px 24px rgba(31,31,31,0.18);
-      padding: 6px 0; min-width: 152px; display: none;
-    }
-    .ctx-menu.show { display: block; animation: ctxFadeIn 0.12s ease; }
-    @keyframes ctxFadeIn { from { opacity:0; transform:scale(0.93); } to { opacity:1; transform:scale(1); } }
-    .ctx-menu-item {
-      padding: 11px 18px; font-size: 13.5px; cursor: pointer;
-      display: flex; align-items: center; gap: 8px; color: var(--ink-1);
-    }
-    .ctx-menu-item:hover { background: var(--bg); }
-
     /* === 发帖情绪托住 === */
     .publish-warmth { margin:0 16px 12px; padding:12px 14px; background:linear-gradient(135deg,var(--apricot-soft),var(--honey-soft)); border-radius:var(--radius-md); }
     .publish-warmth .pw-title { font-size:13.5px; font-weight:700; color:var(--apricot-deep); margin-bottom:4px; }
@@ -3013,11 +2999,6 @@
         <input type="text" class="chat-input" id="chat-input" placeholder="输入消息..." onkeydown="if(event.key==='Enter')sendMessage()">
         <div class="chat-attach chat-send" onclick="sendMessage()">↑</div>
       </div>
-    </div>
-
-    <!-- 全局：长按/右键上下文菜单 -->
-    <div class="ctx-menu" id="ctx-menu">
-      <div class="ctx-menu-item" onclick="ctxCopy()">📋 复制</div>
     </div>
 
     <!-- ===== 屏 12 · Profile ===== -->
@@ -4259,30 +4240,9 @@
     ];
   });
 
-  const CITY_MAP_LABELS = {
-    '大理':    [{t:'21%',l:'15%',n:'古城北门'},{t:'38%',l:'42%',n:'人民路'},{t:'54%',l:'62%',n:'下关'},{t:'18%',l:'74%',n:'洱海月'},{t:'78%',l:'22%',n:'苍山门'}],
-    '丽江':    [{t:'26%',l:'30%',n:'四方街'},{t:'44%',l:'56%',n:'束河古镇'},{t:'13%',l:'66%',n:'玉龙雪山'},{t:'60%',l:'40%',n:'忠义市场'}],
-    '昆明':    [{t:'26%',l:'30%',n:'翠湖公园'},{t:'16%',l:'62%',n:'世博园'},{t:'66%',l:'48%',n:'滇池'},{t:'44%',l:'38%',n:'南屏街'},{t:'53%',l:'70%',n:'官渡古镇'}],
-    '西双版纳':[{t:'38%',l:'42%',n:'告庄西双景'},{t:'60%',l:'26%',n:'橄榄坝'},{t:'20%',l:'63%',n:'野象谷'}],
-  };
-
   function getActiveFeedData() {
     if (currentCity === '大理') return FEED_DATA;
     return CITY_FEEDS[currentCity] || FEED_DATA;
-  }
-
-  function updateMapLabels(city) {
-    const layer = document.getElementById('map-layer');
-    if (!layer) return;
-    layer.querySelectorAll('.map-label').forEach(el => el.remove());
-    const labels = CITY_MAP_LABELS[city] || [{ t:'40%', l:'40%', n: city }];
-    labels.forEach(lb => {
-      const div = document.createElement('div');
-      div.className = 'map-label';
-      div.style.top = lb.t; div.style.left = lb.l;
-      div.textContent = lb.n;
-      layer.appendChild(div);
-    });
   }
 
   /* ============== 情感安全设计 · 不做时间倒计时 ==============
@@ -4844,17 +4804,6 @@
 
   function closeAllSwipeCards() {
     document.querySelectorAll('#feed-list .card-swipe-wrapper.open').forEach(w => w.classList.remove('open'));
-  }
-
-  function handleCardContact(id) {
-    closeAllSwipeCards();
-    showToast('📞 联系功能开发中...');
-  }
-
-  function handleCardMap(id) {
-    closeAllSwipeCards();
-    showOnMapByLoc(id);
-    showScreen('map', true);
   }
 
   /* ============== 下拉刷新 ============== */
@@ -5958,13 +5907,6 @@
     const foundEl = document.getElementById('publish-time-found');
     if (foundEl) foundEl.textContent = t;
     closeTimeSheet();
-  }
-
-  // 性别 / 年龄（简单 prompt）
-  function openGenderAgeSheet() {
-    const cur = document.getElementById('publish-gender-age').textContent;
-    const v = prompt('修改性别 / 年龄\n（小程序实际会用 picker 组件）', cur);
-    if (v) document.getElementById('publish-gender-age').textContent = v;
   }
 
   // 提交校验
