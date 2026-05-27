@@ -1,0 +1,17 @@
+<view class="page">
+  <view class="notice">⚖ 申诉将进入人工仲裁队列。请客观描述情况，附上能佐证的截图/照片。</view>
+
+  <view class="label">情况描述 <text class="req">*</text></view>
+  <textarea class="textarea" placeholder="发生了什么？涉及哪条帖子 / 对方？（≥10 字）" value="{{text}}" bindinput="onInput" maxlength="500" />
+
+  <view class="label">证据照片（选填，最多 3 张）</view>
+  <view class="photo-row">
+    <view wx:for="{{photos}}" wx:key="*this" class="photo-slot">
+      <image src="{{item}}" mode="aspectFill" class="photo-img" />
+      <view class="photo-del" data-i="{{index}}" catchtap="removePhoto">✕</view>
+    </view>
+    <view wx:if="{{photos.length < 3}}" class="photo-add" bindtap="choosePhoto">＋</view>
+  </view>
+
+  <view class="submit {{submitting?'disabled':''}}" bindtap="submit">提交申诉</view>
+</view>

@@ -22,6 +22,7 @@ Page({
     breedChips: BREEDS.cat,
     form: { name: '', breed: '', sex: '不确定', loc: '', timeText: '', timeMins: 0, desc: '', currentLocation: '', health: '' },
     locs: LOCS, times: TIMES,
+    pickedLat: null, pickedLng: null,
     submitting: false,
   },
 
@@ -56,7 +57,16 @@ Page({
   },
   pickBreed(e) { this.setData({ 'form.breed': e.currentTarget.dataset.b }); },
   pickSex(e) { this.setData({ 'form.sex': e.currentTarget.dataset.s }); },
-  pickLoc(e) { this.setData({ 'form.loc': e.currentTarget.dataset.v }); },
+  pickLoc(e) { this.setData({ 'form.loc': e.currentTarget.dataset.v, pickedLat: null, pickedLng: null }); },
+  chooseLocation() {
+    wx.chooseLocation({
+      success: res => this.setData({
+        'form.loc': res.name || res.address,
+        pickedLat: res.latitude, pickedLng: res.longitude,
+      }),
+      fail: () => {},
+    });
+  },
   pickTime(e) {
     this.setData({ 'form.timeText': e.currentTarget.dataset.label, 'form.timeMins': Number(e.currentTarget.dataset.mins) });
   },
@@ -91,6 +101,7 @@ Page({
         name: mode === 'lost' ? form.name : '',
         breed: form.breed, sex: form.sex,
         loc: form.loc, time: form.timeText, timeMins: form.timeMins,
+        lat: this.data.pickedLat, lng: this.data.pickedLng,
         desc: form.desc, photos: fileIDs,
         currentLocation: mode === 'found' ? form.currentLocation : '',
         health: mode === 'found' ? form.health : '',

@@ -44,6 +44,7 @@
   font-size: 25rpx; color: var(--ink-2); font-weight: 600;
 }
 .chip.active { background: var(--apricot); color: #fff; }
+.chip.map-pick { border: 2rpx dashed var(--apricot); color: var(--apricot-deep); background: var(--apricot-soft); }
 
 .input, .textarea {
   width: 100%; background: var(--surface); border-radius: var(--radius-md);

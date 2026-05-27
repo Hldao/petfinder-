@@ -63,7 +63,9 @@
     <view class="label">{{mode==='lost'?'走失':'发现'}}地点 <text class="req">*</text></view>
     <view class="chips">
       <view wx:for="{{locs}}" wx:key="*this" class="chip {{form.loc===item?'active':''}}" data-v="{{item}}" bindtap="pickLoc">{{item}}</view>
+      <view class="chip map-pick" bindtap="chooseLocation">📍 地图选点</view>
     </view>
+    <view wx:if="{{pickedLat}}" class="sub-hint">已选：{{form.loc}}（地图定位）</view>
   </view>
 
   <!-- 时间 -->

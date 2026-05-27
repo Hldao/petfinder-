@@ -16,4 +16,6 @@
   display: flex; align-items: center; justify-content: center;
 }
 .cta:active { background: var(--apricot-deep); }
+.cta.ghost { margin-top: 20rpx; background: var(--surface); color: var(--ink-2); }
+.cta.ghost:active { background: var(--bg-deeper); }
 .undo { margin-top: 28rpx; font-size: 23rpx; color: var(--ink-4); }

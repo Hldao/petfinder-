@@ -1,5 +1,12 @@
-<view class="stub">
-  <view class="stub-ic">🗺️</view>
-  <view class="stub-title">地图视图</view>
-  <view class="stub-sub">Phase 2 接入腾讯位置服务（pins + 选点）</view>
+<view class="page">
+  <map
+    class="map"
+    latitude="{{latitude}}"
+    longitude="{{longitude}}"
+    scale="{{scale}}"
+    markers="{{markers}}"
+    bindmarkertap="onMarkerTap"
+    show-location="{{false}}"
+  ></map>
+  <view class="tip">📍 点标记查看详情 · 大理</view>
 </view>

@@ -10,6 +10,7 @@ exports.main = async (event = {}) => {
     type = 'lost', petType = 'other', emoji = '🐾',
     name = '', breed = '', sex = '不确定',
     loc = '', time = '', timeMins = 0, desc = '', photos = [],
+    lat = null, lng = null,
     currentLocation = '', health = '',
   } = event;
 
@@ -36,7 +37,7 @@ exports.main = async (event = {}) => {
     name: type === 'lost' ? name : '',
     breed, sex,
     loc, time, timeMins: Number(timeMins) || 0,
-    distanceKm: 0, helpers: 0,
+    lat, lng, distanceKm: 0, helpers: 0,
     desc, photos, clues: [],
     poster_id: OPENID,
     stats: { helpers: 0, shares: 0, clues: 0 },

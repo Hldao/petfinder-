@@ -1,0 +1,12 @@
+<view class="page">
+  <view wx:if="{{blocked.length === 0}}" class="empty">
+    <view class="fe-icon">🤝</view>
+    <view>还没有拉黑任何人</view>
+  </view>
+  <view wx:else class="list">
+    <view wx:for="{{blocked}}" wx:key="*this" class="row">
+      <text class="name">{{item}}</text>
+      <view class="unblock" data-name="{{item}}" bindtap="unblock">移出</view>
+    </view>
+  </view>
+</view>

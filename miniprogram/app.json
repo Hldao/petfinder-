@@ -10,7 +10,11 @@
     "pages/search/index",
     "pages/return-success/index",
     "pages/my-posts/index",
-    "pages/all-posts/index"
+    "pages/all-posts/index",
+    "pages/feedback/index",
+    "pages/blocklist/index",
+    "pages/dispute/index",
+    "pages/thanks-edit/index"
   ],
   "window": {
     "navigationBarBackgroundColor": "#F0E9D8",
@@ -30,6 +34,10 @@
       { "pagePath": "pages/messages/index", "text": "消息" },
       { "pagePath": "pages/profile/index", "text": "我的" }
     ]
+  },
+  "requiredPrivateInfos": ["chooseLocation", "getLocation"],
+  "permission": {
+    "scope.userLocation": { "desc": "用于发布走失/招领地点与附近匹配（精度模糊到 500m）" }
   },
   "style": "v2",
   "sitemapLocation": "sitemap.json",

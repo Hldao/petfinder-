@@ -84,10 +84,45 @@
       width: 122px; height: 28px; background: #18181B;
       border-bottom-left-radius: 16px; border-bottom-right-radius: 16px; z-index: 100;
     }
+    /* v10 r59 · status-bar 接近 iOS 真实状态栏（白底 · 系统黑字） */
     .status-bar {
       height: 44px; display: flex; justify-content: space-between; align-items: center;
       padding: 0 28px; font-size: 14px; font-weight: 600;
-      font-family: var(--font-en); background: var(--surface); position: relative; z-index: 5;
+      font-family: var(--font-en); background: #FFF; color: #000; position: relative; z-index: 5;
+    }
+
+    /* v10 r59 · 微信小程序胶囊按钮（系统强制存在 · 右上角浮于 navbar 之上）
+     * 真实小程序里这个胶囊由微信系统渲染 · 任何页面都不能去掉
+     * 页面自定义按钮需要避开此位置（约 90px 右侧空间）*/
+    .wx-capsule {
+      position: absolute;
+      top: 50px;  /* status-bar 44 + 6px 间距 */
+      right: 7px;
+      width: 87px; height: 32px;
+      background: rgba(255,255,255,0.6);
+      border: 0.5px solid rgba(0,0,0,0.08);
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      z-index: 50;
+      backdrop-filter: blur(10px);
+      pointer-events: none;  /* prototype 不交互 · 仅视觉 */
+    }
+    .wx-capsule-btn {
+      flex: 1;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px;
+      color: rgba(0,0,0,0.85);
+      height: 100%;
+    }
+    .wx-capsule-btn:first-child::before {
+      content: '○';
+      font-size: 14px;
+    }
+    .wx-capsule-divider {
+      width: 0.5px;
+      height: 16px;
+      background: rgba(0,0,0,0.12);
     }
 
     .screen {
@@ -111,6 +146,8 @@
     /* ============== 通用：顶部导航 ============== */
     .nav-region {
       background: var(--surface); padding: 12px 18px 14px;
+      /* v10 r59 · 右侧留 90px 给微信小程序胶囊按钮让位 */
+      padding-right: 100px;
       border-bottom: 1px solid var(--divider); flex-shrink: 0;
     }
     .nav-row { display: flex; align-items: center; gap: 10px; }
@@ -148,24 +185,55 @@
       min-width: 0; flex: 1;
     }
     /* 通用：详情/子页 header */
+    /* v10 r58 · sub-header 改造为微信小程序原生导航栏样式
+     * 真实小程序里这部分由 navigationBarTitleText / navigationBarBackgroundColor 等控制
+     * prototype 用 HTML 模拟视觉接近原生：
+     *  - 白色背景 + 44px iOS 标准高度
+     *  - 标题居中 17px 加粗
+     *  - back-btn / sub-icon 透明无背景 · 接近微信小程序观感
+     * 注意：小程序里右上角胶囊按钮（⊙ ⋯）由系统强制占用 · 页面自定义按钮通常避开 */
     .sub-header {
-      background: var(--surface); padding: 10px 16px;
+      background: #FFF;
+      height: 44px;
+      padding: 0 4px;
+      /* v10 r59 · 右侧留 90px 给胶囊按钮让位（避免 sub-icon 与胶囊重叠）*/
+      padding-right: 90px;
       border-bottom: 1px solid var(--divider);
-      display: flex; align-items: center; gap: 12px; flex-shrink: 0;
+      display: flex; align-items: center; flex-shrink: 0;
+      position: relative;
     }
     .back-btn {
-      width: 34px; height: 34px; background: var(--bg); border-radius: 50%;
+      width: 44px; height: 44px;
+      background: transparent;
       display: flex; align-items: center; justify-content: center;
-      font-size: 18px; cursor: pointer; flex-shrink: 0;
+      font-size: 22px; color: var(--ink-1); cursor: pointer;
+      flex-shrink: 0;
+      z-index: 2;
     }
-    .sub-title { flex: 1; font-size: 15px; font-weight: 700; letter-spacing: -0.005em; }
-    .sub-action { font-size: 13px; color: var(--ink-3); font-weight: 500; cursor: pointer; }
-    .sub-action.primary { color: var(--apricot-deep); font-weight: 700; }
-    .sub-step { font-family: var(--font-en); font-size: 12px; color: var(--ink-3); font-weight: 700; letter-spacing: 0.06em; }
+    .sub-title {
+      position: absolute;
+      left: 50%; top: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 17px; font-weight: 700; letter-spacing: -0.005em;
+      color: var(--ink-1);
+      max-width: 60%;
+      overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+      z-index: 1;
+      pointer-events: none;
+    }
+    .sub-action { font-size: 14px; color: var(--apricot-deep); font-weight: 600; cursor: pointer; padding: 0 12px; margin-left: auto; height: 44px; display: flex; align-items: center; z-index: 2; }
+    .sub-step { font-family: var(--font-en); font-size: 12px; color: var(--ink-3); font-weight: 700; letter-spacing: 0.06em; padding: 0 12px; margin-left: auto; z-index: 2; }
     .sub-icon {
-      width: 34px; height: 34px; background: var(--bg); border-radius: 50%;
-      display: flex; align-items: center; justify-content: center; font-size: 15px; cursor: pointer;
+      width: 44px; height: 44px;
+      background: transparent;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px; color: var(--ink-2); cursor: pointer;
+      flex-shrink: 0;
+      margin-left: auto;  /* 默认靠右（推到 navbar 右侧）*/
+      z-index: 2;
     }
+    /* 相邻 sub-icon 紧贴 · 不再 margin-left:auto */
+    .sub-icon + .sub-icon { margin-left: 0; }
 
     .filter-region { padding: 14px 18px 4px; flex-shrink: 0; }
     .filter-row { display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; align-items: center; padding-bottom: 4px; }
@@ -515,7 +583,8 @@
     .notif-name { font-size: 12.5px; font-weight: 700; color: var(--ink-1); }
     .notif-preview { font-size: 12px; color: var(--ink-3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 1px; }
     .notif-close { font-size: 15px; color: var(--ink-4); padding: 4px; flex-shrink: 0; line-height: 1; }
-    .tab.active { background: var(--apricot-soft); color: var(--apricot-deep); font-weight: 700; }
+    /* v10 r59 · tab.active 改为微信小程序原生观感：仅文字 + 图标变色，无背景色块 */
+    .tab.active { color: var(--apricot-deep); font-weight: 700; }
     .tab.spacer { pointer-events: none; visibility: hidden; }
 
     /* 详情页 */
@@ -2165,6 +2234,12 @@
   <div class="device">
     <div class="toast" id="global-toast"></div>
     <div class="status-bar"><span>9:41</span><span style="font-size:11px">📶 5G 🔋</span></div>
+    <!-- v10 r59 · 微信小程序胶囊按钮（系统强制 · 任何页面都有 · 不可关闭）-->
+    <div class="wx-capsule">
+      <div class="wx-capsule-btn"></div>
+      <div class="wx-capsule-divider"></div>
+      <div class="wx-capsule-btn">⋯</div>
+    </div>
 
     <!-- 顶部消息通知横幅 -->
 
@@ -4535,6 +4610,12 @@
     }, 280);
   }
 
+  // v10 r57 · 往期成功案例点击 · 展示真实故事（替代之前"占位 alert"死按钮）
+  // archive-card 是首页底部「希望叙事」关键入口 · 死按钮让叙事链条断裂
+  function showArchiveStory(c) {
+    alert('🎉 ' + c.name + ' 的回家故事\n\n' + c.story + '\n\n📍 ' + c.loc + ' · ' + c.helpers + ' 人接力 · ' + c.days + ' 天找回 · ' + c.daysAgo + ' 天前');
+  }
+
   // v10 r43 · 关于弹窗（替代 r9 之前没 onclick 的死按钮）
   function showAbout() {
     alert('🐾 寻宠 · 大理\n\n版本：v1.0.0\n社区互助 · 不撮合金钱交易\n\n如有走丢或捡到的宠物，欢迎使用本平台\n大理本地用户互助网络');
@@ -4824,7 +4905,7 @@
     const container = document.getElementById('archive-list');
     if (!container) return;
     container.innerHTML = ARCHIVED_CASES.map(c => `
-      <div class="archive-card" onclick="alert('查看详情：${c.name} 找回故事\\n（暂跳转占位）')">
+      <div class="archive-card" onclick="showArchiveStory(${JSON.stringify(c).replace(/"/g, '&quot;')})">
         <div class="ac-photo ${c.photoClass}">
           <span>${c.emoji}</span>
           <div class="check">✓</div>
@@ -5856,10 +5937,12 @@
     if (timeText.includes('请选择')) { alert('⚠ 请选择时间'); return; }
 
     const desc = document.getElementById('publish-desc').value.trim();
-    if (desc.length < 10) { alert('⚠ 描述至少 10 字\n详细的描述能帮助匹配成功率提高 3 倍'); return; }
+    if (desc.length < 10) { alert('⚠ 描述至少 10 字\n详细的描述更容易帮 ta 回家'); return; }
 
+    // v10 r57 · 发布后跳 my-posts（让用户立即看到自己的帖在"进行中"）
+    // 之前跳 feed · 但内容审核 1 分钟 · feed 上没自己的帖 · 用户「我刚发的去哪了」情绪空窗
     alert('✅ 发布成功！\n\n内容已进入审核队列（约 1 分钟）\n通过后将出现在「附近的小朋友」');
-    showScreen('feed', true);
+    showScreen('my-posts');
   }
 
   /* ============== 举报 ============== */

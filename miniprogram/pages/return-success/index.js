@@ -6,6 +6,9 @@ Page({
   goHome() {
     wx.switchTab({ url: '/pages/feed/index' });
   },
+  writeThanks() {
+    wx.redirectTo({ url: `/pages/thanks-edit/index?pet=${encodeURIComponent(this.data.pet)}` });
+  },
   undo() {
     // 24h 冷却期内可撤回（02 §3 · canceled）
     wx.showModal({
