@@ -4908,12 +4908,14 @@
     }
     // v10 r22 同步：owner action-bar 单 CTA（去除「补充线索」分类 · 都是发文）
     // v10 r19 视角分离：public（路人）vs owner（失主自己）双套 action-bar
+    // v10 r53 · 招领 public 砍「📌 我也见过 ta」secondary 按钮
+    // 寻宠和招领的 public CTA 应不对称（寻宠 = 留信息缩小搜索 / 招领 = 去认确认身份）
+    // 招领 public 单 CTA「💬 私聊发现者」占满
     document.getElementById('dyn-action-bar').innerHTML = isLost
         ? `<div class="btn-secondary view-public-only" onclick="openClueModal('lost')">📌 留一条公开线索</div>
            <div class="btn-primary view-public-only" onclick="openChatAs('finder')">💬 私聊失主</div>
            <div class="btn-primary view-owner-only" onclick="postOwnerUpdate()" style="flex:1">📢 发布新进展</div>`
-        : `<div class="btn-secondary view-public-only" onclick="openClueModal('found')">📌 我也见过 ta</div>
-           <div class="btn-primary view-public-only" onclick="openChatAs('owner')">💬 私聊发现者</div>
+        : `<div class="btn-primary view-public-only" onclick="openChatAs('owner')" style="flex:1">💬 私聊发现者</div>
            <div class="btn-primary view-owner-only" onclick="postOwnerUpdate()" style="flex:1">📢 发布新进展</div>`;
 
     showScreen('detail');
