@@ -2635,6 +2635,17 @@
             </div>
             <div id="sex-hint" style="display:none;font-size:12px;color:var(--ink-3);margin-top:8px;line-height:1.5">⚠ 不需要勉强翻看陌生宠物 · 应激可能咬伤</div>
           </div>
+          <!-- v10 r39 · 招领专属：年龄段（粗略估测 · 拾主难判断精确年龄）-->
+          <div class="form-row" id="age-stage-row" style="display:none">
+            <div class="form-label">年龄段</div>
+            <div class="pet-types">
+              <div class="pet-type" data-age="puppy" onclick="selectAgeStage('puppy', this)">🐣 幼宠</div>
+              <div class="pet-type" data-age="adult" onclick="selectAgeStage('adult', this)">🐱 成年</div>
+              <div class="pet-type" data-age="senior" onclick="selectAgeStage('senior', this)">🌟 老龄</div>
+              <div class="pet-type active" data-age="unknown" onclick="selectAgeStage('unknown', this)">? 不详</div>
+            </div>
+            <div id="age-hint" style="font-size:12px;color:var(--ink-3);margin-top:8px;line-height:1.5">⚠ 拾到的宠物难精确判断年龄 · 粗略估即可 · 失主能通过其他特征匹配</div>
+          </div>
           <div class="form-row">
             <div class="form-label">品种 / 外观</div>
             <input class="form-input" id="publish-breed" value="英短蓝猫" placeholder="比如：英短蓝猫">
@@ -3122,7 +3133,7 @@
             <div class="pc-body" onclick="showDetailScreen(0, 'owner')">
               <div class="pc-photo ph-orange"><span>🐱</span><div class="status-bubble found">招领</div></div>
               <div class="pc-info">
-                <div class="pc-name-row"><span class="pc-name">橘色短毛猫</span><span class="breed">· ♀ · 约 2 岁</span></div>
+                <div class="pc-name-row"><span class="pc-name">橘色短毛猫</span><span class="breed">· ♀ · 成年</span></div>
                 <div class="pc-meta"><span>📍 人民路三月街</span><span class="time">30 min 前</span></div>
                 <div class="pc-desc">在咖啡馆门口蹲了一下午...</div>
                 <div style="font-family:var(--font-en);font-size:10.5px;color:var(--ink-4);margin-top:5px;font-weight:600">👀 47 · 💬 3</div>
@@ -3138,7 +3149,7 @@
             <div class="pc-body" onclick="showDetailScreen(2, 'owner')">
               <div class="pc-photo ph-cream"><span>🐶</span><div class="status-bubble found">招领</div></div>
               <div class="pc-info">
-                <div class="pc-name-row"><span class="pc-name">白色比熊</span><span class="breed">· ♂ · 约 5kg</span></div>
+                <div class="pc-name-row"><span class="pc-name">白色比熊</span><span class="breed">· ♂ · 成年 · 约 5kg</span></div>
                 <div class="pc-meta"><span>📍 下关泰安路</span><span class="time">2 hr 前</span></div>
                 <div class="pc-desc">在小区门口捡到，毛色干净有人养过...</div>
                 <div style="font-family:var(--font-en);font-size:10.5px;color:var(--ink-4);margin-top:5px;font-weight:600">👀 28 · 💬 5 · 招领中</div>
@@ -3173,7 +3184,7 @@
             <div class="pc-body" onclick="showDetailScreen(5, 'owner')">
               <div class="pc-photo ph-pink"><span>🐱</span><div class="status-bubble" style="background:var(--mint-deep)">已归还</div></div>
               <div class="pc-info">
-                <div class="pc-name-row"><span class="pc-name">蓝眼布偶猫</span><span class="breed">· ♀ · 约 6 个月</span></div>
+                <div class="pc-name-row"><span class="pc-name">蓝眼布偶猫</span><span class="breed">· ♀ · 幼宠</span></div>
                 <div class="pc-meta"><span>📍 人民路民宿区</span><span class="time">1 周前结束</span></div>
                 <div class="pc-desc">蓝眼睛长毛，主人已认领。</div>
                 <div style="font-family:var(--font-en);font-size:10.5px;color:var(--ink-4);margin-top:5px;font-weight:600">👀 156 · 💬 6</div>
@@ -3201,7 +3212,7 @@
             <div class="pc-body" onclick="showDetailScreen(8, 'owner')">
               <div class="pc-photo ph-orange"><span>🐱</span><div class="status-bubble" style="background:var(--mint-deep)">已归还</div></div>
               <div class="pc-info">
-                <div class="pc-name-row"><span class="pc-name">橘色短毛猫</span><span class="breed">· ? · 估 4 岁</span></div>
+                <div class="pc-name-row"><span class="pc-name">橘色短毛猫</span><span class="breed">· ? · 成年 · 体型偏胖</span></div>
                 <div class="pc-meta"><span>📍 叶榆路</span><span class="time">1 个月前结束</span></div>
                 <div class="pc-desc">在饭店后厨发现，主人找来认领了。</div>
                 <div style="font-family:var(--font-en);font-size:10.5px;color:var(--ink-4);margin-top:5px;font-weight:600">👀 63 · 💬 2</div>
@@ -4089,7 +4100,7 @@
   // 14 张大理本地化数据（id 与 SHARE 同源）
   const FEED_DATA = [
     { id: 0, emoji:'🐱', photoClass:'ph-orange', status:'found', statusLabel:'招领',
-      name:'橘色短毛猫', sex:'♀', breed:'约 2 岁', loc:'人民路三月街', color:'橘色 橘黄',
+      name:'橘色短毛猫', sex:'♀', ageStage:'adult', breed:'', loc:'人民路三月街', color:'橘色 橘黄',
       time:'30 min 前', timeMins:30, distanceKm:1.2,
       helpers:3, tall:false,
       desc:'在咖啡馆门口蹲了一下午，看着像走丢的。亲人，会撒娇 ☕️',
@@ -4107,7 +4118,7 @@
         { avatar:'林', name:'林*', loc:'复兴路', timeAgo:'1 小时前', text:'我家就在复兴路开客栈，让前台留意一下，今晚监控我看看' }
       ] },
     { id: 2, emoji:'🐶', photoClass:'ph-cream', status:'found', statusLabel:'招领',
-      name:'白色比熊', sex:'♂', breed:'约 5kg', loc:'下关泰安路', color:'白色',
+      name:'白色比熊', sex:'♂', ageStage:'adult', breed:'约 5kg', loc:'下关泰安路', color:'白色',
       time:'2 hr 前', timeMins:120, distanceKm:4.2,
       helpers:5, tall:false,
       desc:'在小区门口捡到，毛色干净有人养过，正在寻找主人 🐾',
@@ -4127,7 +4138,7 @@
       desc:'全身黑色，颈部白毛。在洱海边走丢，主人正在沿环海路找',
       mapPos:{top:42,left:80} },
     { id: 5, emoji:'🐱', photoClass:'ph-pink', status:'found', statusLabel:'招领',
-      name:'蓝眼布偶猫', sex:'♀', breed:'约 6 个月', loc:'人民路民宿区', color:'白色 奶色',
+      name:'蓝眼布偶猫', sex:'♀', ageStage:'puppy', breed:'', loc:'人民路民宿区', color:'白色 奶色',
       time:'45 min 前', timeMins:45, distanceKm:2.1,
       helpers:6, tall:true,
       desc:'蓝眼睛，长毛，戴金色铃铛项圈。在客栈大堂被发现 🛋️',
@@ -4141,7 +4152,7 @@
       desc:'短腿圆屁股的小可爱，戴红色背带。容易认出来',
       mapPos:{top:60,left:16} },
     { id: 7, emoji:'🐶', photoClass:'ph-pink', status:'found', statusLabel:'招领',
-      name:'白色比熊串', sex:'?', breed:'估中型', loc:'喜洲古镇', color:'白色',
+      name:'白色比熊串', sex:'?', ageStage:'unknown', breed:'估中型', loc:'喜洲古镇', color:'白色',
       time:'5 hr 前', timeMins:300, distanceKm:18.5,
       helpers:4, tall:true,
       desc:'在喜洲扎染店门口被发现，毛色干净，应该是走失的家犬',
@@ -4149,7 +4160,7 @@
       health:'毛色干净 · 体型适中 · 看起来是家犬',
       mapPos:{top:18,left:82} },
     { id: 8, emoji:'🐱', photoClass:'ph-orange', status:'found', statusLabel:'招领',
-      name:'橘色短毛猫', sex:'?', breed:'估 4 岁 · 体型偏胖', loc:'叶榆路', color:'橘色 橘黄',
+      name:'橘色短毛猫', sex:'?', ageStage:'adult', breed:'体型偏胖', loc:'叶榆路', color:'橘色 橘黄',
       time:'2 hr 前', timeMins:130, distanceKm:1.9,
       helpers:2, tall:false,
       desc:'在饭店后厨发现，胖胖的看起来不缺吃喝，应该有主',
@@ -4175,7 +4186,7 @@
       desc:'体型偏小，毛色奶白带浅金。爱叫，听到罐头声会出现',
       mapPos:{top:58,left:28} },
     { id: 12, emoji:'🐶', photoClass:'ph-dark', status:'found', statusLabel:'招领',
-      name:'阿拉斯加幼犬', sex:'?', breed:'幼犬', loc:'凤仪镇', color:'黑色 棕色',
+      name:'阿拉斯加幼犬', sex:'?', ageStage:'puppy', breed:'', loc:'凤仪镇', color:'黑色 棕色',
       time:'3 天前', timeMins:4320, distanceKm:22,
       helpers:38, tall:false,
       desc:'在凤仪镇路边发现的小奶狗，疑似走失，正在帮忙找主人 🐾',
@@ -4183,7 +4194,7 @@
       health:'幼犬 · 正在帮忙找主人 · 状态正常',
       mapPos:{top:62,left:72} },
     { id: 13, emoji:'🐶', photoClass:'ph-pink', status:'found', statusLabel:'招领',
-      name:'棕白色小型犬', sex:'?', breed:'约 6kg', loc:'苍山门', color:'棕色 白色',
+      name:'棕白色小型犬', sex:'?', ageStage:'unknown', breed:'约 6kg', loc:'苍山门', color:'棕色 白色',
       time:'9 days', timeMins:12960, distanceKm:3.4,
       helpers:2, tall:false, expired:true,
       desc:'在山脚捡到，比较瘦，已带去打疫苗。希望主人快点出现 💛',
@@ -4524,9 +4535,19 @@
   // 第 6 条「教育只说一次」延伸：发布招领时本就不要求起名 · 数据和表单对齐
 
   // v10 r35 · 性别从 breed 字符串拆出独立 d.sex 字段
-  // 数据模型规范化（与发布表单 sex-row 对齐）· 显示时通过 petMeta 合并
-  // 兼容性：sex 缺失时 fallback 到 breed 原样输出
+  // v10 r39 · 招领增加 d.ageStage 粗略估测（拾主难精确判断）· 寻宠保留 breed 精确年龄
+  // 显示规则：
+  //  - 寻宠：sex · breed（失主自己写的 breed 含精确年龄）
+  //  - 招领：sex · ageStageLabel · breed（breed 只剩纯外观特征）
+  function ageStageLabel(stage) {
+    // unknown 返回空字符串 · 避免和 sex='?' 同时出现"? · ? · X"双问号冗余
+    // sex 是明确的"不确定"信号 · ageStage unknown 是默认值无信息量
+    return { puppy:'幼宠', adult:'成年', senior:'老龄', unknown:'' }[stage] || '';
+  }
   function petMeta(d) {
+    if (d.status === 'found' && d.ageStage) {
+      return [d.sex, ageStageLabel(d.ageStage), d.breed].filter(Boolean).join(' · ');
+    }
     if (d.sex !== undefined && d.sex !== null) {
       return [d.sex, d.breed].filter(Boolean).join(' · ');
     }
@@ -5786,11 +5807,16 @@
       const hint = document.getElementById('sex-hint');
       if (hint) hint.style.display = sex === 'unknown' ? '' : 'none';
     };
+    // 年龄段默认：招领默认「不详」（拾主难精确判断）· 寻宠用 breed 字段填精确年龄即可
+    const presetAgeStage = (stage) => {
+      document.querySelectorAll('#age-stage-row .pet-type').forEach(p => p.classList.toggle('active', p.dataset.age === stage));
+    };
     if (mode === 'lost') {
       show('fields-lost', true);
       show('fields-found', false);
       show('fields-found-extra', false);
       show('name-row', true);
+      show('age-stage-row', false); // 寻宠失主知道精确年龄 · 写进 breed 字段即可
       show('publish-warmth-lost', true);
       show('publish-warmth-found', false);
       document.getElementById('publish-title').textContent = '发布寻宠信息';
@@ -5800,10 +5826,12 @@
       show('fields-found', true);
       show('fields-found-extra', true);
       show('name-row', false); // 捡到的不知道名字
+      show('age-stage-row', true); // 招领用粗略估测代替精确年龄
       show('publish-warmth-lost', false);
       show('publish-warmth-found', true);
       document.getElementById('publish-title').textContent = '发布招领信息';
       presetSex('unknown');
+      presetAgeStage('unknown');
     }
   }
 
@@ -5838,6 +5866,13 @@
     el.classList.add('active');
     const hint = document.getElementById('sex-hint');
     if (hint) hint.style.display = sex === 'unknown' ? '' : 'none';
+  }
+
+  // 年龄段选择 · v10 r39 · 招领专属
+  // 拾主难精确判断 · 默认「不详」+ 提示「粗略估即可」
+  function selectAgeStage(stage, el) {
+    document.querySelectorAll('#age-stage-row .pet-type').forEach(p => p.classList.remove('active'));
+    el.classList.add('active');
   }
 
   // 描述字数计数
