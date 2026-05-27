@@ -2081,7 +2081,7 @@
     .nearby-helpers .nh-num { font-family: var(--font-en); font-weight: 800; }
 
     /* === 情感化时间文案 === */
-    .emotional-time { font-size:11px; color:var(--apricot-deep); font-weight:600; margin:4px 0 3px; line-height:1.4; }
+    /* v10 r52 · .emotional-time 已删 · r51 文案中性化后与 d.time 语义重叠 */
     /* === 主人心声 === */
     .owner-voice { font-size:11.5px; color:var(--ink-3); font-style:italic; padding:8px 14px 10px; border-top:1px solid var(--divider-soft); line-height:1.55; }
     /* === 社区温暖插卡 === */
@@ -2567,7 +2567,7 @@
 
       <div class="action-bar">
         <div class="btn-secondary" onclick="alert('草稿已保存 · 可在「我的发布 → 草稿」中找到')">保存草稿</div>
-        <div class="btn-primary" onclick="submitPublish()">📮 发布</div>
+        <div class="btn-primary" onclick="submitPublish()">发布</div>
       </div>
     </div>
 
@@ -3093,7 +3093,7 @@
     <div class="screen" data-screen="all-posts">
       <div class="sub-header">
         <div class="back-btn" onclick="goBack()">←</div>
-        <div class="sub-title">附近的小朋友</div>
+        <div class="sub-title">全部帖子</div>
         <span class="sub-step" id="all-posts-count"></span>
       </div>
       <div class="filter-region">
@@ -4343,17 +4343,9 @@
   // 失主刷自己帖会看到第三人称"自己"的哀号 → 焦虑放大器
   // 反例库 #11「卖惨/过度积极表情」+ 第 7 条「不为焦虑的人增加心理负担」
 
-  // v10 r51 · 时间叙述中性化（仅寻宠 · 之前文案"主人急寻中/还没回家/请大家多留意 🙏"
-  // 是失主视角的损失框架 · 失主刷自己帖会看到自己被代言的焦虑 · 第 7 条违背）
-  // 现在仅陈述事实 · 让用户自己感受 · 不加焦虑形容词
-  function formatEmotionalTime(d) {
-    if (d.status !== 'lost' || d.expired) return '';
-    const t = d.timeMins;
-    if (t < 60) return `${t} 分钟前离家`;
-    if (t < 1440) { const h = Math.round(t / 60); return `${h} 小时前离家`; }
-    const days = Math.round(t / 1440);
-    return `${days} 天前离家`;
-  }
+  // v10 r52 · formatEmotionalTime 已删
+  // r51 把焦虑文案改为中性事实「N 前离家」后 · 与卡片 d.time「10 min 前」语义重叠
+  // 删冗余 · 保留 d.time（发布时间已传达"事件多久前发生"）
 
   // v10 r32 · 招领贴的 d.name 字段直接存「颜色 + 品种」描述（非发现者昵称）
   // 第 8 条「真实优先」：失主按外观找猫 · 假名误导其跳过真正属于自己的猫
@@ -4430,8 +4422,7 @@
       : '';
     // v10 r48 · 删「⚠ 超24h/超3天」warn badge · 反例库 #4 紧迫度倒计时同病
     // v10 r51 · isLongterm + .emotional-time.longterm 红色变色一并清理 · 同病彻底拔除
-    const emoTime = formatEmotionalTime(d);
-    const emoHtml = emoTime ? `<div class="emotional-time">${emoTime}</div>` : '';
+    // v10 r52 · emoTime/emoHtml 删除 · 与 d.time 语义重叠
     return `<div class="pet-card${borderClass}${d._isMine ? ' my-card' : ''}" ${expiredStyle} onclick="showDetailScreen(${d.id})">
         ${hintHtml}
         <div class="pc-body">
@@ -4439,7 +4430,6 @@
           <div class="pc-info">
             <div class="pc-name-row"><span class="pc-name">${d.name}</span><span class="breed">· ${petMeta(d)}</span></div>
             <div class="pc-meta"><span class="loc-link" onclick="event.stopPropagation();showOnMapByLoc(${d.id})">📍 在${d.loc}${d.status === 'lost' ? '走失' : '发现'} · 距你 ${distanceStr} km</span>${timeSpan}</div>
-            ${emoHtml}
             <div class="pc-desc">${d.desc}</div>
           </div>
         </div>
