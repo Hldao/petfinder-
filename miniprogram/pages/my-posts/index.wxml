@@ -1,0 +1,19 @@
+<view class="page">
+  <view wx:if="{{loading}}" class="hint">加载中…</view>
+
+  <view wx:elif="{{needCloud}}" class="hint">接入云端后，这里显示你发布的帖子与进度</view>
+
+  <block wx:else>
+    <view class="sec-title">进行中 · {{active.length}}</view>
+    <view wx:if="{{active.length === 0}}" class="hint small">暂无进行中的帖子</view>
+    <view class="list">
+      <pet-card wx:for="{{active}}" wx:key="id" post="{{item}}" bindtap="onCardTap" />
+    </view>
+
+    <view class="sec-title">已结束 · {{done.length}}</view>
+    <view wx:if="{{done.length === 0}}" class="hint small">暂无已结束的帖子</view>
+    <view class="list">
+      <pet-card wx:for="{{done}}" wx:key="id" post="{{item}}" bindtap="onCardTap" />
+    </view>
+  </block>
+</view>

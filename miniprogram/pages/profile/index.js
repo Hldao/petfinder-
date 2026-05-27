@@ -5,7 +5,7 @@ Page({
     }
   },
   onMyPosts() {
-    wx.showToast({ title: '我的发布 Phase 2 接入', icon: 'none' });
+    wx.navigateTo({ url: '/pages/my-posts/index' });
   },
   onMenu(e) {
     const label = e.currentTarget.dataset.label;

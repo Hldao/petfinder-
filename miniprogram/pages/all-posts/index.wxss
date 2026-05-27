@@ -1,0 +1,4 @@
+.page { min-height: 100vh; background: var(--bg); padding: 24rpx 32rpx 60rpx; }
+.list { display: flex; flex-direction: column; gap: 24rpx; }
+.meta { font-size: 23rpx; color: var(--ink-3); padding-bottom: 8rpx; }
+.hint { text-align: center; color: var(--ink-3); padding: 80rpx 0; font-size: 26rpx; }
