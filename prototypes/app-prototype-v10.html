@@ -136,9 +136,9 @@
     }
     .city-tag.loading .pin { animation: locSpin 0.9s linear infinite; }
     @keyframes locSpin { to { transform: rotate(360deg); } }
-    /* v10 r36 · 限定地名宽度 · 防止长地名挤压搜索栏 */
+    /* v10 r36 · 固定地名宽度 · city-tag 整体宽度恒定 · 搜索栏不抖动 */
     #city-name {
-      max-width: 5em;
+      width: 5em;          /* fixed width · 不是 max-width */
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
