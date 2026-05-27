@@ -20,7 +20,7 @@
 
 | 文档 | 内容 |
 |------|------|
-| **[`CLAUDE.md`](./CLAUDE.md)** | **★★ 新人 / AI 协作入口**（必读速查版 · 含 8 条哲学 / 12 条反例 / 7 个判断问题 / Merge checklist）|
+| **[`CLAUDE.md`](./CLAUDE.md)** | **★★ 新人 / AI 协作入口**（必读速查版 · 含 8 条哲学 / 12 条反例 / 8 个判断问题 / Merge checklist）|
 | [`STATUS.md`](./STATUS.md) | **★ 切回项目入口：进度速查 + 下一步 + 文件位置** |
 | `docs/00-overview.md` | 项目背景、目标市场（大理）、团队与技术栈、核心流程 |
 | `docs/01-points-system.md` | 善行值激励体系（V2 设计参考 · MVP 不启用）|
