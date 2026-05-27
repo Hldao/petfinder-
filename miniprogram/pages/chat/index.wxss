@@ -6,6 +6,7 @@
 }
 .pet-emoji { font-size: 32rpx; }
 .pet-name { font-size: 24rpx; color: var(--ink-2); font-weight: 600; }
+.more-btn { margin-left: auto; font-size: 36rpx; color: var(--ink-3); padding: 0 12rpx; line-height: 1; }
 
 .audit-bar {
   flex-shrink: 0; font-size: 21rpx; color: var(--mint-deep); background: var(--mint-soft);

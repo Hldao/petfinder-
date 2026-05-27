@@ -1,0 +1,9 @@
+{
+  "triggers": [
+    {
+      "name": "settleCooldownTimer",
+      "type": "timer",
+      "config": "0 0 * * * * *"
+    }
+  ]
+}
