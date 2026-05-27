@@ -1,0 +1,97 @@
+<view class="page">
+  <!-- 发布须知（合规前置告知 · 03 §3.6）-->
+  <view class="notice">
+    🛡 邻里互助网络，不撮合金钱交易。请勿填写微信/电话/悬赏，照片与描述将经审核。
+  </view>
+
+  <!-- 模式切换（r9：🔍 找 / 🏠 收留，去情绪化）-->
+  <view class="seg">
+    <view class="seg-item {{mode==='lost'?'active':''}}" data-mode="lost" bindtap="switchMode">🔍 我丢了宠物</view>
+    <view class="seg-item {{mode==='found'?'active':''}}" data-mode="found" bindtap="switchMode">🏠 我捡到了</view>
+  </view>
+
+  <!-- 照片 -->
+  <view class="field">
+    <view class="label">照片 <text class="req">*</text><text class="hint"> 帮助大家识别（最多 9 张）</text></view>
+    <view class="photo-row">
+      <view wx:for="{{photos}}" wx:key="*this" class="photo-slot">
+        <image src="{{item}}" mode="aspectFill" class="photo-img" />
+        <view class="photo-del" data-i="{{index}}" catchtap="removePhoto">✕</view>
+      </view>
+      <view wx:if="{{photos.length < 9}}" class="photo-add" bindtap="choosePhoto">＋</view>
+    </view>
+  </view>
+
+  <!-- 宠物类型 -->
+  <view class="field">
+    <view class="label">宠物类型 <text class="req">*</text></view>
+    <view class="chips">
+      <view class="chip {{petType==='cat'?'active':''}}" data-t="cat" bindtap="pickType">🐱 猫</view>
+      <view class="chip {{petType==='dog'?'active':''}}" data-t="dog" bindtap="pickType">🐶 狗</view>
+      <view class="chip {{petType==='other'?'active':''}}" data-t="other" bindtap="pickType">🐾 其他</view>
+    </view>
+  </view>
+
+  <!-- 名字（仅寻宠）-->
+  <view wx:if="{{mode==='lost'}}" class="field">
+    <view class="label">名字</view>
+    <input class="input" placeholder="ta 叫什么" value="{{form.name}}" data-field="name" bindinput="onInput" />
+  </view>
+
+  <!-- 品种 / 外观 -->
+  <view class="field">
+    <view class="label">品种 / 外观</view>
+    <view class="chips">
+      <view wx:for="{{breedChips}}" wx:key="*this" class="chip {{form.breed===item?'active':''}}" data-b="{{item}}" bindtap="pickBreed">{{item}}</view>
+    </view>
+    <input class="input" placeholder="或直接输入品种 / 特征" value="{{form.breed}}" data-field="breed" bindinput="onInput" />
+  </view>
+
+  <!-- 性别 -->
+  <view class="field">
+    <view class="label">性别</view>
+    <view class="chips">
+      <view class="chip {{form.sex==='♂'?'active':''}}" data-s="♂" bindtap="pickSex">♂ 公</view>
+      <view class="chip {{form.sex==='♀'?'active':''}}" data-s="♀" bindtap="pickSex">♀ 母</view>
+      <view class="chip {{form.sex==='不确定'?'active':''}}" data-s="不确定" bindtap="pickSex">不确定</view>
+    </view>
+    <view wx:if="{{mode==='found'}}" class="sub-hint">捡到的不必勉强翻看辨别性别</view>
+  </view>
+
+  <!-- 地点 -->
+  <view class="field">
+    <view class="label">{{mode==='lost'?'走失':'发现'}}地点 <text class="req">*</text></view>
+    <view class="chips">
+      <view wx:for="{{locs}}" wx:key="*this" class="chip {{form.loc===item?'active':''}}" data-v="{{item}}" bindtap="pickLoc">{{item}}</view>
+    </view>
+  </view>
+
+  <!-- 时间 -->
+  <view class="field">
+    <view class="label">{{mode==='lost'?'走失':'发现'}}时间 <text class="req">*</text></view>
+    <view class="chips">
+      <view wx:for="{{times}}" wx:key="label" class="chip {{form.timeText===item.label?'active':''}}" data-label="{{item.label}}" data-mins="{{item.mins}}" bindtap="pickTime">{{item.label}}</view>
+    </view>
+  </view>
+
+  <!-- 招领专属：目前状况 -->
+  <block wx:if="{{mode==='found'}}">
+    <view class="field">
+      <view class="label">目前位置</view>
+      <input class="input" placeholder="ta 现在在哪（如：先带回 XX 店）" value="{{form.currentLocation}}" data-field="currentLocation" bindinput="onInput" />
+    </view>
+    <view class="field">
+      <view class="label">健康状况</view>
+      <input class="input" placeholder="选填，如：精神好、已喂水" value="{{form.health}}" data-field="health" bindinput="onInput" />
+    </view>
+  </block>
+
+  <!-- 描述 -->
+  <view class="field">
+    <view class="label">公开描述 <text class="req">*</text><text class="hint"> 至少 10 字，越详细匹配越准</text></view>
+    <textarea class="textarea" placeholder="特征、项圈、性格、习惯…" value="{{form.desc}}" data-field="desc" bindinput="onInput" maxlength="500" />
+  </view>
+
+  <view class="submit {{submitting?'disabled':''}}" bindtap="submit">发布</view>
+  <view class="safe-pad"></view>
+</view>

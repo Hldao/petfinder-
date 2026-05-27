@@ -30,7 +30,6 @@
     <view class="menu-row" data-label="意见反馈" bindtap="onMenu"><text>💬 意见反馈</text><text class="arrow">›</text></view>
     <view class="menu-row" data-label="争议申诉" bindtap="onMenu"><text>⚖ 争议申诉</text><text class="arrow">›</text></view>
     <view class="menu-row" data-label="黑名单" bindtap="onMenu"><text>🚫 黑名单</text><text class="arrow">›</text></view>
-    <view class="menu-row" data-label="联系客服" bindtap="onMenu"><text>🎧 联系客服</text><text class="arrow">›</text></view>
   </view>
 
   <!-- 合规与设置 -->

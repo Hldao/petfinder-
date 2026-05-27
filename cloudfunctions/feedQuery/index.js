@@ -20,6 +20,7 @@ exports.main = async (event = {}) => {
     const posts = (res.data || []).map(doc => {
       const t = doc.type || doc.status; // 兼容
       return Object.assign({}, doc, {
+        id: doc._id, // 卡片导航 / wx:key 用统一 id
         status: t,
         statusLabel: t === 'lost' ? '寻宠' : '招领',
       });

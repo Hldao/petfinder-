@@ -16,13 +16,14 @@ Page({
   },
 
   onLoad(options) {
-    const id = Number(options.id);
+    const id = options.id; // 字符串：兼容种子(数字)与云端(_id 字符串)
+    const eq = p => String(p.id) === String(id);
     if (app.globalData.cloudReady) {
       cloud.call('feedQuery', { filter: 'all' })
-        .then(res => this.render(((res && res.posts) || []).find(p => p.id === id)))
-        .catch(() => this.render(seed.find(p => p.id === id)));
+        .then(res => this.render(((res && res.posts) || []).find(eq)))
+        .catch(() => this.render(seed.find(eq)));
     } else {
-      this.render(seed.find(p => p.id === id));
+      this.render(seed.find(eq));
     }
   },
 
