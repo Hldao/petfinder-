@@ -1036,7 +1036,7 @@
     .msg-name { font-size: 14px; font-weight: 700; letter-spacing: -0.005em; }
     .msg-time { font-family: var(--font-en); font-size: 10.5px; color: var(--ink-4); font-weight: 600; }
     .msg-preview { font-size: 12px; color: var(--ink-3); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; line-height: 1.5; }
-    .msg-sent-marker { font-size: 10px; color: var(--apricot-deep); margin-right: 4px; font-weight: 700; }
+    .msg-prefix { font-size: 12px; color: var(--ink-3); font-weight: 600; margin-right: 1px; }
     .msg-context { font-size: 10.5px; color: var(--apricot-deep); margin-top: 4px; padding: 1.5px 7px; background: var(--apricot-soft); border-radius: var(--radius-pill); display: inline-block; font-weight: 600; }
     .msg-context.reply { color: var(--mint-deep); background: var(--mint-soft); }
     .msg-unread { width: 20px; height: 20px; background: var(--apricot); color: white; border-radius: 50%; font-family: var(--font-en); font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center; margin-left: 8px; flex-shrink: 0; box-shadow: 0 2px 5px rgba(255,133,82,0.4); }
@@ -2774,7 +2774,7 @@
           <div class="msg-avatar ph-orange">🐱</div>
           <div class="msg-body">
             <div class="msg-row-head"><span class="msg-name">客栈老板娘</span><span class="msg-time">17:24</span></div>
-            <div class="msg-preview">好的我现在过来，您能视频先确认一下吗？</div>
+            <div class="msg-preview"><span class="msg-prefix">她：</span>好的我现在过来，您能视频先确认一下吗？</div>
             <div class="msg-context">关于 · 橘猫 招领</div>
           </div>
           <div class="msg-unread">2</div>
@@ -2783,7 +2783,7 @@
           <div class="msg-avatar ph-blue">🐱</div>
           <div class="msg-body">
             <div class="msg-row-head"><span class="msg-name">陈*</span><span class="msg-time">16:38</span></div>
-            <div class="msg-preview">下午在洋人街又看到那只猫了，往复兴路跑了</div>
+            <div class="msg-preview"><span class="msg-prefix">他：</span>下午在洋人街又看到那只猫了，往复兴路跑了</div>
             <div class="msg-context reply">胖丁 寻宠</div>
           </div>
           <div class="msg-unread">1</div>
@@ -2792,15 +2792,15 @@
           <div class="msg-avatar ph-mint">🐶</div>
           <div class="msg-body">
             <div class="msg-row-head"><span class="msg-name">林*</span><span class="msg-time">15:10</span></div>
-            <div class="msg-preview">这只狗好像是我邻居家的，我帮你问问</div>
+            <div class="msg-preview"><span class="msg-prefix">他：</span>这只狗好像是我邻居家的，我帮你问问</div>
             <div class="msg-context reply">小白 招领</div>
           </div>
         </div>
         <div class="msg-row" onclick="openChat(this,'owner')">
           <div class="msg-avatar ph-blue">🐱</div>
           <div class="msg-body">
-            <div class="msg-row-head"><span class="msg-name">陈*</span><span class="msg-time"><span class="msg-sent-marker">↗</span>14:50</span></div>
-            <div class="msg-preview">橘色短毛，颈右侧白色心形斑，叫果儿会回头</div>
+            <div class="msg-row-head"><span class="msg-name">陈*</span><span class="msg-time">14:50</span></div>
+            <div class="msg-preview"><span class="msg-prefix">我：</span>橘色短毛，颈右侧白色心形斑，叫果儿会回头</div>
             <div class="msg-context">关于 · 胖丁 寻宠</div>
           </div>
         </div>
@@ -2808,7 +2808,7 @@
           <div class="msg-avatar ph-cream">🐶</div>
           <div class="msg-body">
             <div class="msg-row-head"><span class="msg-name">王*</span><span class="msg-time">05-24</span></div>
-            <div class="msg-preview">辛苦你了，已经把小黑接回家。回头一定请你喝茶</div>
+            <div class="msg-preview"><span class="msg-prefix">他：</span>辛苦你了，已经把小黑接回家。回头一定请你喝茶</div>
             <div class="msg-context">关于 · 小黑 已归还</div>
           </div>
         </div>
@@ -2820,7 +2820,7 @@
           <div class="msg-avatar ph-blue">🐱</div>
           <div class="msg-body">
             <div class="msg-row-head"><span class="msg-name">陈*</span><span class="msg-time">16:38</span></div>
-            <div class="msg-preview">下午在洋人街又看到那只猫了，往复兴路跑了</div>
+            <div class="msg-preview"><span class="msg-prefix">他：</span>下午在洋人街又看到那只猫了，往复兴路跑了</div>
             <div class="msg-context reply">胖丁 寻宠</div>
           </div>
           <div class="msg-unread">1</div>
@@ -2829,7 +2829,7 @@
           <div class="msg-avatar ph-mint">🐶</div>
           <div class="msg-body">
             <div class="msg-row-head"><span class="msg-name">林*</span><span class="msg-time">15:10</span></div>
-            <div class="msg-preview">这只狗好像是我邻居家的，我帮你问问</div>
+            <div class="msg-preview"><span class="msg-prefix">他：</span>这只狗好像是我邻居家的，我帮你问问</div>
             <div class="msg-context reply">小白 招领</div>
           </div>
         </div>
@@ -2850,7 +2850,7 @@
           <div class="msg-avatar ph-orange">🐱</div>
           <div class="msg-body">
             <div class="msg-row-head"><span class="msg-name">客栈老板娘</span><span class="msg-time">17:24</span></div>
-            <div class="msg-preview">好的我现在过来，您能视频先确认一下吗？</div>
+            <div class="msg-preview"><span class="msg-prefix">她：</span>好的我现在过来，您能视频先确认一下吗？</div>
             <div class="msg-context">关于 · 橘猫 招领</div>
           </div>
           <div class="msg-unread">2</div>
@@ -2858,8 +2858,8 @@
         <div class="msg-row" onclick="openChat(this,'owner')">
           <div class="msg-avatar ph-blue">🐱</div>
           <div class="msg-body">
-            <div class="msg-row-head"><span class="msg-name">陈*</span><span class="msg-time"><span class="msg-sent-marker">↗</span>14:50</span></div>
-            <div class="msg-preview">橘色短毛，颈右侧白色心形斑，叫果儿会回头</div>
+            <div class="msg-row-head"><span class="msg-name">陈*</span><span class="msg-time">14:50</span></div>
+            <div class="msg-preview"><span class="msg-prefix">我：</span>橘色短毛，颈右侧白色心形斑，叫果儿会回头</div>
             <div class="msg-context">关于 · 胖丁 寻宠</div>
           </div>
         </div>
@@ -2867,7 +2867,7 @@
           <div class="msg-avatar ph-cream">🐶</div>
           <div class="msg-body">
             <div class="msg-row-head"><span class="msg-name">王*</span><span class="msg-time">05-24</span></div>
-            <div class="msg-preview">辛苦你了，已经把小黑接回家。回头一定请你喝茶</div>
+            <div class="msg-preview"><span class="msg-prefix">他：</span>辛苦你了，已经把小黑接回家。回头一定请你喝茶</div>
             <div class="msg-context">关于 · 小黑 已归还</div>
           </div>
         </div>
