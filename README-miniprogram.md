@@ -51,5 +51,16 @@ cloudfunctions/
 新增云函数（接入云端后需「上传并部署」）：`login` · `feedQuery` · `contentSafety` · `postCreate` · `sendMessage`
 新增云数据库集合（按需在控制台建）：`posts` · `users` · `messages`
 
-## 下一步（Phase 2，见 08 方案）
-地图（腾讯位置服务 + 选点）· 个人中心余项 + 隐私协议流程 + 「清除我的数据」· 归还流程（`confirmReturn` 状态机 + `settleCooldown` 24h 冷却定时触发器）· my-posts/all-posts。
+## 已完成 Phase 2（见 08 方案）
+- ✅ 启动隐私协议流程（首启不可绕过 → 公众号关注 modal）+「清除我的数据」（30 天冷却）
+- ✅ 归还闭环：chat ⋯「完成归还」→ `confirmReturn`（confirmed + 24h 冷却）→
+  `return-success`（温暖时刻）→ `settleCooldown` 定时触发器期满置 returned
+- ✅ my-posts（进行中/已结束分组）+ all-posts + `myPosts` 云函数
+- ✅ 地图基础版（腾讯 `<map>` + 帖子标记 → 点进详情，待小伙伴完善选点/定位）
+
+新增云函数：`confirmReturn` · `settleCooldown`（定时触发器）· `myPosts`
+新增集合：`return_confirmations`
+
+## 下一步（Phase 3，见 08 方案）
+感谢信 / 争议申诉 / 意见反馈 / 黑名单 · 服务号注册认证 + 模板消息 ·
+地图选点接入发布（wx.chooseLocation）· 实时消息（db.watch）。
