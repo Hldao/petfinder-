@@ -1154,6 +1154,18 @@
     .menu-meta.ok { color: var(--mint-deep); }
     .menu-arrow { color: var(--ink-4); font-size: 13px; }
     .footer-info { text-align: center; padding: 16px 0 30px; font-family: var(--font-en); font-size: 10.5px; color: var(--ink-4); line-height: 1.7; font-weight: 500; }
+    /* v10 r54 · 用户协议 / 隐私政策 屏 */
+    .legal-scroll { flex: 1; overflow-y: auto; padding: 16px 18px 36px; }
+    .legal-meta { font-size: 11.5px; color: var(--ink-4); margin-bottom: 14px; padding-bottom: 12px; border-bottom: 1px solid var(--divider-soft); }
+    .legal-intro { font-size: 13px; color: var(--ink-2); line-height: 1.7; margin-bottom: 18px; padding: 12px 14px; background: var(--apricot-soft); border-radius: var(--radius-md); color: var(--apricot-deep); font-weight: 600; }
+    .legal-section { margin-bottom: 22px; }
+    .legal-section h3 { font-size: 15px; font-weight: 700; color: var(--ink-1); margin: 0 0 8px; }
+    .legal-section p { font-size: 13px; color: var(--ink-2); line-height: 1.75; margin: 0 0 6px; }
+    .legal-section ul { margin: 6px 0 0; padding-left: 20px; }
+    .legal-section li { font-size: 13px; color: var(--ink-2); line-height: 1.75; margin-bottom: 4px; }
+    .legal-section .legal-note { font-size: 12px; color: var(--ink-3); background: var(--bg); padding: 10px 12px; border-radius: 8px; margin-top: 8px; line-height: 1.6; }
+    .legal-section b { color: var(--ink-1); font-weight: 700; }
+    .legal-footer { font-size: 11.5px; color: var(--ink-4); text-align: center; padding: 12px 0 0; line-height: 1.7; border-top: 1px solid var(--divider-soft); margin-top: 8px; }
 
     /* Points History */
     .points-screen { flex: 1; overflow-y: auto; padding-bottom: 24px; }
@@ -2877,8 +2889,8 @@
           </div>
           <div class="menu-section-label">合规与设置</div>
           <div class="menu-section">
-            <div class="menu-row" onclick="alert('打开《用户协议》')"><span class="menu-icon">📄</span><span class="menu-label">用户协议</span><span class="menu-arrow">›</span></div>
-            <div class="menu-row" onclick="alert('打开《隐私政策》')"><span class="menu-icon">🔐</span><span class="menu-label">隐私政策</span><span class="menu-arrow">›</span></div>
+            <div class="menu-row" onclick="showScreen('user-agreement')"><span class="menu-icon">📄</span><span class="menu-label">用户协议</span><span class="menu-arrow">›</span></div>
+            <div class="menu-row" onclick="showScreen('privacy-policy')"><span class="menu-icon">🔐</span><span class="menu-label">隐私政策</span><span class="menu-arrow">›</span></div>
             <div class="menu-row" onclick="if(confirm('将清除你的位置 / 聊天记录 / 发布的帖子，确定？')) alert('已提交清除请求 · 30 天内完成（合规冷却期）· 期间可撤销')"><span class="menu-icon">🗑</span><span class="menu-label">清除我的数据</span><span class="menu-arrow">›</span></div>
           </div>
           <div class="footer-info">
@@ -2904,6 +2916,200 @@
         <div class="sub-title">黑名单</div>
       </div>
       <div id="blocklist-content" style="flex:1;overflow-y:auto;padding:12px 16px 32px;display:flex;flex-direction:column;gap:10px;"></div>
+    </div>
+
+    <!-- ===== 用户协议 · v10 r54 ===== -->
+    <div class="screen" data-screen="user-agreement">
+      <div class="sub-header">
+        <div class="back-btn" onclick="goBack()">←</div>
+        <div class="sub-title">用户协议</div>
+      </div>
+      <div class="legal-scroll">
+        <div class="legal-meta">最后更新：2026-05-27 · v1.0 · 仅适用于大理本地用户</div>
+
+        <div class="legal-intro">🐾 这是「邻里互助网络」· 不撮合金钱交易 · 不诱导加微信 · 用户的善意通过平台连接。</div>
+
+        <div class="legal-section">
+          <h3>1. 适用范围</h3>
+          <p>本协议适用于「寻宠 · 大理」微信小程序及其全部功能。本平台<b>仅服务大理本地用户</b>（古城 / 下关 / 海东），位置信息会被验证。</p>
+        </div>
+
+        <div class="legal-section">
+          <h3>2. 你可以做什么</h3>
+          <ul>
+            <li>发布走失（寻宠）/ 拾到（招领）信息</li>
+            <li>浏览他人的发布，提供线索、目击信息</li>
+            <li>通过站内消息与其他用户沟通</li>
+            <li>参与接力寻找（你的提供线索 / 私聊 / 分享 / 目击会被记录为「接力」）</li>
+            <li>在确认归还时通过聊天屏菜单标记「归还完成」</li>
+            <li>随时清除你的所有数据（30 天合规冷却期 · 期内可撤销）</li>
+          </ul>
+        </div>
+
+        <div class="legal-section">
+          <h3>3. 你不能做什么</h3>
+          <p>以下行为将触发<b>限流 / 警告 / 封号</b>，严重者配合监管：</p>
+          <ul>
+            <li>发布虚假信息（不存在的宠物 / 编造的特征）</li>
+            <li><b>索要财物或设置悬赏</b>——本平台不撮合金钱交易</li>
+            <li><b>引导加微信 / 留电话 / 二维码</b>——平台会自动过滤这些内容</li>
+            <li>冒充其他用户身份冒领宠物</li>
+            <li>发布与寻宠 / 招领无关的内容</li>
+            <li>骚扰、威胁、辱骂其他用户</li>
+          </ul>
+        </div>
+
+        <div class="legal-section">
+          <h3>4. 平台承担什么</h3>
+          <ul>
+            <li>内容审核（约 1 分钟）后内容才送达 feed</li>
+            <li>站内消息合规审核（含微信号 / 电话 / 二维码将被过滤）</li>
+            <li>争议申诉 24 小时内人工响应</li>
+            <li>归还闭环：单方标记 + 24h 撤销期 + 反冒领冷却</li>
+            <li>位置信息精确度模糊至 500 米（保护用户隐私）</li>
+          </ul>
+        </div>
+
+        <div class="legal-section">
+          <h3>5. 平台不承担什么</h3>
+          <p>本平台是<b>信息撮合工具</b>，不参与线下交接：</p>
+          <ul>
+            <li>线下见面、宠物归还、潜在的款项往来由你自主决定与承担</li>
+            <li>因虚假信息或冒领造成的损失，平台协助调查但不代为赔偿</li>
+            <li>用户间私聊内容是双方共同记录 · 平台仅在合规审核时查看</li>
+          </ul>
+        </div>
+
+        <div class="legal-section">
+          <h3>6. 违规处理梯度</h3>
+          <ul>
+            <li><b>轻度</b>：内容隐藏 + 系统提示（如关键词过滤）</li>
+            <li><b>中度</b>：限流 + 警告通知</li>
+            <li><b>重度</b>：封号 + 配合监管</li>
+          </ul>
+        </div>
+
+        <div class="legal-section">
+          <h3>7. 争议处理</h3>
+          <p>遇到怀疑冒领 / 索要财物 / 威胁 / 失联，请在「我的 → 争议申诉」提交。平台 24 小时内响应，证据材料保密留存 6 个月。</p>
+        </div>
+
+        <div class="legal-section">
+          <h3>8. 法律适用</h3>
+          <p>本协议受中华人民共和国法律约束。如有争议，优先双方协商；协商不成提交大理市本地有管辖权的法院。</p>
+        </div>
+
+        <div class="legal-footer">
+          本协议会随产品迭代调整 · 重要变更通过小程序通知<br>
+          运营主体 · XX 个体工商户 · ICP 备案号 XXXXX
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== 隐私政策 · v10 r54 ===== -->
+    <div class="screen" data-screen="privacy-policy">
+      <div class="sub-header">
+        <div class="back-btn" onclick="goBack()">←</div>
+        <div class="sub-title">隐私政策</div>
+      </div>
+      <div class="legal-scroll">
+        <div class="legal-meta">最后更新：2026-05-27 · v1.0</div>
+
+        <div class="legal-intro">🔐 最少必要原则：我们只收必要的数据 · 不收集手机号 / 实名信息 / 通讯录 / 相册。</div>
+
+        <div class="legal-section">
+          <h3>1. 我们收集什么（最少必要）</h3>
+          <ul>
+            <li><b>微信 OpenID</b>：小程序登录自动获取 · 用于识别你的身份（匿名标识 · 非手机号）</li>
+            <li><b>位置信息</b>：仅在你点击「📍 大理」授权后收集 · <b>精度模糊至 500 米</b></li>
+            <li><b>你主动填写的内容</b>：发布的照片、地点、描述、宠物特征等</li>
+            <li><b>站内消息</b>：用于合规审核（关键词过滤 · 不留人工痕迹）</li>
+            <li><b>行为统计</b>：你的接力数据（线索数、私聊数、分享数 · OpenID 去重统计）</li>
+          </ul>
+        </div>
+
+        <div class="legal-section">
+          <h3>2. 我们不收集什么</h3>
+          <ul>
+            <li>你的真实姓名 / 身份证号</li>
+            <li>你的手机号（MVP 阶段完全不收集）</li>
+            <li>你的微信号 / QQ 号</li>
+            <li>支付信息（本平台无任何付款功能）</li>
+            <li>通讯录、相册（除你主动选择上传的照片）</li>
+          </ul>
+        </div>
+
+        <div class="legal-section">
+          <h3>3. 你的位置如何处理</h3>
+          <ul>
+            <li>默认不收集 · 仅在你授权后获取</li>
+            <li>精度<b>模糊至 500 米</b>（符合合规要求）</li>
+            <li>不向其他用户展示精确位置</li>
+            <li>不向第三方共享</li>
+          </ul>
+          <div class="legal-note">点击「📍 大理」按钮 = 一次性位置授权 · 用于按距离排序 feed 列表 · 你可以在微信设置里随时撤销授权</div>
+        </div>
+
+        <div class="legal-section">
+          <h3>4. 数据怎么用</h3>
+          <ul>
+            <li><b>发布内容</b>：公开展示给其他大理本地用户（你发的内容你知道是公开的）</li>
+            <li><b>位置</b>：用于「附近排序」（feed 列表按距离展示）</li>
+            <li><b>消息</b>：仅你与对方可见 · 合规审核员可应需查看</li>
+            <li><b>接力数据</b>：仅用于「N 人在帮忙找」展示 · 不形成用户画像</li>
+          </ul>
+        </div>
+
+        <div class="legal-section">
+          <h3>5. 第三方共享</h3>
+          <p>我们<b>不向任何第三方共享</b>你的数据，除非：</p>
+          <ul>
+            <li>法律要求（如配合公安调查冒领、诈骗等案件）</li>
+            <li>你主动分享（如转发到微信朋友圈）</li>
+          </ul>
+        </div>
+
+        <div class="legal-section">
+          <h3>6. 你的权利</h3>
+          <ul>
+            <li><b>随时清除</b>所有数据 · 在「我的 → 清除我的数据」</li>
+            <li>清除请求 <b>30 天内完成</b>（合规冷却期 · 期内可撤销）</li>
+            <li>清除后：所有发布内容、聊天记录、位置数据均被删除</li>
+            <li>查询、更正：联系客服或在「我的 → 意见反馈」</li>
+          </ul>
+        </div>
+
+        <div class="legal-section">
+          <h3>7. 数据保留期</h3>
+          <ul>
+            <li>进行中的帖子：保留至关闭（标记归还后 90 天自动归档）</li>
+            <li>已归还 / 已找回：保留 12 个月（用于争议追溯）</li>
+            <li>争议申诉证据：保留 6 个月</li>
+            <li>聊天记录：保留 90 天 · 合规审核后销毁</li>
+            <li>位置授权状态：你可随时在微信中撤销</li>
+          </ul>
+        </div>
+
+        <div class="legal-section">
+          <h3>8. 数据安全</h3>
+          <p>所有数据存储于腾讯云（CloudBase），通过 HTTPS 加密传输。我们采用最少权限原则限制数据访问，定期进行安全审计。</p>
+        </div>
+
+        <div class="legal-section">
+          <h3>9. 未成年人保护</h3>
+          <p>本平台不主动收集 14 岁以下用户的个人信息。如发现未成年人发布内容，平台将通过站内通知确认并视情况删除。</p>
+        </div>
+
+        <div class="legal-section">
+          <h3>10. 政策变更</h3>
+          <p>本政策变更将通过小程序内通知告知你。重大变更可能要求你重新授权。</p>
+        </div>
+
+        <div class="legal-footer">
+          适用《中华人民共和国个人信息保护法》<br>
+          有任何疑问请通过「我的 → 联系客服」反馈
+        </div>
+      </div>
     </div>
 
     <!-- ===== 意见反馈页 ===== -->
