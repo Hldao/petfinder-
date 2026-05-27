@@ -2950,7 +2950,7 @@
 
       <div class="chat-input-bar">
         <div class="chat-attach" onclick="alert('📷 选择照片\n（小程序会调用 wx.chooseImage）')">📷</div>
-        <div class="chat-attach" onclick="alert('📍 发送位置\n（小程序会调用 wx.chooseLocation）')">📍</div>
+        <div class="chat-attach" onclick="sendLocation()">📍</div>
         <input type="text" class="chat-input" id="chat-input" placeholder="输入消息..." onkeydown="if(event.key==='Enter')sendMessage()">
         <div class="chat-attach chat-send" onclick="sendMessage()">↑</div>
       </div>
@@ -5740,6 +5740,24 @@
   function hideMeetHint() {
     document.getElementById('meet-hint').classList.remove('show');
     clearTimeout(_meetHintTimer);
+  }
+
+  function sendLocation() {
+    const msgsArea = document.querySelector('[data-screen="chat"] .chat-msgs');
+    if (msgsArea) {
+      const div = document.createElement('div');
+      div.className = 'chat-msg me';
+      div.innerHTML = `
+        <div class="chat-avatar" style="background:var(--apricot-soft)">😊</div>
+        <div class="chat-bubble">📍 大理古城北门广场<br><span style="font-size:11px;color:var(--ink-4)">[位置] 点击查看地图</span></div>
+      `;
+      msgsArea.appendChild(div);
+      msgsArea.scrollTop = msgsArea.scrollHeight;
+    }
+    const el = document.getElementById('meet-hint');
+    el.classList.add('show');
+    clearTimeout(_meetHintTimer);
+    _meetHintTimer = setTimeout(hideMeetHint, 10000);
   }
 
   /* ============== 留一条公开线索（v10 r17）==============
