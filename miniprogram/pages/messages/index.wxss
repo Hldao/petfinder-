@@ -1,23 +1,84 @@
-.page { min-height: 100vh; background: var(--bg); padding-bottom: calc(140rpx + env(safe-area-inset-bottom)); }
-.title-bar { font-size: 36rpx; font-weight: 800; color: var(--ink-1); padding: 36rpx 32rpx 16rpx; }
+.page {
+  min-height: 100vh;
+  background: var(--bg);
+  padding-bottom: calc(140rpx + env(safe-area-inset-bottom));
+}
 
-.chat-list { padding: 0 24rpx; display: flex; flex-direction: column; gap: 16rpx; }
-.chat-row {
+.title-bar {
+  font-size: 36rpx; font-weight: 800; color: var(--ink-1);
+  padding: 36rpx 32rpx 16rpx;
+}
+
+/* Tab 栏 */
+.tab-bar {
+  display: flex; gap: 0;
+  padding: 0 24rpx;
+  border-bottom: 1rpx solid var(--divider-soft);
+  margin-bottom: 16rpx;
+}
+.tab {
+  padding: 16rpx 28rpx; font-size: 26rpx; color: var(--ink-3);
+  border-bottom: 3rpx solid transparent; margin-bottom: -1rpx;
+  transition: color 0.2s;
+}
+.tab.active { color: var(--mint-deep); font-weight: 700; border-bottom-color: var(--mint-deep); }
+
+/* 消息列表 */
+.msg-list { padding: 0 24rpx; display: flex; flex-direction: column; gap: 4rpx; }
+
+.msg-row {
   display: flex; gap: 20rpx; align-items: center;
-  background: var(--surface); border-radius: var(--radius-md); padding: 22rpx 24rpx;
+  background: var(--surface); border-radius: var(--radius-md);
+  padding: 22rpx 24rpx;
 }
-.avatar {
+
+/* 头像 */
+.msg-avatar {
   width: 84rpx; height: 84rpx; border-radius: 24rpx; flex-shrink: 0;
-  background: var(--apricot-soft); display: flex; align-items: center; justify-content: center;
-  font-size: 40rpx;
+  background: var(--apricot-soft);
+  display: flex; align-items: center; justify-content: center; font-size: 38rpx;
 }
-.avatar.sys { background: var(--bg-deeper); color: var(--ink-3); font-size: 30rpx; }
-.body { flex: 1; min-width: 0; }
-.row1 { display: flex; align-items: baseline; gap: 12rpx; }
-.peer { font-size: 28rpx; font-weight: 700; color: var(--ink-1); }
-.about { font-size: 20rpx; color: var(--mint-deep); background: var(--mint-soft); padding: 2rpx 12rpx; border-radius: var(--radius-pill); }
-.time { font-size: 21rpx; color: var(--ink-4); margin-left: auto; }
-.preview {
+.msg-avatar.orange { background: #FFE8D6; }
+.msg-avatar.blue   { background: #D6E8FF; }
+.msg-avatar.mint   { background: var(--mint-soft); }
+.msg-avatar.cream  { background: #FFF3DC; }
+.msg-avatar.sys    { background: var(--bg-deeper); font-size: 30rpx; color: var(--ink-3); }
+
+/* 正文 */
+.msg-body { flex: 1; min-width: 0; }
+
+.msg-row-head { display: flex; align-items: center; gap: 10rpx; }
+.msg-name { font-size: 28rpx; font-weight: 700; color: var(--ink-1); }
+.mp-tag {
+  font-size: 18rpx; color: var(--mint-deep); background: var(--mint-soft);
+  padding: 2rpx 12rpx; border-radius: var(--radius-pill);
+}
+.msg-time { font-size: 21rpx; color: var(--ink-4); margin-left: auto; flex-shrink: 0; }
+
+.msg-preview {
   font-size: 25rpx; color: var(--ink-3); margin-top: 6rpx;
   overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+
+.msg-context {
+  font-size: 20rpx; color: var(--ink-4); margin-top: 6rpx;
+}
+.msg-context.reply {
+  color: var(--mint-deep); background: var(--mint-soft);
+  display: inline-block; padding: 2rpx 12rpx; border-radius: var(--radius-pill);
+}
+
+/* 未读徽标 */
+.msg-unread {
+  min-width: 36rpx; height: 36rpx; border-radius: 18rpx;
+  background: var(--apricot); color: #fff;
+  font-size: 20rpx; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+  padding: 0 8rpx; flex-shrink: 0;
+}
+
+/* 空状态 */
+.empty {
+  text-align: center; color: var(--ink-4); font-size: 26rpx;
+  padding: 80rpx 0;
 }

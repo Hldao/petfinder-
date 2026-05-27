@@ -1,16 +1,53 @@
 <view class="page">
   <view class="title-bar">消息</view>
-  <view class="chat-list">
-    <view wx:for="{{chats}}" wx:key="id" class="chat-row" data-c="{{item}}" bindtap="openChat">
-      <view class="avatar {{item.system ? 'sys' : ''}}">{{item.avatar}}</view>
-      <view class="body">
-        <view class="row1">
-          <text class="peer">{{item.peerName}}</text>
-          <text wx:if="{{item.petName}}" class="about">关于 {{item.petName}}</text>
-          <text class="time">{{item.lastTime}}</text>
+
+  <!-- Tab 栏 -->
+  <view class="tab-bar">
+    <view
+      class="tab {{currentTab === 'all' ? 'active' : ''}}"
+      data-tab="all"
+      bindtap="switchTab"
+    >全部</view>
+    <view
+      class="tab {{currentTab === 'replies' ? 'active' : ''}}"
+      data-tab="replies"
+      bindtap="switchTab"
+    >帖子回复</view>
+    <view
+      class="tab {{currentTab === 'dm' ? 'active' : ''}}"
+      data-tab="dm"
+      bindtap="switchTab"
+    >私信</view>
+  </view>
+
+  <!-- 消息列表 -->
+  <view class="msg-list">
+    <view
+      wx:for="{{displayMessages}}"
+      wx:key="id"
+      class="msg-row"
+      data-msg="{{item}}"
+      bindtap="openMsg"
+    >
+      <!-- 头像 -->
+      <view class="msg-avatar {{item.avatarStyle}}">{{item.avatar}}</view>
+
+      <!-- 正文 -->
+      <view class="msg-body">
+        <view class="msg-row-head">
+          <text class="msg-name">{{item.peerName}}</text>
+          <text wx:if="{{item.mpTag}}" class="mp-tag">服务号</text>
+          <text class="msg-time">{{item.lastTime}}</text>
         </view>
-        <view class="preview">{{item.lastMsg}}</view>
+        <view class="msg-preview">{{item.lastMsg}}</view>
+        <view class="msg-context {{item.type === 'reply' ? 'reply' : ''}}">{{item.context}}</view>
       </view>
+
+      <!-- 未读徽标 -->
+      <view wx:if="{{item.unread > 0}}" class="msg-unread">{{item.unread}}</view>
     </view>
+
+    <!-- 空状态 -->
+    <view wx:if="{{displayMessages.length === 0}}" class="empty">暂无消息</view>
   </view>
 </view>
