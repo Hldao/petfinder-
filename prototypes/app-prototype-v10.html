@@ -4416,7 +4416,7 @@
       <div class="pc-footer">
         ${d._isMine ? '<span class="pc-mine">✏ 我发布的</span>' : ''}
         <div class="pc-actions">
-          <span class="pc-action">🤝 ${d.helpers} 接力</span>
+          <span class="pc-action">${helpersText(d)}</span>
           <span class="pc-action share" onclick="event.stopPropagation();openShare(${d.id})">⤴ 转发</span>
         </div>
       </div>
@@ -4555,6 +4555,16 @@
     return d.breed || '';
   }
 
+  // v10 r41 · 接力数文案状态化 · 替代单词「N 接力」（首次用户认知成本高）
+  // 失主刷自己帖 / 路人浏览 / 已结束帖 三种状态各有适合的表达
+  function helpersText(d) {
+    const n = d.helpers || 0;
+    if (d.expired) return `🤝 ${n} 人帮过`;
+    if (d.status === 'lost') return `🤝 ${n} 人在接力寻找`;
+    if (d.status === 'found') return `🤝 ${n} 人在帮忙找主人`;
+    return `🤝 ${n} 人接力`;
+  }
+
   // 社区温暖插卡
   const COMMUNITY_MOMENTS = [
     { ic:'🤝', text:'刚刚，有 3 人转发了古城的寻宠帖', sub:'大家都在帮忙找，你也可以' },
@@ -4652,7 +4662,7 @@
         <div class="pc-footer">
           ${d._isMine ? '<span class="pc-mine">✏ 我发布的</span>' : ''}
           <div class="pc-actions">
-            <span class="pc-action">🤝 ${d.helpers} 接力</span>
+            <span class="pc-action">${helpersText(d)}</span>
             ${effStatus === 'lost' && !d.expired && !d._isMine ? `<span class="pc-action sighting" onclick="event.stopPropagation();openSightingSheet(${d.id},'${d.name}')">👁 看到了</span>` : ''}
             <span class="pc-action share" onclick="event.stopPropagation();openShare(${d.id})">⤴ 转发</span>
           </div>
@@ -6196,7 +6206,7 @@
           </div>
           <div class="pc-footer">
             <div class="pc-actions">
-              <span class="pc-action">🤝 ${d.helpers} 接力</span>
+              <span class="pc-action">${helpersText(d)}</span>
               <span class="pc-action share" onclick="event.stopPropagation();openShare(${d.id})">⤴ 转发</span>
             </div>
           </div>
