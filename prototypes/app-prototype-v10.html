@@ -911,22 +911,18 @@
     }
     .success-title { font-size: 24px; font-weight: 700; letter-spacing: -0.005em; margin-bottom: 8px; }
     .success-sub { font-size: 13px; color: var(--ink-3); line-height: 1.7; padding: 0 24px; }
-    .reward-card {
-      margin: 22px 18px 14px;
-      background: linear-gradient(135deg, var(--apricot) 0%, #FF6B35 100%);
-      color: white; border-radius: var(--radius-md);
-      padding: 18px 20px; position: relative; overflow: hidden;
-    }
-    .reward-card::before { content: '🐾'; position: absolute; bottom: -22px; right: -10px; font-size: 110px; opacity: 0.15; line-height: 1; }
-    .reward-label { font-size: 11px; font-family: var(--font-en); font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; opacity: 0.92; }
-    .reward-value { font-family: var(--font-en); font-size: 38px; font-weight: 800; letter-spacing: 0.02em; margin: 6px 0 6px; line-height: 1; font-style: italic; }
-    .reward-detail { font-size: 12px; opacity: 0.95; line-height: 1.55; }
-    .cta-card { margin: 0 18px 10px; background: var(--surface); border-radius: var(--radius-md); padding: 14px; display: flex; gap: 12px; align-items: center; cursor: pointer; box-shadow: var(--shadow-card); }
-    .cta-icon { width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; }
-    .cta-icon.apricot { background: var(--apricot-soft); color: var(--apricot-deep); }
-    .cta-icon.honey { background: var(--honey-soft); color: var(--honey-deep); }
-    .cta-title { font-size: 14px; font-weight: 700; }
-    .cta-sub { font-size: 11px; color: var(--ink-3); margin-top: 2px; }
+    /* v10 r45 · 接力数据条 · 唯一真实数据展示（取代之前的 3 项 dashboard）*/
+    .reunion-helpers { margin: 18px 16px 14px; padding: 16px 18px; background: var(--apricot-soft); border-radius: var(--radius-md); display: flex; align-items: center; gap: 10px; justify-content: center; }
+    .reunion-helpers .rh-emoji { font-size: 22px; }
+    .reunion-helpers .rh-text { font-size: 14.5px; color: var(--apricot-deep); font-weight: 600; }
+    .reunion-helpers .rh-text b { font-family: var(--font-en); font-size: 18px; font-weight: 800; margin: 0 2px; }
+    /* v10 r45 · 感谢卡（合并 r42 已有的 sendThankNote）· 唯一 CTA · 不强行"自动致谢" */
+    .reunion-thank-card { margin: 0 16px 12px; background: var(--surface); border-radius: var(--radius-md); padding: 14px 16px; display: flex; align-items: center; gap: 12px; cursor: pointer; box-shadow: var(--shadow-card); }
+    .reunion-thank-card .rtc-icon { width: 40px; height: 40px; border-radius: 12px; background: var(--apricot-soft); color: var(--apricot-deep); display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
+    .reunion-thank-card .rtc-body { flex: 1; min-width: 0; }
+    .reunion-thank-card .rtc-title { font-size: 14px; font-weight: 700; color: var(--ink-1); }
+    .reunion-thank-card .rtc-sub { font-size: 11.5px; color: var(--ink-3); margin-top: 3px; line-height: 1.5; }
+    .reunion-thank-card .rtc-arrow { color: var(--ink-4); font-size: 16px; }
 
     /* Thanks Edit */
     .thanks-scroll { flex: 1; overflow-y: auto; padding: 14px 16px 110px; }
@@ -2253,12 +2249,7 @@
     .sighting-field input,.sighting-field textarea { width:100%; box-sizing:border-box; border:1.5px solid var(--divider); border-radius:10px; padding:10px 12px; font-size:14px; font-family:inherit; background:var(--bg); color:var(--ink-1); outline:none; }
     .sighting-field textarea { height:72px; resize:none; }
     .sighting-field input:focus,.sighting-field textarea:focus { border-color:var(--mint); }
-    /* === 归还仪式感统计 === */
-    .reunion-stats { display:flex; margin:0 16px 14px; background:white; border-radius:14px; overflow:hidden; box-shadow:0 1px 6px rgba(0,0,0,0.07); }
-    .reunion-stat { flex:1; display:flex; flex-direction:column; align-items:center; padding:14px 8px; gap:2px; border-right:1px solid var(--divider); }
-    .reunion-stat:last-child { border-right:none; }
-    .reunion-stat .rs-num { font-size:22px; font-weight:800; color:var(--apricot-deep); }
-    .reunion-stat .rs-label { font-size:11px; color:var(--ink-3); }
+    /* v10 r45 · reunion-stats / reunion-stat 已删（3 项 dashboard 改为单一 helpers 数据条 · § 6.7 情感时刻不数据化）*/
     .reunion-share-card { margin:0 16px 14px; padding:14px; background:var(--apricot-soft); border-radius:14px; text-align:center; cursor:pointer; }
     .reunion-share-card .rsc-title { font-size:14px; font-weight:700; color:var(--apricot-deep); margin-bottom:4px; }
     .reunion-share-card .rsc-sub { font-size:12px; color:#A05020; }
@@ -2756,50 +2747,43 @@
          从 contact-guide 一步到 return-success，流程缩短一屏。 -->
 
     <!-- ===== 屏 8 · Return Success ===== -->
+    <!-- v10 r45 · 重做 return-success：从「成就 dashboard」改造为「温暖庆祝时刻」
+         删除：第 N 次成功归还（反例库 #1 · 负面框架 · § 6.6 视角混乱）
+              有效线索 N（反例库「✓ 有用」badge · 平台对线索打标签）
+              为救助打分（反例库 #9 守护者等级同病 · 善行商品化）
+              一键自动致谢（与 my-posts r42 写感谢信职责重叠 · 改为复用）
+              双 CTA「不致谢就走」+「一键致谢回首页」（违背产品价值观 + 视角混乱）
+         保留：庆祝 hero（视角中性化「ta 顺利回家了」）+ 接力数 + 分享故事
+         合并：感谢动作统一走 sendThankNote（与 my-posts r42 同源）-->
     <div class="screen" data-screen="return-success">
       <div class="success-scroll">
         <div class="success-hero">
           <div class="success-circle"><div class="success-check">✓</div></div>
-          <div class="success-title">小橘子顺利回家了 🎉</div>
-          <div class="success-sub">感谢大理的善意，<br>让这个故事有了温暖的结局。</div>
+          <div class="success-title">ta 顺利回家了 🎉</div>
+          <div class="success-sub">谢谢大理的每一份善意</div>
         </div>
 
-        <div class="reunion-stats">
-          <div class="reunion-stat"><div class="rs-num">3</div><div class="rs-label">走失天数</div></div>
-          <div class="reunion-stat"><div class="rs-num">12</div><div class="rs-label">爱心接力</div></div>
-          <div class="reunion-stat"><div class="rs-num">4</div><div class="rs-label">有效线索</div></div>
+        <div class="reunion-helpers">
+          <span class="rh-emoji">🤝</span>
+          <span class="rh-text"><b>12</b> 位邻居一起接力寻找</span>
         </div>
 
-        <div class="reunion-share-card" onclick="alert('📤 生成归来故事卡\n\n「小橘子走失 3 天后，在大理 12 位邻居的帮助下回家了 🏠」\n\n分享给朋友，让更多人看到大理的温暖。')">
-          <div class="rsc-title">📤 分享「小橘子的归来故事」</div>
-          <div class="rsc-sub">让更多人看到大理社区的温暖 · 吸引更多守护者</div>
-        </div>
-
-        <div class="reward-card">
-          <div class="reward-label">致 · 客栈老板娘</div>
-          <div class="reward-value" style="font-size:24px;font-style:normal">第 3 次成功归还 ✓</div>
-          <div class="reward-detail">谢谢你帮 ta 回家 · 大理因为你变得更温暖 💛</div>
-        </div>
-        <div class="cta-card" onclick="alert('🙏 感谢已自动发送\n\n所有提供线索的人 + 拾主都会收到「失主感谢您」的通知。')">
-          <div class="cta-icon apricot">🙏</div>
-          <div style="flex:1">
-            <div class="cta-title">向参与的人致谢</div>
-            <div class="cta-sub">一键通知所有线索提供者 + 拾主</div>
+        <div class="reunion-thank-card" onclick="sendThankNote()">
+          <div class="rtc-icon">🙏</div>
+          <div class="rtc-body">
+            <div class="rtc-title">写一句话谢谢 ta 们</div>
+            <div class="rtc-sub">站内信送达 · 你的话比平台话术真诚</div>
           </div>
-          <div style="color:var(--ink-4);font-size:14px">›</div>
+          <div class="rtc-arrow">›</div>
         </div>
-        <div class="cta-card" onclick="alert('⭐ 感谢评价\n\n帮我们改进流程')">
-          <div class="cta-icon honey">⭐</div>
-          <div style="flex:1">
-            <div class="cta-title">为这次救助打分</div>
-            <div class="cta-sub">帮我们改进流程</div>
-          </div>
-          <div style="color:var(--ink-4);font-size:14px">›</div>
+
+        <div class="reunion-share-card" onclick="shareReunionStory()">
+          <div class="rsc-title">📤 分享 · 让更多人看到大理的温暖</div>
+          <div class="rsc-sub">这份回家的故事可能正鼓励另一个失主</div>
         </div>
       </div>
       <div class="action-bar">
-        <div class="btn-secondary" onclick="showScreen('feed', true)">回首页</div>
-        <div class="btn-primary" onclick="alert('🙏 已向所有参与者发送感谢通知');showScreen('feed', true)">🙏 一键致谢 · 回首页</div>
+        <div class="btn-primary" onclick="showScreen('feed', true)" style="flex:1">回首页</div>
       </div>
     </div>
 
@@ -4438,6 +4422,11 @@
   // v10 r43 · 关于弹窗（替代 r9 之前没 onclick 的死按钮）
   function showAbout() {
     alert('🐾 寻宠 · 大理\n\n版本：v1.0.0\n社区互助 · 不撮合金钱交易\n\n如有走丢或捡到的宠物，欢迎使用本平台\n大理本地用户互助网络');
+  }
+
+  // v10 r45 · 分享归来故事（视角中性 · 不绑定具体宠物名）
+  function shareReunionStory() {
+    alert('📤 已生成「ta 回家的故事」分享卡\n\n「在大理 12 位邻居的接力帮助下，ta 平安回家了 🏠」\n\n（V2 支持自定义文案 + 转发到微信 / 公众号）');
   }
 
   // v10 r42 · 感谢信 mock · V2 实现完整编辑器
