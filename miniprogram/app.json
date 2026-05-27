@@ -7,7 +7,10 @@
     "pages/detail/index",
     "pages/publish/index",
     "pages/chat/index",
-    "pages/search/index"
+    "pages/search/index",
+    "pages/return-success/index",
+    "pages/my-posts/index",
+    "pages/all-posts/index"
   ],
   "window": {
     "navigationBarBackgroundColor": "#F0E9D8",

@@ -38,7 +38,7 @@ Page({
   data: {
     peerName: '发布者', petName: '', emoji: '🐾',
     messages: [], input: '', quick: [], scrollId: '',
-    cid: '',
+    cid: '', pid: '',
   },
 
   onLoad(options) {
@@ -49,7 +49,7 @@ Page({
     const cid = options.cid || '';
     const messages = SEED_MSGS[cid] ? SEED_MSGS[cid].slice() : [];
     this.setData({
-      peerName, petName, emoji, cid,
+      peerName, petName, emoji, cid, pid: options.pid || '',
       quick: QUICK[role], messages,
     });
     wx.setNavigationBarTitle({ title: peerName });
@@ -58,6 +58,32 @@ Page({
 
   onInput(e) { this.setData({ input: e.detail.value }); },
   pickQuick(e) { this.setData({ input: e.currentTarget.dataset.text }); },
+
+  // ⋯ 菜单（r22：完成归还 + 举报）
+  onMore() {
+    wx.showActionSheet({
+      itemList: ['✓ 完成归还', '⚠ 举报对方'],
+      success: r => {
+        if (r.tapIndex === 0) this.confirmReturn();
+        else if (r.tapIndex === 1) wx.showToast({ title: '举报已记录，将人工核查', icon: 'none' });
+      },
+    });
+  },
+  // 归还闭环：一个按钮 + 24h 冷却（02 §3 · 06 第1条归还极简）· 不依赖对方主动确认
+  confirmReturn() {
+    wx.showModal({
+      title: '确认完成归还？',
+      content: '确认后进入 24 小时确认期（期间可撤回），期满归还完成。这是防冒领的最后一道保障。',
+      confirmText: '确认归还',
+      success: res => {
+        if (!res.confirm) return;
+        const go = () => wx.redirectTo({ url: `/pages/return-success/index?pet=${encodeURIComponent(this.data.petName)}` });
+        if (app.globalData.cloudReady && this.data.pid) {
+          cloud.call('confirmReturn', { postId: this.data.pid }).then(go).catch(go);
+        } else go();
+      },
+    });
+  },
 
   scrollBottom() {
     const n = this.data.messages.length;

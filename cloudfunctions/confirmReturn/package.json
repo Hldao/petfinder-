@@ -1,0 +1,9 @@
+{
+  "name": "confirmReturn",
+  "version": "1.0.0",
+  "description": "确认归还 + 24h 冷却",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3"
+  }
+}

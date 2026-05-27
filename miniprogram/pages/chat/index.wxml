@@ -1,8 +1,9 @@
 <view class="page">
-  <!-- 顶部宠物卡 -->
-  <view wx:if="{{petName}}" class="pet-bar">
+  <!-- 顶部宠物卡 + ⋯ 菜单 -->
+  <view class="pet-bar">
     <text class="pet-emoji">{{emoji}}</text>
-    <text class="pet-name">关于 {{petName}}</text>
+    <text class="pet-name">{{petName ? '关于 ' + petName : '会话'}}</text>
+    <view class="more-btn" bindtap="onMore">⋯</view>
   </view>
 
   <!-- 审核提示条（03 §4.2）-->

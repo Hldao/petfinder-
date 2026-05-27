@@ -1,0 +1,8 @@
+<view class="page">
+  <view wx:if="{{loading}}" class="hint">加载中…</view>
+  <view wx:elif="{{posts.length === 0}}" class="hint">还没有帖子</view>
+  <view wx:else class="list">
+    <view class="meta">共 {{posts.length}} 条</view>
+    <pet-card wx:for="{{posts}}" wx:key="id" post="{{item}}" bindtap="onCardTap" />
+  </view>
+</view>

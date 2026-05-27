@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "全部帖子",
+  "usingComponents": {
+    "pet-card": "/components/pet-card/index"
+  }
+}
