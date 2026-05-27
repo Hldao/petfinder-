@@ -46,3 +46,24 @@
 .empty { text-align: center; color: var(--ink-3); padding: 80rpx 0; font-size: 27rpx; }
 .empty .fe-icon { font-size: 72rpx; margin-bottom: 16rpx; }
 .seed-note { text-align: center; color: var(--ink-4); font-size: 21rpx; padding: 24rpx 0; }
+
+/* 启动 modal 遮罩 */
+.mask {
+  position: fixed; inset: 0; z-index: 200;
+  background: rgba(31,31,31,0.5);
+  display: flex; align-items: center; justify-content: center; padding: 0 56rpx;
+}
+.modal {
+  width: 100%; background: var(--surface); border-radius: var(--radius-lg);
+  padding: 44rpx 40rpx 32rpx;
+}
+.m-title { font-size: 32rpx; font-weight: 800; color: var(--ink-1); text-align: center; }
+.m-body { font-size: 26rpx; color: var(--ink-2); line-height: 1.7; margin: 28rpx 0; }
+.m-item { color: var(--ink-2); margin-top: 8rpx; }
+.m-btn {
+  height: 84rpx; border-radius: var(--radius-pill);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 28rpx; font-weight: 700; margin-top: 16rpx;
+}
+.m-btn.primary { background: var(--apricot); color: #fff; }
+.m-btn.ghost { background: var(--bg); color: var(--ink-3); }

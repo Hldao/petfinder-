@@ -43,4 +43,28 @@
   </view>
 
   <view wx:if="{{fromSeed}}" class="seed-note">本地示例数据（config.js 填好 CLOUD_ENV 后接入云端）</view>
+
+  <!-- 启动隐私协议（首启 · 不可绕过 · 03 §6）-->
+  <view wx:if="{{showPrivacy}}" class="mask">
+    <view class="modal">
+      <view class="m-title">🐾 欢迎来到寻宠·大理</view>
+      <view class="m-body">
+        <view>为了帮 ta 回家，我们会用到：</view>
+        <view class="m-item">📍 位置 · 发布与附近匹配（精度模糊到 500m）</view>
+        <view class="m-item">📷 照片 · 宠物识别（经平台审核）</view>
+        <view class="m-item">💬 聊天内容 · 双方沟通（经审核送达）</view>
+      </view>
+      <view class="m-btn primary" bindtap="agreePrivacy">同意并继续</view>
+    </view>
+  </view>
+
+  <!-- 公众号关注（关一次后不再主动弹 · 06 第 6 条）-->
+  <view wx:if="{{showMp}}" class="mask">
+    <view class="modal">
+      <view class="m-title">📣 关注公众号，推送更及时</view>
+      <view class="m-body"><view>有人留线索 / 匹配到 ta 时，第一时间通知你。</view></view>
+      <view class="m-btn primary" bindtap="followMp">去关注</view>
+      <view class="m-btn ghost" bindtap="dismissMp">稍后再说</view>
+    </view>
+  </view>
 </view>

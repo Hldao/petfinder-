@@ -8,12 +8,34 @@ Page({
     filter: 'all',    // all | lost | found
     loading: true,
     fromSeed: false,  // 是否在用本地 seed（提示开发者）
+    showPrivacy: false, // 启动隐私协议（首启 · 不可绕过）
+    showMp: false,      // 公众号关注 modal（关一次后不再主动弹）
   },
 
   _all: [], // 全量缓存，筛选在本地做
 
   onLoad() {
     this.loadFeed();
+    this.checkOnboarding();
+  },
+
+  // 03 §6 流程：首启隐私 modal → 同意 → 0.25s 公众号 modal
+  checkOnboarding() {
+    if (!wx.getStorageSync('privacy_ok')) this.setData({ showPrivacy: true });
+    else if (!wx.getStorageSync('mp_ok')) this.setData({ showMp: true });
+  },
+  agreePrivacy() {
+    wx.setStorageSync('privacy_ok', 1);
+    this.setData({ showPrivacy: false });
+    if (!wx.getStorageSync('mp_ok')) setTimeout(() => this.setData({ showMp: true }), 250);
+  },
+  dismissMp() {
+    wx.setStorageSync('mp_ok', 1);
+    this.setData({ showMp: false });
+  },
+  followMp() {
+    wx.showToast({ title: '公众号关联待配置', icon: 'none' });
+    this.dismissMp();
   },
 
   onShow() {
