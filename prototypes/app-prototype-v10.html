@@ -4479,6 +4479,12 @@
     }, 280);
   }
 
+  // v10 r57 · 往期成功案例点击 · 展示真实故事（替代之前"占位 alert"死按钮）
+  // archive-card 是首页底部「希望叙事」关键入口 · 死按钮让叙事链条断裂
+  function showArchiveStory(c) {
+    alert('🎉 ' + c.name + ' 的回家故事\n\n' + c.story + '\n\n📍 ' + c.loc + ' · ' + c.helpers + ' 人接力 · ' + c.days + ' 天找回 · ' + c.daysAgo + ' 天前');
+  }
+
   // v10 r43 · 关于弹窗（替代 r9 之前没 onclick 的死按钮）
   function showAbout() {
     alert('🐾 寻宠 · 大理\n\n版本：v1.0.0\n社区互助 · 不撮合金钱交易\n\n如有走丢或捡到的宠物，欢迎使用本平台\n大理本地用户互助网络');
@@ -4768,7 +4774,7 @@
     const container = document.getElementById('archive-list');
     if (!container) return;
     container.innerHTML = ARCHIVED_CASES.map(c => `
-      <div class="archive-card" onclick="alert('查看详情：${c.name} 找回故事\\n（暂跳转占位）')">
+      <div class="archive-card" onclick="showArchiveStory(${JSON.stringify(c).replace(/"/g, '&quot;')})">
         <div class="ac-photo ${c.photoClass}">
           <span>${c.emoji}</span>
           <div class="check">✓</div>
@@ -5800,10 +5806,12 @@
     if (timeText.includes('请选择')) { alert('⚠ 请选择时间'); return; }
 
     const desc = document.getElementById('publish-desc').value.trim();
-    if (desc.length < 10) { alert('⚠ 描述至少 10 字\n详细的描述能帮助匹配成功率提高 3 倍'); return; }
+    if (desc.length < 10) { alert('⚠ 描述至少 10 字\n详细的描述更容易帮 ta 回家'); return; }
 
+    // v10 r57 · 发布后跳 my-posts（让用户立即看到自己的帖在"进行中"）
+    // 之前跳 feed · 但内容审核 1 分钟 · feed 上没自己的帖 · 用户「我刚发的去哪了」情绪空窗
     alert('✅ 发布成功！\n\n内容已进入审核队列（约 1 分钟）\n通过后将出现在「附近的小朋友」');
-    showScreen('feed', true);
+    showScreen('my-posts');
   }
 
   /* ============== 举报 ============== */
