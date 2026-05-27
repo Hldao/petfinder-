@@ -1012,9 +1012,21 @@
       border-radius: var(--radius-lg);
       box-shadow: var(--shadow-card);
       cursor: pointer;
-      transition: transform 0.15s, box-shadow 0.15s;
+      transition: transform 0.15s, box-shadow 0.15s, opacity 0.2s;
+      position: relative;
     }
     .msg-row:active { transform: scale(0.99); }
+    .msg-row.blocked { opacity: 0.4; pointer-events: none; }
+    .msg-row.blocked::after { content: '已拉黑'; position: absolute; right: 14px; top: 50%; transform: translateY(-50%); font-size: 11px; color: var(--ink-4); background: var(--bg); padding: 2px 8px; border-radius: var(--radius-pill); }
+    /* Toast 轻提示 */
+    .toast {
+      position: absolute; bottom: 90px; left: 50%; transform: translateX(-50%) translateY(8px);
+      background: rgba(31,31,31,0.82); color: #fff;
+      font-size: 13px; padding: 8px 18px; border-radius: var(--radius-pill);
+      white-space: nowrap; opacity: 0; pointer-events: none;
+      transition: opacity 0.2s, transform 0.2s; z-index: 500;
+    }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
     .msg-avatar { width: 46px; height: 46px; border-radius: 14px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 22px; }
     .msg-avatar.system { background: linear-gradient(135deg, #B0B7BF, #7A828B); color: white; font-weight: 700; font-size: 14px; }
     .msg-body { flex: 1; min-width: 0; }
@@ -6009,7 +6021,28 @@
   /* ============== 举报 / 拉黑用户 ============== */
   let _actionTargetName = '';
   let _msgLongPressTimer = null;
+  // 每条记录：{ name, time, avatar }
   let _blockedUsers = [];
+  let _toastTimer = null;
+
+  function showToast(msg) {
+    const el = document.getElementById('global-toast');
+    if (!el) return;
+    el.textContent = msg;
+    el.classList.add('show');
+    clearTimeout(_toastTimer);
+    _toastTimer = setTimeout(() => el.classList.remove('show'), 2200);
+  }
+
+  function updateBlockedRows() {
+    const blockedNames = _blockedUsers.map(u => u.name);
+    document.querySelectorAll('.msg-row').forEach(row => {
+      const nameEl = row.querySelector('.msg-name');
+      if (!nameEl) return;
+      const rowName = nameEl.textContent.replace(/服务号$/, '').trim();
+      row.classList.toggle('blocked', blockedNames.includes(rowName));
+    });
+  }
 
   function openUserActionSheet(name) {
     _actionTargetName = name || '该用户';
@@ -6028,17 +6061,22 @@
   }
   function submitUserReport(reason) {
     closeUserReportSheet();
-    alert('✓ 已举报「' + _actionTargetName + '」\n\n原因：' + reason + '\n平台审核员将在 24 小时内核查 💛');
+    showToast('已举报，平台将在 24h 内核查 💛');
   }
+
   function confirmBlock() {
     closeUserActionSheet();
-    if (confirm('拉黑「' + _actionTargetName + '」后，对方将无法向你发消息。确定？')) {
-      if (!_blockedUsers.includes(_actionTargetName)) {
-        _blockedUsers.push(_actionTargetName);
-        renderBlocklist();
-      }
-      alert('已拉黑「' + _actionTargetName + '」\n可在「我的 → 黑名单」中解除');
+    const name = _actionTargetName;
+    if (_blockedUsers.some(u => u.name === name)) {
+      showToast('「' + name + '」已在黑名单中');
+      return;
     }
+    const now = new Date();
+    const timeStr = (now.getMonth()+1).toString().padStart(2,'0') + '-' + now.getDate().toString().padStart(2,'0') + ' ' + now.getHours().toString().padStart(2,'0') + ':' + now.getMinutes().toString().padStart(2,'0');
+    _blockedUsers.push({ name, time: timeStr, avatar: '🚫' });
+    renderBlocklist();
+    updateBlockedRows();
+    showToast('已拉黑「' + name + '」');
   }
 
   function renderBlocklist() {
@@ -6050,18 +6088,22 @@
       el.innerHTML = '<div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;color:var(--ink-4);padding-bottom:60px"><div style="font-size:40px;opacity:0.3">🚫</div><div style="font-size:13.5px">黑名单为空</div></div>';
       return;
     }
-    el.innerHTML = _blockedUsers.map(name => `
+    el.innerHTML = _blockedUsers.map(u => `
       <div style="display:flex;align-items:center;gap:12px;background:var(--surface);border-radius:var(--radius-md);box-shadow:var(--shadow-card);padding:13px 15px">
-        <div style="width:38px;height:38px;border-radius:50%;background:var(--bg);display:flex;align-items:center;justify-content:center;font-size:16px;color:var(--ink-3);flex-shrink:0">🚫</div>
-        <div style="flex:1;font-size:14px;font-weight:600;color:var(--ink-2)">${name}</div>
-        <div onclick="unblockUser('${name}')" style="font-size:12.5px;font-weight:700;color:var(--apricot-deep);padding:6px 14px;border-radius:var(--radius-pill);border:1.5px solid var(--apricot);cursor:pointer;white-space:nowrap">解除拉黑</div>
+        <div style="width:38px;height:38px;border-radius:50%;background:var(--bg);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0">${u.avatar}</div>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:14px;font-weight:600;color:var(--ink-2)">${u.name}</div>
+          <div style="font-size:11.5px;color:var(--ink-4);margin-top:2px">拉黑于 ${u.time}</div>
+        </div>
+        <div onclick="unblockUser('${u.name}')" style="font-size:12.5px;font-weight:700;color:var(--apricot-deep);padding:6px 14px;border-radius:var(--radius-pill);border:1.5px solid var(--apricot);cursor:pointer;white-space:nowrap">解除</div>
       </div>`).join('');
   }
 
   function unblockUser(name) {
-    if (!confirm('解除对「' + name + '」的拉黑？')) return;
-    _blockedUsers = _blockedUsers.filter(n => n !== name);
+    _blockedUsers = _blockedUsers.filter(u => u.name !== name);
     renderBlocklist();
+    updateBlockedRows();
+    showToast('已解除对「' + name + '」的拉黑');
   }
 
   /* 消息列表长按 */
@@ -6334,6 +6376,7 @@
   showScreen = function(...args) {
     _origShowScreen(...args);
     if (args[0] === 'feedback') renderFeedbackList();
+    if (args[0] === 'blocklist') renderBlocklist();
   };
 </script>
 
