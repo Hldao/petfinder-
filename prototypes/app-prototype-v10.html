@@ -136,15 +136,7 @@
     }
     .city-tag.loading .pin { animation: locSpin 0.9s linear infinite; }
     @keyframes locSpin { to { transform: rotate(360deg); } }
-    /* v10 r36 · city-tag 自适应宽度但限最长 · 短地名不留白 / 长地名截断 */
-    #city-name {
-      max-width: 5em;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-      display: inline-block;
-      vertical-align: middle;
-    }
+    /* v10 r37 · city-tag 永远显示「大理」固定文字 · 不再需要宽度限制 */
     .search-pill {
       flex: 1; min-width: 0;     /* min-width:0 让 flex item 可以 shrink */
       height: 36px; background: var(--bg);
@@ -4465,22 +4457,19 @@
   // 城市标签宽度有限 · 地名控制在 5 字以内（超出会触发省略号）
   const _mockLocations = ['古城北门', '三月街', '洋人街', '下关泰安路', '喜洲扎染巷'];
 
+  // v10 r37 · 方案 A 高德模式：city-tag 永远显示「大理」固定宽度
+  // 重新定位的精确位置反馈通过 toast · 不挤压搜索栏布局
   function handleLocationRequest() {
     const tag = document.querySelector('.city-tag');
-    const name = document.getElementById('city-name');
-    if (!tag || !name) return;
+    if (!tag) return;
     tag.classList.add('loading');
-    const prevText = name.textContent;
-    name.textContent = '定位中...';
     const isFirstTime = !_hasLocation;
     setTimeout(() => {
       tag.classList.remove('loading');
-      // 随机抽一个 mock 地标（模拟真实位置变化）
       const loc = _mockLocations[Math.floor(Math.random() * _mockLocations.length)];
-      name.textContent = loc;
       _hasLocation = true;
       showToast(isFirstTime
-        ? '📍 已为你获取附近内容 · 大理 · ' + loc
+        ? '📍 已获取你的位置 · 大理 · ' + loc
         : '📍 位置已刷新 · ' + loc);
     }, isFirstTime ? 1200 : 800);
   }
