@@ -1,0 +1,5 @@
+<view class="stub">
+  <view class="stub-ic">🗺️</view>
+  <view class="stub-title">地图视图</view>
+  <view class="stub-sub">Phase 2 接入腾讯位置服务（pins + 选点）</view>
+</view>

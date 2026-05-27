@@ -1,0 +1,45 @@
+<view class="page">
+  <!-- hero（r44 压缩版 · 非善行值 dashboard）-->
+  <view class="hero">
+    <view class="avatar">客</view>
+    <view class="who">
+      <view class="name">客栈老板娘</view>
+      <view class="handle">大理古城</view>
+    </view>
+  </view>
+
+  <!-- 高频入口大号卡（r44：失主 90% 为看自己的帖）-->
+  <view class="feature-card" bindtap="onMyPosts">
+    <view class="fc-ic">📮</view>
+    <view class="fc-body">
+      <view class="fc-title">我的发布</view>
+      <view class="fc-sub">查看进行中 / 已完成的帖子</view>
+    </view>
+    <view class="fc-arrow">›</view>
+  </view>
+
+  <!-- 通知 -->
+  <view class="menu-label">通知</view>
+  <view class="menu">
+    <view class="menu-row" data-label="关注公众号" bindtap="onMenu"><text>📣 关注公众号 · 推送更及时</text><text class="arrow">›</text></view>
+  </view>
+
+  <!-- 反馈与申诉 -->
+  <view class="menu-label">反馈与申诉</view>
+  <view class="menu">
+    <view class="menu-row" data-label="意见反馈" bindtap="onMenu"><text>💬 意见反馈</text><text class="arrow">›</text></view>
+    <view class="menu-row" data-label="争议申诉" bindtap="onMenu"><text>⚖ 争议申诉</text><text class="arrow">›</text></view>
+    <view class="menu-row" data-label="黑名单" bindtap="onMenu"><text>🚫 黑名单</text><text class="arrow">›</text></view>
+    <view class="menu-row" data-label="联系客服" bindtap="onMenu"><text>🎧 联系客服</text><text class="arrow">›</text></view>
+  </view>
+
+  <!-- 合规与设置 -->
+  <view class="menu-label">合规与设置</view>
+  <view class="menu">
+    <view class="menu-row" data-label="用户协议" bindtap="onMenu"><text>📄 用户协议</text><text class="arrow">›</text></view>
+    <view class="menu-row" data-label="隐私政策" bindtap="onMenu"><text>🔒 隐私政策</text><text class="arrow">›</text></view>
+    <view class="menu-row" data-label="清除我的数据" bindtap="onMenu"><text>🗑 清除我的数据</text><text class="arrow">›</text></view>
+  </view>
+
+  <view class="footer-about">寻宠·大理 v1.0.0 · 公益 / 动物救助</view>
+</view>

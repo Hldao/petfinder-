@@ -1,6 +1,9 @@
 {
   "pages": [
     "pages/feed/index",
+    "pages/map/index",
+    "pages/messages/index",
+    "pages/profile/index",
     "pages/detail/index"
   ],
   "window": {
@@ -9,6 +12,18 @@
     "navigationBarTextStyle": "black",
     "backgroundColor": "#F0E9D8",
     "backgroundTextStyle": "dark"
+  },
+  "tabBar": {
+    "custom": true,
+    "color": "#7A7A7A",
+    "selectedColor": "#E66A38",
+    "backgroundColor": "#FFFFFF",
+    "list": [
+      { "pagePath": "pages/feed/index", "text": "首页" },
+      { "pagePath": "pages/map/index", "text": "地图" },
+      { "pagePath": "pages/messages/index", "text": "消息" },
+      { "pagePath": "pages/profile/index", "text": "我的" }
+    ]
   },
   "style": "v2",
   "sitemapLocation": "sitemap.json",
