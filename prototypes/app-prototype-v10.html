@@ -2166,21 +2166,6 @@
     /* === 顶部情感语轮播 === */
     .fsb-tagline { display:block; font-size:10.5px; color:var(--apricot-deep); font-weight:700; letter-spacing:0.02em; transition:opacity 0.4s ease; }
     .fsb-tagline.fading { opacity:0; }
-    /* === 卡片左滑快捷操作 === */
-    .card-swipe-wrapper { position:relative; border-radius:var(--radius-lg); overflow:hidden; box-shadow:var(--shadow-card); }
-    .card-swipe-wrapper .pet-card { box-shadow:none; border-radius:0; position:relative; z-index:2; transform:translateX(0); transition:transform 0.26s cubic-bezier(0.25,1,0.5,1); width:100%; }
-    .card-swipe-wrapper.open .pet-card { transform:translateX(-96px); }
-    .swipe-actions { position:absolute; right:0; top:0; bottom:0; width:96px; z-index:1; display:flex; align-items:center; justify-content:center; background:linear-gradient(135deg, var(--honey-soft), var(--apricot-soft)); cursor:pointer; }
-    .swipe-home { display:flex; flex-direction:column; align-items:center; gap:5px; }
-    .swipe-home .sh-icons { position:relative; width:38px; height:38px; display:flex; align-items:center; justify-content:center; }
-    .swipe-home .sh-house { font-size:30px; line-height:1; }
-    .swipe-home .sh-paw { position:absolute; bottom:-4px; right:-8px; }
-    .swipe-home .sh-label { font-size:10.5px; font-weight:700; color:var(--apricot-deep); letter-spacing:0.02em; }
-    /* 右侧滑动图标提示（footer 内） */
-    .swipe-hint-icon { display:flex; align-items:center; margin-left:auto; flex-shrink:0; opacity:0.45; }
-    .swa-btn { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:3px; padding:8px 4px; border-radius:9px; cursor:pointer; background:white; box-shadow:var(--shadow-pill); font-size:10.5px; font-weight:700; color:var(--ink-2); }
-    .swa-btn .swa-ic { font-size:18px; line-height:1.2; }
-    .swa-btn:active { opacity:0.7; }
     /* === 距离分组标题 === */
     .dist-group-header { display:flex; align-items:center; gap:8px; padding:12px 0 4px; }
     .dgh-label { font-size:11px; font-weight:700; color:var(--ink-3); white-space:nowrap; letter-spacing:0.4px; }
@@ -4572,38 +4557,7 @@
       ? `<div class="overdue-badge">${isLongterm ? '⚠ 超3天' : '⚠ 超24h'}</div>` : '';
     const emoTime = formatEmotionalTime(d);
     const emoHtml = emoTime ? `<div class="emotional-time${isLongterm ? ' longterm' : ''}">${emoTime}</div>` : '';
-    const isCat = /🐱|🐈/.test(d.emoji);
-    const isDog = /🐶|🐕|🦮/.test(d.emoji);
-    const pawColor = effStatus === 'lost' ? '#FF8552' : effStatus === 'found' ? '#5BB89F' : '#B0AC9E';
-    const catPaw = `<svg width="16" height="16" viewBox="0 0 20 22" fill="${pawColor}" xmlns="http://www.w3.org/2000/svg">
-      <ellipse cx="10" cy="16.5" rx="5.2" ry="4.2"/>
-      <ellipse cx="3.8" cy="10.5" rx="2" ry="2.6"/>
-      <ellipse cx="7.8" cy="8.2" rx="2" ry="2.6"/>
-      <ellipse cx="12.2" cy="8.2" rx="2" ry="2.6"/>
-      <ellipse cx="16.2" cy="10.5" rx="2" ry="2.6"/>
-    </svg>`;
-    const dogPaw = `<svg width="16" height="16" viewBox="0 0 20 22" fill="${pawColor}" xmlns="http://www.w3.org/2000/svg">
-      <ellipse cx="10" cy="16" rx="6" ry="4.8"/>
-      <circle cx="3.5" cy="10" r="2.6"/>
-      <circle cx="8" cy="7.8" r="2.6"/>
-      <circle cx="12" cy="7.8" r="2.6"/>
-      <circle cx="16.5" cy="10" r="2.6"/>
-    </svg>`;
-    const pawSvg = isCat ? catPaw : isDog ? dogPaw : catPaw;
-    const smallPaw = isCat
-      ? `<svg width="18" height="18" viewBox="0 0 20 22" fill="${pawColor}" xmlns="http://www.w3.org/2000/svg"><ellipse cx="10" cy="16.5" rx="5.2" ry="4.2"/><ellipse cx="3.8" cy="10.5" rx="2" ry="2.6"/><ellipse cx="7.8" cy="8.2" rx="2" ry="2.6"/><ellipse cx="12.2" cy="8.2" rx="2" ry="2.6"/><ellipse cx="16.2" cy="10.5" rx="2" ry="2.6"/></svg>`
-      : `<svg width="18" height="18" viewBox="0 0 20 22" fill="${pawColor}" xmlns="http://www.w3.org/2000/svg"><ellipse cx="10" cy="16" rx="6" ry="4.8"/><circle cx="3.5" cy="10" r="2.6"/><circle cx="8" cy="7.8" r="2.6"/><circle cx="12" cy="7.8" r="2.6"/><circle cx="16.5" cy="10" r="2.6"/></svg>`;
-    return `<div class="card-swipe-wrapper" ${expiredStyle}>
-      <div class="swipe-actions" onclick="event.stopPropagation();alert('🏠 已登记\n我们会联系发帖人，告知你愿意接 ta 回家 🧡')">
-        <div class="swipe-home">
-          <div class="sh-icons">
-            <span class="sh-house">🏠</span>
-            <span class="sh-paw">${smallPaw}</span>
-          </div>
-          <div class="sh-label">接回家</div>
-        </div>
-      </div>
-      <div class="pet-card${borderClass}${d._isMine ? ' my-card' : ''}" onclick="showDetailScreen(${d.id})">
+    return `<div class="pet-card${borderClass}${d._isMine ? ' my-card' : ''}" ${expiredStyle} onclick="showDetailScreen(${d.id})">
         ${overdueHtml}${hintHtml}
         <div class="pc-body">
           <div class="pc-photo ${d.photoClass}"><span>${d.emoji}</span><div class="status-bubble ${statusCls}">${statusLabel}</div></div>
@@ -4621,10 +4575,8 @@
             ${effStatus === 'lost' && !d.expired && !d._isMine ? `<span class="pc-action sighting" onclick="event.stopPropagation();openSightingSheet(${d.id},'${d.name}')">👁 看到了</span>` : ''}
             <span class="pc-action share" onclick="event.stopPropagation();openShare(${d.id})">⤴ 转发</span>
           </div>
-          <span class="swipe-hint-icon">${pawSvg}<span style="font-size:10px;font-weight:700;margin-left:2px;color:var(--ink-4)">‹</span></span>
         </div>
-      </div>
-    </div>`;
+      </div>`;
   }
 
   function renderFeed() {
@@ -4685,25 +4637,7 @@
       const msgs = [CARD_HINTS[d.id], getNearbyHelpersText(d), OWNER_VOICES[d.id]].filter(Boolean);
       if (msgs.length > 1) el._hintMsgs = msgs;
     });
-    bindSwipeActions();
     bindHintRotation();
-    demoSwipeHint();
-  }
-
-  /* ============== 左滑新手引导 ============== */
-  function demoSwipeHint() {
-    const first = document.querySelector('#feed-list .card-swipe-wrapper');
-    if (!first) return;
-    const card = first.querySelector('.pet-card');
-    if (!card) return;
-    setTimeout(() => {
-      card.style.transition = 'transform 0.45s cubic-bezier(0.25,1,0.5,1)';
-      card.style.transform = 'translateX(-32px)';
-      setTimeout(() => {
-        card.style.transform = 'translateX(0)';
-        setTimeout(() => { card.style.transition = ''; }, 450);
-      }, 1400);
-    }, 3000);
   }
 
   /* ============== 提示条轮播 ============== */
@@ -4723,56 +4657,6 @@
         }, 280);
       }, 8000);
     });
-  }
-
-  /* ============== 卡片左滑交互 ============== */
-  function bindSwipeActions() {
-    document.querySelectorAll('#feed-list .card-swipe-wrapper').forEach(wrapper => {
-      if (wrapper._swipeBound) return;
-      wrapper._swipeBound = true;
-      let sx, sy, swiping = false;
-
-      wrapper.addEventListener('pointerdown', e => {
-        if (e.button && e.button !== 0) return;
-        sx = e.clientX; sy = e.clientY; swiping = false;
-      });
-      wrapper.addEventListener('pointermove', e => {
-        if (sx === undefined) return;
-        const dx = e.clientX - sx, dy = e.clientY - sy;
-        if (!swiping && (Math.abs(dx) > 8 || Math.abs(dy) > 8)) {
-          if (Math.abs(dx) > Math.abs(dy)) {
-            swiping = true;
-            wrapper.setPointerCapture(e.pointerId);
-          } else { sx = undefined; return; }
-        }
-        if (!swiping) return;
-        const card = wrapper.querySelector('.pet-card');
-        if (card) { card.style.transition = 'none'; card.style.transform = `translateX(${Math.max(-96, Math.min(0, e.clientX - sx))}px)`; }
-      });
-      wrapper.addEventListener('pointerup', e => {
-        const card = wrapper.querySelector('.pet-card');
-        if (card) { card.style.transition = ''; card.style.transform = ''; }
-        if (!swiping) { sx = undefined; return; }
-        const dx = e.clientX - sx;
-        sx = undefined; swiping = false;
-        if (dx < -60) { closeAllSwipeCards(); wrapper.classList.add('open'); }
-        else { wrapper.classList.remove('open'); }
-      });
-      wrapper.addEventListener('pointercancel', () => {
-        const card = wrapper.querySelector('.pet-card');
-        if (card) { card.style.transition = ''; card.style.transform = ''; }
-        sx = undefined; swiping = false;
-      });
-      wrapper.addEventListener('click', e => {
-        if (wrapper.classList.contains('open') && !e.target.closest('.swipe-actions')) {
-          e.stopPropagation(); wrapper.classList.remove('open');
-        }
-      }, true);
-    });
-  }
-
-  function closeAllSwipeCards() {
-    document.querySelectorAll('#feed-list .card-swipe-wrapper.open').forEach(w => w.classList.remove('open'));
   }
 
   /* ============== 下拉刷新 ============== */
