@@ -950,7 +950,9 @@
     .toggle-row { background: var(--surface); border-radius: var(--radius-md); padding: 12px 14px; display: flex; align-items: center; justify-content: space-between; box-shadow: var(--shadow-card); }
     .toggle-label { font-size: 13.5px; font-weight: 600; }
     .toggle { width: 40px; height: 22px; background: var(--apricot); border-radius: 11px; position: relative; cursor: pointer; }
-    .toggle::after { content: ''; position: absolute; width: 16px; height: 16px; background: white; border-radius: 50%; top: 3px; right: 3px; }
+    .toggle::after { content: ''; position: absolute; width: 16px; height: 16px; background: white; border-radius: 50%; top: 3px; right: 3px; transition: right 0.15s, left 0.15s; }
+    .toggle.off { background: var(--ink-4); }
+    .toggle.off::after { right: auto; left: 3px; }
 
     /* Map */
     .map-container { flex: 1; position: relative; overflow: hidden;
@@ -3034,6 +3036,44 @@
         <div class="sub-title">黑名单</div>
       </div>
       <div id="blocklist-content" style="flex:1;overflow-y:auto;padding:12px 16px 32px;display:flex;flex-direction:column;gap:10px;"></div>
+    </div>
+
+    <!-- ===== 消息通知设置 ===== -->
+    <div class="screen" data-screen="notif-settings">
+      <div class="sub-header">
+        <div class="back-btn" onclick="goBack()">←</div>
+        <div class="sub-title">消息通知设置</div>
+      </div>
+      <div style="flex:1;overflow-y:auto;padding:16px 16px 32px;display:flex;flex-direction:column;">
+        <div class="menu-section-label">通知类型</div>
+        <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px;">
+          <div class="toggle-row">
+            <div>
+              <div class="toggle-label">私信</div>
+              <div style="font-size:11.5px;color:var(--ink-3);margin-top:2px">有人向你发了私信</div>
+            </div>
+            <div class="toggle" id="notif-dm" onclick="toggleNotif('dm')"></div>
+          </div>
+          <div class="toggle-row">
+            <div>
+              <div class="toggle-label">帖子线索</div>
+              <div style="font-size:11.5px;color:var(--ink-3);margin-top:2px">有人在你的帖子下提供线索</div>
+            </div>
+            <div class="toggle" id="notif-reply" onclick="toggleNotif('reply')"></div>
+          </div>
+          <div class="toggle-row">
+            <div>
+              <div class="toggle-label">归还确认</div>
+              <div style="font-size:11.5px;color:var(--ink-3);margin-top:2px">对方标记了「归还完成」</div>
+            </div>
+            <div class="toggle" id="notif-return" onclick="toggleNotif('return')"></div>
+          </div>
+        </div>
+        <div class="menu-section-label">微信推送</div>
+        <div class="menu-section">
+          <div class="menu-row" onclick="openMPModal()"><span class="menu-icon">📣</span><span class="menu-label">关注公众号</span><span class="menu-meta" style="color:var(--mint-deep)">推送更及时</span><span class="menu-arrow">›</span></div>
+        </div>
+      </div>
     </div>
 
     <!-- ===== 用户协议 · v10 r54 ===== -->
@@ -6359,6 +6399,11 @@
     renderFeedbackList();
     closeFeedbackSheet();
     alert('✅ 反馈已提交，感谢你的建议 💛');
+  }
+
+  function toggleNotif(key) {
+    const el = document.getElementById('notif-' + key);
+    if (el) el.classList.toggle('off');
   }
 
   /* 进入反馈页时渲染列表 */
