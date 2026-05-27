@@ -1,10 +1,20 @@
 const app = getApp();
 const cloud = require('../../utils/cloud.js');
 
-// Quick Reply 角色化（03 §4.3）：拾主联系失主 / 失主回复拾主
+// Quick Reply 角色化（03 §4.3 · 短语措辞同步原型 df7fa34）：短标签显示 / 完整句插入
 const QUICK = {
-  finder: ['📍 我看到了', '📸 我拍到了', '🏠 我先收着 ta', '🕐 约个时间见面', '🙏 谢谢你们'],
-  owner: ['🙏 太感谢了', '🕐 我们约个时间', '❓ 方便视频确认一下吗', '📍 在哪方便见面'],
+  finder: [
+    { label: '📍 看到了', text: '刚在附近看到 ta 了！' },
+    { label: '🏠 我收着', text: 'ta 在我这里，随时可以来取 🐾' },
+    { label: '🕐 约见面', text: '我们约个时间当面确认吧？' },
+    { label: '🙏 谢谢', text: '谢谢你们，辛苦了 🙏' },
+  ],
+  owner: [
+    { label: '📍 马上来', text: '我马上过去！在哪里方便见面？' },
+    { label: '📷 发张照片', text: '能发张照片吗？想先确认一下 🙏' },
+    { label: '🐾 问特征', text: 'ta 有什么特别的地方吗？比如颜色、斑纹、项圈' },
+    { label: '🤝 约见面', text: '我们约个时间当面确认吧？' },
+  ],
 };
 
 // 前端关键词预筛（03 §4.4）· 后端 msgSecCheck 是第二层
@@ -47,7 +57,7 @@ Page({
   },
 
   onInput(e) { this.setData({ input: e.detail.value }); },
-  pickQuick(e) { this.setData({ input: e.currentTarget.dataset.t }); },
+  pickQuick(e) { this.setData({ input: e.currentTarget.dataset.text }); },
 
   scrollBottom() {
     const n = this.data.messages.length;

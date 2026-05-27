@@ -20,7 +20,7 @@
 
   <!-- Quick Reply -->
   <scroll-view scroll-x class="quick-row">
-    <view wx:for="{{quick}}" wx:key="*this" class="quick-chip" data-t="{{item}}" bindtap="pickQuick">{{item}}</view>
+    <view wx:for="{{quick}}" wx:key="label" class="quick-chip" data-text="{{item.text}}" bindtap="pickQuick">{{item.label}}</view>
   </scroll-view>
 
   <!-- 输入栏 -->
