@@ -10,7 +10,9 @@
     "pages/search/index",
     "pages/return-success/index",
     "pages/my-posts/index",
-    "pages/all-posts/index"
+    "pages/all-posts/index",
+    "pages/feedback/index",
+    "pages/blocklist/index"
   ],
   "window": {
     "navigationBarBackgroundColor": "#F0E9D8",

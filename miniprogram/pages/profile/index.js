@@ -10,6 +10,8 @@ Page({
   onMenu(e) {
     const label = e.currentTarget.dataset.label;
     if (label === '清除我的数据') return this.onClearData();
+    if (label === '意见反馈') return wx.navigateTo({ url: '/pages/feedback/index' });
+    if (label === '黑名单') return wx.navigateTo({ url: '/pages/blocklist/index' });
     wx.showToast({ title: label + ' 待接入', icon: 'none' });
   },
   // 03 §6.3 + 06 反例库：小程序无账号概念，是「清除数据」非「注销」· 列明范围 + 30 天冷却

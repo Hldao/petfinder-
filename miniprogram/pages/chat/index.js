@@ -62,12 +62,20 @@ Page({
   // ⋯ 菜单（r22：完成归还 + 举报）
   onMore() {
     wx.showActionSheet({
-      itemList: ['✓ 完成归还', '⚠ 举报对方'],
+      itemList: ['✓ 完成归还', '⚠ 举报对方', '🚫 拉黑此人'],
       success: r => {
         if (r.tapIndex === 0) this.confirmReturn();
         else if (r.tapIndex === 1) wx.showToast({ title: '举报已记录，将人工核查', icon: 'none' });
+        else if (r.tapIndex === 2) this.blockPeer();
       },
     });
+  },
+  blockPeer() {
+    const name = this.data.peerName;
+    const blocked = wx.getStorageSync('blocked') || [];
+    if (!blocked.includes(name)) { blocked.push(name); wx.setStorageSync('blocked', blocked); }
+    wx.showToast({ title: '已拉黑', icon: 'none' });
+    setTimeout(() => wx.navigateBack(), 600);
   },
   // 归还闭环：一个按钮 + 24h 冷却（02 §3 · 06 第1条归还极简）· 不依赖对方主动确认
   confirmReturn() {

@@ -1,0 +1,13 @@
+.page { min-height: 100vh; background: var(--bg); padding: 24rpx 32rpx; }
+.empty { text-align: center; color: var(--ink-3); padding: 120rpx 0; font-size: 27rpx; }
+.empty .fe-icon { font-size: 80rpx; margin-bottom: 16rpx; }
+.list { display: flex; flex-direction: column; gap: 16rpx; }
+.row {
+  display: flex; align-items: center; justify-content: space-between;
+  background: var(--surface); border-radius: var(--radius-md); padding: 24rpx 28rpx;
+}
+.name { font-size: 28rpx; color: var(--ink-1); font-weight: 600; }
+.unblock {
+  font-size: 24rpx; color: var(--apricot-deep); background: var(--apricot-soft);
+  padding: 10rpx 24rpx; border-radius: var(--radius-pill); font-weight: 700;
+}
