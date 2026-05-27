@@ -1271,10 +1271,15 @@
     .mp-tab.active { background: var(--ink-1); color: white; box-shadow: none; }
     .mp-list { flex: 1; overflow-y: auto; padding: 0 16px 30px; }
     .mp-card { background: var(--surface); border-radius: var(--radius-lg); margin-bottom: 10px; overflow: hidden; box-shadow: var(--shadow-card); }
+    /* v10 r42 · 已完成卡用浅薄荷绿渐变作为状态标识 · 不再用 opacity 弱化（成功故事应被庆祝）*/
+    .mp-card-done { background: linear-gradient(135deg, #F4FBF8 0%, white 55%); box-shadow: 0 4px 14px rgba(91,184,159,0.08), 0 0 0 1px rgba(91,184,159,0.08); }
     .mp-actions { display: flex; padding: 10px 14px; border-top: 1px solid var(--divider-soft); gap: 6px; }
     .mp-action { font-size: 12px; padding: 6px 12px; border-radius: var(--radius-pill); background: var(--bg); color: var(--ink-2); cursor: pointer; font-weight: 600; }
     .mp-action.primary { background: var(--apricot); color: white; font-weight: 700; }
     .mp-note { padding: 12px; font-size: 11px; color: var(--ink-4); text-align: center; line-height: 1.55; }
+    /* v10 r42 · helpers 文字 · 替代 dashboard 风格的「👀 N · 💬 N」统计 */
+    .mp-helpers { font-size: 12px; color: var(--apricot-deep); margin-top: 6px; font-weight: 600; }
+    .mp-helpers.done { color: var(--mint-deep); }
 
     /* Dispute */
     /* ===== 意见反馈 ===== */
@@ -3137,13 +3142,12 @@
                 <div class="pc-name-row"><span class="pc-name">橘色短毛猫</span><span class="breed">· ♀ · 成年</span></div>
                 <div class="pc-meta"><span>📍 人民路三月街</span><span class="time">30 min 前</span></div>
                 <div class="pc-desc">在咖啡馆门口蹲了一下午...</div>
-                <div style="font-family:var(--font-en);font-size:10.5px;color:var(--ink-4);margin-top:5px;font-weight:600">👀 47 · 💬 3</div>
+                <div class="mp-helpers">🤝 3 人在帮忙找主人</div>
               </div>
             </div>
             <div class="mp-actions">
-              <div class="mp-action primary" onclick="if(confirm('确认已归还？'))showScreen('return-success')">✓ 标记已归还</div>
-              <div class="mp-action" onclick="showScreen('publish')">编辑</div>
-              <div class="mp-action">分享</div>
+              <div class="mp-action primary" onclick="goToChatForReturnMark()">✓ 标记已归还</div>
+              <div class="mp-action" onclick="event.stopPropagation();openShare(0)">分享</div>
             </div>
           </div>
           <div class="mp-card">
@@ -3153,89 +3157,92 @@
                 <div class="pc-name-row"><span class="pc-name">白色比熊</span><span class="breed">· ♂ · 成年 · 约 5kg</span></div>
                 <div class="pc-meta"><span>📍 下关泰安路</span><span class="time">2 hr 前</span></div>
                 <div class="pc-desc">在小区门口捡到，毛色干净有人养过...</div>
-                <div style="font-family:var(--font-en);font-size:10.5px;color:var(--ink-4);margin-top:5px;font-weight:600">👀 28 · 💬 5 · 招领中</div>
+                <div class="mp-helpers">🤝 5 人在帮忙找主人</div>
               </div>
             </div>
             <div class="mp-actions">
-              <div class="mp-action primary" onclick="if(confirm('确认已归还？'))showScreen('return-success')">✓ 标记已归还</div>
-              <div class="mp-action" onclick="showScreen('publish')">编辑</div>
+              <div class="mp-action primary" onclick="goToChatForReturnMark()">✓ 标记已归还</div>
+              <div class="mp-action" onclick="event.stopPropagation();openShare(2)">分享</div>
             </div>
           </div>
-          <div class="mp-note">🛡 编辑发布内容后，将重新进入审核队列</div>
+          <div class="mp-note">🛡 归还标记需在和对方的聊天里完成（最后一道反冒领防线）</div>
         </div>
 
         <!-- 已完成 -->
         <div id="mp-section-done" style="display:none">
-          <div class="mp-card" style="opacity:0.75">
-            <div class="pc-body" onclick="showScreen('return-success')">
+          <div class="mp-card mp-card-done">
+            <div class="pc-body" onclick="showDetailScreen(1, 'owner')">
               <div class="pc-photo ph-blue"><span>🐱</span><div class="status-bubble" style="background:var(--mint-deep)">已找到</div></div>
               <div class="pc-info">
-                <div class="pc-name-row"><span class="pc-name">胖丁</span><span class="breed">· 英短蓝猫 · ♂</span></div>
+                <div class="pc-name-row"><span class="pc-name">胖丁</span><span class="breed">· ♂ · 英短蓝猫 · 3 岁</span></div>
                 <div class="pc-meta"><span>📍 古城北门</span><span class="time">3 天前结束</span></div>
                 <div class="pc-desc">穿粉色项圈，左耳缺一小块。已成功找回 🎉</div>
-                <div style="font-family:var(--font-en);font-size:10.5px;color:var(--ink-4);margin-top:5px;font-weight:600">👀 312 · 💬 12 · 线索 8 条</div>
+                <div class="mp-helpers done">🤝 12 人帮过 · 谢谢 ta 们</div>
               </div>
             </div>
             <div class="mp-actions">
-              <div class="mp-action" onclick="showScreen('return-success')">查看详情</div>
-              <div class="mp-action" onclick="alert('🙏 已发送一键致谢')">感谢信</div>
+              <div class="mp-action" onclick="showDetailScreen(1, 'owner')">查看详情</div>
+              <div class="mp-action" onclick="sendThankNote()">📩 写封感谢信</div>
             </div>
           </div>
-          <div class="mp-card" style="opacity:0.75">
+          <div class="mp-card mp-card-done">
             <div class="pc-body" onclick="showDetailScreen(5, 'owner')">
               <div class="pc-photo ph-pink"><span>🐱</span><div class="status-bubble" style="background:var(--mint-deep)">已归还</div></div>
               <div class="pc-info">
                 <div class="pc-name-row"><span class="pc-name">蓝眼布偶猫</span><span class="breed">· ♀ · 幼宠</span></div>
                 <div class="pc-meta"><span>📍 人民路民宿区</span><span class="time">1 周前结束</span></div>
                 <div class="pc-desc">蓝眼睛长毛，主人已认领。</div>
-                <div style="font-family:var(--font-en);font-size:10.5px;color:var(--ink-4);margin-top:5px;font-weight:600">👀 156 · 💬 6</div>
+                <div class="mp-helpers done">🤝 6 人帮过 · 谢谢 ta 们</div>
               </div>
             </div>
             <div class="mp-actions">
               <div class="mp-action" onclick="showDetailScreen(5, 'owner')">查看详情</div>
+              <div class="mp-action" onclick="sendThankNote()">📩 写封感谢信</div>
             </div>
           </div>
-          <div class="mp-card" style="opacity:0.75">
+          <div class="mp-card mp-card-done">
             <div class="pc-body" onclick="showDetailScreen(7, 'owner')">
               <div class="pc-photo ph-cream"><span>🐶</span><div class="status-bubble" style="background:var(--mint-deep)">已归还</div></div>
               <div class="pc-info">
                 <div class="pc-name-row"><span class="pc-name">白色比熊串</span><span class="breed">· ? · 估中型</span></div>
                 <div class="pc-meta"><span>📍 喜洲古镇</span><span class="time">2 周前结束</span></div>
                 <div class="pc-desc">在喜洲扎染店门口被发现，主人已来认领。</div>
-                <div style="font-family:var(--font-en);font-size:10.5px;color:var(--ink-4);margin-top:5px;font-weight:600">👀 89 · 💬 4</div>
+                <div class="mp-helpers done">🤝 4 人帮过 · 谢谢 ta 们</div>
               </div>
             </div>
             <div class="mp-actions">
               <div class="mp-action" onclick="showDetailScreen(7, 'owner')">查看详情</div>
+              <div class="mp-action" onclick="sendThankNote()">📩 写封感谢信</div>
             </div>
           </div>
-          <div class="mp-card" style="opacity:0.75">
+          <div class="mp-card mp-card-done">
             <div class="pc-body" onclick="showDetailScreen(8, 'owner')">
               <div class="pc-photo ph-orange"><span>🐱</span><div class="status-bubble" style="background:var(--mint-deep)">已归还</div></div>
               <div class="pc-info">
                 <div class="pc-name-row"><span class="pc-name">橘色短毛猫</span><span class="breed">· ? · 成年 · 体型偏胖</span></div>
                 <div class="pc-meta"><span>📍 叶榆路</span><span class="time">1 个月前结束</span></div>
                 <div class="pc-desc">在饭店后厨发现，主人找来认领了。</div>
-                <div style="font-family:var(--font-en);font-size:10.5px;color:var(--ink-4);margin-top:5px;font-weight:600">👀 63 · 💬 2</div>
+                <div class="mp-helpers done">🤝 2 人帮过 · 谢谢 ta 们</div>
               </div>
             </div>
             <div class="mp-actions">
               <div class="mp-action" onclick="showDetailScreen(8, 'owner')">查看详情</div>
+              <div class="mp-action" onclick="sendThankNote()">📩 写封感谢信</div>
             </div>
           </div>
-          <div class="mp-card" style="opacity:0.75">
+          <div class="mp-card mp-card-done">
             <div class="pc-body" onclick="showDetailScreen(3, 'owner')">
               <div class="pc-photo ph-mint"><span>🐈</span><div class="status-bubble" style="background:var(--mint-deep)">已找到</div></div>
               <div class="pc-info">
-                <div class="pc-name-row"><span class="pc-name">咖啡</span><span class="breed">· 美短 · ♀</span></div>
+                <div class="pc-name-row"><span class="pc-name">咖啡</span><span class="breed">· ♀ · 美短 · 1 岁半</span></div>
                 <div class="pc-meta"><span>📍 洋人街</span><span class="time">2 个月前结束</span></div>
                 <div class="pc-desc">咖啡色虎斑，已在洋人街附近找到 🎉</div>
-                <div style="font-family:var(--font-en);font-size:10.5px;color:var(--ink-4);margin-top:5px;font-weight:600">👀 201 · 💬 8 · 线索 5 条</div>
+                <div class="mp-helpers done">🤝 8 人帮过 · 谢谢 ta 们</div>
               </div>
             </div>
             <div class="mp-actions">
               <div class="mp-action" onclick="showDetailScreen(3, 'owner')">查看详情</div>
-              <div class="mp-action" onclick="alert('🙏 已发送一键致谢')">感谢信</div>
+              <div class="mp-action" onclick="sendThankNote()">📩 写封感谢信</div>
             </div>
           </div>
           <div class="mp-note">共 5 条已完成记录</div>
@@ -4481,6 +4488,25 @@
         ? '📍 已获取你的位置 · 大理 · ' + loc
         : '📍 位置已刷新 · ' + loc);
     }, isFirstTime ? 1200 : 800);
+  }
+
+  // v10 r42 · 从 my-posts 进入 chat 屏并弹开归还菜单
+  // 不在 my-posts 简化标记 · 强制走 chat 完整闭环（24h cooldown + 系统消息 + 撤销）
+  function goToChatForReturnMark() {
+    showScreen('chat');
+    setTimeout(() => {
+      const menu = document.getElementById('chat-menu');
+      if (menu) menu.classList.add('show');
+    }, 280);
+  }
+
+  // v10 r42 · 感谢信 mock · V2 实现完整编辑器
+  function sendThankNote() {
+    const note = prompt('📩 写一句话给提供过线索的好心人\n（站内信送达 · 不强加格式）：',
+      '谢谢你们陪我把 ta 接回家 🙏 大理冬天的暖意从这里来。');
+    if (note && note.trim()) {
+      alert('✅ 感谢信已发送给所有接力过的好心人\n\n（V2 将支持选择对象 · 加照片 · 自定义模板）');
+    }
   }
 
   function switchMpTab(el, section) {
