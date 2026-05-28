@@ -2821,7 +2821,7 @@
           <div class="msg-avatar ph-orange">🐱</div>
           <div class="msg-body">
             <div class="msg-row-head"><span class="msg-name">客栈老板娘</span><span class="msg-time">17:24</span></div>
-            <div class="msg-preview"><span class="msg-prefix">她：</span>好的我现在过来，您能视频先确认一下吗？</div>
+            <div class="msg-preview"><span class="msg-prefix">ta：</span>好的我现在过来，您能视频先确认一下吗？</div>
             <div class="msg-context">关于 · 橘猫 招领</div>
           </div>
           <div class="msg-unread">2</div>
@@ -2830,7 +2830,7 @@
           <div class="msg-avatar ph-blue">🐱</div>
           <div class="msg-body">
             <div class="msg-row-head"><span class="msg-name">陈*</span><span class="msg-time">16:38</span></div>
-            <div class="msg-preview"><span class="msg-prefix">他：</span>下午在洋人街又看到那只猫了，往复兴路跑了</div>
+            <div class="msg-preview"><span class="msg-prefix">ta：</span>下午在洋人街又看到那只猫了，往复兴路跑了</div>
             <div class="msg-context reply">胖丁 寻宠</div>
           </div>
           <div class="msg-unread">1</div>
@@ -2839,7 +2839,7 @@
           <div class="msg-avatar ph-mint">🐶</div>
           <div class="msg-body">
             <div class="msg-row-head"><span class="msg-name">林*</span><span class="msg-time">15:10</span></div>
-            <div class="msg-preview"><span class="msg-prefix">他：</span>这只狗好像是我邻居家的，我帮你问问</div>
+            <div class="msg-preview"><span class="msg-prefix">ta：</span>这只狗好像是我邻居家的，我帮你问问</div>
             <div class="msg-context reply">小白 招领</div>
           </div>
         </div>
@@ -2855,7 +2855,7 @@
           <div class="msg-avatar ph-cream">🐶</div>
           <div class="msg-body">
             <div class="msg-row-head"><span class="msg-name">王*</span><span class="msg-time">05-24</span></div>
-            <div class="msg-preview"><span class="msg-prefix">他：</span>辛苦你了，已经把小黑接回家。回头一定请你喝茶</div>
+            <div class="msg-preview"><span class="msg-prefix">ta：</span>辛苦你了，已经把小黑接回家。回头一定请你喝茶</div>
             <div class="msg-context">关于 · 小黑 已归还</div>
           </div>
         </div>
@@ -2867,7 +2867,7 @@
           <div class="msg-avatar ph-blue">🐱</div>
           <div class="msg-body">
             <div class="msg-row-head"><span class="msg-name">陈*</span><span class="msg-time">16:38</span></div>
-            <div class="msg-preview"><span class="msg-prefix">他：</span>下午在洋人街又看到那只猫了，往复兴路跑了</div>
+            <div class="msg-preview"><span class="msg-prefix">ta：</span>下午在洋人街又看到那只猫了，往复兴路跑了</div>
             <div class="msg-context reply">胖丁 寻宠</div>
           </div>
           <div class="msg-unread">1</div>
@@ -2876,7 +2876,7 @@
           <div class="msg-avatar ph-mint">🐶</div>
           <div class="msg-body">
             <div class="msg-row-head"><span class="msg-name">林*</span><span class="msg-time">15:10</span></div>
-            <div class="msg-preview"><span class="msg-prefix">他：</span>这只狗好像是我邻居家的，我帮你问问</div>
+            <div class="msg-preview"><span class="msg-prefix">ta：</span>这只狗好像是我邻居家的，我帮你问问</div>
             <div class="msg-context reply">小白 招领</div>
           </div>
         </div>
@@ -2897,7 +2897,7 @@
           <div class="msg-avatar ph-orange">🐱</div>
           <div class="msg-body">
             <div class="msg-row-head"><span class="msg-name">客栈老板娘</span><span class="msg-time">17:24</span></div>
-            <div class="msg-preview"><span class="msg-prefix">她：</span>好的我现在过来，您能视频先确认一下吗？</div>
+            <div class="msg-preview"><span class="msg-prefix">ta：</span>好的我现在过来，您能视频先确认一下吗？</div>
             <div class="msg-context">关于 · 橘猫 招领</div>
           </div>
           <div class="msg-unread">2</div>
@@ -2914,7 +2914,7 @@
           <div class="msg-avatar ph-cream">🐶</div>
           <div class="msg-body">
             <div class="msg-row-head"><span class="msg-name">王*</span><span class="msg-time">05-24</span></div>
-            <div class="msg-preview"><span class="msg-prefix">他：</span>辛苦你了，已经把小黑接回家。回头一定请你喝茶</div>
+            <div class="msg-preview"><span class="msg-prefix">ta：</span>辛苦你了，已经把小黑接回家。回头一定请你喝茶</div>
             <div class="msg-context">关于 · 小黑 已归还</div>
           </div>
         </div>
@@ -4679,6 +4679,7 @@
    * 地理服务仍仅限大理 · 不在大理时仍展示大理本地内容
    * ============================================== */
   let _hasLocation = false;
+  let _currentLocation = '';  // v10 r60 · 记录最近一次定位的具体地标 · 给 sendLocation 用
   // mock 街道地标池（用户在大理的可能位置）
   // 城市标签宽度有限 · 地名控制在 5 字以内（超出会触发省略号）
   const _mockLocations = ['古城北门', '三月街', '洋人街', '下关泰安路', '喜洲扎染巷'];
@@ -4694,6 +4695,7 @@
       tag.classList.remove('loading');
       const loc = _mockLocations[Math.floor(Math.random() * _mockLocations.length)];
       _hasLocation = true;
+      _currentLocation = loc;
       showToast(isFirstTime
         ? '📍 已获取你的位置 · 大理 · ' + loc
         : '📍 位置已刷新 · ' + loc);
@@ -5842,14 +5844,25 @@
     clearTimeout(_meetHintTimer);
   }
 
+  // v10 r60 · sendLocation 改用真实当前定位
+  // 优先用 _currentLocation（用户最近一次 city-tag 定位结果）
+  // 未定位时提示授权 · 不再写死 mock 位置（之前是「大理古城北门广场」捏造）
+  // 真实小程序里会调用 wx.chooseLocation 让用户选择 / 确认位置
   function sendLocation() {
+    if (!_hasLocation) {
+      if (confirm('需要先开启位置权限才能发送位置 · 现在开启？')) {
+        handleLocationRequest();
+      }
+      return;
+    }
+    const loc = _currentLocation || '大理本地';
     const msgsArea = document.querySelector('[data-screen="chat"] .chat-msgs');
     if (msgsArea) {
       const div = document.createElement('div');
       div.className = 'chat-msg me';
       div.innerHTML = `
         <div class="chat-avatar" style="background:var(--apricot-soft)">😊</div>
-        <div class="chat-bubble">📍 大理古城北门广场<br><span style="font-size:11px;color:var(--ink-4)">[位置] 点击查看地图</span></div>
+        <div class="chat-bubble">📍 大理 · ${loc}<br><span style="font-size:11px;color:var(--ink-4)">[位置] 点击查看地图</span></div>
       `;
       msgsArea.appendChild(div);
       msgsArea.scrollTop = msgsArea.scrollHeight;
