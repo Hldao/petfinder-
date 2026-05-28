@@ -5347,7 +5347,7 @@
           <div class="pc-photo ${d.photoClass}"><span>${d.emoji}</span><div class="status-bubble ${statusCls}">${statusLabel}</div></div>
           <div class="pc-info">
             <div class="pc-name-row"><span class="pc-name">${d.name}</span><span class="breed">${petMeta(d)}</span></div>
-            <div class="pc-meta"><span class="loc-link" onclick="event.stopPropagation();showOnMapByLoc(${d.id})"><svg class="icon icon-sm"><use href="#i-location"/></svg> ${d.loc} · 距你 ${distanceStr}</span>${timeSpan}</div>
+            <div class="pc-meta"><span class="loc-link" onclick="event.stopPropagation();openMapNavigation('${d.loc}')"><svg class="icon icon-sm"><use href="#i-location"/></svg> ${d.loc} · 距你 ${distanceStr}</span>${timeSpan}</div>
             <div class="pc-desc">${d.desc}</div>
           </div>
         </div>
@@ -5726,6 +5726,15 @@
     showOnMap('pin_' + id);
   }
 
+  // v10 r105 · 位置点击唤起微信内置地图导航（大众点评 / 美团 / 闲鱼详情页同款）
+  // 生产环境：wx.openLocation({ latitude, longitude, name, address, scale: 16 })
+  // - 唤起内嵌腾讯地图 · 自带「导航」按钮（用户可选腾讯/高德/百度跳过去）
+  // - 需 app.json 配 requiredPrivateInfos: ["getLocation"]
+  // - 首次唤起时弹隐私授权（已由 privacy-modal r45 预告）
+  function openMapNavigation(loc) {
+    alert('🗺 调起微信内置地图\n\n目的地：' + loc + '\n\n生产环境：\nwx.openLocation({ latitude, longitude, name, address })\n\n用户可在内嵌地图选择「腾讯/高德/百度」跳出导航');
+  }
+
   function showPinPopup(key, pinEl) {
     const d = pinData[key];
     if (!d) return;
@@ -5799,7 +5808,7 @@
 
     document.getElementById('dyn-dist-main').textContent = '距你 ' + distStr;
     document.getElementById('dyn-dist-sub').textContent  = d.loc;
-    document.getElementById('dyn-dist-bar').onclick = () => showOnMapByLoc(d.id);
+    document.getElementById('dyn-dist-bar').onclick = () => openMapNavigation(d.loc);
 
     const locLabel  = isLost ? '走失地点' : '发现地点';
     const timeLabel = isLost ? '走失时间' : '发现时间';
