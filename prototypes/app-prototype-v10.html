@@ -568,23 +568,44 @@
       line-height: 1.55;
     }
 
-    .feed-empty-state {
-      padding: 70px 30px 40px;
+    /* v10 r68 · 统一空状态视觉系统 · 通用 .empty-state 让 feed/search/blocklist 一致 */
+    .empty-state {
+      padding: var(--space-10) var(--space-6) var(--space-6);
       text-align: center;
+      display: flex; flex-direction: column; align-items: center;
+      gap: var(--space-3);
     }
-    .feed-empty-state .fe-icon { font-size: 48px; opacity: 0.4; line-height: 1; }
+    .empty-state .empty-icon {
+      font-size: 56px; opacity: 0.35; line-height: 1;
+      margin-bottom: var(--space-1);
+    }
+    .empty-state .empty-title {
+      font-size: var(--text-md); font-weight: 700; color: var(--ink-1);
+    }
+    .empty-state .empty-sub {
+      font-size: var(--text-sm); color: var(--ink-3);
+      line-height: var(--leading-relaxed);
+    }
+    .empty-state .empty-cta {
+      font-size: var(--text-sm); color: var(--apricot-deep);
+      font-weight: 700; cursor: pointer;
+      margin-top: var(--space-1);
+    }
+    /* 旧 class 别名映射 · 保持向后兼容 */
+    .feed-empty-state { padding: var(--space-10) var(--space-6) var(--space-6); text-align: center; }
+    .feed-empty-state .fe-icon { font-size: 56px; opacity: 0.35; line-height: 1; }
     .feed-empty-state .fe-title {
-      margin-top: 14px;
-      font-size: 13.5px;
-      color: var(--ink-2);
-      font-weight: 600;
+      margin-top: var(--space-3);
+      font-size: var(--text-md);
+      color: var(--ink-1);
+      font-weight: 700;
     }
     .feed-empty-state .fe-cta {
-      margin-top: 10px;
+      margin-top: var(--space-2);
       color: var(--apricot-deep);
       font-weight: 700;
       cursor: pointer;
-      font-size: 12.5px;
+      font-size: var(--text-sm);
     }
 
     /* FAB & Tab */
@@ -1586,15 +1607,16 @@
     }
     .sug-tag.found { background: var(--mint-soft); color: var(--mint-deep); }
     .sug-tag.care { background: var(--plum-soft); color: var(--plum-deep); }
+    /* v10 r68 · search 空状态对齐统一系统 */
     .search-empty {
-      padding: 70px 40px 40px; text-align: center;
+      padding: var(--space-10) var(--space-6) var(--space-6); text-align: center;
     }
-    .search-empty-icon { font-size: 56px; opacity: 0.4; line-height: 1; }
+    .search-empty-icon { font-size: 56px; opacity: 0.35; line-height: 1; }
     .search-empty-title {
-      margin-top: 18px; font-size: 14.5px; font-weight: 700; color: var(--ink-1);
+      margin-top: var(--space-4); font-size: var(--text-md); font-weight: 700; color: var(--ink-1);
     }
     .search-empty-sub {
-      margin-top: 8px; font-size: 12.5px; color: var(--ink-3); line-height: 1.7;
+      margin-top: var(--space-2); font-size: var(--text-sm); color: var(--ink-3); line-height: var(--leading-relaxed);
     }
     .search-empty-cta {
       color: var(--apricot-deep); font-weight: 700; cursor: pointer;
@@ -6276,7 +6298,8 @@
     if (countEl) countEl.style.display = _blockedUsers.length ? 'inline-block' : 'none';
     if (!el) return;
     if (_blockedUsers.length === 0) {
-      el.innerHTML = '<div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;color:var(--ink-4);padding-bottom:60px"><div style="font-size:40px;opacity:0.3">🚫</div><div style="font-size:13.5px">黑名单为空</div></div>';
+      // v10 r68 · 统一空状态视觉系统
+      el.innerHTML = '<div class="empty-state"><div class="empty-icon">🚫</div><div class="empty-title">黑名单为空</div><div class="empty-sub">长按消息列表中的用户可以拉黑 ta</div></div>';
       return;
     }
     el.innerHTML = _blockedUsers.map(u => `
