@@ -177,14 +177,16 @@
      * 胶囊 top:50, height:32 · 中心 66
      * nav-row 36px · 要让中心也是 66 · 起点 = 66-18 = 48 · padding-top = 48-44 = 4
      */
-    /* v10 r82 · nav-region 不再吸附（小程序 navbar 系统级已吸附 · 这层叠加是冗余）
-     * 改为跟随内容滚动 · 在 scroll-area 内部作为列表第一块 · filter chip 用 sticky 替代 */
+    /* v10 r85 · nav-region 回到 .screen 直接子 · 永远吸附在小程序 navbar 下方
+     * 微信小程序底层常态：搜索栏 + 城市标签 作为顶部常驻 · 不滚走
+     * filter-region 改为内容一部分 · 跟着滚 */
     .nav-region {
       background: var(--surface);
       padding: 4px 18px 12px;
       /* v10 r59 · 右侧留 96px 给胶囊让位 · 略大于胶囊宽 87 + 7 right + 2 buffer */
       padding-right: 96px;
       border-bottom: 1px solid var(--divider);
+      flex-shrink: 0;
     }
     .nav-row { display: flex; align-items: center; gap: 10px; }
     /* 位置标签 · v10 r26 · 点击触发位置授权 / 刷新（仅限大理范围内更精确）*/
@@ -279,21 +281,9 @@
     /* 相邻 sub-icon 紧贴 · 不再 margin-left:auto */
     .sub-icon + .sub-icon { margin-left: 0; }
 
-    /* v10 r84 · filter-region sticky · 用 scroll listener fallback 保证 is-stuck 可靠
-     * 视觉差异：默认融入背景（米色）· sticky 时白底 + 明显阴影 + 1px hairline */
-    .filter-region {
-      padding: 14px 18px 10px;
-      background: var(--bg);
-      position: sticky; top: 0; z-index: 5;
-      transition: background-color 0.2s ease, box-shadow 0.2s ease, padding 0.2s ease;
-    }
-    .filter-region.is-stuck {
-      background: var(--surface);
-      box-shadow: 0 6px 16px rgba(31,31,31,0.06),
-                  0 1px 0 var(--divider);
-      padding-top: 10px;
-      padding-bottom: 10px;
-    }
+    /* v10 r85 · filter-region 跟内容一起滚（删 sticky · 删 is-stuck）
+     * 用户明确要求：nav 吸附 / filter 滚走 */
+    .filter-region { padding: 14px 18px 4px; }
     .filter-row { display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; align-items: center; padding-bottom: 4px; }
     .filter-row::-webkit-scrollbar { display: none; }
     .chip {
@@ -2678,15 +2668,15 @@
 
     <!-- ===== 屏 1 · Feed ===== -->
     <div class="screen active" data-screen="feed">
-      <div class="scroll-area">
-        <!-- v10 r82 · nav-region 移入 scroll-area · 作为列表头部跟随滚动
-             filter-region position:sticky top:0 · 滚走 nav 后吸附小程序 navbar 下 -->
-        <div class="nav-region">
-          <div class="nav-row">
-            <div class="city-tag" onclick="handleLocationRequest()"><span class="pin"><svg class="icon" style="width:11px;height:11px;stroke-width:2.5;color:white"><use href="#i-location"/></svg></span><span id="city-name">大理</span></div>
-            <div class="search-pill" onclick="showScreen('search')"><svg class="icon" style="width:16px;height:16px;stroke-width:2;color:var(--ink-4)"><use href="#i-search"/></svg><span>搜品种、地点、特征...</span></div>
-          </div>
+      <!-- v10 r85 · nav-region 回到 .screen 直接子 · 永远吸附（微信小程序常态搜索栏不滚走）
+           filter-region 移入 scroll-area · 跟内容一起滚 -->
+      <div class="nav-region">
+        <div class="nav-row">
+          <div class="city-tag" onclick="handleLocationRequest()"><span class="pin"><svg class="icon" style="width:11px;height:11px;stroke-width:2.5;color:white"><use href="#i-location"/></svg></span><span id="city-name">大理</span></div>
+          <div class="search-pill" onclick="showScreen('search')"><svg class="icon" style="width:16px;height:16px;stroke-width:2;color:var(--ink-4)"><use href="#i-search"/></svg><span>搜品种、地点、特征...</span></div>
         </div>
+      </div>
+      <div class="scroll-area">
         <div class="filter-region">
           <div class="filter-row" id="feed-filter-row">
             <div class="chip active" data-filter="all" onclick="applyFilter('all', this)">全部</div>
@@ -5534,33 +5524,12 @@
     }
   }
 
-  // v10 r84 · sticky 视觉反馈 · 改用 scroll listener（IntersectionObserver 在某些 webview 中 root 行为不稳）
-  // 判定标准：scrollTop >= nav-region 高度 → filter 已吸附 navbar 下 → 加 .is-stuck
-  function setupStickyFilter() {
-    const screen = document.querySelector('[data-screen="feed"]');
-    if (!screen) return;
-    const scrollArea = screen.querySelector('.scroll-area');
-    const nav = screen.querySelector('.nav-region');
-    const filter = screen.querySelector('.filter-region');
-    if (!scrollArea || !nav || !filter) return;
-    let lastStuck = false;
-    scrollArea.addEventListener('scroll', () => {
-      const threshold = nav.offsetTop + nav.offsetHeight - 1;
-      const stuck = scrollArea.scrollTop >= threshold;
-      if (stuck !== lastStuck) {
-        filter.classList.toggle('is-stuck', stuck);
-        lastStuck = stuck;
-      }
-    }, { passive: true });
-  }
-
   // 初次渲染
   function initApp() {
     renderFeed(); renderArchive(); renderMapPins(); renderSheetCards();
     document.querySelectorAll('.filter-row').forEach(enableDragScroll);
     initStatBarAutoDismiss();
     updateMsgBadge();
-    setupStickyFilter();
   }
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', initApp);
