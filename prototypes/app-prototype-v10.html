@@ -12,7 +12,7 @@
       --apricot: #FF8552; --apricot-soft: #FFE9DD; --apricot-deep: #E66A38;
       --mint: #5BB89F; --mint-soft: #DDF1EA; --mint-deep: #3F9079;
       --honey: #F0AC32; --honey-soft: #FFF3D6; --honey-deep: #D89020;
-      --plum: #A672D4; --plum-soft: #EDE2F8; --plum-deep: #7E4FB5;
+      /* v10 r73 · plum 色系删除 · MVP 不做 care 状态 · plum 全是死代码 */
       --warn: #E04E4E; --warn-soft: #FCE5E5; --warn-deep: #B83030;
       --bg: #F0E9D8; --bg-deeper: #E8DFC8;
       --surface: #FFFFFF; --surface-warm: #FFFAF2;
@@ -345,7 +345,6 @@
     }
     .status-bubble.lost { background: var(--apricot); }
     .status-bubble.found { background: var(--mint); }
-    .status-bubble.care { background: var(--plum); }
     .status-bubble.expired { background: var(--ink-4); }
     /* 自己发布的帖子卡片 · v10 r23 · 温和差异化
      * 仅浅杏橘渐变背景 + 阴影 · 不再用强边框 + 顶部 strip（减少视觉压力）
@@ -702,7 +701,6 @@
     }
     .hero-status.lost  { background: var(--apricot); }
     .hero-status.found { background: var(--mint); }
-    .hero-status.care  { background: var(--plum); }
     .hero-status.expired { background: var(--ink-4); }
     /* hero 背景由各宠物自己的 photoClass（ph-blue/ph-orange/...）提供 · 不再按屏强制覆盖 */
     .hero-time {
@@ -1097,7 +1095,6 @@
     .pin-head span { transform: rotate(45deg); color: white; font-size: 13px; }
     .map-pin.lost .pin-head { background: var(--apricot); }
     .map-pin.found .pin-head { background: var(--mint); }
-    .map-pin.care .pin-head { background: var(--plum); }
     .map-label { position: absolute; font-size: 11px; font-weight: 700; color: var(--ink-2); background: var(--surface); padding: 2px 7px; border-radius: var(--radius-pill); pointer-events: none; box-shadow: var(--shadow-pill); }
     .map-view-toggle { position: absolute; top: 14px; left: 16px; z-index: 5; background: var(--surface); border-radius: var(--radius-pill); padding: 4px; display: flex; box-shadow: var(--shadow-card); }
     .vt { font-size: 12px; font-weight: 700; padding: 6px 14px; border-radius: var(--radius-pill); cursor: pointer; color: var(--ink-3); }
@@ -1393,7 +1390,6 @@
     .tx-icon { width: 36px; height: 36px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
     .tx-icon.return { background: var(--mint-soft); color: var(--mint-deep); }
     .tx-icon.clue { background: var(--apricot-soft); color: var(--apricot-deep); }
-    .tx-icon.care { background: var(--plum-soft); color: var(--plum-deep); }
     .tx-icon.thanks { background: var(--honey-soft); color: var(--honey-deep); }
     .tx-body { flex: 1; min-width: 0; }
     .tx-title { font-size: 13px; font-weight: 600; margin-bottom: 2px; }
@@ -1618,7 +1614,6 @@
       border-radius: var(--radius-pill); font-weight: 600;
     }
     .sug-tag.found { background: var(--mint-soft); color: var(--mint-deep); }
-    .sug-tag.care { background: var(--plum-soft); color: var(--plum-deep); }
     /* v10 r68 · search 空状态对齐统一系统 */
     .search-empty {
       padding: var(--space-10) var(--space-6) var(--space-6); text-align: center;
@@ -1811,7 +1806,6 @@
     }
     .scp-status.status-lost { background: rgba(255,133,82,0.95); }
     .scp-status.status-found { background: rgba(91,184,159,0.95); }
-    .scp-status.status-care { background: rgba(166,114,212,0.95); }
 
     .scp-body { padding: 14px 16px 16px; }
     .scp-name-line {
@@ -2247,15 +2241,12 @@
     .map-fab .btn.locating { background:#EFF6FF; color:#3B82F6; }
     .map-pin.lost.selected  .pin-head { box-shadow:0 0 0 3px var(--apricot), 0 4px 12px rgba(0,0,0,0.25); }
     .map-pin.found.selected .pin-head { box-shadow:0 0 0 3px var(--mint),    0 4px 12px rgba(0,0,0,0.25); }
-    .map-pin.care.selected  .pin-head { box-shadow:0 0 0 3px var(--plum),    0 4px 12px rgba(0,0,0,0.25); }
     .sheet-back-btn { font-size:12px; font-weight:700; cursor:pointer; padding:2px 8px; border-radius:6px; }
     .sheet-back-btn.lost  { color:var(--apricot-deep); background:var(--apricot-soft); }
     .sheet-back-btn.found { color:var(--mint-deep);    background:var(--mint-soft); }
-    .sheet-back-btn.care  { color:var(--plum-deep);    background:var(--plum-soft); }
     .pin-label { font-size:10px; font-weight:700; background:white; padding:2px 7px; border-radius:5px; margin-top:4px; box-shadow:0 1px 4px rgba(0,0,0,0.15); white-space:nowrap; letter-spacing:0.2px; }
     .map-pin.lost .pin-label { color:var(--apricot-deep); }
     .map-pin.found .pin-label { color:var(--mint-deep); }
-    .map-pin.care .pin-label { color:var(--plum-deep); }
     .map-pin .pin-head { position:relative; }
     .pin-pulse { position:absolute; inset:-3px; border-radius:50% 50% 50% 0; border:2.5px solid var(--apricot); opacity:0; animation:pinPulse 2s ease-out infinite; pointer-events:none; transform-origin:center; }
     @keyframes pinPulse { 0%{opacity:0.7;transform:scale(1)} 100%{opacity:0;transform:scale(2.6)} }
@@ -2270,35 +2261,29 @@
     .popup-status-tag { font-size:10.5px; padding:2px 7px; border-radius:5px; font-weight:700; flex-shrink:0; }
     .popup-status-tag.lost { background:var(--apricot-soft); color:var(--apricot-deep); }
     .popup-status-tag.found { background:var(--mint-soft); color:var(--mint-deep); }
-    .popup-status-tag.care { background:var(--plum-soft); color:var(--plum-deep); }
     .popup-dist-row { font-size:11.5px; color:var(--ink-3); margin-bottom:8px; display:flex; gap:8px; flex-wrap:nowrap; align-items:center; white-space:nowrap; }
     .popup-dist-row .hl { font-weight:700; }
     .pin-popup.lost  .hl { color:var(--apricot-deep); }
     .pin-popup.found .hl { color:var(--mint-deep); }
-    .pin-popup.care  .hl { color:var(--plum-deep); }
     .popup-btns { display:flex; gap:7px; }
     .popup-call { border:none; border-radius:9px; padding:8px 11px; font-size:15px; cursor:pointer; flex-shrink:0; }
     .popup-call.lost  { background:var(--apricot-soft); color:var(--apricot-deep); }
     .popup-call.found { background:var(--mint-soft);    color:var(--mint-deep); }
-    .popup-call.care  { background:var(--plum-soft);    color:var(--plum-deep); }
     .popup-go { flex:1; color:white; border:none; border-radius:9px; padding:8px; font-size:13px; font-weight:700; cursor:pointer; font-family:var(--font-cn); }
     .pin-popup.lost  .popup-go { background:var(--apricot); }
     .pin-popup.found .popup-go { background:var(--mint-deep); }
-    .pin-popup.care  .popup-go { background:var(--plum-deep); }
     /* 地图底部迷你详情卡 */
     .sheet-detail-card { padding:12px 14px 4px; }
     .sdc-hero { display:flex; align-items:center; gap:12px; margin-bottom:10px; }
     .sdc-emoji { width:52px; height:52px; border-radius:14px; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:28px; position:relative; }
     .sdc-emoji.lost  { background:linear-gradient(135deg,var(--apricot-soft),#FFCDA8); }
     .sdc-emoji.found { background:linear-gradient(135deg,var(--mint-soft),#ABDDCB); }
-    .sdc-emoji.care  { background:linear-gradient(135deg,var(--plum-soft),#D8B4FE); }
     .sdc-meta { flex:1; min-width:0; }
     .sdc-name { font-size:17px; font-weight:700; letter-spacing:-0.01em; }
     .sdc-breed { font-size:12px; color:var(--ink-3); margin-top:2px; }
     .sdc-status { font-size:11px; font-weight:700; padding:3px 8px; border-radius:6px; flex-shrink:0; align-self:flex-start; }
     .sdc-status.lost  { background:var(--apricot-soft); color:var(--apricot-deep); }
     .sdc-status.found { background:var(--mint-soft);    color:var(--mint-deep); }
-    .sdc-status.care  { background:var(--plum-soft);    color:var(--plum-deep); }
     .sdc-loc { font-size:12px; color:var(--ink-3); margin-bottom:8px; display:flex; gap:6px; align-items:center; }
     .sdc-loc .hl { font-weight:600; color:var(--ink-2); }
     .sdc-desc { font-size:13px; color:var(--ink-2); line-height:1.55; margin-bottom:12px; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; }
@@ -2306,7 +2291,6 @@
     .sdc-btn-primary { flex:1; border:none; border-radius:10px; padding:10px; font-size:13px; font-weight:700; cursor:pointer; font-family:var(--font-cn); color:white; }
     .sdc-btn-primary.lost  { background:var(--apricot); }
     .sdc-btn-primary.found { background:var(--mint-deep); }
-    .sdc-btn-primary.care  { background:var(--plum-deep); }
     .sdc-btn-detail { flex:1; border:1.5px solid var(--divider); background:var(--surface); border-radius:10px; padding:10px; font-size:13px; font-weight:700; cursor:pointer; font-family:var(--font-cn); color:var(--ink-2); }
     /* 可拖拽底部面板 */
     .map-bottom-sheet { position:absolute; bottom:82px; left:0; right:0; background:var(--surface); border-radius:20px 20px 0 0; box-shadow:0 -8px 24px rgba(0,0,0,0.08); height:210px; display:flex; flex-direction:column; transition:height 0.32s cubic-bezier(0.34,1.2,0.64,1); user-select:none; }
@@ -2326,7 +2310,6 @@
     .sheet-filter-label.show { display:inline-block; }
     .sheet-filter-label.lost  { background:var(--apricot-soft); color:var(--apricot-deep); }
     .sheet-filter-label.found { background:var(--mint-soft); color:var(--mint-deep); }
-    .sheet-filter-label.care  { background:var(--plum-soft); color:var(--plum-deep); }
     .sheet-card.highlighted { animation: sheetCardFlash 1.5s ease forwards; }
     @keyframes sheetCardFlash { 0%,20%{background:var(--apricot-soft);border-radius:8px} 100%{background:transparent} }
     .sheet-handle.pulse { animation: handlePulse 1.8s ease-in-out infinite; }
@@ -2347,7 +2330,6 @@
     .si-tag { font-size:10px; padding:2px 7px; border-radius:5px; color:white; font-weight:700; flex-shrink:0; }
     .si-tag.lost { background:var(--apricot); }
     .si-tag.found { background:var(--mint); }
-    .si-tag.care { background:var(--plum); }
     .map-search-empty { font-size:12px; color:var(--ink-4); text-align:center; padding:8px 0; }
     /* 首页卡片位置链接 */
     .loc-link { cursor:pointer; border-bottom:1px dotted var(--ink-4); transition:color 0.15s,border-color 0.15s; display:inline; }
@@ -2408,7 +2390,6 @@
     }
     .card-hint-strip.lost  { background: var(--apricot-soft); color: var(--apricot-deep); border-bottom: 1px solid rgba(255,133,82,0.15); }
     .card-hint-strip.found { background: var(--mint-soft);    color: var(--mint-deep);    border-bottom: 1px solid rgba(91,184,159,0.15); }
-    .card-hint-strip.care  { background: var(--plum-soft);    color: var(--plum-deep);    border-bottom: 1px solid rgba(166,114,212,0.15); }
     .card-hint-strip .hint-arrow { margin-left: auto; font-size: 13px; opacity: 0.7; }
     .card-hint-strip { transition: opacity 0.28s ease; }
     .card-hint-strip.hint-fading { opacity: 0; }
@@ -5043,7 +5024,7 @@
     const statusLabel = d.expired ? '已过期' : d.statusLabel;
     // 卡片视觉平等：不强化任何一类（删除原 urgent-card 路径，符合"不评判失主"哲学）
     const borderClass = !d.expired
-      ? (effStatus === 'lost' ? ' lost-card' : effStatus === 'care' ? ' care-card' : ' found-card')
+      ? (effStatus === 'lost' ? ' lost-card' : ' found-card')
       : '';
     // 时间显示：纯中性字符串（不再用 phase 倒计时）
     const timeSpan = `<span class="time">${d.time}</span>`;
