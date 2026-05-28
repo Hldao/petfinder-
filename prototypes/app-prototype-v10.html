@@ -248,8 +248,8 @@
       background: #FFF;
       height: 44px;
       padding: 0 4px;
-      /* v10 r59 · 右侧留 90px 给胶囊按钮让位（避免 sub-icon 与胶囊重叠）*/
-      padding-right: 90px;
+      /* v10 r59 → r99 · 右侧让位胶囊 · 胶囊覆盖 right:7~94 · 改 96 与 nav-region 一致（避免 sub-icon 与胶囊重叠 4px） */
+      padding-right: 96px;
       border-bottom: 1px solid var(--divider);
       display: flex; align-items: center; flex-shrink: 0;
       position: relative;
@@ -2915,8 +2915,19 @@
       <div class="sub-header">
         <div class="back-btn" onclick="goBack()">←</div>
         <div class="sub-title" id="dyn-title">详情</div>
-        <div class="sub-icon" id="dyn-share-btn" title="转发"><svg class="icon" style="width:20px;height:20px"><use href="#i-share"/></svg></div>
-        <div class="sub-icon" onclick="openReportSheet()" title="举报"><svg class="icon" style="width:20px;height:20px"><use href="#i-alert"/></svg></div>
+        <!-- v10 r99 · 2 独立 sub-icon → 单 ⋯ menu · 行业标配（大众点评/闲鱼/小红书同款）+ 与 chat 屏一致 -->
+        <div class="sub-icon" onclick="toggleDetailMenu(event)" title="更多"><svg class="icon" style="width:20px;height:20px"><use href="#i-more"/></svg></div>
+        <div class="chat-menu" id="detail-menu" onclick="event.stopPropagation()">
+          <div class="chat-menu-item" id="detail-menu-share">
+            <span class="cm-ic"><svg class="icon icon-sm"><use href="#i-share"/></svg></span>
+            <span>转发</span>
+          </div>
+          <div class="chat-menu-divider"></div>
+          <div class="chat-menu-item" onclick="closeDetailMenu();openReportSheet()">
+            <span class="cm-ic"><svg class="icon icon-sm"><use href="#i-alert"/></svg></span>
+            <span>举报</span>
+          </div>
+        </div>
       </div>
       <div class="detail-scroll">
         <div class="hero-photo" id="dyn-hero">
@@ -4661,6 +4672,22 @@
    * 不依赖对方主动确认（符合「机制 vs 行为」原则）
    * 24h 冷却是平台层最后一道反冒领防线
    * ================================================ */
+  // v10 r99 · detail 屏 ⋯ menu · 复用 chat-menu 视觉
+  function toggleDetailMenu(e) {
+    if (e) e.stopPropagation();
+    const menu = document.getElementById('detail-menu');
+    if (!menu) return;
+    menu.classList.toggle('show');
+    if (menu.classList.contains('show')) {
+      setTimeout(() => document.addEventListener('click', closeDetailMenuOnce, { once: true }), 0);
+    }
+  }
+  function closeDetailMenu() {
+    const menu = document.getElementById('detail-menu');
+    if (menu) menu.classList.remove('show');
+  }
+  function closeDetailMenuOnce() { closeDetailMenu(); }
+
   function toggleChatMenu(e) {
     if (e) e.stopPropagation();
     const menu = document.getElementById('chat-menu');
@@ -5694,8 +5721,9 @@
 
     document.getElementById('dyn-title').textContent = isLost ? '寻宠详情' : '招领详情';
 
-    const shareBtn = document.getElementById('dyn-share-btn');
-    if (shareBtn) shareBtn.onclick = () => openShare(d.id);
+    // v10 r99 · share 由 detail-menu 内的 menu item 触发（不再 sub-header 独立按钮）
+    const shareItem = document.getElementById('detail-menu-share');
+    if (shareItem) shareItem.onclick = () => { closeDetailMenu(); openShare(d.id); };
 
     const hero = document.getElementById('dyn-hero');
     hero.className = 'hero-photo ' + d.photoClass;
