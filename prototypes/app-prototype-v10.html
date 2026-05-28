@@ -2937,12 +2937,13 @@
         <div class="sub-title" id="publish-title">发布寻宠信息</div>
       </div>
 
-      <div class="seg">
-        <div class="seg-item active" data-mode="lost" onclick="switchPublishMode('lost', this)">🔍 我丢了宠物</div>
-        <div class="seg-item" data-mode="found" onclick="switchPublishMode('found', this)">🏠 我捡到了</div>
-      </div>
-
       <div class="scroll-area" style="padding-top:0">
+
+        <!-- v10 r96 · .seg 移入 scroll-area · 跟内容一起滚 · 避免 sub-header + seg 双重吸顶（同 feed 屏修复） -->
+        <div class="seg">
+          <div class="seg-item active" data-mode="lost" onclick="switchPublishMode('lost', this)">🔍 我丢了宠物</div>
+          <div class="seg-item" data-mode="found" onclick="switchPublishMode('found', this)">🏠 我捡到了</div>
+        </div>
 
         <!-- 情绪支撑横幅 -->
         <div class="publish-warmth" id="publish-warmth-lost">
