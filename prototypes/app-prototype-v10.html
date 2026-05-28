@@ -123,19 +123,19 @@
     /* v10 r59 · 微信小程序胶囊按钮（系统强制存在 · 右上角浮于 navbar 之上）
      * 真实小程序里这个胶囊由微信系统渲染 · 任何页面都不能去掉
      * 页面自定义按钮需要避开此位置（约 90px 右侧空间）*/
+    /* v10 r65 · wx-capsule 视觉精修 · 浅灰底 + 实在边框 · 在白底 navbar 上更清晰 */
     .wx-capsule {
       position: absolute;
-      top: 50px;  /* status-bar 44 + 6px 间距 */
+      top: 50px;  /* status-bar 44 + 6px · 胶囊中心 66 与 nav-row 中心对齐 */
       right: 7px;
       width: 87px; height: 32px;
-      background: rgba(255,255,255,0.6);
-      border: 0.5px solid rgba(0,0,0,0.08);
+      background: rgba(0,0,0,0.04);
+      border: 0.5px solid rgba(0,0,0,0.12);
       border-radius: 16px;
       display: flex;
       align-items: center;
       z-index: 50;
-      backdrop-filter: blur(10px);
-      pointer-events: none;  /* prototype 不交互 · 仅视觉 */
+      pointer-events: none;
     }
     .wx-capsule-btn {
       flex: 1;
@@ -173,10 +173,15 @@
     .screen.view-as-finder .qr-owner { display: none !important; }
 
     /* ============== 通用：顶部导航 ============== */
+    /* v10 r65 · nav-region 重新对齐胶囊按钮
+     * 胶囊 top:50, height:32 · 中心 66
+     * nav-row 36px · 要让中心也是 66 · 起点 = 66-18 = 48 · padding-top = 48-44 = 4
+     */
     .nav-region {
-      background: var(--surface); padding: 12px 18px 14px;
-      /* v10 r59 · 右侧留 90px 给微信小程序胶囊按钮让位 */
-      padding-right: 100px;
+      background: var(--surface);
+      padding: 4px 18px 12px;
+      /* v10 r59 · 右侧留 96px 给胶囊让位 · 略大于胶囊宽 87 + 7 right + 2 buffer */
+      padding-right: 96px;
       border-bottom: 1px solid var(--divider); flex-shrink: 0;
     }
     .nav-row { display: flex; align-items: center; gap: 10px; }
