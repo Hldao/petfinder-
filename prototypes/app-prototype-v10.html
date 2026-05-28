@@ -305,8 +305,12 @@
     .chip-dot { width: 6px; height: 6px; border-radius: 50%; }
     .chip-sort { color: var(--apricot-deep); background: var(--apricot-soft); font-weight: 600; box-shadow: none; }
 
+    /* v10 r91 · section-header 间距统一
+     * 1) 横向 padding 20→16 · 与 feed-list/feed-stat-bar/archive-header 左边线对齐
+     * 2) 上间距 18→14 · 配合上方 feed-stat-bar margin-bottom 14 · 共 28px 呼吸
+     * 3) 下间距 10 保留 · 标题与下方第一张卡 / chip 留出空气 */
     .section-header {
-      padding: 18px 20px 10px; display: flex; align-items: baseline; gap: 10px;
+      padding: 14px 16px 10px; display: flex; align-items: baseline; gap: 10px;
     }
     .section-header .title { font-size: var(--text-lg); font-weight: 700; letter-spacing: -0.005em; }
     .section-header .count { font-family: var(--font-en); font-size: var(--text-sm); font-weight: 700; color: var(--ink-3); letter-spacing: 0.04em; }
@@ -2725,7 +2729,7 @@
             <span class="fsb-tagline" id="fsb-tagline">在大理，走失的小朋友正被大家一起找回 🐾</span>
           </div>
         </div>
-        <div class="section-header" style="padding-top:16px;padding-bottom:2px">
+        <div class="section-header">
           <span class="title">大理的小朋友</span>
           <span class="count">·&nbsp;<span id="feed-count">0</span>&nbsp;条</span>
           <span class="right" onclick="showScreen('all-posts')">查看全部 →</span>
@@ -4035,7 +4039,7 @@
             <div class="search-chip" onclick="doSearchWith('拉布拉多')">拉布拉多</div>
           </div>
 
-          <div class="section-header" style="padding-top:14px">
+          <div class="section-header">
             <span class="title">按颜色</span>
           </div>
           <div class="color-chip-row">
@@ -4048,7 +4052,7 @@
             <div class="color-chip" onclick="doSearchWith('虎斑')"><span class="color-dot" style="background:linear-gradient(135deg,#C8894A,#7A5230)"></span>虎斑</div>
           </div>
 
-          <div class="section-header" style="padding-top:14px">
+          <div class="section-header">
             <span class="title">按地点</span>
           </div>
           <div class="search-chips">
