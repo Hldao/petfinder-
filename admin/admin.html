@@ -141,7 +141,7 @@
     if (app) return;
     app = cloudbase.init({ env: envId });
     const auth = app.auth({ persistence: 'local' });
-    if (!auth.hasLoginState()) await auth.signInAnonymously();
+    if (!auth.hasLoginState()) await auth.anonymousAuthProvider().signIn();
   }
 
   async function call(name, data) {
