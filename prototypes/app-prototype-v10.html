@@ -1441,11 +1441,17 @@
     .feedback-pending { font-size: 11px; color: var(--ink-4); display: flex; align-items: center; gap: 5px; }
 
     /* 提交 sheet */
+    /* v10 r74 · feedback-sheet-overlay 加 mask fade（避免突现感）*/
     .feedback-sheet-overlay {
       position: fixed; inset: 0; z-index: 8500;
-      background: rgba(31,31,31,0.42); display: none; align-items: flex-end;
+      background: rgba(0,0,0,0.5);
+      backdrop-filter: blur(8px);
+      display: none; align-items: flex-end;
     }
-    .feedback-sheet-overlay.show { display: flex; }
+    .feedback-sheet-overlay.show {
+      display: flex;
+      animation: onboardingMaskIn 0.3s ease both;
+    }
     .feedback-sheet {
       width: 100%; background: var(--surface);
       border-radius: var(--radius-lg) var(--radius-lg) 0 0;
@@ -1644,16 +1650,23 @@
     .pet-card.found-card .pc-action.share { color: var(--mint-deep); background: var(--mint-soft); }
 
     /* Clue Modal · 留一条公开线索（轻量 textarea · 非表单） */
+    /* v10 r74 · clue-modal 是 bottom sheet · 加 slideUp 入场（与 as-mask sheets 一致）*/
     .clue-modal {
       position: absolute; inset: 0;
-      background: rgba(0,0,0,0.55);
-      backdrop-filter: blur(6px);
+      background: rgba(0,0,0,0.5);
+      backdrop-filter: blur(8px);
       display: none;
       align-items: flex-end;
       justify-content: center;
       z-index: 60;
     }
-    .clue-modal.show { display: flex; }
+    .clue-modal.show {
+      display: flex;
+      animation: onboardingMaskIn 0.3s ease both;
+    }
+    .clue-modal.show .clue-modal-box {
+      animation: sheetSlideUp 0.38s cubic-bezier(0.32, 0.72, 0, 1) both;
+    }
     .clue-modal-box {
       background: var(--surface);
       border-radius: 20px 20px 0 0;
@@ -1704,18 +1717,22 @@
     .clue-modal-actions { display: flex; gap: 10px; }
 
     /* Share Modal · 帮忙转发 */
+    /* v10 r74 · share-modal 加 onboarding 入场动画（与 mp/privacy modal 一致）*/
     .share-modal {
       position: absolute;
       inset: 0;
-      background: rgba(0,0,0,0.55);
-      backdrop-filter: blur(6px);
+      background: rgba(0,0,0,0.5);
+      backdrop-filter: blur(8px);
       display: none;
       align-items: center;
       justify-content: center;
       z-index: 60;
-      padding: 18px;
+      padding: var(--space-5);
     }
-    .share-modal.show { display: flex; }
+    .share-modal.show {
+      display: flex;
+      animation: onboardingMaskIn 0.3s ease both;
+    }
     .share-box {
       background: var(--surface);
       border-radius: 20px;
@@ -1724,6 +1741,7 @@
       box-shadow: 0 20px 60px rgba(0,0,0,0.35);
       max-height: 95%;
       display: flex; flex-direction: column;
+      animation: onboardingBoxIn 0.32s cubic-bezier(0.2, 0.7, 0.3, 1.2) both;
     }
     .share-head {
       padding: 14px 18px;
@@ -2403,8 +2421,15 @@
     /* === 快速目击上报按钮（feed 卡片） === */
     .pc-action.sighting { color:var(--mint-deep); background:var(--mint-soft); border-radius:99px; padding:3px 8px; }
     /* === 目击上报弹层 === */
-    .sighting-overlay { display:none; position:absolute; inset:0; background:rgba(0,0,0,0.55); backdrop-filter:blur(6px); z-index:60; }
-    .sighting-overlay.open { display:flex; align-items:flex-end; justify-content:center; }
+    /* v10 r74 · sighting overlay 加 mask fade + sheet slide-up · 与其他 modal 一致 */
+    .sighting-overlay { display:none; position:absolute; inset:0; background:rgba(0,0,0,0.5); backdrop-filter:blur(8px); z-index:60; }
+    .sighting-overlay.open {
+      display:flex; align-items:flex-end; justify-content:center;
+      animation: onboardingMaskIn 0.3s ease both;
+    }
+    .sighting-overlay.open .sighting-sheet {
+      animation: sheetSlideUp 0.38s cubic-bezier(0.32, 0.72, 0, 1) both;
+    }
     .sighting-sheet { background:white; border-radius:20px 20px 0 0; padding:20px 16px 34px; width:100%; max-height:78vh; overflow-y:auto; box-sizing:border-box; }
     .sighting-sheet .ss-drag { width:36px; height:4px; background:var(--divider); border-radius:2px; margin:0 auto 16px; }
     .sighting-sheet h3 { font-size:16px; font-weight:700; margin:0 0 4px; }
