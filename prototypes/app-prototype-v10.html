@@ -1211,7 +1211,8 @@
     .map-sheet { position: absolute; bottom: 82px; left: 0; right: 0; background: var(--surface); border-radius: 20px 20px 0 0; max-height: 240px; box-shadow: 0 -8px 24px rgba(0,0,0,0.1); }
     /* v10 r87 · drag area 可发现性提升 · ink-5 太淡用户找不到 → ink-4 微强化 */
     .sheet-handle { width: 36px; height: 4px; background: var(--ink-4); border-radius: 2px; margin: 8px auto; opacity: 0.6; }
-    .sheet-header { padding: 4px 18px 8px; display: flex; align-items: center; justify-content: space-between; }
+    /* v10 r104 · padding-top 4 → 8 · sheet-title 与上方 drag-hint 紧贴改成有呼吸 */
+    .sheet-header { padding: 8px 18px 8px; display: flex; align-items: center; justify-content: space-between; }
     .sheet-title { font-size: 14px; font-weight: 700; }
     .sheet-meta { font-family: var(--font-en); font-size: 11px; color: var(--ink-3); font-weight: 600; }
     .sheet-content { padding: 4px 12px 16px; }
@@ -2416,7 +2417,8 @@
     .pin-popup { position:absolute; background:var(--surface); border-radius:14px; box-shadow:var(--shadow-card); padding:12px 14px 10px; width:210px; z-index:25; display:none; transform:translate(-50%,calc(-100% - 4px)); }
     .pin-popup.show { display:block; }
     .pin-popup::after { content:''; position:absolute; bottom:-8px; left:50%; transform:translateX(-50%); border:8px solid transparent; border-top:8px solid var(--surface); border-bottom:none; filter:drop-shadow(0 2px 2px rgba(0,0,0,0.08)); }
-    .popup-top { display:flex; align-items:center; gap:8px; margin-bottom:7px; }
+    /* v10 r104 · margin-bottom 7 → 10 · 宠物信息区与下方距离/时间行更稳定的节奏 */
+    .popup-top { display:flex; align-items:center; gap:8px; margin-bottom:10px; }
     .popup-emoji { font-size:24px; }
     .popup-meta-col { flex:1; min-width:0; }
     .popup-name { font-size:14px; font-weight:700; }
@@ -2429,7 +2431,8 @@
     .pin-popup.lost  .hl { color:var(--apricot-deep); }
     .pin-popup.found .hl { color:var(--mint-deep); }
     .popup-btns { display:flex; gap:7px; }
-    .popup-call { border:none; border-radius:9px; padding:8px 11px; font-size:15px; cursor:pointer; flex-shrink:0; }
+    /* v10 r104 · popup-call 缩到与 popup-go 等高 · 不再比主 CTA 还大 · 矫正主从感 */
+    .popup-call { border:none; border-radius:9px; padding:8px 10px; cursor:pointer; flex-shrink:0; display:inline-flex; align-items:center; justify-content:center; }
     .popup-call.lost  { background:var(--apricot-soft); color:var(--apricot-deep); }
     .popup-call.found { background:var(--mint-soft);    color:var(--mint-deep); }
     .popup-go { flex:1; color:white; border:none; border-radius:9px; padding:8px; font-size:13px; font-weight:700; cursor:pointer; font-family:var(--font-cn); }
@@ -2479,7 +2482,8 @@
     @keyframes sheetCardFlash { 0%,20%{background:var(--apricot-soft);border-radius:8px} 100%{background:transparent} }
     .sheet-handle.pulse { animation: handlePulse 1.8s ease-in-out infinite; }
     @keyframes handlePulse { 0%,100%{transform:scaleX(1);opacity:0.4} 55%{transform:scaleX(1.6);opacity:1} }
-    .sheet-viewport-hint { font-size:11px; color:var(--ink-3); padding:0 16px 5px; display:none; }
+    /* v10 r104 · padding-top 0 → 4 · 与上方 sheet-header 留呼吸 */
+    .sheet-viewport-hint { font-size:11px; color:var(--ink-3); padding:4px 16px 6px; display:none; }
     .sheet-viewport-hint.show { display:block; }
     /* 地图内搜索面板 */
     /* v10 r102 · map-search-panel top:62 → 90 · 让位胶囊（同 r87 fab/precision-hint 同款修复） */
@@ -2891,7 +2895,7 @@
           </div>
           <div class="popup-btns">
             <!-- v10 r103 · 原 i-phone 误导（看像"打电话"）· 实际功能是私聊 · 改 i-message + 加 onclick -->
-            <button class="popup-call" id="popup-call-btn" title="私聊"><svg class="icon icon-md"><use href="#i-message"/></svg></button>
+            <button class="popup-call" id="popup-call-btn" title="私聊"><svg class="icon" style="width:16px;height:16px"><use href="#i-message"/></svg></button>
             <button class="popup-go" id="popup-go-btn">查看详情 →</button>
           </div>
         </div>
