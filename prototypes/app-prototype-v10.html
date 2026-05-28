@@ -904,8 +904,17 @@
       background: var(--surface); border-radius: var(--radius-pill); padding: 4px;
       box-shadow: var(--shadow-pill);
     }
-    .seg-item { flex: 1; padding: 9px; text-align: center; font-size: 13px; font-weight: 600; color: var(--ink-3); cursor: pointer; border-radius: var(--radius-pill); }
-    .seg-item.active { background: var(--ink-1); color: white; }
+    /* v10 r97 · .seg-item.active 跟 mode 联动配色（lost=杏橘 · found=薄荷）
+     * 之前 var(--ink-1) 黑底白字与产品治愈调性违和 + 失去 lost/found 语义信号
+     * 现：选「我丢了」→ 杏橘 active 与 publish-warmth-lost / lost-card 主题一致
+     *     选「我捡到了」→ 薄荷 active 与 publish-warmth-found / found-card 主题一致 */
+    .seg-item {
+      flex: 1; padding: 9px; text-align: center; font-size: 13px; font-weight: 600;
+      color: var(--ink-3); cursor: pointer; border-radius: var(--radius-pill);
+      transition: background-color 0.18s, color 0.18s;
+    }
+    .seg-item.active[data-mode="lost"]  { background: var(--apricot-soft); color: var(--apricot-deep); }
+    .seg-item.active[data-mode="found"] { background: var(--mint-soft);    color: var(--mint-deep); }
     .form-section { background: var(--surface); margin: 0 16px 12px; border-radius: var(--radius-md); overflow: hidden; box-shadow: var(--shadow-card); }
     /* v10 r70 · 表单组件 token 化 + font-size 收敛 */
     .form-row { padding: var(--space-3) var(--space-4); border-bottom: 1px solid var(--divider-soft); }
