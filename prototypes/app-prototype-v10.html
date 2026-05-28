@@ -279,21 +279,21 @@
     /* 相邻 sub-icon 紧贴 · 不再 margin-left:auto */
     .sub-icon + .sub-icon { margin-left: 0; }
 
-    /* v10 r82 → r83 · filter-region 唯一 sticky 层（贴在小程序 navbar 下方）
-     * background 必须实色 · z-index > 内容 · 滚动时挡住下方 feed 卡片不透视
-     * is-stuck class · 真正吸附时加阴影（IntersectionObserver + sentinel 检测） */
+    /* v10 r84 · filter-region sticky · 用 scroll listener fallback 保证 is-stuck 可靠
+     * 视觉差异：默认融入背景（米色）· sticky 时白底 + 明显阴影 + 1px hairline */
     .filter-region {
-      padding: 14px 18px 4px;
+      padding: 14px 18px 10px;
       background: var(--bg);
       position: sticky; top: 0; z-index: 5;
-      transition: box-shadow 0.18s ease, background-color 0.18s ease;
+      transition: background-color 0.2s ease, box-shadow 0.2s ease, padding 0.2s ease;
     }
     .filter-region.is-stuck {
-      background: rgba(240,233,216,0.96); backdrop-filter: blur(8px);
-      box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+      background: var(--surface);
+      box-shadow: 0 6px 16px rgba(31,31,31,0.06),
+                  0 1px 0 var(--divider);
+      padding-top: 10px;
+      padding-bottom: 10px;
     }
-    /* 哨兵元素 · 在 filter-region 之前 · 用于 IntersectionObserver 监测 sticky 触发 */
-    .filter-sentinel { height: 1px; margin-bottom: -1px; pointer-events: none; }
     .filter-row { display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; align-items: center; padding-bottom: 4px; }
     .filter-row::-webkit-scrollbar { display: none; }
     .chip {
@@ -2687,7 +2687,6 @@
             <div class="search-pill" onclick="showScreen('search')"><svg class="icon" style="width:16px;height:16px;stroke-width:2;color:var(--ink-4)"><use href="#i-search"/></svg><span>搜品种、地点、特征...</span></div>
           </div>
         </div>
-        <div class="filter-sentinel" id="feed-filter-sentinel"></div>
         <div class="filter-region">
           <div class="filter-row" id="feed-filter-row">
             <div class="chip active" data-filter="all" onclick="applyFilter('all', this)">全部</div>
@@ -5535,22 +5534,24 @@
     }
   }
 
-  // v10 r83 · sticky 视觉反馈 · sentinel 离开 scroll-area 顶 = filter 吸附 · 加 .is-stuck
-  // 模式参考：美团 / 小红书 · sticky 时背景模糊 + 阴影 · 让"贴顶"动作可感知
+  // v10 r84 · sticky 视觉反馈 · 改用 scroll listener（IntersectionObserver 在某些 webview 中 root 行为不稳）
+  // 判定标准：scrollTop >= nav-region 高度 → filter 已吸附 navbar 下 → 加 .is-stuck
   function setupStickyFilter() {
     const screen = document.querySelector('[data-screen="feed"]');
     if (!screen) return;
     const scrollArea = screen.querySelector('.scroll-area');
-    const sentinel = screen.querySelector('#feed-filter-sentinel');
+    const nav = screen.querySelector('.nav-region');
     const filter = screen.querySelector('.filter-region');
-    if (!scrollArea || !sentinel || !filter || !window.IntersectionObserver) return;
-    const observer = new IntersectionObserver(
-      entries => {
-        entries.forEach(e => filter.classList.toggle('is-stuck', !e.isIntersecting));
-      },
-      { root: scrollArea, threshold: 0 }
-    );
-    observer.observe(sentinel);
+    if (!scrollArea || !nav || !filter) return;
+    let lastStuck = false;
+    scrollArea.addEventListener('scroll', () => {
+      const threshold = nav.offsetTop + nav.offsetHeight - 1;
+      const stuck = scrollArea.scrollTop >= threshold;
+      if (stuck !== lastStuck) {
+        filter.classList.toggle('is-stuck', stuck);
+        lastStuck = stuck;
+      }
+    }, { passive: true });
   }
 
   // 初次渲染
