@@ -25,6 +25,35 @@
       --shadow-fab: 0 6px 16px rgba(255,133,82,0.35), 0 2px 6px rgba(255,133,82,0.2);
       --shadow-pill: 0 1px 2px rgba(31,31,31,0.04);
       --radius-pill: 999px; --radius-lg: 18px; --radius-md: 12px; --radius-sm: 8px;
+
+      /* v10 r61 · Type scale · iOS-inspired · 收敛 18+ 散乱字号到 8 阶 */
+      --text-xs: 10.5px;   /* 标签 / 计数 / 极小辅助 */
+      --text-sm: 11.5px;   /* 次要 meta / sub */
+      --text-base: 13px;   /* 正文 body */
+      --text-md: 14px;     /* 主要正文 */
+      --text-lg: 15px;     /* 强调 */
+      --text-xl: 17px;     /* navbar / 卡片标题 · iOS 标准 */
+      --text-2xl: 22px;    /* 大标题 */
+      --text-3xl: 26px;    /* 特大 hero */
+
+      /* v10 r61 · Spacing scale · 4/8 网格基线 */
+      --space-1: 4px;
+      --space-2: 8px;
+      --space-3: 12px;
+      --space-4: 16px;
+      --space-5: 20px;
+      --space-6: 24px;
+      --space-8: 32px;
+      --space-10: 40px;
+
+      /* v10 r61 · Line height · 中文移动端友好 */
+      --leading-tight: 1.3;     /* 标题 · 紧凑 */
+      --leading-normal: 1.5;    /* 通用正文 */
+      --leading-relaxed: 1.7;   /* 长内容（协议/详情描述）*/
+
+      /* v10 r61 · Active state token · 小程序无 hover · :active 是主要反馈 */
+      --tap-scale: scale(0.98);
+      --tap-opacity: 0.85;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -214,7 +243,7 @@
       position: absolute;
       left: 50%; top: 50%;
       transform: translate(-50%, -50%);
-      font-size: 17px; font-weight: 700; letter-spacing: -0.005em;
+      font-size: var(--text-xl); font-weight: 700; letter-spacing: -0.005em;
       color: var(--ink-1);
       max-width: 60%;
       overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
@@ -610,8 +639,8 @@
       font-family: var(--font-en); font-size: 11px; font-weight: 700; color: var(--ink-2); letter-spacing: 0.04em;
     }
     .detail-body { padding: 20px 18px; }
-    .detail-name { font-size: 26px; font-weight: 700; letter-spacing: -0.01em; line-height: 1.2; margin-bottom: 4px; }
-    .detail-subtitle { font-size: 13px; color: var(--ink-3); margin-bottom: 16px; }
+    .detail-name { font-size: var(--text-3xl); font-weight: 700; letter-spacing: -0.01em; line-height: var(--leading-tight); margin-bottom: var(--space-1); }
+    .detail-subtitle { font-size: var(--text-base); color: var(--ink-3); margin-bottom: var(--space-4); }
     .info-grid {
       background: var(--surface); border-radius: var(--radius-md);
       padding: 4px 0; margin-bottom: 16px;
@@ -1222,7 +1251,9 @@
     /* v10 r46 · 「关于」合并到 footer · 不再独占 menu-section */
     .footer-about { font-size: 12px; color: var(--ink-3); padding: 10px 0 12px; cursor: pointer; font-family: var(--font-cn); }
     .menu-section { background: var(--surface); border-radius: var(--radius-md); overflow: hidden; margin-bottom: 12px; box-shadow: var(--shadow-card); }
-    .menu-row { padding: 13px 16px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid var(--divider-soft); cursor: pointer; }
+    .menu-row { padding: 13px 16px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid var(--divider-soft); cursor: pointer; transition: background-color 0.15s; }
+    /* v10 r61 · :active 微互动补齐（小程序点击反馈） */
+    .menu-row:active { background: var(--bg); }
     .menu-row:last-child { border-bottom: none; }
     .menu-icon { font-size: 16px; width: 22px; text-align: center; }
     .menu-label { flex: 1; font-size: 13.5px; }
@@ -1235,10 +1266,10 @@
     .legal-meta { font-size: 11.5px; color: var(--ink-4); margin-bottom: 14px; padding-bottom: 12px; border-bottom: 1px solid var(--divider-soft); }
     .legal-intro { font-size: 13px; color: var(--ink-2); line-height: 1.7; margin-bottom: 18px; padding: 12px 14px; background: var(--apricot-soft); border-radius: var(--radius-md); color: var(--apricot-deep); font-weight: 600; }
     .legal-section { margin-bottom: 22px; }
-    .legal-section h3 { font-size: 15px; font-weight: 700; color: var(--ink-1); margin: 0 0 8px; }
-    .legal-section p { font-size: 13px; color: var(--ink-2); line-height: 1.75; margin: 0 0 6px; }
+    .legal-section h3 { font-size: var(--text-lg); font-weight: 700; color: var(--ink-1); margin: 0 0 var(--space-2); }
+    .legal-section p { font-size: var(--text-base); color: var(--ink-2); line-height: var(--leading-relaxed); margin: 0 0 6px; }
     .legal-section ul { margin: 6px 0 0; padding-left: 20px; }
-    .legal-section li { font-size: 13px; color: var(--ink-2); line-height: 1.75; margin-bottom: 4px; }
+    .legal-section li { font-size: var(--text-base); color: var(--ink-2); line-height: var(--leading-relaxed); margin-bottom: var(--space-1); }
     .legal-section .legal-note { font-size: 12px; color: var(--ink-3); background: var(--bg); padding: 10px 12px; border-radius: 8px; margin-top: 8px; line-height: 1.6; }
     .legal-section b { color: var(--ink-1); font-weight: 700; }
     .legal-footer { font-size: 11.5px; color: var(--ink-4); text-align: center; padding: 12px 0 0; line-height: 1.7; border-top: 1px solid var(--divider-soft); margin-top: 8px; }
