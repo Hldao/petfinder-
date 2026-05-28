@@ -971,24 +971,32 @@
     .terms-note .link { color: var(--apricot-deep); font-weight: 600; }
 
     /* 品种快选 chips */
+    /* v10 r95 · breed-chip 拥挤精修
+     * 之前 gap:5 padding:3×9 font:11 → 高度 ~17px 比 place-chip(24) 还薄
+     * 现 gap:8 padding:6×12 font:12 → 高度 ~24px · 与 place-chip / search-chip 同 family
+     * 颜色 ink-3 → ink-2 · contrast 提升（在白色 form-section 卡片内更可读）*/
     .breed-chips {
-      display: flex; flex-wrap: wrap; gap: 5px;
-      margin-top: 8px;
+      display: flex; flex-wrap: wrap; gap: 8px;
+      margin-top: 10px;
     }
     .breed-chip {
-      font-size: 11px;
-      padding: 3px 9px;
+      font-size: 12px;
+      padding: 6px 12px;
       background: var(--bg);
-      color: var(--ink-3);
+      color: var(--ink-2);
       border-radius: var(--radius-pill);
       cursor: pointer;
       font-weight: 500;
+      transition: background-color 0.15s, transform 0.1s;
     }
+    .breed-chip:active { transform: scale(0.97); background: var(--bg-deeper); }
     .breed-chip.other {
-      background: white;
+      background: var(--surface);
       color: var(--apricot-deep);
       border: 1px dashed var(--apricot);
       font-weight: 600;
+      padding: 5px 11px;
+      display: inline-flex; align-items: center; gap: 4px;
     }
 
     /* Contact Guide */
