@@ -407,8 +407,8 @@
     .pc-action { font-size: 11.5px; color: var(--ink-3); display: flex; align-items: center; gap: 3px; font-family: var(--font-en); font-weight: 600; }
     .pc-action.clue { color: var(--apricot-deep); background: var(--apricot-soft); padding: 4px 10px; border-radius: var(--radius-pill); font-family: var(--font-cn); font-weight: 700; }
     .feed-list { padding: 0 var(--space-4); display: flex; flex-direction: column; gap: var(--space-3); }
-    /* v10 r62 → r78 · 入场 stagger 抽成 utility · 4 个列表共用（feed/archive/all-posts/search-result）
-     * signature moment · 仅首屏一次 · 给 prototype 一个"温暖出现"的开场 · 不打扰后续滚动 */
+    /* v10 r62 → r78 → r86 · stagger 简化为 3 段（之前 6 段 / 总 0.8s · 现 3 段 / 总 0.67s）
+     * 视觉中心收紧 · 首屏运动期压短 · 卡片快速归于静态 */
     @keyframes feedCardEnter {
       from { opacity: 0; transform: translateY(8px); }
       to   { opacity: 1; transform: translateY(0); }
@@ -417,19 +417,13 @@
       animation: feedCardEnter 0.42s cubic-bezier(0.2, 0.7, 0.3, 1) both;
     }
     .stagger-enter > *:nth-child(1) { animation-delay: 0.05s; }
-    .stagger-enter > *:nth-child(2) { animation-delay: 0.12s; }
-    .stagger-enter > *:nth-child(3) { animation-delay: 0.19s; }
-    .stagger-enter > *:nth-child(4) { animation-delay: 0.26s; }
-    .stagger-enter > *:nth-child(5) { animation-delay: 0.32s; }
-    .stagger-enter > *:nth-child(n+6) { animation-delay: 0.38s; }
+    .stagger-enter > *:nth-child(2) { animation-delay: 0.15s; }
+    .stagger-enter > *:nth-child(n+3) { animation-delay: 0.25s; }
     /* 向后兼容：feed-list 自动获得 stagger 行为 */
     .feed-list > * { animation: feedCardEnter 0.42s cubic-bezier(0.2, 0.7, 0.3, 1) both; }
     .feed-list > *:nth-child(1) { animation-delay: 0.05s; }
-    .feed-list > *:nth-child(2) { animation-delay: 0.12s; }
-    .feed-list > *:nth-child(3) { animation-delay: 0.19s; }
-    .feed-list > *:nth-child(4) { animation-delay: 0.26s; }
-    .feed-list > *:nth-child(5) { animation-delay: 0.32s; }
-    .feed-list > *:nth-child(n+6) { animation-delay: 0.38s; }
+    .feed-list > *:nth-child(2) { animation-delay: 0.15s; }
+    .feed-list > *:nth-child(n+3) { animation-delay: 0.25s; }
 
     /* 通用 Toast · v10 r25 从 city-toast 改名 */
     .toast {
@@ -2719,7 +2713,7 @@
             <div class="title">往期成功案例</div>
             <div class="meta">共 <strong style="color:var(--mint);font-family:var(--font-en);font-weight:800">47</strong> 个家庭团聚</div>
           </div>
-          <div class="archive-list stagger-enter" id="archive-list"></div>
+          <div class="archive-list" id="archive-list"></div>
         </div>
 
         <!-- 排序 Action Sheet -->
