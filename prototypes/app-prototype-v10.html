@@ -326,8 +326,9 @@
     .scroll-area::-webkit-scrollbar { display: none; }
 
     /* 卡片 */
-    /* v10 r63 · pet-card 视觉精修：左侧 ribbon 仅给「我发布的」卡（my-card）
-     * 状态识别已由 status-bubble + 各 photo 渐变承担 · ribbon 是"我的帖"专属信号 */
+    /* v10 r63 → r92 · my-card ribbon 砍掉 · 单留杏橘渐变背景作为"我的帖"信号
+     * 之前 r78 已砍 footer 「✏ 我发布的」chip · 现砍左侧 3px ribbon
+     * 「我的帖」标识从三重（ribbon + 整卡渐变 + footer chip）收敛到单一（整卡渐变） */
     .pet-card {
       background: var(--surface); border-radius: var(--radius-lg);
       overflow: hidden; box-shadow: var(--shadow-card); cursor: pointer;
@@ -335,12 +336,6 @@
       transition: transform 0.18s, box-shadow 0.18s;
     }
     .pet-card:active { transform: scale(0.99); }
-    .pet-card.my-card::before {
-      content: ''; position: absolute;
-      left: 0; top: 0; bottom: 0; width: 3px;
-      border-radius: var(--radius-lg) 0 0 var(--radius-lg);
-      background: linear-gradient(180deg, var(--apricot) 0%, #FFB088 100%);
-    }
     .pc-body { display: flex; padding: var(--space-4); gap: var(--space-4); align-items: flex-start; }
     /* v10 r70 · pc-photo 加 subtle inset shadow · 让 photo "被托住"的层次感 */
     /* v10 r79 · pc-photo emoji 强制居中（line-height:1 修正 emoji baseline 偏下） */
@@ -2519,8 +2514,7 @@
     .card-hint-strip.found::before { background: var(--mint); }
     .card-hint-strip .hint-arrow { margin-left: auto; font-size: 13px; opacity: 0.7; }
     .card-hint-strip.hint-fading { opacity: 0; }
-    /* my-card 已有左侧 ribbon · hint-strip 不再加 ::before（同色重叠会撕裂） */
-    .pet-card.my-card .card-hint-strip::before { display: none; }
+    /* v10 r92 · my-card ribbon 已砍 · hint-strip::before 不再需要 override · 让 my-card 的 hint 也能显示颜色信号 */
 
     /* === 发帖情绪托住 === */
     .publish-warmth { margin:0 16px 12px; padding:12px 14px; background:linear-gradient(135deg,var(--apricot-soft),var(--honey-soft)); border-radius:var(--radius-md); }
