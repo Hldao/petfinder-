@@ -1151,9 +1151,9 @@
     .map-pin.found .pin-head { background: var(--mint); }
     /* v10 r87 · 地名 chip 阴影减弱（pill shadow 太重看起来在飘）· 改 1px ring 表"贴在地图上"质感 */
     .map-label { position: absolute; font-size: 11px; font-weight: 700; color: var(--ink-2); background: var(--surface); padding: 2px 8px; border-radius: var(--radius-pill); pointer-events: none; box-shadow: 0 1px 2px rgba(0,0,0,0.06), 0 0 0 1px rgba(0,0,0,0.04); }
-    .map-view-toggle { position: absolute; top: 14px; left: 16px; z-index: 5; background: var(--surface); border-radius: var(--radius-pill); padding: 4px; display: flex; box-shadow: var(--shadow-card); }
-    .vt { font-size: 12px; font-weight: 700; padding: 6px 14px; border-radius: var(--radius-pill); cursor: pointer; color: var(--ink-3); }
-    .vt.active { background: var(--ink-1); color: white; }
+    /* v10 r89 · 砍 .map-view-toggle + .vt · 与 tab-bar「首页/地图」切换语义重复
+     * 反例库 #10 同病 · 容器已 clickable 仍加显式按钮 = 增加认知成本
+     * 地图屏「地图」active 按钮还是装饰性（点击无反应）· 用户决策干扰 */
     /* v10 r87 · map-precision-hint 下移 + 右收 96px · 让位小程序胶囊（top 50~82 / right 7~94）+ 让位 map-fab */
     .map-precision-hint {
       position: absolute; top: 90px; left: 16px; right: 96px;
@@ -2801,11 +2801,8 @@
         </div><!-- /map-layer -->
 
         <!-- 固定浮层 -->
+        <!-- v10 r89 · 砍 .map-view-toggle · 与 tab-bar 切换语义重复 + 「地图」active 按钮装饰性 -->
         <div class="map-precision-hint"><svg class="icon icon-sm"><use href="#i-shield"/></svg> 位置精度模糊处理至 500m 以保护隐私</div>
-        <div class="map-view-toggle">
-          <div class="vt" onclick="showScreen('feed', true)">列表</div>
-          <div class="vt active">地图</div>
-        </div>
 
         <!-- Pin 预览弹卡 -->
         <div class="pin-popup" id="pin-popup">
