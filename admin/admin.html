@@ -114,8 +114,19 @@
 
 <div id="toast"></div>
 
-<script src="https://imgcache.qq.com/qcloud/cloudbase-js-sdk/1.7.1/cloudbase.full.js"></script>
+<script type="module">
+  // CloudBase v2 SDK 不出 UMD bundle，走 ESM。esm.sh 实时打包 npm 包给浏览器。
+  import cloudbase from 'https://esm.sh/@cloudbase/js-sdk@2.28.8';
+  window.cloudbase = cloudbase;
+  window.dispatchEvent(new Event('cloudbase-ready'));
+</script>
 <script>
+  // SDK 异步加载，提供一个 Promise 等它就绪
+  const cloudbaseReady = new Promise(resolve => {
+    if (window.cloudbase) resolve(window.cloudbase);
+    else window.addEventListener('cloudbase-ready', () => resolve(window.cloudbase));
+  });
+
   // === 状态 ===
   let app = null;
   let envId = localStorage.getItem('ADMIN_CLOUD_ENV') || '';
@@ -139,9 +150,10 @@
 
   async function initApp() {
     if (app) return;
-    app = cloudbase.init({ env: envId });
+    const cb = await cloudbaseReady;
+    app = cb.init({ env: envId });
     const auth = app.auth({ persistence: 'local' });
-    if (!auth.hasLoginState()) await auth.anonymousAuthProvider().signIn();
+    if (!auth.hasLoginState()) await auth.signInAnonymously();
   }
 
   async function call(name, data) {
