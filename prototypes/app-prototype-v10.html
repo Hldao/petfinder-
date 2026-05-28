@@ -123,19 +123,25 @@
     /* v10 r59 · 微信小程序胶囊按钮（系统强制存在 · 右上角浮于 navbar 之上）
      * 真实小程序里这个胶囊由微信系统渲染 · 任何页面都不能去掉
      * 页面自定义按钮需要避开此位置（约 90px 右侧空间）*/
-    /* v10 r65 · wx-capsule 视觉精修 · 浅灰底 + 实在边框 · 在白底 navbar 上更清晰 */
+    /* v10 r88 · wx-capsule 改白色毛玻璃 · 真实微信胶囊在地图等彩色背景下的实现
+     * 之前 rgba(0,0,0,0.04) 浅黑透明 · 在白色 navbar 上 OK · 但地图屏彩色背景下"融化"看不清
+     * 现：白色 92% 不透明 + backdrop-filter · 任何背景下保持可读
+     * 这也是真实微信小程序胶囊的样式（7.0+ 起 · 滴滴/美团/高德同款） */
     .wx-capsule {
       position: absolute;
       top: 50px;  /* status-bar 44 + 6px · 胶囊中心 66 与 nav-row 中心对齐 */
       right: 7px;
       width: 87px; height: 32px;
-      background: rgba(0,0,0,0.04);
-      border: 0.5px solid rgba(0,0,0,0.12);
+      background: rgba(255,255,255,0.92);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 0.5px solid rgba(0,0,0,0.08);
       border-radius: 16px;
       display: flex;
       align-items: center;
       z-index: 50;
       pointer-events: none;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.04);
     }
     .wx-capsule-btn {
       flex: 1;
