@@ -735,10 +735,11 @@
     }
     .section-label .count { font-family: var(--font-en); color: var(--apricot-deep); }
     .desc-card { background: var(--surface); border-radius: var(--radius-md); padding: var(--space-4); font-size: var(--text-base); color: var(--ink-2); line-height: var(--leading-relaxed); margin-bottom: var(--space-4); box-shadow: var(--shadow-card); }
+    /* v10 r75 · feature-card token 化 + 字号略增易读 */
     .feature-card {
       background: var(--honey-soft); border-radius: var(--radius-md);
-      padding: 12px 14px; margin-bottom: 16px;
-      display: flex; gap: 10px; font-size: 12px; color: var(--honey-deep); line-height: 1.65;
+      padding: var(--space-3) var(--space-4); margin-bottom: var(--space-4);
+      display: flex; gap: var(--space-3); font-size: var(--text-base); color: var(--honey-deep); line-height: var(--leading-relaxed);
     }
     .feature-card.green { background: var(--mint-soft); color: var(--mint-deep); }
     .feature-card .ic { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
@@ -909,10 +910,14 @@
       line-height: 1.5;
     }
     .notify-card .nc-ic { font-size: 16px; flex-shrink: 0; }
+    /* v10 r75 · compliance-note 改 honey 暖色（语义对齐）
+     * 内容是"温馨告知 · 不撮合金钱交易"· 不是警告/危险
+     * warn 红色背景误导用户觉得"危险" · honey 暖色更贴"邻里提醒"语义
+     */
     .compliance-note {
-      margin: 0 16px 12px; padding: 12px 14px;
-      background: var(--warn-soft); border-radius: var(--radius-md);
-      font-size: 11.5px; color: var(--warn-deep); line-height: 1.7;
+      margin: 0 var(--space-4) var(--space-3); padding: var(--space-3) var(--space-4);
+      background: var(--honey-soft); border-radius: var(--radius-md);
+      font-size: var(--text-sm); color: var(--honey-deep); line-height: var(--leading-relaxed);
     }
     .compliance-note b { font-weight: 700; }
     .terms-note { padding: 8px 20px 14px; font-size: 11px; color: var(--ink-4); line-height: 1.6; }
@@ -976,7 +981,8 @@
     }
     .step-row b { font-size: 13.5px; font-weight: 700; }
     .step-row .sub { font-size: 11.5px; color: var(--ink-3); margin-top: 2px; line-height: 1.5; }
-    .warn-block { background: var(--warn-soft); border-radius: var(--radius-md); padding: 12px 14px; font-size: 11.5px; color: var(--warn-deep); line-height: 1.7; margin-top: 12px; }
+    /* v10 r75 · warn-block 保留 warn 红色（真正的严重警告 · 如冒领/永久封号）· token 化 */
+    .warn-block { background: var(--warn-soft); border-radius: var(--radius-md); padding: var(--space-3) var(--space-4); font-size: var(--text-sm); color: var(--warn-deep); line-height: var(--leading-relaxed); margin-top: var(--space-3); }
     .warn-block b { font-weight: 700; }
     .warn-block .link { font-weight: 700; text-decoration: underline; cursor: pointer; }
 
