@@ -1427,9 +1427,33 @@
     }
 
     /* Profile */
+    /* v10 r100 · profile 屏浮层标题栏 · 与胶囊同一行形成 navbar 视觉锚点
+     * - position:absolute 浮在 hero 上 · 不挤占 flex 流 · hero 杏橘背景仍能铺满
+     * - 透明背景 + 白字 + 微妙阴影 · 在杏橘 hero 上可读
+     * - pointer-events:none 不阻挡 hero 点击 */
+    .profile-titlebar {
+      position: absolute; top: 0; left: 0; right: 0;
+      height: 44px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 17px; font-weight: 700;
+      color: white;
+      z-index: 5;
+      letter-spacing: -0.005em;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.08);
+      pointer-events: none;
+      transition: background-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+    }
+    /* v10 r100 · 滚动过 hero 后切实色 · 避免白字进入白底区域看不见 */
+    .profile-titlebar.is-stuck {
+      background: var(--surface);
+      color: var(--ink-1);
+      text-shadow: none;
+      box-shadow: 0 1px 0 var(--divider);
+    }
     .profile-scroll { flex: 1; overflow-y: auto; padding-bottom: 100px; }
     /* v10 r46 · profile 进一步紧凑化 · hero 压缩 + 大号入口 + 分组 label */
-    .profile-hero { background: linear-gradient(135deg, #FFB088 0%, var(--apricot) 100%); color: white; padding: 22px 20px 42px; position: relative; overflow: hidden; }
+    /* v10 r100 · profile-hero padding-top 22 → 56 · 让位浮层 .profile-titlebar (44px) + 12 间距 */
+    .profile-hero { background: linear-gradient(135deg, #FFB088 0%, var(--apricot) 100%); color: white; padding: 56px 20px 42px; position: relative; overflow: hidden; }
     .profile-hero::before { content: '🐾'; position: absolute; top: -10px; right: -10px; font-size: 180px; opacity: 0.08; transform: rotate(-12deg); line-height: 1; }
     .profile-user { display: flex; align-items: center; gap: 14px; position: relative; }
     .profile-avatar { width: 52px; height: 52px; border-radius: 16px; background: rgba(255,255,255,0.95); font-size: 28px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
@@ -3442,6 +3466,8 @@
 
     <!-- ===== 屏 12 · Profile ===== -->
     <div class="screen" data-screen="profile">
+      <!-- v10 r100 · 浮层标题栏 · 与胶囊形成 navbar 视觉锚点 -->
+      <div class="profile-titlebar">我的</div>
       <div class="profile-scroll">
         <!-- v10 r43 · 重做 profile：从「个人成就页」改造为「工具入口列表」
              删除：points-card 贡献统计（反例库 #1/#8/#9 同类问题 · 冷启动空跑）
@@ -4653,6 +4679,7 @@
     if (name === 'all-posts') initAllPosts();
     if (name === 'map' && window._applyFilter) window._applyFilter(currentFilter);
     if (name === 'map') initMapPrecisionHint();
+    if (name === 'profile') setupProfileTitlebar();
   }
 
   // v10 r19 · 进 chat 时设置 chat 视角（根据"我和对方的关系"）
@@ -5585,6 +5612,27 @@
    * Prototype 阶段每次打开都演示；上线时改为 localStorage 永久隐退
    * 用户滚动 feed 即立即收起（说明已开始使用，无需再"介绍"）
    * ====================================================== */
+  // v10 r100 · profile 屏浮层标题栏 sticky 视觉切换
+  // 透明（在 hero 上 · 白字）→ 实色（滚过 hero 后 · 黑字 + 白底 + hairline）
+  let _profileTitlebarBound = false;
+  function setupProfileTitlebar() {
+    if (_profileTitlebarBound) return;
+    const screen = document.querySelector('[data-screen="profile"]');
+    if (!screen) return;
+    const scrollArea = screen.querySelector('.profile-scroll');
+    const titlebar = screen.querySelector('.profile-titlebar');
+    if (!scrollArea || !titlebar) return;
+    _profileTitlebarBound = true;
+    let lastStuck = false;
+    scrollArea.addEventListener('scroll', () => {
+      const stuck = scrollArea.scrollTop > 60;
+      if (stuck !== lastStuck) {
+        titlebar.classList.toggle('is-stuck', stuck);
+        lastStuck = stuck;
+      }
+    }, { passive: true });
+  }
+
   // v10 r94 · 发布页 ✕ 关闭确认 · 防止误触丢失已编辑内容
   function confirmAbandonPublish() {
     if (confirm('放弃发布？已填写的内容将不保留\n（如需保存请点「保存草稿」）')) {
