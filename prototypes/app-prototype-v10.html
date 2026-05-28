@@ -314,9 +314,12 @@
       background: linear-gradient(180deg, var(--apricot) 0%, #FFB088 100%);
     }
     .pc-body { display: flex; padding: var(--space-4); gap: var(--space-4); align-items: flex-start; }
+    /* v10 r70 · pc-photo 加 subtle inset shadow · 让 photo "被托住"的层次感 */
     .pc-photo {
       width: 74px; height: 74px; flex-shrink: 0; border-radius: 16px;
       position: relative; display: flex; align-items: center; justify-content: center; font-size: 36px;
+      box-shadow: inset 0 1px 3px rgba(0,0,0,0.05),
+                  inset 0 0 0 1px rgba(255,255,255,0.4);
     }
     .ph-orange { background: linear-gradient(135deg, #FFE9DD 0%, #FFCDA8 100%); }
     .ph-blue { background: linear-gradient(135deg, #DDE7F4 0%, #B5C7E0 100%); }
@@ -852,10 +855,11 @@
     .seg-item { flex: 1; padding: 9px; text-align: center; font-size: 13px; font-weight: 600; color: var(--ink-3); cursor: pointer; border-radius: var(--radius-pill); }
     .seg-item.active { background: var(--ink-1); color: white; }
     .form-section { background: var(--surface); margin: 0 16px 12px; border-radius: var(--radius-md); overflow: hidden; box-shadow: var(--shadow-card); }
-    .form-row { padding: 12px 16px; border-bottom: 1px solid var(--divider-soft); }
+    /* v10 r70 · 表单组件 token 化 + font-size 收敛 */
+    .form-row { padding: var(--space-3) var(--space-4); border-bottom: 1px solid var(--divider-soft); }
     .form-row:last-child { border-bottom: none; }
     .form-label {
-      font-size: 11px; color: var(--ink-3); margin-bottom: 6px;
+      font-size: var(--text-xs); color: var(--ink-3); margin-bottom: var(--space-2);
       font-family: var(--font-en); font-weight: 700;
       letter-spacing: 0.08em; text-transform: uppercase;
       display: flex; justify-content: space-between; align-items: center;
@@ -863,10 +867,10 @@
     .form-label .req { color: var(--apricot); }
     .form-input, .form-textarea {
       width: 100%; border: none; background: transparent;
-      font-family: var(--font-cn); font-size: 14.5px; color: var(--ink-1);
+      font-family: var(--font-cn); font-size: var(--text-md); color: var(--ink-1);
       outline: none; padding: 0; font-weight: 600;
     }
-    .form-textarea { resize: none; min-height: 64px; font-weight: 400; line-height: 1.6; }
+    .form-textarea { resize: none; min-height: 64px; font-weight: 400; line-height: var(--leading-normal); }
     .form-value { font-size: 14.5px; font-weight: 600; display: flex; justify-content: space-between; align-items: center; }
     .form-arrow { color: var(--ink-4); font-size: 13px; }
     /* v10 r56 · .pet-types 加 flex-wrap + chip 内 nowrap · 4 个 age-stage 不再两行挤压 */
