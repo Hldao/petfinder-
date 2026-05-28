@@ -4,5 +4,5 @@
 // 在 CLOUD_ENV 仍是占位符时，app 自动用本地 seed 数据跑（见 utils/seed.js），
 // 方便在还没建好云环境时就能在开发者工具里看到完整 UI。
 module.exports = {
-  CLOUD_ENV: 'REPLACE_WITH_YOUR_ENV_ID',
+  CLOUD_ENV: 'cloud1-d6gf3h7rd5cc841a9',
 };
