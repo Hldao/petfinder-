@@ -661,15 +661,19 @@
       margin: 14px 16px 0; height: 220px; border-radius: 22px;
       position: relative; display: flex; align-items: center; justify-content: center; font-size: 100px; overflow: hidden;
     }
+    /* v10 r67 · hero-status 与 status-bubble 视觉同源 · 仅尺寸不同 */
     .hero-status {
       position: absolute; top: 14px; left: 14px;
       padding: 5px 14px; border-radius: var(--radius-pill);
-      font-size: 12px; font-weight: 700; color: white;
-      backdrop-filter: blur(8px); letter-spacing: 0.02em;
-      box-shadow: 0 3px 10px rgba(0,0,0,0.12);
+      font-size: var(--text-sm); font-weight: 700; color: white;
+      letter-spacing: 0.02em;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.12),
+                  0 0 0 2px rgba(255,255,255,0.95);
     }
-    .hero-status.lost { background: rgba(255,133,82,0.95); }
-    .hero-status.found { background: rgba(91,184,159,0.95); }
+    .hero-status.lost  { background: var(--apricot); }
+    .hero-status.found { background: var(--mint); }
+    .hero-status.care  { background: var(--plum); }
+    .hero-status.expired { background: var(--ink-4); }
     /* hero 背景由各宠物自己的 photoClass（ph-blue/ph-orange/...）提供 · 不再按屏强制覆盖 */
     .hero-time {
       position: absolute; top: 14px; right: 14px;
