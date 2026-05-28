@@ -1,0 +1,9 @@
+{
+  "name": "adminFeedback",
+  "version": "1.0.0",
+  "description": "运营后台意见反馈查看",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3"
+  }
+}

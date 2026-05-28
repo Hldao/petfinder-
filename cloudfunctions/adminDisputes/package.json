@@ -1,0 +1,9 @@
+{
+  "name": "adminDisputes",
+  "version": "1.0.0",
+  "description": "运营后台争议申诉处理",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3"
+  }
+}

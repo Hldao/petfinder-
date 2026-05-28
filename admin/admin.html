@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>寻宠·大理 · 运营后台</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif; background: #F5F1E8; color: #2B2723; min-height: 100vh; }
+
+  /* === 登录 === */
+  #login { display: flex; align-items: center; justify-content: center; min-height: 100vh; }
+  .login-box { background: #fff; border-radius: 16px; padding: 40px 32px; width: 340px; box-shadow: 0 4px 24px rgba(0,0,0,0.06); }
+  .login-box h1 { font-size: 20px; margin-bottom: 6px; }
+  .login-box p { color: #8B8275; font-size: 13px; margin-bottom: 24px; }
+  .login-box input { width: 100%; padding: 12px 14px; border: 1px solid #E5DFD2; border-radius: 10px; font-size: 15px; margin-bottom: 12px; background: #FAF7F0; }
+  .login-box input:focus { outline: none; border-color: #E66A38; }
+  .login-box button { width: 100%; padding: 12px; background: #E66A38; color: #fff; border: none; border-radius: 10px; font-size: 15px; cursor: pointer; }
+  .login-box button:disabled { opacity: 0.5; cursor: wait; }
+  .login-box .err { color: #C44; font-size: 13px; margin-top: 8px; min-height: 18px; }
+  .login-box .cfg { font-size: 12px; color: #A8A092; margin-top: 16px; padding-top: 16px; border-top: 1px dashed #E5DFD2; line-height: 1.6; }
+
+  /* === 后台 === */
+  #admin { max-width: 1100px; margin: 0 auto; padding: 24px 20px; }
+  header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+  header h1 { font-size: 18px; }
+  header .actions { display: flex; gap: 12px; align-items: center; }
+  header .env { font-size: 12px; color: #8B8275; background: #fff; padding: 4px 10px; border-radius: 6px; }
+  header button { background: transparent; border: 1px solid #E5DFD2; color: #6B6358; padding: 6px 12px; border-radius: 8px; cursor: pointer; font-size: 13px; }
+
+  nav.tabs { display: flex; gap: 4px; background: #fff; padding: 4px; border-radius: 10px; margin-bottom: 16px; width: fit-content; }
+  nav.tabs button { background: transparent; border: none; padding: 8px 18px; border-radius: 8px; cursor: pointer; font-size: 14px; color: #6B6358; }
+  nav.tabs button.active { background: #E66A38; color: #fff; }
+  nav.tabs .count { display: inline-block; margin-left: 4px; background: rgba(0,0,0,0.08); padding: 1px 7px; border-radius: 8px; font-size: 11px; }
+  nav.tabs button.active .count { background: rgba(255,255,255,0.25); }
+
+  main section { background: #fff; border-radius: 12px; padding: 20px; min-height: 200px; }
+  main section[hidden] { display: none; }
+  .loading, .empty { text-align: center; color: #8B8275; padding: 60px 20px; font-size: 14px; }
+
+  /* 帖子卡 */
+  .post-item, .dispute-item, .feedback-item { display: flex; gap: 16px; padding: 16px; border: 1px solid #EFE9DC; border-radius: 10px; margin-bottom: 12px; }
+  .post-photos { display: flex; gap: 6px; flex-shrink: 0; }
+  .post-photos img { width: 72px; height: 72px; border-radius: 8px; object-fit: cover; background: #F0EBDF; }
+  .post-body { flex: 1; min-width: 0; }
+  .post-meta { display: flex; gap: 8px; align-items: center; font-size: 12px; color: #8B8275; margin-bottom: 6px; }
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; }
+  .badge.lost { background: #FFE9D6; color: #C44A1A; }
+  .badge.found { background: #DEEEDE; color: #2E7A3A; }
+  .badge.pending { background: #FFF2C2; color: #8A6800; }
+  .badge.risky { background: #FFD6D6; color: #B02020; }
+  .badge.resolved { background: #E1E8F0; color: #5A6B7C; }
+  .post-title { font-size: 15px; font-weight: 600; margin-bottom: 4px; }
+  .post-desc { font-size: 13px; color: #4B4438; line-height: 1.5; white-space: pre-wrap; word-break: break-word; }
+  .post-actions { display: flex; gap: 8px; align-items: flex-start; flex-shrink: 0; }
+  .post-actions button { padding: 6px 14px; border-radius: 8px; border: none; cursor: pointer; font-size: 13px; }
+  .btn-approve { background: #2E7A3A; color: #fff; }
+  .btn-reject { background: #C44; color: #fff; }
+  .btn-resolve { background: #E66A38; color: #fff; }
+  .btn-approve:disabled, .btn-reject:disabled, .btn-resolve:disabled { opacity: 0.5; cursor: wait; }
+
+  /* toast */
+  #toast { position: fixed; bottom: 40px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.78); color: #fff; padding: 10px 20px; border-radius: 22px; font-size: 14px; opacity: 0; transition: opacity 0.2s; pointer-events: none; }
+  #toast.show { opacity: 1; }
+</style>
+</head>
+<body>
+
+<!-- 登录页 -->
+<div id="login">
+  <div class="login-box">
+    <h1>🐾 寻宠·大理 · 运营后台</h1>
+    <p>请输入运营密码</p>
+    <input type="text" id="env-input" placeholder="CloudBase 环境 ID（首次必填）" autocomplete="off">
+    <input type="password" id="pwd-input" placeholder="密码" autocomplete="current-password">
+    <button id="login-btn" onclick="doLogin()">登录</button>
+    <div class="err" id="login-err"></div>
+    <div class="cfg">
+      环境 ID 在腾讯云 CloudBase 控制台首页。<br>
+      密码由后端管理员设置（云函数环境变量 ADMIN_PASSWORD）。
+    </div>
+  </div>
+</div>
+
+<!-- 后台主体 -->
+<div id="admin" hidden>
+  <header>
+    <h1>🐾 寻宠·大理 · 运营后台</h1>
+    <div class="actions">
+      <span class="env" id="env-label"></span>
+      <button onclick="refreshAll()">刷新</button>
+      <button onclick="doLogout()">退出</button>
+    </div>
+  </header>
+
+  <nav class="tabs">
+    <button class="active" data-tab="posts" onclick="switchTab('posts')">内容审核 <span class="count" id="cnt-posts">·</span></button>
+    <button data-tab="disputes" onclick="switchTab('disputes')">争议申诉 <span class="count" id="cnt-disputes">·</span></button>
+    <button data-tab="feedback" onclick="switchTab('feedback')">意见反馈 <span class="count" id="cnt-feedback">·</span></button>
+  </nav>
+
+  <main>
+    <section id="tab-posts">
+      <div class="loading">加载中…</div>
+    </section>
+    <section id="tab-disputes" hidden>
+      <div class="loading">加载中…</div>
+    </section>
+    <section id="tab-feedback" hidden>
+      <div class="loading">加载中…</div>
+    </section>
+  </main>
+</div>
+
+<div id="toast"></div>
+
+<script src="https://imgcache.qq.com/qcloud/cloudbase-js-sdk/1.7.2/cloudbase.full.js"></script>
+<script>
+  // === 状态 ===
+  let app = null;
+  let envId = localStorage.getItem('ADMIN_CLOUD_ENV') || '';
+  let pwd = sessionStorage.getItem('ADMIN_PWD') || '';
+  let currentTab = 'posts';
+
+  // 启动时如果已有 envId 和 pwd，尝试自动进入
+  window.addEventListener('DOMContentLoaded', () => {
+    if (envId) document.getElementById('env-input').value = envId;
+    if (envId && pwd) tryAutoLogin();
+  });
+
+  async function tryAutoLogin() {
+    try {
+      await initApp();
+      const r = await call('adminAuth', {});
+      if (r && r.ok) enterAdmin();
+      else { pwd = ''; sessionStorage.removeItem('ADMIN_PWD'); }
+    } catch (e) { /* 静默：留在登录页 */ }
+  }
+
+  async function initApp() {
+    if (app) return;
+    app = cloudbase.init({ env: envId });
+    const auth = app.auth({ persistence: 'local' });
+    if (!auth.hasLoginState()) await auth.signInAnonymously();
+  }
+
+  async function call(name, data) {
+    if (!app) await initApp();
+    const res = await app.callFunction({ name, data: Object.assign({ password: pwd }, data || {}) });
+    return res.result || {};
+  }
+
+  // === 登录 ===
+  async function doLogin() {
+    const btn = document.getElementById('login-btn');
+    const err = document.getElementById('login-err');
+    err.textContent = '';
+    const eVal = document.getElementById('env-input').value.trim();
+    const pVal = document.getElementById('pwd-input').value;
+    if (!eVal) { err.textContent = '请填环境 ID'; return; }
+    if (!pVal) { err.textContent = '请输入密码'; return; }
+
+    btn.disabled = true; btn.textContent = '登录中…';
+    try {
+      envId = eVal; pwd = pVal;
+      localStorage.setItem('ADMIN_CLOUD_ENV', envId);
+      app = null;
+      await initApp();
+      const r = await call('adminAuth', {});
+      if (r.ok) {
+        sessionStorage.setItem('ADMIN_PWD', pwd);
+        enterAdmin();
+      } else {
+        err.textContent = r.msg || '登录失败';
+        pwd = '';
+      }
+    } catch (e) {
+      err.textContent = '调用失败：' + (e.message || e);
+      pwd = '';
+    }
+    btn.disabled = false; btn.textContent = '登录';
+  }
+
+  function doLogout() {
+    sessionStorage.removeItem('ADMIN_PWD');
+    pwd = '';
+    location.reload();
+  }
+
+  function enterAdmin() {
+    document.getElementById('login').hidden = true;
+    document.getElementById('admin').hidden = false;
+    document.getElementById('env-label').textContent = envId;
+    refreshAll();
+  }
+
+  // === Tab 切换 ===
+  function switchTab(tab) {
+    currentTab = tab;
+    document.querySelectorAll('nav.tabs button').forEach(b => {
+      b.classList.toggle('active', b.dataset.tab === tab);
+    });
+    document.querySelectorAll('main section').forEach(s => {
+      s.hidden = s.id !== 'tab-' + tab;
+    });
+  }
+
+  async function refreshAll() {
+    await Promise.all([loadPosts(), loadDisputes(), loadFeedback()]);
+  }
+
+  // === 帖子审核 ===
+  async function loadPosts() {
+    const el = document.getElementById('tab-posts');
+    el.innerHTML = '<div class="loading">加载中…</div>';
+    try {
+      const r = await call('adminPosts', { action: 'list' });
+      if (!r.ok) { el.innerHTML = '<div class="empty">' + (r.msg || '加载失败') + '</div>'; return; }
+      const list = r.list || [];
+      document.getElementById('cnt-posts').textContent = list.length;
+      if (!list.length) { el.innerHTML = '<div class="empty">暂无待审核帖子 🌿</div>'; return; }
+      el.innerHTML = list.map(p => renderPost(p)).join('');
+    } catch (e) {
+      el.innerHTML = '<div class="empty">异常：' + (e.message || e) + '</div>';
+    }
+  }
+
+  function renderPost(p) {
+    const photos = (p.photos || []).slice(0, 3).map(u => '<img src="' + escapeHtml(u) + '" alt="">').join('');
+    const typeBadge = p.type === 'lost' ? '<span class="badge lost">寻宠</span>' : '<span class="badge found">招领</span>';
+    const statusBadge = p.status === 'risky'
+      ? '<span class="badge risky">风险</span>'
+      : '<span class="badge pending">待审核</span>';
+    const title = (p.name || p.breed || p.petType || '宠物') + ' · ' + (p.loc || '未填地点');
+    return '<div class="post-item">'
+      + (photos ? '<div class="post-photos">' + photos + '</div>' : '')
+      + '<div class="post-body">'
+      +   '<div class="post-meta">' + typeBadge + statusBadge + '<span>' + fmtDate(p.createdAt) + '</span></div>'
+      +   '<div class="post-title">' + escapeHtml(title) + '</div>'
+      +   '<div class="post-desc">' + escapeHtml(p.desc || '') + '</div>'
+      + '</div>'
+      + '<div class="post-actions">'
+      +   '<button class="btn-approve" onclick="approvePost(\'' + p._id + '\', this)">通过</button>'
+      +   '<button class="btn-reject" onclick="rejectPost(\'' + p._id + '\', this)">拒绝</button>'
+      + '</div>'
+      + '</div>';
+  }
+
+  async function approvePost(id, btn) {
+    btn.disabled = true;
+    try {
+      const r = await call('adminPosts', { action: 'approve', id });
+      if (r.ok) { toast('已通过'); loadPosts(); }
+      else { toast(r.msg || '操作失败'); btn.disabled = false; }
+    } catch (e) { toast('异常：' + (e.message || e)); btn.disabled = false; }
+  }
+
+  async function rejectPost(id, btn) {
+    const reason = prompt('拒绝原因（可选，将记录到帖子上）：');
+    if (reason === null) return;
+    btn.disabled = true;
+    try {
+      const r = await call('adminPosts', { action: 'reject', id, reason });
+      if (r.ok) { toast('已拒绝'); loadPosts(); }
+      else { toast(r.msg || '操作失败'); btn.disabled = false; }
+    } catch (e) { toast('异常：' + (e.message || e)); btn.disabled = false; }
+  }
+
+  // === 争议申诉 ===
+  async function loadDisputes() {
+    const el = document.getElementById('tab-disputes');
+    el.innerHTML = '<div class="loading">加载中…</div>';
+    try {
+      const r = await call('adminDisputes', { action: 'list' });
+      if (!r.ok) { el.innerHTML = '<div class="empty">' + (r.msg || '加载失败') + '</div>'; return; }
+      const list = r.list || [];
+      const pending = list.filter(d => d.status !== 'resolved').length;
+      document.getElementById('cnt-disputes').textContent = pending;
+      if (!list.length) { el.innerHTML = '<div class="empty">暂无申诉 🌿</div>'; return; }
+      el.innerHTML = list.map(d => renderDispute(d)).join('');
+    } catch (e) {
+      el.innerHTML = '<div class="empty">异常：' + (e.message || e) + '</div>';
+    }
+  }
+
+  function renderDispute(d) {
+    const photos = (d.photos || []).slice(0, 3).map(u => '<img src="' + escapeHtml(u) + '" alt="">').join('');
+    const statusBadge = d.status === 'resolved'
+      ? '<span class="badge resolved">已处理</span>'
+      : '<span class="badge pending">待处理</span>';
+    return '<div class="dispute-item">'
+      + (photos ? '<div class="post-photos">' + photos + '</div>' : '')
+      + '<div class="post-body">'
+      +   '<div class="post-meta">' + statusBadge + '<span>' + fmtDate(d.createdAt) + '</span><span>帖子 ' + (d.post_id || '—') + '</span></div>'
+      +   '<div class="post-desc">' + escapeHtml(d.text || '') + '</div>'
+      +   (d.resolution ? '<div class="post-desc" style="margin-top:8px;color:#5A6B7C">处理：' + escapeHtml(d.resolution) + '</div>' : '')
+      + '</div>'
+      + (d.status === 'resolved' ? '' : '<div class="post-actions"><button class="btn-resolve" onclick="resolveDispute(\'' + d._id + '\', this)">标记处理</button></div>')
+      + '</div>';
+  }
+
+  async function resolveDispute(id, btn) {
+    const resolution = prompt('处理结论（将存档）：');
+    if (resolution === null) return;
+    btn.disabled = true;
+    try {
+      const r = await call('adminDisputes', { action: 'resolve', id, resolution });
+      if (r.ok) { toast('已标记处理'); loadDisputes(); }
+      else { toast(r.msg || '操作失败'); btn.disabled = false; }
+    } catch (e) { toast('异常：' + (e.message || e)); btn.disabled = false; }
+  }
+
+  // === 意见反馈 ===
+  async function loadFeedback() {
+    const el = document.getElementById('tab-feedback');
+    el.innerHTML = '<div class="loading">加载中…</div>';
+    try {
+      const r = await call('adminFeedback', { action: 'list' });
+      if (!r.ok) { el.innerHTML = '<div class="empty">' + (r.msg || '加载失败') + '</div>'; return; }
+      const list = r.list || [];
+      document.getElementById('cnt-feedback').textContent = list.length;
+      if (!list.length) { el.innerHTML = '<div class="empty">暂无反馈 🌿</div>'; return; }
+      el.innerHTML = list.map(f => renderFeedback(f)).join('');
+    } catch (e) {
+      el.innerHTML = '<div class="empty">异常：' + (e.message || e) + '</div>';
+    }
+  }
+
+  function renderFeedback(f) {
+    return '<div class="feedback-item">'
+      + '<div class="post-body">'
+      +   '<div class="post-meta"><span class="badge resolved">' + escapeHtml(f.cat || 'other') + '</span><span>' + fmtDate(f.createdAt) + '</span></div>'
+      +   '<div class="post-desc">' + escapeHtml(f.text || '') + '</div>'
+      + '</div>'
+      + '</div>';
+  }
+
+  // === utils ===
+  function escapeHtml(s) {
+    return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]));
+  }
+  function fmtDate(d) {
+    if (!d) return '';
+    const t = (typeof d === 'string' || typeof d === 'number') ? new Date(d) : (d.$date ? new Date(d.$date) : new Date(d));
+    if (isNaN(t)) return '';
+    const p = n => String(n).padStart(2, '0');
+    return t.getFullYear() + '-' + p(t.getMonth() + 1) + '-' + p(t.getDate()) + ' ' + p(t.getHours()) + ':' + p(t.getMinutes());
+  }
+  let toastTimer = null;
+  function toast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => t.classList.remove('show'), 2000);
+  }
+</script>
+</body>
+</html>
