@@ -183,6 +183,20 @@
       /* v10 r59 · 右侧留 96px 给胶囊让位 · 略大于胶囊宽 87 + 7 right + 2 buffer */
       padding-right: 96px;
       border-bottom: 1px solid var(--divider); flex-shrink: 0;
+      /* v10 r81 · 上滑收起 · 美团/闲鱼/小红书同款模式 · filter chip 直接贴 navbar */
+      max-height: 80px;
+      overflow: hidden;
+      transition:
+        max-height 0.32s cubic-bezier(0.2, 0.7, 0.3, 1),
+        opacity 0.22s ease,
+        padding 0.32s cubic-bezier(0.2, 0.7, 0.3, 1);
+    }
+    .nav-region.collapsed {
+      max-height: 0;
+      padding-top: 0;
+      padding-bottom: 0;
+      opacity: 0;
+      border-bottom-width: 0;
     }
     .nav-row { display: flex; align-items: center; gap: 10px; }
     /* 位置标签 · v10 r26 · 点击触发位置授权 / 刷新（仅限大理范围内更精确）*/
@@ -5510,12 +5524,34 @@
     }
   }
 
+  // v10 r81 · feed 屏上滑收起 nav-region（城市标签 + 搜索框）· filter chip 留下贴 navbar
+  // 模式参考：美团/闲鱼/小红书 · 滚到列表深处时节省屏占 · 返回顶部时恢复
+  function setupCollapsibleNav() {
+    const feedScreen = document.querySelector('[data-screen="feed"]');
+    if (!feedScreen) return;
+    const scrollArea = feedScreen.querySelector('.scroll-area');
+    const nav = feedScreen.querySelector('.nav-region');
+    if (!scrollArea || !nav) return;
+    let collapsed = false;
+    scrollArea.addEventListener('scroll', () => {
+      const y = scrollArea.scrollTop;
+      if (y > 60 && !collapsed) {
+        nav.classList.add('collapsed');
+        collapsed = true;
+      } else if (y < 30 && collapsed) {
+        nav.classList.remove('collapsed');
+        collapsed = false;
+      }
+    }, { passive: true });
+  }
+
   // 初次渲染
   function initApp() {
     renderFeed(); renderArchive(); renderMapPins(); renderSheetCards();
     document.querySelectorAll('.filter-row').forEach(enableDragScroll);
     initStatBarAutoDismiss();
     updateMsgBadge();
+    setupCollapsibleNav();
   }
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', initApp);
