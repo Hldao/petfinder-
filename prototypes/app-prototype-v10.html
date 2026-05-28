@@ -177,26 +177,14 @@
      * 胶囊 top:50, height:32 · 中心 66
      * nav-row 36px · 要让中心也是 66 · 起点 = 66-18 = 48 · padding-top = 48-44 = 4
      */
+    /* v10 r82 · nav-region 不再吸附（小程序 navbar 系统级已吸附 · 这层叠加是冗余）
+     * 改为跟随内容滚动 · 在 scroll-area 内部作为列表第一块 · filter chip 用 sticky 替代 */
     .nav-region {
       background: var(--surface);
       padding: 4px 18px 12px;
       /* v10 r59 · 右侧留 96px 给胶囊让位 · 略大于胶囊宽 87 + 7 right + 2 buffer */
       padding-right: 96px;
-      border-bottom: 1px solid var(--divider); flex-shrink: 0;
-      /* v10 r81 · 上滑收起 · 美团/闲鱼/小红书同款模式 · filter chip 直接贴 navbar */
-      max-height: 80px;
-      overflow: hidden;
-      transition:
-        max-height 0.32s cubic-bezier(0.2, 0.7, 0.3, 1),
-        opacity 0.22s ease,
-        padding 0.32s cubic-bezier(0.2, 0.7, 0.3, 1);
-    }
-    .nav-region.collapsed {
-      max-height: 0;
-      padding-top: 0;
-      padding-bottom: 0;
-      opacity: 0;
-      border-bottom-width: 0;
+      border-bottom: 1px solid var(--divider);
     }
     .nav-row { display: flex; align-items: center; gap: 10px; }
     /* 位置标签 · v10 r26 · 点击触发位置授权 / 刷新（仅限大理范围内更精确）*/
@@ -291,7 +279,13 @@
     /* 相邻 sub-icon 紧贴 · 不再 margin-left:auto */
     .sub-icon + .sub-icon { margin-left: 0; }
 
-    .filter-region { padding: 14px 18px 4px; flex-shrink: 0; }
+    /* v10 r82 · filter-region 唯一 sticky 层（贴在小程序 navbar 下方）
+     * background 必须实色 · z-index > 内容 · 滚动时挡住下方 feed 卡片不透视 */
+    .filter-region {
+      padding: 14px 18px 4px;
+      background: var(--bg);
+      position: sticky; top: 0; z-index: 5;
+    }
     .filter-row { display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; align-items: center; padding-bottom: 4px; }
     .filter-row::-webkit-scrollbar { display: none; }
     .chip {
@@ -2670,21 +2664,23 @@
 
     <!-- ===== 屏 1 · Feed ===== -->
     <div class="screen active" data-screen="feed">
-      <div class="nav-region">
-        <div class="nav-row">
-          <div class="city-tag" onclick="handleLocationRequest()"><span class="pin"><svg class="icon" style="width:11px;height:11px;stroke-width:2.5;color:white"><use href="#i-location"/></svg></span><span id="city-name">大理</span></div>
-          <div class="search-pill" onclick="showScreen('search')"><svg class="icon" style="width:16px;height:16px;stroke-width:2;color:var(--ink-4)"><use href="#i-search"/></svg><span>搜品种、地点、特征...</span></div>
-        </div>
-      </div>
-      <div class="filter-region">
-        <div class="filter-row" id="feed-filter-row">
-          <div class="chip active" data-filter="all" onclick="applyFilter('all', this)">全部</div>
-          <div class="chip" data-filter="lost" onclick="applyFilter('lost', this)"><span class="chip-dot" style="background:var(--apricot)"></span>寻宠</div>
-          <div class="chip" data-filter="found" onclick="applyFilter('found', this)"><span class="chip-dot" style="background:var(--mint)"></span>招领</div>
-          <div class="chip chip-sort" id="sort-chip" onclick="openSortSheet()"><svg class="icon icon-sm"><use href="#i-clock"/></svg> 最新</div>
-        </div>
-      </div>
       <div class="scroll-area">
+        <!-- v10 r82 · nav-region 移入 scroll-area · 作为列表头部跟随滚动
+             filter-region position:sticky top:0 · 滚走 nav 后吸附小程序 navbar 下 -->
+        <div class="nav-region">
+          <div class="nav-row">
+            <div class="city-tag" onclick="handleLocationRequest()"><span class="pin"><svg class="icon" style="width:11px;height:11px;stroke-width:2.5;color:white"><use href="#i-location"/></svg></span><span id="city-name">大理</span></div>
+            <div class="search-pill" onclick="showScreen('search')"><svg class="icon" style="width:16px;height:16px;stroke-width:2;color:var(--ink-4)"><use href="#i-search"/></svg><span>搜品种、地点、特征...</span></div>
+          </div>
+        </div>
+        <div class="filter-region">
+          <div class="filter-row" id="feed-filter-row">
+            <div class="chip active" data-filter="all" onclick="applyFilter('all', this)">全部</div>
+            <div class="chip" data-filter="lost" onclick="applyFilter('lost', this)"><span class="chip-dot" style="background:var(--apricot)"></span>寻宠</div>
+            <div class="chip" data-filter="found" onclick="applyFilter('found', this)"><span class="chip-dot" style="background:var(--mint)"></span>招领</div>
+            <div class="chip chip-sort" id="sort-chip" onclick="openSortSheet()"><svg class="icon icon-sm"><use href="#i-clock"/></svg> 最新</div>
+          </div>
+        </div>
         <!-- 顶部希望叙事条 · §6.7 去成就数字（dashboard 累计数 → 当下状态 + 希望）-->
         <div class="feed-stat-bar">
           <div class="fsb-ic">🐾</div>
@@ -5524,34 +5520,12 @@
     }
   }
 
-  // v10 r81 · feed 屏上滑收起 nav-region（城市标签 + 搜索框）· filter chip 留下贴 navbar
-  // 模式参考：美团/闲鱼/小红书 · 滚到列表深处时节省屏占 · 返回顶部时恢复
-  function setupCollapsibleNav() {
-    const feedScreen = document.querySelector('[data-screen="feed"]');
-    if (!feedScreen) return;
-    const scrollArea = feedScreen.querySelector('.scroll-area');
-    const nav = feedScreen.querySelector('.nav-region');
-    if (!scrollArea || !nav) return;
-    let collapsed = false;
-    scrollArea.addEventListener('scroll', () => {
-      const y = scrollArea.scrollTop;
-      if (y > 60 && !collapsed) {
-        nav.classList.add('collapsed');
-        collapsed = true;
-      } else if (y < 30 && collapsed) {
-        nav.classList.remove('collapsed');
-        collapsed = false;
-      }
-    }, { passive: true });
-  }
-
   // 初次渲染
   function initApp() {
     renderFeed(); renderArchive(); renderMapPins(); renderSheetCards();
     document.querySelectorAll('.filter-row').forEach(enableDragScroll);
     initStatBarAutoDismiss();
     updateMsgBadge();
-    setupCollapsibleNav();
   }
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', initApp);
