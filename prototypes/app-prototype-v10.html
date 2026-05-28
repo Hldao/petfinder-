@@ -279,13 +279,21 @@
     /* 相邻 sub-icon 紧贴 · 不再 margin-left:auto */
     .sub-icon + .sub-icon { margin-left: 0; }
 
-    /* v10 r82 · filter-region 唯一 sticky 层（贴在小程序 navbar 下方）
-     * background 必须实色 · z-index > 内容 · 滚动时挡住下方 feed 卡片不透视 */
+    /* v10 r82 → r83 · filter-region 唯一 sticky 层（贴在小程序 navbar 下方）
+     * background 必须实色 · z-index > 内容 · 滚动时挡住下方 feed 卡片不透视
+     * is-stuck class · 真正吸附时加阴影（IntersectionObserver + sentinel 检测） */
     .filter-region {
       padding: 14px 18px 4px;
       background: var(--bg);
       position: sticky; top: 0; z-index: 5;
+      transition: box-shadow 0.18s ease, background-color 0.18s ease;
     }
+    .filter-region.is-stuck {
+      background: rgba(240,233,216,0.96); backdrop-filter: blur(8px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+    }
+    /* 哨兵元素 · 在 filter-region 之前 · 用于 IntersectionObserver 监测 sticky 触发 */
+    .filter-sentinel { height: 1px; margin-bottom: -1px; pointer-events: none; }
     .filter-row { display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; align-items: center; padding-bottom: 4px; }
     .filter-row::-webkit-scrollbar { display: none; }
     .chip {
@@ -308,7 +316,13 @@
     .section-header .count { font-family: var(--font-en); font-size: var(--text-sm); font-weight: 700; color: var(--ink-3); letter-spacing: 0.04em; }
     .section-header .right { margin-left: auto; font-size: var(--text-sm); color: var(--apricot-deep); font-weight: 600; cursor: pointer; }
 
-    .scroll-area { flex: 1; overflow-y: auto; padding: 0 0 100px; }
+    /* v10 r83 · min-height:0 修复 flex column 高度收敛（让 sticky 正确计算滚动范围）
+     * -webkit-overflow-scrolling:touch · iOS 平滑滚动 */
+    .scroll-area {
+      flex: 1; min-height: 0;
+      overflow-y: auto; -webkit-overflow-scrolling: touch;
+      padding: 0 0 100px;
+    }
     .scroll-area::-webkit-scrollbar { display: none; }
 
     /* 卡片 */
@@ -2673,6 +2687,7 @@
             <div class="search-pill" onclick="showScreen('search')"><svg class="icon" style="width:16px;height:16px;stroke-width:2;color:var(--ink-4)"><use href="#i-search"/></svg><span>搜品种、地点、特征...</span></div>
           </div>
         </div>
+        <div class="filter-sentinel" id="feed-filter-sentinel"></div>
         <div class="filter-region">
           <div class="filter-row" id="feed-filter-row">
             <div class="chip active" data-filter="all" onclick="applyFilter('all', this)">全部</div>
@@ -5520,12 +5535,31 @@
     }
   }
 
+  // v10 r83 · sticky 视觉反馈 · sentinel 离开 scroll-area 顶 = filter 吸附 · 加 .is-stuck
+  // 模式参考：美团 / 小红书 · sticky 时背景模糊 + 阴影 · 让"贴顶"动作可感知
+  function setupStickyFilter() {
+    const screen = document.querySelector('[data-screen="feed"]');
+    if (!screen) return;
+    const scrollArea = screen.querySelector('.scroll-area');
+    const sentinel = screen.querySelector('#feed-filter-sentinel');
+    const filter = screen.querySelector('.filter-region');
+    if (!scrollArea || !sentinel || !filter || !window.IntersectionObserver) return;
+    const observer = new IntersectionObserver(
+      entries => {
+        entries.forEach(e => filter.classList.toggle('is-stuck', !e.isIntersecting));
+      },
+      { root: scrollArea, threshold: 0 }
+    );
+    observer.observe(sentinel);
+  }
+
   // 初次渲染
   function initApp() {
     renderFeed(); renderArchive(); renderMapPins(); renderSheetCards();
     document.querySelectorAll('.filter-row').forEach(enableDragScroll);
     initStatBarAutoDismiss();
     updateMsgBadge();
+    setupStickyFilter();
   }
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', initApp);
