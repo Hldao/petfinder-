@@ -1167,8 +1167,9 @@
     }
     .map-road { position: absolute; background: var(--surface); opacity: 0.75; border-radius: 2px; }
     .map-pin { position: absolute; transform: translate(-50%, -100%); display: flex; flex-direction: column; align-items: center; cursor: pointer; z-index: 3; }
-    .pin-head { width: 32px; height: 32px; border-radius: 50% 50% 50% 0; transform: rotate(-45deg); display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(0,0,0,0.2); border: 2px solid white; }
-    .pin-head span { transform: rotate(45deg); color: white; font-size: 13px; }
+    /* v10 r102 · pin 阴影减重 · 多 pin 叠加时视觉杂乱（0.2 → 0.15）· emoji 13→16 视觉平衡 */
+    .pin-head { width: 32px; height: 32px; border-radius: 50% 50% 50% 0; transform: rotate(-45deg); display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 6px rgba(0,0,0,0.15); border: 2px solid white; }
+    .pin-head span { transform: rotate(45deg); color: white; font-size: 16px; line-height: 1; }
     .map-pin.lost .pin-head { background: var(--apricot); }
     .map-pin.found .pin-head { background: var(--mint); }
     /* v10 r87 · 地名 chip 阴影减弱（pill shadow 太重看起来在飘）· 改 1px ring 表"贴在地图上"质感 */
@@ -1216,7 +1217,8 @@
     .sheet-content { padding: 4px 12px 16px; }
     .sheet-card { display: flex; gap: 10px; padding: 8px; border-radius: var(--radius-sm); margin-bottom: 4px; cursor: pointer; }
     .sheet-thumb { width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; box-shadow: inset 0 1px 3px rgba(0,0,0,0.05), inset 0 0 0 1px rgba(255,255,255,0.4); }
-    .sheet-pet-name { font-size: 13px; font-weight: 700; }
+    /* v10 r102 · sheet-pet-name 13→14 · 与 archive-card / pc-name 同 family（详情类卡片 name 统一 14px） */
+    .sheet-pet-name { font-size: 14px; font-weight: 700; letter-spacing: -0.005em; }
     .sheet-pet-meta { font-size: 11px; color: var(--ink-3); margin-top: 1px; }
 
     /* Messages · v10 r27 对齐主风格：列表式 → 卡片化（与 feed pet-card 视觉一致）*/
@@ -2480,9 +2482,11 @@
     .sheet-viewport-hint { font-size:11px; color:var(--ink-3); padding:0 16px 5px; display:none; }
     .sheet-viewport-hint.show { display:block; }
     /* 地图内搜索面板 */
-    .map-search-panel { position:absolute; top:62px; right:16px; left:16px; z-index:22; background:var(--surface); border-radius:var(--radius-md); box-shadow:var(--shadow-card); padding:12px; display:none; }
+    /* v10 r102 · map-search-panel top:62 → 90 · 让位胶囊（同 r87 fab/precision-hint 同款修复） */
+    .map-search-panel { position:absolute; top:90px; right:16px; left:16px; z-index:22; background:var(--surface); border-radius:var(--radius-md); box-shadow:var(--shadow-card); padding:12px; display:none; }
     .map-search-panel.show { display:block; }
-    .map-search-input { width:100%; border:1.5px solid var(--divider); border-radius:var(--radius-sm); padding:8px 12px; font-size:14px; outline:none; box-sizing:border-box; font-family:var(--font-cn); background:var(--bg); }
+    /* v10 r102 · border 1.5 → 1px · 与全屏 form-input 一致 */
+    .map-search-input { width:100%; border:1px solid var(--divider); border-radius:var(--radius-sm); padding:8px 12px; font-size:14px; outline:none; box-sizing:border-box; font-family:var(--font-cn); background:var(--bg); }
     .map-search-input:focus { border-color:var(--apricot); }
     .map-search-results { margin-top:8px; }
     .map-search-item { display:flex; align-items:center; gap:10px; padding:8px 6px; border-radius:8px; cursor:pointer; }
@@ -2912,7 +2916,7 @@
           </div>
           <div class="sheet-header">
             <div class="sheet-title" id="sheet-title">可见区域 · 5 条信息<span class="sheet-filter-label" id="sheet-filter-label"></span></div>
-            <span class="sheet-filter-toggle" id="sheet-filter-toggle">筛选 ›</span>
+            <span class="sheet-filter-toggle" id="sheet-filter-toggle">筛选 <svg class="icon" style="width:10px;height:10px;vertical-align:-1px;stroke-width:2.5"><use href="#i-chevron-right"/></svg></span>
           </div>
           <div class="sheet-viewport-hint" id="sheet-viewport-hint"><svg class="icon icon-sm"><use href="#i-map"/></svg> 仅显示当前可见区域的宠物</div>
           <div class="sheet-filter-row" id="sheet-filter-row">
