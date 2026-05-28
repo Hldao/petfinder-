@@ -186,20 +186,26 @@
     }
     .nav-row { display: flex; align-items: center; gap: 10px; }
     /* 位置标签 · v10 r26 · 点击触发位置授权 / 刷新（仅限大理范围内更精确）*/
-    /* v10 r64 · city-tag 固定 36px 高 · 与 search-pill 对齐 · 解决用户指出的导航对齐问题 */
+    /* v10 r71 · city-tag 视觉降级 · 主流 feed 首页模式（pdd/mt/jd 同款）
+     * 背景透明 + 文字黑色 · 让搜索栏成为视觉主角
+     * pin 保留杏橘色 · 作为功能性视觉锚（点击触发定位）
+     */
     .city-tag {
       display: flex; align-items: center; gap: 6px;
       height: 36px;
-      padding: 0 12px 0 6px;
-      background: var(--apricot-soft);
-      color: var(--apricot-deep);
+      padding: 0 10px 0 4px;
+      background: transparent;
+      color: var(--ink-1);
       border-radius: var(--radius-pill);
       font-size: var(--text-base); font-weight: 700;
       cursor: pointer;
       flex-shrink: 0;
-      transition: filter 0.15s, transform 0.1s;
+      transition: background-color 0.15s, transform 0.1s;
     }
-    .city-tag:active { transform: scale(0.97); }
+    .city-tag:active {
+      background: var(--bg);  /* 浅米色微妙点击反馈 · 不再抢眼 */
+      transform: scale(0.97);
+    }
     .city-tag .pin {
       width: 20px; height: 20px; background: var(--apricot); color: white;
       border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px;
