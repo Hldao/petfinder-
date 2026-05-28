@@ -2924,7 +2924,8 @@
     <!-- ===== 屏 5 · Publish ===== -->
     <div class="screen" data-screen="publish">
       <div class="sub-header">
-        <div class="back-btn" onclick="goBack()">✕</div>
+        <!-- v10 r94 · ✕ 表"放弃发布"语义 · 与 ← "返回浏览"区分 · 加 confirm 防误触 -->
+        <div class="back-btn" onclick="confirmAbandonPublish()">✕</div>
         <div class="sub-title" id="publish-title">发布寻宠信息</div>
       </div>
 
@@ -2938,11 +2939,11 @@
         <!-- 情绪支撑横幅 -->
         <div class="publish-warmth" id="publish-warmth-lost">
           <div class="pw-title">🐾 别担心，你不是一个人</div>
-          <div class="pw-body">大理有很多热心邻居，发出去就有更多眼睛帮你找。发布只需 1 分钟，ta 等不及了。</div>
+          <div class="pw-body">大理有很多热心邻居，发出去就有更多眼睛帮你找。发布越早，越多人能看见 ta。</div>
         </div>
         <div class="publish-warmth" id="publish-warmth-found" style="display:none;background:linear-gradient(135deg,var(--mint-soft),#DDF6EC)">
           <div class="pw-title" style="color:var(--mint-deep)">🏠 谢谢你伸出援手</div>
-          <div class="pw-body" style="color:#2D7060">你的一个发布，可能让一个家庭团圆。ta 的主人一定很着急，我们一起帮 ta 回家。</div>
+          <div class="pw-body" style="color:var(--mint-deep)">你的一个发布，可能让一个家庭团圆。我们一起帮 ta 回家。</div>
         </div>
 
         <!-- 发布须知（合规告知 + 价值观声明） -->
@@ -2988,7 +2989,7 @@
               <div class="pet-type" data-sex="female" onclick="selectSex('female', this)">♀ 母</div>
               <div class="pet-type" data-sex="unknown" onclick="selectSex('unknown', this)">? 不确定</div>
             </div>
-            <div id="sex-hint" style="display:none;font-size:12px;color:var(--ink-3);margin-top:8px;line-height:1.5">⚠ 不需要勉强翻看陌生宠物 · 应激可能咬伤</div>
+            <div id="sex-hint" style="display:none;font-size:12px;color:var(--ink-3);margin-top:8px;line-height:1.5"><svg class="icon icon-sm" style="color:var(--ink-4)"><use href="#i-info"/></svg> 不需要勉强翻看陌生宠物 · 应激可能咬伤</div>
           </div>
           <!-- v10 r39 · 招领专属：年龄段（粗略估测 · 拾主难判断精确年龄）-->
           <div class="form-row" id="age-stage-row" style="display:none">
@@ -2999,7 +3000,7 @@
               <div class="pet-type" data-age="senior" onclick="selectAgeStage('senior', this)">🌟 老龄</div>
               <div class="pet-type active" data-age="unknown" onclick="selectAgeStage('unknown', this)">? 不详</div>
             </div>
-            <div id="age-hint" style="font-size:12px;color:var(--ink-3);margin-top:8px;line-height:1.5">⚠ 拾到的宠物难精确判断年龄 · 粗略估即可 · 失主能通过其他特征匹配</div>
+            <div id="age-hint" style="font-size:12px;color:var(--ink-3);margin-top:8px;line-height:1.5"><svg class="icon icon-sm" style="color:var(--ink-4)"><use href="#i-info"/></svg> 拾到的宠物难精确判断年龄 · 粗略估即可 · 失主能通过其他特征匹配</div>
           </div>
           <div class="form-row">
             <div class="form-label">品种 / 外观</div>
@@ -3010,7 +3011,7 @@
               <span class="breed-chip" onclick="fillBreed('英短')">英短</span>
               <span class="breed-chip" onclick="fillBreed('美短')">美短</span>
               <span class="breed-chip" onclick="fillBreed('布偶')">布偶</span>
-              <span class="breed-chip other" onclick="focusBreedInput()">+ 其他品种</span>
+              <span class="breed-chip other" onclick="focusBreedInput()"><svg class="icon icon-sm"><use href="#i-plus"/></svg> 其他品种</span>
             </div>
           </div>
         </div>
@@ -3055,7 +3056,7 @@
         <div class="form-section" id="fields-found-extra" style="display:none">
           <div class="form-row">
             <div class="form-label"><span class="req">*</span> 目前位置</div>
-            <input class="form-input" placeholder="比如：我家 / 宠物医院 / 小区门卫处">
+            <input class="form-input" placeholder="比如：附近的宠物医院 / 小区门卫处">
           </div>
           <div class="form-row">
             <div class="form-label">健康状况</div>
@@ -3077,7 +3078,7 @@
         <!-- 通知保障 · 不让用户做技术选择，直接告诉 ta「我们已经安排好了」 -->
         <div class="notify-card">
           <span class="nc-ic"><svg class="icon icon-md"><use href="#i-bell"/></svg></span>
-          <span>有人留线索时，立刻在小程序 / 微信内通知你</span>
+          <span>有人留线索时立刻通知你（小程序、公众号）</span>
         </div>
 
         <div class="terms-note">
@@ -5533,6 +5534,13 @@
    * Prototype 阶段每次打开都演示；上线时改为 localStorage 永久隐退
    * 用户滚动 feed 即立即收起（说明已开始使用，无需再"介绍"）
    * ====================================================== */
+  // v10 r94 · 发布页 ✕ 关闭确认 · 防止误触丢失已编辑内容
+  function confirmAbandonPublish() {
+    if (confirm('放弃发布？已填写的内容将不保留\n（如需保存请点「保存草稿」）')) {
+      goBack();
+    }
+  }
+
   // v10 r90 · 地图屏精度 hint 一次性教育 · §6 哲学条款 6
   // 用户首次切到 map 屏时启动 5s timer · 后续切回保持 dismissed
   // 用户可点击 ✕ 立即关闭
