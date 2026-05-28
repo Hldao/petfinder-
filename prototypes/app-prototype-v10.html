@@ -1155,12 +1155,33 @@
      * 反例库 #10 同病 · 容器已 clickable 仍加显式按钮 = 增加认知成本
      * 地图屏「地图」active 按钮还是装饰性（点击无反应）· 用户决策干扰 */
     /* v10 r87 · map-precision-hint 下移 + 右收 96px · 让位小程序胶囊（top 50~82 / right 7~94）+ 让位 map-fab */
+    /* v10 r90 · 可关闭 + 5s 自动消失（§6 哲学条款 6 教育只说一次）· dismiss 模式同 feed-stat-bar */
     .map-precision-hint {
       position: absolute; top: 90px; left: 16px; right: 96px;
       padding: 8px 12px; background: var(--honey-soft); border-radius: var(--radius-pill);
       font-size: 11px; color: var(--honey-deep);
       display: flex; align-items: center; gap: 6px; z-index: 4; box-shadow: var(--shadow-pill);
+      overflow: hidden; max-height: 40px;
+      transition: opacity 0.4s ease, max-height 0.5s ease, padding 0.5s ease, transform 0.4s ease;
     }
+    .map-precision-hint.dismissed {
+      opacity: 0;
+      max-height: 0;
+      padding-top: 0;
+      padding-bottom: 0;
+      transform: translateY(-4px);
+      pointer-events: none;
+    }
+    .map-precision-hint-close {
+      margin-left: auto;
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 18px; height: 18px;
+      cursor: pointer;
+      color: var(--honey-deep);
+      opacity: 0.55;
+      flex-shrink: 0;
+    }
+    .map-precision-hint-close:active { opacity: 1; }
     /* v10 r87 · map-fab top 14 → 90 · 让位胶囊（right 14 不变 · 与 precision-hint 横向不重叠） */
     .map-fab { position: absolute; right: 14px; top: 90px; display: flex; flex-direction: column; gap: 8px; z-index: 5; }
     .map-fab .btn { width: 38px; height: 38px; background: var(--surface); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 15px; color: var(--ink-1); box-shadow: var(--shadow-card); cursor: pointer; }
@@ -2802,7 +2823,12 @@
 
         <!-- 固定浮层 -->
         <!-- v10 r89 · 砍 .map-view-toggle · 与 tab-bar 切换语义重复 + 「地图」active 按钮装饰性 -->
-        <div class="map-precision-hint"><svg class="icon icon-sm"><use href="#i-shield"/></svg> 位置精度模糊处理至 500m 以保护隐私</div>
+        <!-- v10 r90 · precision-hint 加 ✕ + 5s 自动消失 · 教育只说一次 -->
+        <div class="map-precision-hint" id="map-precision-hint">
+          <svg class="icon icon-sm"><use href="#i-shield"/></svg>
+          <span>位置精度模糊处理至 500m 以保护隐私</span>
+          <span class="map-precision-hint-close" onclick="dismissPrecisionHint(event)"><svg class="icon icon-sm"><use href="#i-x"/></svg></span>
+        </div>
 
         <!-- Pin 预览弹卡 -->
         <div class="pin-popup" id="pin-popup">
@@ -4598,6 +4624,7 @@
     }
     if (name === 'all-posts') initAllPosts();
     if (name === 'map' && window._applyFilter) window._applyFilter(currentFilter);
+    if (name === 'map') initMapPrecisionHint();
   }
 
   // v10 r19 · 进 chat 时设置 chat 视角（根据"我和对方的关系"）
@@ -5514,6 +5541,24 @@
    * Prototype 阶段每次打开都演示；上线时改为 localStorage 永久隐退
    * 用户滚动 feed 即立即收起（说明已开始使用，无需再"介绍"）
    * ====================================================== */
+  // v10 r90 · 地图屏精度 hint 一次性教育 · §6 哲学条款 6
+  // 用户首次切到 map 屏时启动 5s timer · 后续切回保持 dismissed
+  // 用户可点击 ✕ 立即关闭
+  let _precisionHintTimerStarted = false;
+  function initMapPrecisionHint() {
+    if (_precisionHintTimerStarted) return;
+    _precisionHintTimerStarted = true;
+    setTimeout(() => {
+      const el = document.getElementById('map-precision-hint');
+      if (el && !el.classList.contains('dismissed')) el.classList.add('dismissed');
+    }, 5000);
+  }
+  function dismissPrecisionHint(event) {
+    if (event) event.stopPropagation();
+    const el = document.getElementById('map-precision-hint');
+    if (el) el.classList.add('dismissed');
+  }
+
   function initStatBarAutoDismiss() {
     const bar = document.querySelector('.feed-stat-bar');
     if (!bar) return;
