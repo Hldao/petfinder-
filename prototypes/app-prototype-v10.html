@@ -1991,27 +1991,49 @@
     }
 
     /* 公众号关注 Modal */
+    /* v10 r72 · onboarding modal 统一视觉系统（privacy + mp 共用）
+     * mask 入场 fade · box 入场 scale-up · 关闭 × 按钮 · token 化 */
+    @keyframes onboardingMaskIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes onboardingBoxIn {
+      from { opacity: 0; transform: scale(0.92) translateY(8px); }
+      to   { opacity: 1; transform: scale(1) translateY(0); }
+    }
     .mp-modal {
       position: absolute;
       inset: 0;
-      background: rgba(0,0,0,0.55);
-      backdrop-filter: blur(6px);
+      background: rgba(0,0,0,0.5);
+      backdrop-filter: blur(8px);
       display: none;
       align-items: center;
       justify-content: center;
       z-index: 70;
-      padding: 18px;
+      padding: var(--space-5);
     }
-    .mp-modal.show { display: flex; }
+    .mp-modal.show {
+      display: flex;
+      animation: onboardingMaskIn 0.3s ease both;
+    }
     .mp-box {
       background: var(--surface);
       border-radius: 20px;
       width: 100%;
       max-width: 320px;
-      padding: 24px 22px 20px;
+      padding: var(--space-6) var(--space-5) var(--space-5);
       box-shadow: 0 20px 60px rgba(0,0,0,0.35);
+      position: relative;
+      animation: onboardingBoxIn 0.32s cubic-bezier(0.2, 0.7, 0.3, 1.2) both;
     }
-    .mp-head { text-align: center; margin-bottom: 16px; }
+    .mp-close {
+      position: absolute; top: 12px; right: 12px;
+      width: 28px; height: 28px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px; color: var(--ink-3);
+      cursor: pointer;
+      border-radius: 50%;
+      background: var(--bg);
+    }
+    .mp-close:active { background: var(--divider); transform: scale(0.92); }
+    .mp-head { text-align: center; margin-bottom: var(--space-4); }
     .mp-icon {
       width: 56px; height: 56px;
       background: linear-gradient(135deg, var(--mint-soft), var(--mint));
@@ -2019,68 +2041,72 @@
       border-radius: 16px;
       display: flex; align-items: center; justify-content: center;
       font-size: 28px;
-      margin: 0 auto 12px;
+      margin: 0 auto var(--space-3);
       box-shadow: 0 6px 16px rgba(91,184,159,0.3);
     }
     .mp-title {
-      font-size: 17px;
+      font-size: var(--text-xl);
       font-weight: 700;
       letter-spacing: -0.005em;
     }
     .mp-sub {
-      font-size: 11.5px;
+      font-size: var(--text-sm);
       color: var(--ink-3);
-      margin-top: 4px;
+      margin-top: var(--space-1);
       font-family: var(--font-en);
       letter-spacing: 0.04em;
     }
+    /* QR 码精修：薄荷边框 → 浅米色背景 + 微妙阴影 */
     .mp-qrcode {
       width: 140px; height: 140px;
-      margin: 0 auto 16px;
+      margin: 0 auto var(--space-4);
       background: white;
-      border: 3px solid var(--mint-soft);
       border-radius: 14px;
-      padding: 8px;
+      padding: var(--space-2);
+      box-shadow: 0 4px 16px rgba(91,184,159,0.18),
+                  0 0 0 1px rgba(91,184,159,0.15);
     }
     .mp-qrcode svg { width: 100%; height: 100%; display: block; }
     .mp-benefits {
       background: var(--bg);
       border-radius: var(--radius-md);
-      padding: 12px 14px;
-      margin-bottom: 16px;
+      padding: var(--space-3) var(--space-4);
+      margin-bottom: var(--space-4);
     }
     .mp-benefit {
       display: flex;
       align-items: center;
-      gap: 10px;
-      padding: 4px 0;
-      font-size: 12.5px;
+      gap: var(--space-3);
+      padding: var(--space-1) 0;
+      font-size: var(--text-base);
       color: var(--ink-2);
     }
     .mp-benefit b { font-weight: 700; color: var(--ink-1); }
-    .mp-b-ic { font-size: 16px; flex-shrink: 0; width: 22px; text-align: center; }
-    .mp-actions { display: flex; gap: 8px; }
+    .mp-b-ic { font-size: 15px; flex-shrink: 0; width: 22px; text-align: center; }
+    .mp-actions { display: flex; gap: var(--space-2); }
     .mp-btn-secondary {
-      flex: 1; padding: 12px;
+      flex: 1; padding: var(--space-3);
       background: var(--bg);
       border-radius: 12px;
       text-align: center;
-      font-size: 13.5px;
+      font-size: var(--text-md);
       font-weight: 700;
       cursor: pointer;
       color: var(--ink-2);
     }
+    .mp-btn-secondary:active { background: var(--divider); transform: scale(0.98); }
     .mp-btn-primary {
-      flex: 1.4; padding: 12px;
+      flex: 1.4; padding: var(--space-3);
       background: linear-gradient(135deg, var(--mint), var(--mint-deep));
       border-radius: 12px;
       text-align: center;
-      font-size: 13.5px;
+      font-size: var(--text-md);
       font-weight: 700;
       cursor: pointer;
       color: white;
       box-shadow: 0 4px 12px rgba(91,184,159,0.3);
     }
+    .mp-btn-primary:active { transform: scale(0.98); filter: brightness(0.95); }
 
     /* 公众号风格的消息头像 */
     .msg-avatar.mp {
@@ -2101,23 +2127,73 @@
       vertical-align: middle;
     }
 
-    /* Privacy Modal */
-    .privacy-modal { position: absolute; inset: 44px 0 0 0; background: rgba(31,31,31,0.55); backdrop-filter: blur(8px); z-index: 1000; display: flex; align-items: center; justify-content: center; padding: 24px; }
+    /* v10 r72 · privacy modal 与 mp modal 共用视觉系统 · token 化 + 入场动画 */
+    .privacy-modal {
+      position: absolute; inset: 44px 0 0 0;
+      background: rgba(0,0,0,0.5);
+      backdrop-filter: blur(8px);
+      z-index: 1000;
+      display: flex; align-items: center; justify-content: center;
+      padding: var(--space-5);
+    }
+    .privacy-modal:not(.hidden) {
+      animation: onboardingMaskIn 0.3s ease both;
+    }
     .privacy-modal.hidden { display: none; }
-    .privacy-box { background: var(--surface); border-radius: 20px; padding: 24px 22px 20px; width: 100%; max-height: 90%; overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,0.35); }
-    .privacy-head { text-align: center; margin-bottom: 14px; }
-    .privacy-head-icon { width: 56px; height: 56px; background: var(--apricot-soft); color: var(--apricot-deep); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 26px; margin: 0 auto 10px; }
-    .privacy-title { font-size: 19px; font-weight: 700; letter-spacing: -0.005em; }
-    .privacy-sub { font-size: 11.5px; color: var(--ink-3); margin-top: 4px; }
-    .privacy-list { background: var(--bg); border-radius: var(--radius-md); padding: 14px; font-size: 12.5px; color: var(--ink-2); line-height: 1.75; }
+    .privacy-box {
+      background: var(--surface); border-radius: 20px;
+      padding: var(--space-6) var(--space-5) var(--space-5);
+      width: 100%; max-height: 90%; overflow-y: auto;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.35);
+      animation: onboardingBoxIn 0.32s cubic-bezier(0.2, 0.7, 0.3, 1.2) both;
+    }
+    .privacy-head { text-align: center; margin-bottom: var(--space-4); }
+    .privacy-head-icon {
+      width: 56px; height: 56px;
+      background: linear-gradient(135deg, var(--apricot-soft), #FFCDA8);
+      color: var(--apricot-deep);
+      border-radius: 16px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 28px; margin: 0 auto var(--space-3);
+      box-shadow: 0 6px 16px rgba(255,133,82,0.25);
+    }
+    .privacy-title { font-size: var(--text-xl); font-weight: 700; letter-spacing: -0.005em; }
+    .privacy-sub { font-size: var(--text-sm); color: var(--ink-3); margin-top: var(--space-1); line-height: var(--leading-normal); }
+    .privacy-list {
+      background: var(--bg); border-radius: var(--radius-md);
+      padding: var(--space-4);
+      font-size: var(--text-base); color: var(--ink-2);
+      line-height: var(--leading-relaxed);
+    }
     .privacy-list b { color: var(--ink-1); font-weight: 700; }
-    .privacy-item { display: flex; gap: 8px; padding: 4px 0; }
-    .privacy-item-ic { width: 18px; flex-shrink: 0; color: var(--apricot); font-weight: 800; font-family: var(--font-en); }
-    .privacy-list-footer { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--ink-5); font-size: 11px; color: var(--ink-3); }
-    .privacy-agree { display: flex; align-items: flex-start; gap: 8px; margin: 14px 4px 6px; font-size: 12px; color: var(--ink-2); line-height: 1.5; }
-    .privacy-check { width: 18px; height: 18px; background: var(--apricot); border-radius: 5px; color: white; display: flex; align-items: center; justify-content: center; font-size: 11px; flex-shrink: 0; margin-top: 1px; }
+    .privacy-item { display: flex; gap: var(--space-2); padding: var(--space-1) 0; }
+    .privacy-item-ic {
+      width: 20px; height: 20px; flex-shrink: 0;
+      background: var(--apricot); color: white;
+      border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      font-size: 11px; font-weight: 800; font-family: var(--font-en);
+      margin-top: 2px;
+    }
+    .privacy-list-footer {
+      margin-top: var(--space-3); padding-top: var(--space-3);
+      border-top: 1px solid var(--ink-5);
+      font-size: var(--text-sm); color: var(--ink-3);
+    }
+    .privacy-agree {
+      display: flex; align-items: flex-start; gap: var(--space-2);
+      margin: var(--space-4) var(--space-1) var(--space-2);
+      font-size: var(--text-base); color: var(--ink-2);
+      line-height: var(--leading-normal);
+    }
+    .privacy-check {
+      width: 18px; height: 18px;
+      background: var(--apricot); border-radius: 5px;
+      color: white;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px; flex-shrink: 0; margin-top: 1px;
+    }
     .privacy-link { color: var(--apricot-deep); font-weight: 600; }
-    .privacy-actions { display: flex; gap: 10px; margin-top: 14px; }
+    .privacy-actions { display: flex; gap: var(--space-3); margin-top: var(--space-4); }
 
     /* 底部交互说明 */
     .interaction-map {
@@ -4182,6 +4258,8 @@
     <!-- ===== 公众号关注 Modal · 关键消息推送入口 ===== -->
     <div class="mp-modal" id="mp-modal" onclick="if(event.target===this) closeMPModal()">
       <div class="mp-box">
+        <!-- v10 r72 · 加关闭按钮 · 让交互可逆 -->
+        <div class="mp-close" onclick="closeMPModal()">✕</div>
         <div class="mp-head">
           <div class="mp-icon">📣</div>
           <div class="mp-title">关注公众号 · 关键消息不错过</div>
@@ -4241,7 +4319,7 @@
 
         <div class="mp-actions">
           <div class="mp-btn-secondary" onclick="closeMPModal()">稍后再说</div>
-          <div class="mp-btn-primary" onclick="alert('💬 已唤起微信\n请前往「订阅号 / 我」找服务号关注');closeMPModal()">长按识别 / 一键关注</div>
+          <div class="mp-btn-primary" onclick="alert('💬 已唤起微信\n请前往「订阅号 / 我」找服务号关注');closeMPModal()">一键关注</div>
         </div>
       </div>
     </div>
@@ -4256,9 +4334,9 @@
         </div>
         <div class="privacy-list">
           <b style="display:block;margin-bottom:6px">我们会收集和使用以下信息：</b>
-          <div class="privacy-item"><span class="privacy-item-ic">①</span><span><b>位置</b> · 用于发布走失/招领、附近匹配（精度模糊至 500m）</span></div>
-          <div class="privacy-item"><span class="privacy-item-ic">②</span><span><b>照片</b> · 用于宠物识别匹配，将经平台审核</span></div>
-          <div class="privacy-item"><span class="privacy-item-ic">③</span><span><b>聊天内容</b> · 经审核送达，留存 6 个月以满足监管</span></div>
+          <div class="privacy-item"><span class="privacy-item-ic">1</span><span><b>位置</b> · 用于发布走失/招领、附近匹配（精度模糊至 500m）</span></div>
+          <div class="privacy-item"><span class="privacy-item-ic">2</span><span><b>照片</b> · 用于宠物识别匹配，将经平台审核</span></div>
+          <div class="privacy-item"><span class="privacy-item-ic">3</span><span><b>聊天内容</b> · 经审核送达，留存 6 个月以满足监管</span></div>
           <div class="privacy-list-footer">你可随时在「我的 → 清除我的数据」中删除所有个人数据。</div>
         </div>
         <div class="privacy-agree">
@@ -4266,7 +4344,7 @@
           <div>我已阅读并同意 <span class="privacy-link">《用户协议》</span> 和 <span class="privacy-link">《隐私政策》</span></div>
         </div>
         <div class="privacy-actions">
-          <div class="btn-secondary" style="flex:1" onclick="alert('退出小程序')">不同意</div>
+          <div class="btn-secondary" style="flex:1" onclick="alert('退出小程序')">暂不使用</div>
           <div class="btn-primary" style="flex:1.6" onclick="closePrivacyModal()">同意并继续</div>
         </div>
       </div>
