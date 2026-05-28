@@ -2495,26 +2495,20 @@
     .ptr-wrap.spinning .ptr-icon { animation:ptrRotate 0.7s linear infinite; }
     @keyframes ptrRotate { to { transform:rotate(360deg); } }
 
-    /* 卡片顶部提示条 · v10 r78 · 左侧 3px inset 颜色条增强"消息"信号识别 */
+    /* 卡片顶部提示条 · v10 r78 → r93 · 砍左侧 3px 颜色条
+     * 信号识别已由整条背景色（apricot-soft / mint-soft）+ 文字色 + border-bottom 承担
+     * 颜色条是冗余视觉装饰 · 与 my-card ribbon r92 同病一起清理 */
     .card-hint-strip {
-      padding: 8px 14px 8px 14px;
+      padding: 8px 14px;
       display: flex; align-items: center; gap: 6px;
       font-size: 11.5px; font-weight: 600;
       cursor: pointer;
-      position: relative;
       transition: opacity 0.28s ease;
     }
-    .card-hint-strip::before {
-      content: ''; position: absolute;
-      left: 0; top: 0; bottom: 0; width: 3px;
-    }
     .card-hint-strip.lost  { background: var(--apricot-soft); color: var(--apricot-deep); border-bottom: 1px solid rgba(255,133,82,0.15); }
-    .card-hint-strip.lost::before  { background: var(--apricot); }
     .card-hint-strip.found { background: var(--mint-soft);    color: var(--mint-deep);    border-bottom: 1px solid rgba(91,184,159,0.15); }
-    .card-hint-strip.found::before { background: var(--mint); }
     .card-hint-strip .hint-arrow { margin-left: auto; font-size: 13px; opacity: 0.7; }
     .card-hint-strip.hint-fading { opacity: 0; }
-    /* v10 r92 · my-card ribbon 已砍 · hint-strip::before 不再需要 override · 让 my-card 的 hint 也能显示颜色信号 */
 
     /* === 发帖情绪托住 === */
     .publish-warmth { margin:0 16px 12px; padding:12px 14px; background:linear-gradient(135deg,var(--apricot-soft),var(--honey-soft)); border-radius:var(--radius-md); }
