@@ -291,7 +291,8 @@
     .scroll-area::-webkit-scrollbar { display: none; }
 
     /* 卡片 */
-    /* v10 r62 · pet-card 视觉精修：左侧状态色 ribbon 让状态识别瞬间发生 */
+    /* v10 r63 · pet-card 视觉精修：左侧 ribbon 仅给「我发布的」卡（my-card）
+     * 状态识别已由 status-bubble + 各 photo 渐变承担 · ribbon 是"我的帖"专属信号 */
     .pet-card {
       background: var(--surface); border-radius: var(--radius-lg);
       overflow: hidden; box-shadow: var(--shadow-card); cursor: pointer;
@@ -299,17 +300,12 @@
       transition: transform 0.18s, box-shadow 0.18s;
     }
     .pet-card:active { transform: scale(0.99); }
-    /* 左侧 3px 状态色 ribbon · 视觉识别瞬间触发 */
-    .pet-card.lost-card::before,
-    .pet-card.found-card::before,
-    .pet-card.care-card::before {
+    .pet-card.my-card::before {
       content: ''; position: absolute;
       left: 0; top: 0; bottom: 0; width: 3px;
       border-radius: var(--radius-lg) 0 0 var(--radius-lg);
+      background: linear-gradient(180deg, var(--apricot) 0%, #FFB088 100%);
     }
-    .pet-card.lost-card::before  { background: linear-gradient(180deg, var(--apricot) 0%, #FFB088 100%); }
-    .pet-card.found-card::before { background: linear-gradient(180deg, var(--mint) 0%, #84CFB6 100%); }
-    .pet-card.care-card::before  { background: linear-gradient(180deg, var(--plum) 0%, #C5A0E0 100%); }
     .pc-body { display: flex; padding: var(--space-4); gap: var(--space-4); align-items: flex-start; }
     .pc-photo {
       width: 74px; height: 74px; flex-shrink: 0; border-radius: 16px;
