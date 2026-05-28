@@ -2890,7 +2890,8 @@
             <span><svg class="icon icon-sm"><use href="#i-clock"/></svg> <span id="popup-time">10 分钟前</span></span>
           </div>
           <div class="popup-btns">
-            <button class="popup-call" id="popup-call-btn"><svg class="icon icon-md"><use href="#i-phone"/></svg></button>
+            <!-- v10 r103 · 原 i-phone 误导（看像"打电话"）· 实际功能是私聊 · 改 i-message + 加 onclick -->
+            <button class="popup-call" id="popup-call-btn" title="私聊"><svg class="icon icon-md"><use href="#i-message"/></svg></button>
             <button class="popup-go" id="popup-go-btn">查看详情 →</button>
           </div>
         </div>
@@ -5749,6 +5750,8 @@
     tag.textContent = d.status;
     tag.className = 'popup-status-tag ' + d.statusClass;
     document.getElementById('popup-call-btn').className = 'popup-call ' + d.statusClass;
+    // v10 r103 · popup-call 实际功能 = 唤起私聊（不是打电话）
+    document.getElementById('popup-call-btn').onclick = function(e) { e.stopPropagation(); popup.classList.remove('show'); showScreen('chat'); };
     document.getElementById('popup-go-btn').onclick = function() { showDetailScreen(parseInt(key.replace('pin_', ''))); popup.classList.remove('show'); };
     popup.className = 'pin-popup ' + d.statusClass;
     setTimeout(() => {
@@ -6213,10 +6216,13 @@
     const toggle = document.getElementById('sheet-filter-toggle');
     const row    = document.getElementById('sheet-filter-row');
     if (!toggle || !row) return;
+    // v10 r103 · 用 innerHTML 保留 svg（之前 textContent 会把 r102 加的 svg chevron 擦掉变 unicode）
+    const CHEV = '<svg class="icon" style="width:10px;height:10px;vertical-align:-1px;stroke-width:2.5"><use href="#i-chevron-right"/></svg>';
+    const CLOSE = '<svg class="icon" style="width:10px;height:10px;vertical-align:-1px;stroke-width:2.5"><use href="#i-x"/></svg>';
     toggle.addEventListener('click', function() {
       row.classList.toggle('show');
       toggle.classList.toggle('active');
-      toggle.textContent = row.classList.contains('show') ? '筛选 ×' : '筛选 ›';
+      toggle.innerHTML = '筛选 ' + (row.classList.contains('show') ? CLOSE : CHEV);
     });
   })();
 
