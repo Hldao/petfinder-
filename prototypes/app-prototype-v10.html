@@ -1869,10 +1869,15 @@
     }
 
     /* Search */
-    /* v10 r130 · padding-right 96 → 100 · 让 cancel 与胶囊 box-shadow 外扩区拉开 buffer
-     * 胶囊本体覆盖 right:7~94 · r88 加 box-shadow 外扩 ~2-3px · 实际视觉影响 right:5~97
-     * padding-right 96 → 100 = cancel 与胶囊视觉边界差 6px · 不再像贴在一起 */
-    .search-input-header { padding: 8px 100px 8px 14px; gap: 8px; }
+    /* v10 r134 · 砍 .search-input-header（input 不再在 sub-header 内）
+     * 新增 .search-bar · 独立一行容器 · 在 sub-header 下方
+     * 不让位胶囊（胶囊只占 navbar 行 · search-bar 在下方一行）· input 全宽 */
+    .search-bar {
+      display: flex; align-items: center; gap: 8px;
+      padding: 8px 14px 12px; background: var(--surface);
+      border-bottom: 1px solid var(--divider);
+      flex-shrink: 0;
+    }
     /* v10 r132 · 加 hairline ring · 米色 wrap 与白色 sub-header 视觉边界清晰
      * 同 r110 修 search-pill 思路一致 */
     .search-input-wrap {
@@ -4261,8 +4266,13 @@
 
     <!-- ===== 屏 16 · Search ===== -->
     <div class="screen" data-screen="search">
-      <div class="sub-header search-input-header">
+      <!-- v10 r134 · sub-header 与 input 拆开（input 不再与系统胶囊抢空间）
+           参考微信/小红书：navbar 一行 + input 独立一行 + 明确退出入口 -->
+      <div class="sub-header">
         <div class="back-btn" onclick="goBack()">←</div>
+        <div class="sub-title">搜索</div>
+      </div>
+      <div class="search-bar">
         <div class="search-input-wrap" id="search-wrap">
           <span class="search-input-icon"><svg class="icon"><use href="#i-search"/></svg></span>
           <input type="text" class="search-input" id="search-box"
@@ -4270,7 +4280,7 @@
                  oninput="onSearchInput()" autocomplete="off">
           <span class="search-input-clear" onclick="clearSearchInput()"><svg class="icon" style="width:14px;height:14px"><use href="#i-x"/></svg></span>
         </div>
-        <!-- v10 r132 · cancel 动态切换 · 无内容 = 取消（返回）· 有内容 = 搜索（执行）· 参考微信/小红书模式 -->
+        <!-- v10 r132 · cancel 动态切换 · 无内容 = 取消（返回）· 有内容 = 搜索（执行） -->
         <span class="search-cancel" id="search-cancel" onclick="handleSearchCancel()">取消</span>
       </div>
 
