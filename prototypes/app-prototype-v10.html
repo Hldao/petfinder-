@@ -417,22 +417,8 @@
     /* v10 r79 · breed 「· 」分隔符抽到 ::before · 不再在内容里硬编码（一处控制颜色/间距） */
     .pc-name-row .breed { flex: 0 1 auto; min-width: 0; font-size: 11.5px; color: var(--ink-3); font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .pc-name-row .breed::before { content: '· '; color: var(--ink-4); margin-right: 1px; }
-    /* v10 r121 → r123 · 「我」角标移到 photo 右下角 absolute · 不再挤压 name-row
-     * 与 photo 左上 status-bubble 形成对角 · 视觉对称 · 不占内容流空间 */
-    .pc-mine-corner {
-      position: absolute;
-      bottom: -4px; right: -4px;
-      padding: 2px 7px;
-      background: linear-gradient(135deg, var(--apricot) 0%, #FFA378 100%);
-      color: white;
-      border-radius: var(--radius-pill);
-      font-size: 10px;
-      font-weight: 700;
-      letter-spacing: 0.04em;
-      box-shadow: 0 2px 5px rgba(255,133,82,0.3), 0 0 0 2px rgba(255,255,255,0.95);
-      z-index: 2;
-      white-space: nowrap;
-    }
+    /* v10 r123 → r125 · 砍 photo 右下角 corner（遮挡照片 + 与左上 status-bubble 形成"双角标"抢主题）
+     * 标识改回 footer 左侧（用现有 .pc-mine class · 已在行 400）· 完全避开 photo 区域 */
     .pc-meta { font-size: 12px; color: var(--ink-3); margin-bottom: 6px; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
     /* v10 r79 · time 不再用 font-en（避免「30 min 前」英文数字 + 中文「前」字字体撕裂）
      * font-feature-settings: tnum 让数字 tabular（等宽对齐）· 仍统一 CN 字体 */
@@ -5519,7 +5505,7 @@
     return `<div class="pet-card${borderClass}${d._isMine ? ' my-card' : ''}" ${expiredStyle} onclick="showDetailScreen(${d.id})">
         ${hintHtml}
         <div class="pc-body">
-          <div class="pc-photo ${d.photoClass}"><span>${d.emoji}</span><div class="status-bubble ${statusCls}">${statusLabel}</div>${d._isMine ? '<div class="pc-mine-corner">我发布的</div>' : ''}</div>
+          <div class="pc-photo ${d.photoClass}"><span>${d.emoji}</span><div class="status-bubble ${statusCls}">${statusLabel}</div></div>
           <div class="pc-info">
             <div class="pc-name-row"><span class="pc-name">${d.name}</span><span class="breed">${petMeta(d)}</span></div>
             <div class="pc-meta"><span class="loc-link" onclick="event.stopPropagation();openMapNavigation('${d.loc}')"><svg class="icon icon-sm"><use href="#i-location"/></svg> ${d.loc} · 距你 ${distanceStr}</span>${timeSpan}</div>
@@ -5527,6 +5513,7 @@
           </div>
         </div>
         <div class="pc-footer">
+          ${d._isMine ? '<span class="pc-mine">✏ 我发布的</span>' : ''}
           <span class="pc-action helpers">${helpersText(d)}</span>
           <div class="pc-actions">
             ${effStatus === 'lost' && !d.expired && !d._isMine ? `<span class="pc-action sighting" onclick="event.stopPropagation();openSightingSheet(${d.id},'${d.name}')"><svg class="icon icon-sm"><use href="#i-eye"/></svg> 看到了</span>` : ''}
