@@ -2458,10 +2458,14 @@
     }
     .privacy-check {
       width: 18px; height: 18px;
-      background: var(--apricot); border-radius: 5px;
-      color: white;
+      background: white; border: 1.5px solid var(--ink-3); border-radius: 5px;
+      color: transparent;
       display: flex; align-items: center; justify-content: center;
       font-size: 11px; flex-shrink: 0; margin-top: 1px;
+      cursor: pointer; transition: background 0.15s, border-color 0.15s, color 0.15s;
+    }
+    .privacy-check.checked {
+      background: var(--apricot); border-color: var(--apricot); color: white;
     }
     .privacy-link { color: var(--apricot-deep); font-weight: 600; }
     .privacy-actions { display: flex; gap: var(--space-3); margin-top: var(--space-4); }
@@ -4751,8 +4755,8 @@
           <div class="privacy-item"><span class="privacy-item-ic">3</span><span><b>聊天内容</b> · 经审核送达，留存 6 个月以满足监管</span></div>
           <div class="privacy-list-footer">你可随时在「我的 → 清除我的数据」中删除所有个人数据。</div>
         </div>
-        <div class="privacy-agree">
-          <div class="privacy-check">✓</div>
+        <div class="privacy-agree" onclick="document.getElementById('privacyCheck').classList.toggle('checked')" style="cursor:pointer">
+          <div class="privacy-check" id="privacyCheck">✓</div>
           <div>我已阅读并同意 <span class="privacy-link">《用户协议》</span> 和 <span class="privacy-link">《隐私政策》</span></div>
         </div>
         <div class="privacy-actions">
