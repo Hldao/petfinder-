@@ -1819,7 +1819,9 @@
     }
 
     /* Search */
-    .search-input-header { padding: 8px 14px; gap: 10px; }
+    /* v10 r126 · search-input-header 让位胶囊 · padding-right 96 与 sub-header 一致
+     * 之前 padding: 8px 14px 覆盖了 sub-header 的 padding-right:96 · search-cancel 跑到 right:14 与胶囊（right:7~94）重叠 */
+    .search-input-header { padding: 8px 96px 8px 14px; gap: 10px; }
     .search-input-wrap {
       flex: 1; display: flex; align-items: center; gap: 7px;
       background: var(--bg); padding: 0 14px;
