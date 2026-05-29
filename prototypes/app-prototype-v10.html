@@ -224,6 +224,8 @@
     .city-tag.loading .pin { animation: locSpin 0.9s linear infinite; }
     @keyframes locSpin { to { transform: rotate(360deg); } }
     /* v10 r37 · city-tag 永远显示「大理」固定文字 · 不再需要宽度限制 */
+    /* v10 r110 · 加 hairline ring · search-pill 米色背景与白色 navbar 对比仅 7% · 视觉边界模糊
+     * 1px inset shadow 给"凹陷感"· 用户更易识别这是输入区 */
     .search-pill {
       flex: 1; min-width: 0;     /* min-width:0 让 flex item 可以 shrink */
       height: 36px; background: var(--bg);
@@ -231,6 +233,7 @@
       display: flex; align-items: center; gap: 7px;
       font-size: 12.5px; color: var(--ink-4); cursor: pointer;
       overflow: hidden;
+      box-shadow: inset 0 0 0 1px rgba(0,0,0,0.05);
     }
     .search-pill > span:last-child {
       white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
@@ -920,8 +923,11 @@
       color: var(--ink-3); cursor: pointer; border-radius: var(--radius-pill);
       transition: background-color 0.18s, color 0.18s;
     }
-    .seg-item.active[data-mode="lost"]  { background: var(--apricot-soft); color: var(--apricot-deep); }
-    .seg-item.active[data-mode="found"] { background: var(--mint-soft);    color: var(--mint-deep); }
+    /* v10 r110 · 升级 soft → deep + white · 与 chip/mp-tab active 强度统一
+     * 主决策按钮（丢/捡 mode 切换）应该有强 active 信号 · 否则视觉看不出
+     * apricot-soft (#FFE9DD) 在白底容器内差异 < 5% · deep (#E66A38) 差异显著 */
+    .seg-item.active[data-mode="lost"]  { background: var(--apricot-deep); color: white; }
+    .seg-item.active[data-mode="found"] { background: var(--mint-deep);    color: white; }
     .form-section { background: var(--surface); margin: 0 16px 12px; border-radius: var(--radius-md); overflow: hidden; box-shadow: var(--shadow-card); }
     /* v10 r70 · 表单组件 token 化 + font-size 收敛 */
     .form-row { padding: var(--space-3) var(--space-4); border-bottom: 1px solid var(--divider-soft); }
@@ -2487,7 +2493,8 @@
     .sheet-filter-row.show { display:flex; }
     /* v10 r87 · sfc 与 feed .chip 对齐 · 治愈调性 · 不用黑底白字 */
     .sfc { padding:5px 12px; border-radius:var(--radius-pill); font-size:12px; background:var(--surface); cursor:pointer; white-space:nowrap; color:var(--ink-2); font-weight:600; box-shadow:var(--shadow-pill); display:inline-flex; align-items:center; gap:5px; }
-    .sfc.active { background:var(--apricot-soft); color:var(--apricot-deep); box-shadow:none; }
+    /* v10 r110 · 升级 soft → deep + white · 与 chip/seg/mp-tab 统一强 active */
+    .sfc.active { background:var(--apricot-deep); color:white; box-shadow:none; font-weight:700; }
     .sfc .sfc-dot { width:7px; height:7px; border-radius:50%; flex-shrink:0; }
     .sheet-content-scroll { flex:1; overflow-y:auto; padding:0 12px 14px; overscroll-behavior:contain; }
     .sheet-content-scroll::-webkit-scrollbar { display:none; }
