@@ -1504,6 +1504,19 @@
     .qr-label { display: none; }
     .chat-attach.qr-toggle.active { color: var(--apricot-deep); background: var(--apricot-soft); border-radius: 8px; }
 
+    /* 页面底部固定操作按钮 */
+    .screen-bottom-btn {
+      position: absolute; bottom: 24px; left: 50%; transform: translateX(-50%);
+      padding: 13px 48px;
+      background: var(--apricot); color: white;
+      font-size: 15px; font-weight: 700;
+      border-radius: var(--radius-pill);
+      box-shadow: 0 4px 16px rgba(255,133,82,0.35);
+      cursor: pointer; white-space: nowrap;
+      z-index: 10;
+    }
+    .screen-bottom-btn:active { transform: translateX(-50%) scale(0.97); }
+
     /* Profile */
     /* v10 r100 · profile 屏浮层标题栏 · 与胶囊同一行形成 navbar 视觉锚点
      * - position:absolute 浮在 hero 上 · 不挤占 flex 流 · hero 杏橘背景仍能铺满
@@ -4016,7 +4029,6 @@
       <div class="sub-header">
         <div class="back-btn" onclick="goBack()">←</div>
         <div class="sub-title">我的发布</div>
-        <div class="sub-action" onclick="showScreen('publish')">发布</div>
       </div>
       <div class="mp-tabs">
         <div class="mp-tab active" onclick="switchMpTab(this,'active')">进行中 · 2</div>
@@ -4160,6 +4172,7 @@
         </div>
 
       </div>
+      <div class="screen-bottom-btn" onclick="showScreen('publish')">发布新帖</div>
     </div>
 
     <!-- ===== 屏 · All Posts ===== -->
