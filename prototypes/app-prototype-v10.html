@@ -1460,19 +1460,28 @@
 
     /* Quick Reply 快捷回复 */
     .quick-replies {
-      padding: 10px 14px 8px;
+      padding: 10px 14px 10px;
       background: var(--surface);
       border-top: 1px solid var(--divider-soft);
       display: flex;
-      gap: 6px;
-      overflow-x: auto;
-      scrollbar-width: none;
+      flex-wrap: wrap;
+      gap: 8px;
       align-items: center;
+      overflow: hidden;
+      max-height: 0;
+      padding-top: 0;
+      padding-bottom: 0;
+      border-top-width: 0;
+      transition: max-height 0.25s ease, padding 0.25s ease, border-top-width 0.25s ease;
     }
-    .quick-replies::-webkit-scrollbar { display: none; }
+    .quick-replies.open {
+      max-height: 120px;
+      padding-top: 10px;
+      padding-bottom: 10px;
+      border-top-width: 1px;
+    }
     .qr-chip {
-      flex-shrink: 0;
-      padding: 6px 12px;
+      padding: 7px 14px;
       background: var(--bg);
       border: 1px solid var(--divider);
       border-radius: var(--radius-pill);
@@ -1492,15 +1501,8 @@
       color: var(--mint-deep);
       border-color: var(--mint);
     }
-    .qr-label {
-      flex-shrink: 0;
-      font-size: 10.5px;
-      color: var(--ink-4);
-      font-family: var(--font-en);
-      font-weight: 700;
-      letter-spacing: 0.04em;
-      margin-right: 4px;
-    }
+    .qr-label { display: none; }
+    .chat-attach.qr-toggle.active { color: var(--apricot-deep); background: var(--apricot-soft); border-radius: 8px; }
 
     /* Profile */
     /* v10 r100 · profile 屏浮层标题栏 · 与胶囊同一行形成 navbar 视觉锚点
@@ -3691,6 +3693,7 @@
       </div>
 
       <div class="chat-input-bar">
+        <div class="chat-attach qr-toggle" id="qr-toggle-btn" onclick="toggleQuickReplies()">⚡</div>
         <div class="chat-attach" onclick="alert('📷 选择照片\n（小程序会调用 wx.chooseImage）')"><svg class="icon" style="width:18px;height:18px"><use href="#i-camera"/></svg></div>
         <div class="chat-attach" onclick="sendLocation()"><svg class="icon" style="width:18px;height:18px"><use href="#i-location"/></svg></div>
         <input type="text" class="chat-input" id="chat-input" placeholder="输入消息..." onkeydown="if(event.key==='Enter')sendMessage()">
@@ -6551,6 +6554,14 @@
   }
 
   /* ============== 聊天 · 快捷回复 + 发送 ============== */
+  function toggleQuickReplies() {
+    const bar = document.querySelector('.quick-replies');
+    const btn = document.getElementById('qr-toggle-btn');
+    if (!bar) return;
+    const isOpen = bar.classList.toggle('open');
+    btn.classList.toggle('active', isOpen);
+  }
+
   function setQuickReply(text) {
     const input = document.getElementById('chat-input');
     if (!input) return;
