@@ -1658,7 +1658,17 @@
     }
     .feedback-reply-label { font-size: 10.5px; font-weight: 700; color: var(--mint-deep); margin-bottom: 4px; }
     .feedback-reply-text { font-size: 12.5px; color: var(--ink-2); line-height: 1.6; }
-    .feedback-pending { font-size: 11px; color: var(--ink-4); display: flex; align-items: center; gap: 5px; }
+    /* v10 r122 · 待回复状态 badge 化 · 与 已回复 标签视觉对等 */
+    .feedback-pending { font-size: 11px; color: var(--apricot-deep); background: var(--apricot-soft); padding: 3px 9px; border-radius: var(--radius-pill); display: inline-flex; align-items: center; gap: 5px; font-weight: 600; align-self: flex-start; }
+    /* v10 r122 · 历史分组小标题 · 与全屏 section-label 同 family */
+    .feedback-group-title {
+      font-size: var(--text-xs); color: var(--ink-3);
+      font-weight: 700; letter-spacing: 0.08em;
+      font-family: var(--font-en); text-transform: uppercase;
+      padding: 4px 4px 2px; margin-top: 6px;
+    }
+    .feedback-group-title:first-child { margin-top: 0; }
+    .feedback-group-title .count { color: var(--apricot-deep); margin-left: 2px; }
 
     /* 提交 sheet */
     /* v10 r74 · feedback-sheet-overlay 加 mask fade（避免突现感）*/
@@ -1695,11 +1705,48 @@
       padding: 12px 14px; min-height: 120px; line-height: 1.7;
     }
     .feedback-textarea:focus { border-color: var(--apricot); }
+    /* v10 r122 · feedback 截图上传 · 参考成熟产品（微信/小红书/B站等均有）· 最多 4 张 */
+    .feedback-photo-row {
+      display: flex; gap: 8px; margin: 12px 16px 0; flex-wrap: wrap;
+    }
+    .feedback-photo-slot {
+      width: 60px; height: 60px;
+      background: var(--bg);
+      border: 1.5px dashed var(--divider);
+      border-radius: var(--radius-sm);
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 2px; color: var(--ink-4); cursor: pointer;
+      flex-shrink: 0;
+    }
+    .feedback-photo-slot.filled {
+      border-style: solid; border-color: var(--apricot);
+      background: var(--apricot-soft); color: var(--apricot-deep);
+      font-size: 24px; position: relative;
+    }
+    .feedback-photo-slot .feedback-photo-x {
+      position: absolute; top: -6px; right: -6px;
+      width: 18px; height: 18px;
+      background: var(--ink-1); color: white;
+      border-radius: 50%; font-size: 11px;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    }
+    /* v10 r122 · 联系方式 · 选填 · 与成熟产品对齐 */
+    .feedback-contact {
+      margin: 10px 16px 0; font-size: 13px;
+      font-family: var(--font-cn); color: var(--ink-1);
+      border: 1.5px solid var(--divider); outline: none;
+      background: var(--bg); border-radius: var(--radius-sm);
+      padding: 10px 14px; transition: border-color 0.15s;
+    }
+    .feedback-contact:focus { border-color: var(--apricot); }
     .feedback-submit {
       margin: 12px 16px 0; padding: 14px; border-radius: var(--radius-md);
       background: var(--apricot); color: white; font-size: 15px; font-weight: 700;
       text-align: center; cursor: pointer;
+      transition: opacity 0.15s;
     }
+    .feedback-submit.loading { opacity: 0.6; pointer-events: none; }
 
     .dispute-scroll { flex: 1; overflow-y: auto; padding: 14px 16px 110px; }
     .dispute-hero { text-align: center; padding: 18px 12px 20px; }
@@ -3917,8 +3964,17 @@
           <div class="feedback-cat" id="fcat-experience" onclick="selectFeedbackCat('experience',this)">😤 体验吐槽</div>
           <div class="feedback-cat" id="fcat-other" onclick="selectFeedbackCat('other',this)">💬 其他</div>
         </div>
-        <textarea class="feedback-textarea" id="feedback-textarea" placeholder="请详细描述你的想法或遇到的问题，我们会认真阅读每一条反馈 💛"></textarea>
-        <div class="feedback-submit" onclick="submitFeedback()">提交反馈</div>
+        <textarea class="feedback-textarea" id="feedback-textarea" placeholder="详细描述你的想法或遇到的问题，我们会认真阅读每一条反馈"></textarea>
+        <!-- v10 r122 · 截图上传（最多 4 张）· 参考微信/小红书/B站等成熟产品 -->
+        <div class="feedback-photo-row" id="feedback-photo-row">
+          <div class="feedback-photo-slot" id="feedback-photo-add" onclick="addFeedbackPhoto()">
+            <span style="font-size:18px">+</span>
+            <span style="font-size:9.5px">截图</span>
+          </div>
+        </div>
+        <!-- v10 r122 · 联系方式 · 选填 · 用于回复 -->
+        <input class="feedback-contact" id="feedback-contact" placeholder="微信号 / 手机号（选填 · 用于回复你）">
+        <div class="feedback-submit" id="feedback-submit-btn" onclick="submitFeedback()">提交反馈</div>
       </div>
     </div>
 
@@ -7105,6 +7161,7 @@
     }
   ];
 
+  // v10 r122 · 历史反馈状态分组 · 待回复 / 已回复 · 参考小红书 / B站
   function renderFeedbackList() {
     const el = document.getElementById('feedback-list');
     if (!el) return;
@@ -7113,7 +7170,10 @@
       return;
     }
     const catLabel = { suggestion: '功能建议', bug: '问题反馈', experience: '体验吐槽', other: '其他' };
-    el.innerHTML = _feedbackData.slice().reverse().map(f => `
+    const sorted = _feedbackData.slice().reverse();
+    const pending = sorted.filter(f => !f.reply);
+    const replied = sorted.filter(f => f.reply);
+    const renderCard = f => `
       <div class="feedback-card">
         <div class="feedback-card-head">
           <span class="feedback-tag ${f.cat}">${catLabel[f.cat] || f.cat}</span>
@@ -7124,7 +7184,11 @@
           ? `<div class="feedback-reply"><div class="feedback-reply-label">官方回复 · ${f.reply.time}</div><div class="feedback-reply-text">${f.reply.text}</div></div>`
           : `<div class="feedback-pending">⏳ 待回复 · 通常 3 个工作日内处理</div>`
         }
-      </div>`).join('');
+      </div>`;
+    el.innerHTML = `
+      ${pending.length > 0 ? `<div class="feedback-group-title">待回复<span class="count">·&nbsp;${pending.length}</span></div>${pending.map(renderCard).join('')}` : ''}
+      ${replied.length > 0 ? `<div class="feedback-group-title">已回复<span class="count">·&nbsp;${replied.length}</span></div>${replied.map(renderCard).join('')}` : ''}
+    `;
   }
 
   function openFeedbackSheet() {
@@ -7134,6 +7198,15 @@
     if (first) first.classList.add('active');
     const ta = document.getElementById('feedback-textarea');
     if (ta) ta.value = '';
+    // v10 r122 · 重置截图 + 联系方式 + submit 状态
+    const contact = document.getElementById('feedback-contact');
+    if (contact) contact.value = '';
+    const photoRow = document.getElementById('feedback-photo-row');
+    if (photoRow) {
+      photoRow.querySelectorAll('.feedback-photo-slot.filled').forEach(s => s.remove());
+    }
+    const btn = document.getElementById('feedback-submit-btn');
+    if (btn) { btn.classList.remove('loading'); btn.textContent = '提交反馈'; }
     document.getElementById('feedback-sheet-overlay').classList.add('show');
   }
 
@@ -7147,19 +7220,44 @@
     el.classList.add('active');
   }
 
+  // v10 r122 · 加 loading 反馈 · 提交期间防重复点击
   function submitFeedback() {
     const ta = document.getElementById('feedback-textarea');
     const text = ta ? ta.value.trim() : '';
-    if (!text) { alert('请描述你的想法或遇到的问题 💛'); return; }
-    const now = new Date();
-    const mm = String(now.getMonth() + 1).padStart(2, '0');
-    const dd = String(now.getDate()).padStart(2, '0');
-    const hh = String(now.getHours()).padStart(2, '0');
-    const mi = String(now.getMinutes()).padStart(2, '0');
-    _feedbackData.push({ id: Date.now(), cat: _feedbackCat, text, time: mm + '-' + dd + ' ' + hh + ':' + mi, reply: null });
-    renderFeedbackList();
-    closeFeedbackSheet();
-    alert('✅ 反馈已提交，感谢你的建议 💛');
+    if (!text) { alert('请描述你的想法或遇到的问题'); return; }
+    const btn = document.getElementById('feedback-submit-btn');
+    if (btn) { btn.classList.add('loading'); btn.textContent = '提交中...'; }
+    setTimeout(() => {
+      const now = new Date();
+      const mm = String(now.getMonth() + 1).padStart(2, '0');
+      const dd = String(now.getDate()).padStart(2, '0');
+      const hh = String(now.getHours()).padStart(2, '0');
+      const mi = String(now.getMinutes()).padStart(2, '0');
+      _feedbackData.push({ id: Date.now(), cat: _feedbackCat, text, time: mm + '-' + dd + ' ' + hh + ':' + mi, reply: null });
+      renderFeedbackList();
+      closeFeedbackSheet();
+      alert('✅ 反馈已提交，感谢你的建议');
+    }, 500);
+  }
+
+  // v10 r122 · 截图上传 mock · 最多 4 张 · 真实环境用 wx.chooseImage
+  function addFeedbackPhoto() {
+    const row = document.getElementById('feedback-photo-row');
+    if (!row) return;
+    const filled = row.querySelectorAll('.feedback-photo-slot.filled');
+    if (filled.length >= 4) { alert('最多上传 4 张截图'); return; }
+    const addBtn = document.getElementById('feedback-photo-add');
+    const slot = document.createElement('div');
+    slot.className = 'feedback-photo-slot filled';
+    slot.innerHTML = '📷<span class="feedback-photo-x" onclick="removeFeedbackPhoto(event,this.parentElement)">×</span>';
+    row.insertBefore(slot, addBtn);
+    if (filled.length + 1 >= 4) addBtn.style.display = 'none';
+  }
+  function removeFeedbackPhoto(e, slot) {
+    e.stopPropagation();
+    slot.remove();
+    const addBtn = document.getElementById('feedback-photo-add');
+    if (addBtn) addBtn.style.display = '';
   }
 
   function toggleNotif(key) {
