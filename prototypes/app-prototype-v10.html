@@ -29,8 +29,9 @@
        * - surface 浅米白：卡片底（替代刺眼纯白）
        * - surface-warm 强暖米：装饰强调
        * - surface-bright 纯白：仅 modal / overlay / 必须强对比的极少场景 */
+      /* v10 r115 · surface 再深一档 · 米色调更浓 · 与 bg 形成清晰梯度 */
       --bg: #F0E9D8; --bg-deeper: #E8DFC8;
-      --surface: #FBF6E5; --surface-warm: #FFF8DE; --surface-bright: #FFFFFF;
+      --surface: #FAF1D2; --surface-warm: #FFF3C4; --surface-bright: #FFFFFF;
       --divider: #C9BD9C; --divider-soft: #DAD0B7;
       /* ink 拉大明度对比 · ink-1 关键标题更黑 · ink-2 正文加深 · meta 层级清晰 */
       --ink-1: #141414; --ink-2: #2E2E2E; --ink-3: #5A5A5A;
@@ -953,12 +954,18 @@
     /* v10 r70 · 表单组件 token 化 + font-size 收敛 */
     .form-row { padding: var(--space-3) var(--space-4); border-bottom: 1px solid var(--divider-soft); }
     .form-row:last-child { border-bottom: none; }
+    /* v10 r115 · form-label flex 修复 · 之前 justify-content: space-between
+     * 当 label 内容是 [req span] + [text-node]（如「* 宠物类型」）时
+     * text-node 被推到最右 · 视觉错位
+     * 修：删 justify-content + 加 gap · 单 label 自然左对齐
+     * 含两 span 时（如照片那种带计数）· 第二个 span 自动 margin-left:auto */
     .form-label {
       font-size: var(--text-xs); color: var(--ink-3); margin-bottom: var(--space-2);
       font-family: var(--font-en); font-weight: 700;
       letter-spacing: 0.08em; text-transform: uppercase;
-      display: flex; justify-content: space-between; align-items: center;
+      display: flex; gap: 6px; align-items: center;
     }
+    .form-label > span + span { margin-left: auto; }
     .form-label .req { color: var(--apricot); }
     .form-input, .form-textarea {
       width: 100%; border: none; background: transparent;
