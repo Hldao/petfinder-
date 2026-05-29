@@ -413,21 +413,21 @@
     /* v10 r79 · breed 「· 」分隔符抽到 ::before · 不再在内容里硬编码（一处控制颜色/间距） */
     .pc-name-row .breed { flex: 0 1 auto; min-width: 0; font-size: 11.5px; color: var(--ink-3); font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .pc-name-row .breed::before { content: '· '; color: var(--ink-4); margin-right: 1px; }
-    /* v10 r121 · 「我发布的」直观角标 · name 后浮一个杏橘小 chip
-     * 与左上 status-bubble 不冲突 · 与整卡微杏橘渐变 + 杏橘 ring 共同强化"这是我的帖"信号 */
-    .pc-mine-tag {
-      font-size: 10px;
+    /* v10 r121 → r123 · 「我」角标移到 photo 右下角 absolute · 不再挤压 name-row
+     * 与 photo 左上 status-bubble 形成对角 · 视觉对称 · 不占内容流空间 */
+    .pc-mine-corner {
+      position: absolute;
+      bottom: -4px; right: -4px;
       padding: 2px 7px;
       background: linear-gradient(135deg, var(--apricot) 0%, #FFA378 100%);
       color: white;
       border-radius: var(--radius-pill);
+      font-size: 10px;
       font-weight: 700;
       letter-spacing: 0.04em;
-      margin-left: 4px;
-      flex-shrink: 0;
+      box-shadow: 0 2px 5px rgba(255,133,82,0.3), 0 0 0 2px rgba(255,255,255,0.95);
+      z-index: 2;
       white-space: nowrap;
-      box-shadow: 0 1px 3px rgba(255,133,82,0.3);
-      align-self: center;
     }
     .pc-meta { font-size: 12px; color: var(--ink-3); margin-bottom: 6px; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
     /* v10 r79 · time 不再用 font-en（避免「30 min 前」英文数字 + 中文「前」字字体撕裂）
@@ -5461,21 +5461,17 @@
   // v10 r51 · COMMUNITY_MOMENTS / mkCommunityCardHtml 已删
   // 完美命中 CLAUDE.md AI 协作陷阱第 7 条原文示例：身份/转发链路不可追踪 = 捏造
 
+  // v10 r123 · CARD_HINTS 收敛为「真实目击」类（🐾）
+  // 砍：🔔 alert（"N 人转发"数字化）· ✅ done（"已检查"与 detail 重复）· 🔔 数据化统计类
+  // §6.8 真实 > 看起来繁荣 · 多数真实帖子没有 hint · 不在 mock 里假装活跃
+  // 真实环境只有有目击线索时才显示 · 让"有人看到 ta"信号高纯度
   const CARD_HINTS = {
-    0:  '🔔 12 人转发扩散中 · 帮忙找到主人',
     1:  '🐾 有人在古城北门附近看到相似猫 · 2 min 前',
-    2:  '✅ 已在下关宠物医院检查，身体健康',
     3:  '🐾 洋人街巷子拍到一只虎斑猫 · 18 min 前',
     4:  '🐾 才村码头附近有目击者 · 1 hr 前',
-    5:  '🔔 有人认为可能是走丢的布偶猫 · 30 min 前',
     6:  '🐾 苍山门茶馆旁看到短腿狗 · 1 hr 前',
-    7:  '🔔 喜洲附近有宠主正在认领确认中',
-    8:  '🔔 已有 2 人询问是否是自家猫',
     9:  '🐾 双廊有人见过类似的狗 · 2 hr 前',
     10: '🐾 海东芦苇地拍到疑似蓝白猫 · 3 hr 前',
-    11: '🐾 新增 3 条线索 · 最新 20 min 前',
-    12: '🔔 凤仪镇发现小奶狗 · 正在帮忙找主人',
-    13: '🔔 帖子已过期，仍可联系发布者认领',
   };
 
   // v10 r78 · 距离 < 1km 显示「约 N 米」· 与 sdc 卡片对齐 · 人眼更直观
@@ -5497,16 +5493,16 @@
       : '';
     // 时间显示：纯中性字符串（不再用 phase 倒计时）
     const timeSpan = `<span class="time">${d.time}</span>`;
-    // v10 r79 · hint-strip 按类型决定 icon · CARD_HINTS 的 emoji prefix 自动转 svg
-    // 🔔 = alert（提醒类）· 🐾 = sighting（目击线索）· ✅ = done（节点完成）
+    // v10 r79 → r123 · hint-strip 只保留 sighting（真实目击）
+    // 砍 alert（"N 人转发" 数字化）+ done（"已检查" 与 detail 重复）+ helpers（nearbyTxt 数字化）
+    // §6.8 真实 > 看起来繁荣 · 多数帖子真实环境下无 hint · 不假装活跃
     const hint = CARD_HINTS[d.id];
-    const nearbyTxt = getNearbyHelpersText(d);
-    let firstMsg = hint || nearbyTxt || '';
+    let firstMsg = '';
     let hintType = '';
-    if (firstMsg.startsWith('🔔')) { hintType = 't-alert';    firstMsg = firstMsg.replace('🔔', '<svg class="icon icon-sm"><use href="#i-bell"/></svg>'); }
-    else if (firstMsg.startsWith('🐾')) { hintType = 't-sighting'; firstMsg = firstMsg.replace('🐾', '<svg class="icon icon-sm"><use href="#i-eye"/></svg>'); }
-    else if (firstMsg.startsWith('✅')) { hintType = 't-done';     firstMsg = firstMsg.replace('✅', '<svg class="icon icon-sm"><use href="#i-check"/></svg>'); }
-    else if (firstMsg.startsWith('🤝')) { hintType = 't-helpers';  firstMsg = firstMsg.replace('🤝', '<svg class="icon icon-sm"><use href="#i-handshake"/></svg>'); }
+    if (hint && hint.startsWith('🐾')) {
+      hintType = 't-sighting';
+      firstMsg = hint.replace('🐾', '<svg class="icon icon-sm"><use href="#i-eye"/></svg>');
+    }
     const hintHtml = firstMsg
       ? `<div class="card-hint-strip ${effStatus} ${hintType}" id="hint-${d.id}" onclick="event.stopPropagation();showDetailScreen(${d.id})">${firstMsg}<span class="hint-arrow">›</span></div>`
       : '';
@@ -5516,9 +5512,9 @@
     return `<div class="pet-card${borderClass}${d._isMine ? ' my-card' : ''}" ${expiredStyle} onclick="showDetailScreen(${d.id})">
         ${hintHtml}
         <div class="pc-body">
-          <div class="pc-photo ${d.photoClass}"><span>${d.emoji}</span><div class="status-bubble ${statusCls}">${statusLabel}</div></div>
+          <div class="pc-photo ${d.photoClass}"><span>${d.emoji}</span><div class="status-bubble ${statusCls}">${statusLabel}</div>${d._isMine ? '<div class="pc-mine-corner">我发布的</div>' : ''}</div>
           <div class="pc-info">
-            <div class="pc-name-row"><span class="pc-name">${d.name}</span>${d._isMine ? '<span class="pc-mine-tag">我发布的</span>' : ''}<span class="breed">${petMeta(d)}</span></div>
+            <div class="pc-name-row"><span class="pc-name">${d.name}</span><span class="breed">${petMeta(d)}</span></div>
             <div class="pc-meta"><span class="loc-link" onclick="event.stopPropagation();openMapNavigation('${d.loc}')"><svg class="icon icon-sm"><use href="#i-location"/></svg> ${d.loc} · 距你 ${distanceStr}</span>${timeSpan}</div>
             <div class="pc-desc">${d.desc}</div>
           </div>
