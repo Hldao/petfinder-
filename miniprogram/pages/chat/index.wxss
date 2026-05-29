@@ -1,19 +1,17 @@
 .page { display: flex; flex-direction: column; height: 100vh; background: var(--bg); }
 
-/* 宠物卡 · ⋯ 绝对定位贴右边缘 */
+/* 宠物卡 · r136 走自然 flex · ⋯ margin-left:auto 靠右 */
 .pet-bar {
-  position: relative;
   display: flex; align-items: center; gap: 12rpx;
-  padding: 16rpx 60rpx 16rpx 32rpx;
+  padding: 16rpx 32rpx;
   background: var(--surface-warm); flex-shrink: 0;
 }
 .pet-emoji { font-size: 32rpx; }
 .pet-name { font-size: 24rpx; color: var(--ink-2); font-weight: 600; }
 .more-btn {
-  position: absolute; right: 16rpx; top: 50%;
-  transform: translateY(-50%);
+  margin-left: auto;
   font-size: 36rpx; color: var(--ink-3);
-  padding: 8rpx 12rpx; line-height: 1;
+  padding: 8rpx 16rpx; line-height: 1;
 }
 
 /* 举报/拉黑 · 小红书风格纯文字链接 */
