@@ -2467,6 +2467,13 @@
     .privacy-check.checked {
       background: var(--apricot); border-color: var(--apricot); color: white;
     }
+    @keyframes privacy-shake {
+      0%,100% { transform: translateX(0); }
+      20% { transform: translateX(-4px); }
+      40% { transform: translateX(4px); }
+      60% { transform: translateX(-3px); }
+      80% { transform: translateX(3px); }
+    }
     .privacy-link { color: var(--apricot-deep); font-weight: 600; }
     .privacy-actions { display: flex; gap: var(--space-3); margin-top: var(--space-4); }
 
@@ -4963,6 +4970,13 @@
 
   let _firstPrivacyClose = true;
   function closePrivacyModal() {
+    if (!document.getElementById('privacyCheck').classList.contains('checked')) {
+      const el = document.getElementById('privacyCheck');
+      el.style.animation = 'none';
+      el.offsetHeight;
+      el.style.animation = 'privacy-shake 0.35s ease';
+      return;
+    }
     document.getElementById('privacy-modal').classList.add('hidden');
     // 首次同意隐私协议后，引导关注公众号
     if (_firstPrivacyClose) {
