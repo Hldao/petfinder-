@@ -2909,6 +2909,7 @@
   <symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></symbol>
   <symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
   <symbol id="i-more" viewBox="0 0 24 24"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></symbol>
+  <symbol id="i-more-vertical" viewBox="0 0 24 24"><circle cx="12" cy="12" r="1"/><circle cx="12" cy="5" r="1"/><circle cx="12" cy="19" r="1"/></symbol>
   <symbol id="i-alert" viewBox="0 0 24 24"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></symbol>
   <symbol id="i-share" viewBox="0 0 24 24"><path d="M12 2v13"/><path d="m17 8-5-5-5 5"/><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/></symbol>
   <symbol id="i-message" viewBox="0 0 24 24"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></symbol>
@@ -3181,8 +3182,8 @@
         <div class="back-btn" onclick="goBack()">←</div>
         <div class="sub-title" id="dyn-title">详情</div>
         <!-- v10 r99 · 2 独立 sub-icon → 单 ⋯ menu · 行业标配（大众点评/闲鱼/小红书同款）+ 与 chat 屏一致 -->
-        <!-- v10 r137 · 同 chat 屏 · 删 inline absolute right:8（被胶囊压住）+ 加 sub-icon-chip 让 ⋯ 独立成按钮 -->
-        <div class="sub-icon sub-icon-chip" onclick="toggleDetailMenu(event)" title="更多"><svg class="icon" style="width:18px;height:18px"><use href="#i-more"/></svg></div>
+        <!-- v10 r138 · 同 chat 屏 · 用竖向 ⋮ (Material Design 标准) · 与微信横向 ⋯ 区分 -->
+        <div class="sub-icon sub-icon-chip" onclick="toggleDetailMenu(event)" title="更多"><svg class="icon" style="width:18px;height:18px"><use href="#i-more-vertical"/></svg></div>
         <div class="chat-menu" id="detail-menu" onclick="event.stopPropagation()">
           <div class="chat-menu-item" id="detail-menu-share">
             <span class="cm-ic"><svg class="icon icon-sm"><use href="#i-share"/></svg></span>
@@ -3632,9 +3633,9 @@
       <div class="sub-header">
         <div class="back-btn" onclick="goBack()">←</div>
         <div class="sub-title">客栈老板娘</div>
-        <!-- v10 r137 · 加 sub-icon-chip class · 圆形 chip 视觉让 ⋯ 独立成"按钮"
-             之前裸 ⋯ 灰色与 sub-title 视觉太近 · 像"昵称后的省略号"而非操作按钮 -->
-        <div class="sub-icon sub-icon-chip" onclick="toggleChatMenu(event)" title="更多"><svg class="icon" style="width:18px;height:18px"><use href="#i-more"/></svg></div>
+        <!-- v10 r138 · 改用竖向 ⋮ (Material Design 标准"更多操作")
+             与微信原生横向 ⋯ 视觉区分 · 不再被误读为"昵称的省略号" -->
+        <div class="sub-icon sub-icon-chip" onclick="toggleChatMenu(event)" title="更多"><svg class="icon" style="width:18px;height:18px"><use href="#i-more-vertical"/></svg></div>
         <!-- 右上角 menu · v10 r22 归还闭环入口 -->
         <div class="chat-menu" id="chat-menu" onclick="event.stopPropagation()">
           <div class="chat-menu-item primary" onclick="confirmReturn()">
