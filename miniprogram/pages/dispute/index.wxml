@@ -1,17 +1,49 @@
 <view class="page">
-  <view class="notice">⚖ 申诉将进入人工仲裁队列。请客观描述情况，附上能佐证的截图/照片。</view>
-
-  <view class="label">情况描述 <text class="req">*</text></view>
-  <textarea class="textarea" placeholder="发生了什么？涉及哪条帖子 / 对方？（≥10 字）" value="{{text}}" bindinput="onInput" maxlength="500" />
-
-  <view class="label">证据照片（选填，最多 3 张）</view>
-  <view class="photo-row">
-    <view wx:for="{{photos}}" wx:key="*this" class="photo-slot">
-      <image src="{{item}}" mode="aspectFill" class="photo-img" />
-      <view class="photo-del" data-i="{{index}}" catchtap="removePhoto">✕</view>
+  <view class="scroll-area">
+    <!-- Hero · 警示 -->
+    <view class="dispute-hero">
+      <view class="dispute-icon">⚠</view>
+      <view class="dispute-title">遇到了什么情况？</view>
+      <view class="dispute-sub">平台审核员将在 24 小时内回复，请如实描述并附上证据</view>
     </view>
-    <view wx:if="{{photos.length < 3}}" class="photo-add" bindtap="choosePhoto">＋</view>
+
+    <!-- 争议类型 -->
+    <view class="section-label">争议类型</view>
+    <view class="dispute-types">
+      <view wx:for="{{types}}" wx:key="k" class="dispute-type {{type===item.k?'selected':''}}" data-k="{{item.k}}" bindtap="pickType">{{item.label}}</view>
+    </view>
+
+    <!-- 相关帖子（占位） -->
+    <view wx:if="{{postId}}" class="section-label">相关宠物 / 帖子</view>
+    <view wx:if="{{postId}}" class="dispute-block">
+      <view class="related-row">
+        <text>帖子 ID：{{postId}}</text>
+        <text class="related-arrow">›</text>
+      </view>
+    </view>
+
+    <!-- 详细描述 -->
+    <view class="section-label">详细描述</view>
+    <view class="dispute-block">
+      <textarea class="textarea" placeholder="请客观描述：什么时间、什么人、说了什么、做了什么（≥10 字）" value="{{text}}" bindinput="onInput" maxlength="500" />
+    </view>
+
+    <!-- 证据照片 -->
+    <view class="section-label">证据照片（选填，最多 3 张）</view>
+    <view class="photo-row">
+      <view wx:for="{{photos}}" wx:key="*this" class="photo-slot">
+        <image src="{{item}}" mode="aspectFill" class="photo-img" />
+        <view class="photo-del" data-i="{{index}}" catchtap="removePhoto">✕</view>
+      </view>
+      <view wx:if="{{photos.length < 3}}" class="photo-add" bindtap="choosePhoto">
+        <view class="add-plus">+</view>
+        <view class="add-label">截图/照片</view>
+      </view>
+    </view>
   </view>
 
-  <view class="submit {{submitting?'disabled':''}}" bindtap="submit">提交申诉</view>
+  <view class="action-bar">
+    <view class="btn-secondary" bindtap="goBack">取消</view>
+    <view class="btn-primary {{submitting?'disabled':''}}" bindtap="submit">提交申诉</view>
+  </view>
 </view>

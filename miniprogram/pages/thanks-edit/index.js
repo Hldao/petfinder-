@@ -14,6 +14,7 @@ Page({
     });
   },
   removePhoto() { this.setData({ photo: '' }); },
+  skip() { wx.switchTab({ url: '/pages/feed/index' }); },
 
   async submit() {
     const text = (this.data.text || '').trim();

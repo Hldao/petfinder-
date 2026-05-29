@@ -1,10 +1,20 @@
 const app = getApp();
 const cloud = require('../../utils/cloud.js');
 
+const TYPES = [
+  { k: 'claim', label: '🚨 怀疑冒领' },
+  { k: 'money', label: '😞 索要财物' },
+  { k: 'threat', label: '😨 威胁/恐吓' },
+  { k: 'ghost', label: '⏱ 对方失联' },
+];
+
 Page({
-  data: { text: '', photos: [], submitting: false, postId: '' },
+  data: { text: '', photos: [], submitting: false, postId: '', types: TYPES, type: 'claim' },
 
   onLoad(options) { this.setData({ postId: options.pid || '' }); },
+
+  pickType(e) { this.setData({ type: e.currentTarget.dataset.k }); },
+  goBack() { wx.navigateBack({ fail: () => wx.switchTab({ url: '/pages/feed/index' }) }); },
 
   onInput(e) { this.setData({ text: e.detail.value }); },
   choosePhoto() {
@@ -35,7 +45,7 @@ Page({
         const up = await wx.cloud.uploadFile({ cloudPath: `disputes/${Date.now()}-${Math.random().toString(36).slice(2)}.jpg`, filePath: p });
         fileIDs.push(up.fileID);
       }
-      const res = await cloud.call('submitDispute', { text, photos: fileIDs, postId: this.data.postId });
+      const res = await cloud.call('submitDispute', { text, photos: fileIDs, postId: this.data.postId, type: this.data.type });
       wx.hideLoading();
       if (res && res.ok === false) return wx.showModal({ title: '提交未通过', content: res.msg || '请重试', showCancel: false });
       wx.showToast({ title: '已提交，将人工仲裁', icon: 'success' });
