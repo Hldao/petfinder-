@@ -4727,7 +4727,7 @@
           <div class="privacy-list-footer">你可随时在「我的 → 清除我的数据」中删除所有个人数据。</div>
         </div>
         <div class="privacy-agree" onclick="document.getElementById('privacyCheck').classList.toggle('checked')" style="cursor:pointer">
-          <div class="privacy-check" id="privacyCheck">✓</div>
+          <div class="privacy-check checked" id="privacyCheck">✓</div>
           <!-- v10 r128 · 隐私 modal 内链接也加跳转 · 直接关闭 modal + 进协议屏（不触发"同意并继续"校验）-->
           <div>我已阅读并同意 <span class="privacy-link" onclick="event.stopPropagation();document.getElementById('privacy-modal').classList.add('hidden');showScreen('user-agreement')">《用户协议》</span> 和 <span class="privacy-link" onclick="event.stopPropagation();document.getElementById('privacy-modal').classList.add('hidden');showScreen('privacy-policy')">《隐私政策》</span></div>
         </div>
