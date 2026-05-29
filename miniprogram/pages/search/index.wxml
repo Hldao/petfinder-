@@ -1,27 +1,63 @@
 <view class="page">
-  <!-- 搜索栏 -->
+  <!-- 搜索栏 · r134 拆出独立一行 -->
   <view class="search-bar">
-    <view class="box">
-      <text class="ic">🔍</text>
-      <input class="inp" placeholder="搜品种、地点、特征…" value="{{query}}" bindinput="onInput" focus confirm-type="search" />
-      <text wx:if="{{query}}" class="clear" bindtap="clear">✕</text>
+    <view class="search-input-wrap">
+      <text class="search-input-icon">🔍</text>
+      <input class="search-input" placeholder="搜品种、地点、特征..." value="{{query}}" bindinput="onInput" focus confirm-type="search" bindconfirm="onConfirm" />
+      <text wx:if="{{query}}" class="search-input-clear" bindtap="clear">✕</text>
     </view>
+    <!-- r132 · cancel 动态切换 · 无内容 = 取消 / 有内容 = 搜索 -->
+    <text class="search-cancel" bindtap="handleCancel">{{query ? '搜索' : '取消'}}</text>
   </view>
 
-  <!-- 默认态：热门搜索 -->
+  <!-- 默认态：分类筛选 -->
   <view wx:if="{{state === 'default'}}" class="default">
-    <view class="sec-title">大理热门</view>
-    <view class="hots">
-      <view wx:for="{{hots}}" wx:key="*this" class="hot" data-q="{{item}}" bindtap="tapHot">{{item}}</view>
+    <!-- 最近搜索 -->
+    <view wx:if="{{history.length}}" class="section-header">
+      <text class="title">最近搜索</text>
+      <text class="right" bindtap="clearHistory">清除</text>
+    </view>
+    <view wx:if="{{history.length}}" class="search-chips">
+      <view wx:for="{{history}}" wx:key="*this" class="search-chip" data-q="{{item}}" bindtap="tapHot">{{item}}</view>
+    </view>
+
+    <!-- 按品种 -->
+    <view class="section-header">
+      <text class="title">按品种快速筛选</text>
+      <text class="count">· 着急时最常用</text>
+    </view>
+    <view class="search-chips">
+      <view wx:for="{{breeds}}" wx:key="name" class="search-chip {{item.hot?'hot':''}}" data-q="{{item.name}}" bindtap="tapHot">{{item.hot?'🔥 ':''}}{{item.name}}</view>
+    </view>
+
+    <!-- 按颜色 -->
+    <view class="section-header"><text class="title">按颜色</text></view>
+    <view class="color-chip-row">
+      <view wx:for="{{colors}}" wx:key="name" class="color-chip" data-q="{{item.name}}" bindtap="tapHot">
+        <view class="color-dot" style="background:{{item.color}};{{item.border?'border:1rpx solid '+item.border:''}}"></view>
+        <text>{{item.name}}</text>
+      </view>
+    </view>
+
+    <!-- 按地点 -->
+    <view class="section-header"><text class="title">按地点</text></view>
+    <view class="search-chips">
+      <view wx:for="{{places}}" wx:key="*this" class="search-chip" data-q="{{item}}" bindtap="tapHot">{{item}}</view>
     </view>
   </view>
 
   <!-- 结果态 -->
   <block wx:else>
-    <view class="result-meta">找到 {{results.length}} 条「{{query}}」</view>
-    <view wx:if="{{results.length === 0}}" class="empty">
-      <view class="fe-icon">🐾</view>
-      <view>没有匹配的信息</view>
+    <view class="result-meta">
+      <text class="title">附近匹配</text>
+      <text class="count">· {{results.length}} 条 · 最近优先</text>
+    </view>
+    <view wx:if="{{results.length === 0}}" class="search-empty">
+      <view class="se-icon">🐾</view>
+      <view class="se-title">附近暂时没有匹配</view>
+      <view class="se-sub">
+        换个关键词试试，或者 <text class="se-cta" bindtap="goPublish">立刻发布寻宠</text> 让大家帮你找
+      </view>
     </view>
     <view wx:else class="list">
       <pet-card wx:for="{{results}}" wx:key="id" post="{{item}}" bindtap="onCardTap" />

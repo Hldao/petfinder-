@@ -1,7 +1,8 @@
 <view class="page">
   <view wx:if="{{blocked.length === 0}}" class="empty">
-    <view class="fe-icon">🤝</view>
-    <view>还没有拉黑任何人</view>
+    <view class="fe-icon">🌿</view>
+    <view class="empty-title">一片清净</view>
+    <view class="empty-sub">希望你在这里遇到的，都是善意</view>
   </view>
   <view wx:else class="list">
     <view wx:for="{{blocked}}" wx:key="*this" class="row">

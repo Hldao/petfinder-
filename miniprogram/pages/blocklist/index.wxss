@@ -1,6 +1,8 @@
 .page { min-height: 100vh; background: var(--bg); padding: 24rpx 32rpx; }
-.empty { text-align: center; color: var(--ink-3); padding: 120rpx 0; font-size: 27rpx; }
-.empty .fe-icon { font-size: 80rpx; margin-bottom: 16rpx; }
+.empty { text-align: center; color: var(--ink-3); padding: 140rpx 60rpx; }
+.empty .fe-icon { font-size: 80rpx; margin-bottom: 20rpx; }
+.empty .empty-title { font-size: 30rpx; font-weight: 700; color: var(--ink-1); margin-bottom: 12rpx; }
+.empty .empty-sub { font-size: 24rpx; color: var(--ink-3); line-height: 1.6; }
 .list { display: flex; flex-direction: column; gap: 16rpx; }
 .row {
   display: flex; align-items: center; justify-content: space-between;

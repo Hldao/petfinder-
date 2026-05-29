@@ -10,6 +10,7 @@ Page({
     fromSeed: false,  // 是否在用本地 seed（提示开发者）
     showPrivacy: false, // 启动隐私协议（首启 · 不可绕过）
     showMp: false,      // 公众号关注 modal（关一次后不再主动弹）
+    privacyChecked: true, // r42701ed 默认勾选
   },
 
   _all: [], // 全量缓存，筛选在本地做
@@ -24,10 +25,30 @@ Page({
     if (!wx.getStorageSync('privacy_ok')) this.setData({ showPrivacy: true });
     else if (!wx.getStorageSync('mp_ok')) this.setData({ showMp: true });
   },
+  togglePrivacyCheck() {
+    this.setData({ privacyChecked: !this.data.privacyChecked });
+  },
   agreePrivacy() {
+    // r7b3d4a4 · 未勾选时禁止同意
+    if (!this.data.privacyChecked) {
+      wx.showToast({ title: '请先勾选已阅读', icon: 'none' });
+      return;
+    }
     wx.setStorageSync('privacy_ok', 1);
     this.setData({ showPrivacy: false });
     if (!wx.getStorageSync('mp_ok')) setTimeout(() => this.setData({ showMp: true }), 250);
+  },
+  declinePrivacy() {
+    // r f4a9461 · 暂不使用 = 真实退出
+    wx.exitMiniProgram && wx.exitMiniProgram({ fail: () => {
+      wx.showModal({ title: '已退出', content: '请手动关闭小程序', showCancel: false });
+    }});
+  },
+  openUserAgreement() {
+    wx.showModal({ title: '用户协议', content: '完整内容详见运营页面（占位）。', showCancel: false });
+  },
+  openPrivacyPolicy() {
+    wx.showModal({ title: '隐私政策', content: '完整内容详见运营页面（占位）。', showCancel: false });
   },
   dismissMp() {
     wx.setStorageSync('mp_ok', 1);

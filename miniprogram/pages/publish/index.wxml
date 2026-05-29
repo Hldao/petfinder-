@@ -1,99 +1,157 @@
 <view class="page">
-  <!-- 发布须知（合规前置告知 · 03 §3.6）-->
-  <view class="notice">
-    🛡 邻里互助网络，不撮合金钱交易。请勿填写微信/电话/悬赏，照片与描述将经审核。
-  </view>
-
-  <!-- 模式切换（r9：🔍 找 / 🏠 收留，去情绪化）-->
+  <!-- 模式切换 -->
   <view class="seg">
     <view class="seg-item {{mode==='lost'?'active':''}}" data-mode="lost" bindtap="switchMode">🔍 我丢了宠物</view>
     <view class="seg-item {{mode==='found'?'active':''}}" data-mode="found" bindtap="switchMode">🏠 我捡到了</view>
   </view>
 
+  <!-- 情绪支撑横幅 · r118-r120 + r127 可手动关闭 + localStorage 记忆 -->
+  <view wx:if="{{showWarmth && mode==='lost'}}" class="publish-warmth lost">
+    <view class="pw-title">🐾 别担心，你不是一个人</view>
+    <view class="pw-body">大理有很多热心邻居，发出去就有更多眼睛帮你找。发布越早，越多人能看见 ta。</view>
+    <view class="pw-close" catchtap="dismissWarmth">✕</view>
+  </view>
+  <view wx:if="{{showWarmth && mode==='found'}}" class="publish-warmth found">
+    <view class="pw-title">🏠 谢谢你伸出援手</view>
+    <view class="pw-body">你的一个发布，可能让一个家庭团圆。我们一起帮 ta 回家。</view>
+    <view class="pw-close" catchtap="dismissWarmth">✕</view>
+  </view>
+
+  <!-- 合规告知 · r127 可手动关闭 + 持久化 -->
+  <view wx:if="{{showCompliance}}" class="compliance-note">
+    <view class="cn-title">🛡 发布前请知悉</view>
+    <view class="cn-body">· 内容将经平台审核（约 1 分钟）</view>
+    <view class="cn-body">· 这里是「邻里互助网络」— 不展示悬赏金额、不撮合金钱交易</view>
+    <view class="cn-close" catchtap="dismissCompliance">✕</view>
+  </view>
+
   <!-- 照片 -->
-  <view class="field">
-    <view class="label">照片 <text class="req">*</text><text class="hint"> 帮助大家识别（最多 9 张）</text></view>
-    <view class="photo-row">
-      <view wx:for="{{photos}}" wx:key="*this" class="photo-slot">
-        <image src="{{item}}" mode="aspectFill" class="photo-img" />
-        <view class="photo-del" data-i="{{index}}" catchtap="removePhoto">✕</view>
+  <view class="form-section">
+    <view class="field">
+      <view class="label">
+        <text><text class="req">*</text> 上传照片（至少 1 张）</text>
+        <text class="count">{{photos.length}} / 9</text>
       </view>
-      <view wx:if="{{photos.length < 9}}" class="photo-add" bindtap="choosePhoto">＋</view>
+      <view class="photo-row">
+        <view wx:for="{{photos}}" wx:key="*this" class="photo-slot">
+          <image src="{{item}}" mode="aspectFill" class="photo-img" />
+          <view class="photo-del" data-i="{{index}}" catchtap="removePhoto">✕</view>
+        </view>
+        <view wx:if="{{photos.length < 9}}" class="photo-add" bindtap="choosePhoto">＋</view>
+      </view>
     </view>
   </view>
 
-  <!-- 宠物类型 -->
-  <view class="field">
-    <view class="label">宠物类型 <text class="req">*</text></view>
-    <view class="chips">
-      <view class="chip {{petType==='cat'?'active':''}}" data-t="cat" bindtap="pickType">🐱 猫</view>
-      <view class="chip {{petType==='dog'?'active':''}}" data-t="dog" bindtap="pickType">🐶 狗</view>
-      <view class="chip {{petType==='other'?'active':''}}" data-t="other" bindtap="pickType">🐾 其他</view>
+  <!-- 宠物信息 -->
+  <view class="form-section-label">宠物信息</view>
+  <view class="form-section">
+    <view class="field">
+      <view class="label"><text class="req">*</text> 宠物类型</view>
+      <view class="chips">
+        <view class="chip {{petType==='cat'?'active':''}}" data-t="cat" bindtap="pickType">🐱 猫</view>
+        <view class="chip {{petType==='dog'?'active':''}}" data-t="dog" bindtap="pickType">🐶 狗</view>
+        <view class="chip {{petType==='other'?'active':''}}" data-t="other" bindtap="pickType">🐾 其他</view>
+      </view>
+    </view>
+
+    <view wx:if="{{mode==='lost'}}" class="field">
+      <view class="label">名字 / 昵称</view>
+      <input class="input" placeholder="比如：胖丁" value="{{form.name}}" data-field="name" bindinput="onInput" />
+    </view>
+
+    <view class="field">
+      <view class="label">性别</view>
+      <view class="chips">
+        <view class="chip {{form.sex==='♂'?'active':''}}" data-s="♂" bindtap="pickSex">♂ 公</view>
+        <view class="chip {{form.sex==='♀'?'active':''}}" data-s="♀" bindtap="pickSex">♀ 母</view>
+        <view class="chip {{form.sex==='不确定'?'active':''}}" data-s="不确定" bindtap="pickSex">? 不确定</view>
+      </view>
+      <view wx:if="{{mode==='found'}}" class="field-hint">不需要勉强翻看陌生宠物 · 应激可能咬伤</view>
+    </view>
+
+    <!-- 招领专属：年龄段 · r39 拾主难精确判断 -->
+    <view wx:if="{{mode==='found'}}" class="field">
+      <view class="label">年龄段</view>
+      <view class="chips">
+        <view class="chip {{form.ageStage==='puppy'?'active':''}}" data-a="puppy" bindtap="pickAgeStage">🐣 幼宠</view>
+        <view class="chip {{form.ageStage==='adult'?'active':''}}" data-a="adult" bindtap="pickAgeStage">🐱 成年</view>
+        <view class="chip {{form.ageStage==='senior'?'active':''}}" data-a="senior" bindtap="pickAgeStage">🌟 老龄</view>
+        <view class="chip {{!form.ageStage || form.ageStage==='unknown'?'active':''}}" data-a="unknown" bindtap="pickAgeStage">? 不详</view>
+      </view>
+      <view class="field-hint">拾到的宠物难精确判断年龄 · 粗略估即可 · 失主能通过其他特征匹配</view>
+    </view>
+
+    <view class="field">
+      <view class="label">品种 / 外观</view>
+      <input class="input" placeholder="比如：英短蓝猫" value="{{form.breed}}" data-field="breed" bindinput="onInput" />
+      <view class="chips" style="margin-top:14rpx">
+        <view wx:for="{{breedChips}}" wx:key="*this" class="chip {{form.breed===item?'active':''}}" data-b="{{item}}" bindtap="pickBreed">{{item}}</view>
+      </view>
     </view>
   </view>
 
-  <!-- 名字（仅寻宠）-->
-  <view wx:if="{{mode==='lost'}}" class="field">
-    <view class="label">名字</view>
-    <input class="input" placeholder="ta 叫什么" value="{{form.name}}" data-field="name" bindinput="onInput" />
-  </view>
-
-  <!-- 品种 / 外观 -->
-  <view class="field">
-    <view class="label">品种 / 外观</view>
-    <view class="chips">
-      <view wx:for="{{breedChips}}" wx:key="*this" class="chip {{form.breed===item?'active':''}}" data-b="{{item}}" bindtap="pickBreed">{{item}}</view>
+  <!-- 地点 / 时间 -->
+  <view class="form-section-label">{{mode==='lost'?'走失地点 / 时间':'发现地点 / 时间'}}</view>
+  <view class="form-section">
+    <view class="field">
+      <view class="label"><text class="req">*</text> {{mode==='lost'?'走失':'发现'}}地点</view>
+      <view class="chips">
+        <view wx:for="{{locs}}" wx:key="*this" class="chip {{form.loc===item?'active':''}}" data-v="{{item}}" bindtap="pickLoc">{{item}}</view>
+        <view class="chip map-pick" bindtap="chooseLocation">📍 地图选点</view>
+      </view>
+      <view wx:if="{{pickedLat}}" class="field-hint">已选：{{form.loc}}（地图定位）</view>
     </view>
-    <input class="input" placeholder="或直接输入品种 / 特征" value="{{form.breed}}" data-field="breed" bindinput="onInput" />
-  </view>
 
-  <!-- 性别 -->
-  <view class="field">
-    <view class="label">性别</view>
-    <view class="chips">
-      <view class="chip {{form.sex==='♂'?'active':''}}" data-s="♂" bindtap="pickSex">♂ 公</view>
-      <view class="chip {{form.sex==='♀'?'active':''}}" data-s="♀" bindtap="pickSex">♀ 母</view>
-      <view class="chip {{form.sex==='不确定'?'active':''}}" data-s="不确定" bindtap="pickSex">不确定</view>
-    </view>
-    <view wx:if="{{mode==='found'}}" class="sub-hint">捡到的不必勉强翻看辨别性别</view>
-  </view>
-
-  <!-- 地点 -->
-  <view class="field">
-    <view class="label">{{mode==='lost'?'走失':'发现'}}地点 <text class="req">*</text></view>
-    <view class="chips">
-      <view wx:for="{{locs}}" wx:key="*this" class="chip {{form.loc===item?'active':''}}" data-v="{{item}}" bindtap="pickLoc">{{item}}</view>
-      <view class="chip map-pick" bindtap="chooseLocation">📍 地图选点</view>
-    </view>
-    <view wx:if="{{pickedLat}}" class="sub-hint">已选：{{form.loc}}（地图定位）</view>
-  </view>
-
-  <!-- 时间 -->
-  <view class="field">
-    <view class="label">{{mode==='lost'?'走失':'发现'}}时间 <text class="req">*</text></view>
-    <view class="chips">
-      <view wx:for="{{times}}" wx:key="label" class="chip {{form.timeText===item.label?'active':''}}" data-label="{{item.label}}" data-mins="{{item.mins}}" bindtap="pickTime">{{item.label}}</view>
+    <view class="field">
+      <view class="label"><text class="req">*</text> {{mode==='lost'?'走失':'发现'}}时间</view>
+      <view class="chips">
+        <view wx:for="{{times}}" wx:key="label" class="chip {{form.timeText===item.label?'active':''}}" data-label="{{item.label}}" data-mins="{{item.mins}}" bindtap="pickTime">{{item.label}}</view>
+      </view>
     </view>
   </view>
 
   <!-- 招领专属：目前状况 -->
   <block wx:if="{{mode==='found'}}">
-    <view class="field">
-      <view class="label">目前位置</view>
-      <input class="input" placeholder="ta 现在在哪（如：先带回 XX 店）" value="{{form.currentLocation}}" data-field="currentLocation" bindinput="onInput" />
-    </view>
-    <view class="field">
-      <view class="label">健康状况</view>
-      <input class="input" placeholder="选填，如：精神好、已喂水" value="{{form.health}}" data-field="health" bindinput="onInput" />
+    <view class="form-section-label">目前状况</view>
+    <view class="form-section">
+      <view class="field">
+        <view class="label"><text class="req">*</text> 目前位置</view>
+        <input class="input" placeholder="比如：附近的宠物医院 / 小区门卫处" value="{{form.currentLocation}}" data-field="currentLocation" bindinput="onInput" />
+      </view>
+      <view class="field">
+        <view class="label">健康状况</view>
+        <input class="input" placeholder="比如：已喂食，未发现外伤" value="{{form.health}}" data-field="health" bindinput="onInput" />
+      </view>
     </view>
   </block>
 
   <!-- 描述 -->
-  <view class="field">
-    <view class="label">公开描述 <text class="req">*</text><text class="hint"> 至少 10 字，越详细匹配越准</text></view>
-    <textarea class="textarea" placeholder="特征、项圈、性格、习惯…" value="{{form.desc}}" data-field="desc" bindinput="onInput" maxlength="500" />
+  <view class="form-section">
+    <view class="field">
+      <view class="label">
+        <text><text class="req">*</text> 公开描述</text>
+        <text class="count">{{form.desc.length}} / 500</text>
+      </view>
+      <textarea class="textarea" placeholder="描述外观特征、走失/发现时穿戴、行为习惯等" value="{{form.desc}}" data-field="desc" bindinput="onInput" maxlength="500" />
+    </view>
   </view>
 
-  <view class="submit {{submitting?'disabled':''}}" bindtap="submit">发布</view>
-  <view class="safe-pad"></view>
+  <!-- 通知保障 -->
+  <view class="notify-card">
+    <text class="nc-ic">🔔</text>
+    <text>有人留线索时立刻通知你（小程序、公众号）</text>
+  </view>
+
+  <!-- 协议 · r128 -->
+  <view class="terms-note">
+    发布即表示你已阅读并同意 <text class="link" bindtap="openUserAgreement">《用户协议》</text> 和 <text class="link" bindtap="openPrivacyPolicy">《隐私政策》</text>
+  </view>
+
+  <view class="bottom-pad"></view>
+
+  <!-- 底部 action bar · r131 移至底部 FAB -->
+  <view class="action-bar">
+    <view class="btn-secondary" bindtap="saveDraft">保存草稿</view>
+    <view class="btn-primary {{submitting?'disabled':''}}" bindtap="submit">发布</view>
+  </view>
 </view>

@@ -1,11 +1,32 @@
 <view class="page">
-  <view class="label">反馈类型</view>
-  <view class="chips">
-    <view wx:for="{{cats}}" wx:key="k" class="chip {{cat===item.k?'active':''}}" data-k="{{item.k}}" bindtap="pickCat">{{item.label}}</view>
+  <view class="header">
+    <view class="title">说说你的想法</view>
+    <view class="sub">我们会认真阅读每一条反馈</view>
   </view>
 
-  <view class="label">具体内容</view>
-  <textarea class="textarea" placeholder="说说你遇到的问题或想法，我们会认真看 🙏" value="{{text}}" bindinput="onInput" maxlength="500" />
+  <!-- 分类 · r122 加体验吐槽 -->
+  <view class="cats">
+    <view wx:for="{{cats}}" wx:key="k" class="cat {{cat===item.k?'active':''}}" data-k="{{item.k}}" bindtap="pickCat">{{item.label}}</view>
+  </view>
 
-  <view class="submit {{submitting?'disabled':''}}" bindtap="submit">提交</view>
+  <!-- 描述 -->
+  <textarea class="textarea" placeholder="详细描述你的想法或遇到的问题" value="{{text}}" bindinput="onInput" maxlength="500" />
+
+  <!-- 截图 · r122 最多 4 张 -->
+  <view class="photo-row">
+    <view wx:for="{{photos}}" wx:key="*this" class="photo-slot filled">
+      <image src="{{item}}" mode="aspectFill" class="photo-img" />
+      <view class="photo-x" data-i="{{index}}" catchtap="removePhoto">✕</view>
+    </view>
+    <view wx:if="{{photos.length < 4}}" class="photo-slot add" bindtap="choosePhoto">
+      <view class="add-plus">+</view>
+      <view class="add-label">截图</view>
+    </view>
+  </view>
+
+  <!-- 联系方式 · r122 -->
+  <input class="contact" placeholder="微信号 / 手机号（选填 · 用于回复你）" value="{{contact}}" bindinput="onContact" />
+
+  <!-- 底部 FAB · r131 -->
+  <view class="fab {{submitting?'disabled':''}}" bindtap="submit">提交反馈</view>
 </view>

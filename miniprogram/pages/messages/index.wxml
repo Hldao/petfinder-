@@ -35,15 +35,19 @@
       <!-- 正文 -->
       <view class="msg-body">
         <view class="msg-row-head">
-          <text class="msg-name">{{item.peerName}}</text>
-          <text wx:if="{{item.mpTag}}" class="mp-tag">服务号</text>
+          <view class="msg-name-wrap">
+            <text class="msg-name">{{item.peerName}}</text>
+            <text wx:if="{{item.mpTag}}" class="mp-tag">服务号</text>
+          </view>
           <text class="msg-time">{{item.lastTime}}</text>
         </view>
-        <view class="msg-preview">{{item.lastMsg}}</view>
+        <view class="msg-preview">
+          <text wx:if="{{item.prefix}}" class="msg-prefix">{{item.prefix}}</text>{{item.lastMsg}}
+        </view>
         <view class="msg-context {{item.type === 'reply' ? 'reply' : ''}}">{{item.context}}</view>
       </view>
 
-      <!-- 未读徽标 -->
+      <!-- 未读徽标 · 右侧垂直居中 -->
       <view wx:if="{{item.unread > 0}}" class="msg-unread">{{item.unread}}</view>
     </view>
 

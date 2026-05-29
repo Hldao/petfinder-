@@ -15,6 +15,7 @@
     </view>
   </view>
   <view class="pc-footer">
+    <view wx:if="{{post.isMine}}" class="pc-mine">✏ 我发布的</view>
     <text class="pc-action">{{helpersText}}</text>
     <text class="pc-action share">⤴ 转发</text>
   </view>

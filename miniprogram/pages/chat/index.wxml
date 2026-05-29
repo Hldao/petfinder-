@@ -1,12 +1,17 @@
 <view class="page">
-  <!-- 顶部宠物卡 + ⋯ 菜单 -->
+  <!-- 顶部宠物卡 · r2ae0ba2 ⋯ 绝对定位贴右边缘 -->
   <view class="pet-bar">
     <text class="pet-emoji">{{emoji}}</text>
     <text class="pet-name">{{petName ? '关于 ' + petName : '会话'}}</text>
     <view class="more-btn" bindtap="onMore">⋯</view>
   </view>
 
-  <!-- 审核提示条（03 §4.2）-->
+  <!-- 举报/拉黑 入口 · r277d552 + r2299c2f 移至宠物信息栏下方 · 小红书风格纯文字链接 -->
+  <view class="report-link" bindtap="onMore">
+    <text>举报 / 拉黑此用户</text>
+  </view>
+
+  <!-- 审核提示条 -->
   <view class="audit-bar">🛡 消息经审核后送达 · 含微信号 / 电话 / 二维码将被过滤</view>
 
   <!-- 消息流 -->
@@ -19,10 +24,17 @@
     <view class="stream-pad"></view>
   </scroll-view>
 
-  <!-- Quick Reply -->
-  <scroll-view scroll-x class="quick-row">
-    <view wx:for="{{quick}}" wx:key="label" class="quick-chip" data-text="{{item.text}}" bindtap="pickQuick">{{item.label}}</view>
-  </scroll-view>
+  <!-- Quick Reply · r f4941ef 点击 ⚡ 展开/收起 · 换行显示全部 -->
+  <view wx:if="{{quick.length}}" class="quick-section">
+    <view class="quick-trigger" bindtap="toggleQuick">
+      <text class="quick-trigger-ic">⚡</text>
+      <text>{{quickExpanded?'收起':'快捷回复'}}</text>
+      <text class="quick-trigger-chev">{{quickExpanded?'▾':'▸'}}</text>
+    </view>
+    <view wx:if="{{quickExpanded}}" class="quick-list">
+      <view wx:for="{{quick}}" wx:key="label" class="quick-chip" data-text="{{item.text}}" bindtap="pickQuick">{{item.label}}</view>
+    </view>
+  </view>
 
   <!-- 输入栏 -->
   <view class="input-bar">

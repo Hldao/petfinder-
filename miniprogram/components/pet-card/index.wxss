@@ -47,3 +47,14 @@
   margin-left: auto; color: var(--apricot-deep);
   background: var(--apricot-soft); padding: 8rpx 20rpx; border-radius: var(--radius-pill); font-weight: 700;
 }
+/* 我发布的小标识 · r125 footer 左侧 */
+.pc-mine {
+  display: inline-flex; align-items: center; gap: 6rpx;
+  padding: 6rpx 18rpx;
+  background: var(--apricot-soft);
+  color: var(--apricot-deep);
+  border-radius: 999rpx;
+  font-size: 21rpx; font-weight: 700;
+  letter-spacing: 0.02em;
+  flex-shrink: 0;
+}

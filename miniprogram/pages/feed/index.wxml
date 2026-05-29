@@ -44,17 +44,32 @@
 
   <view wx:if="{{fromSeed}}" class="seed-note">本地示例数据（config.js 填好 CLOUD_ENV 后接入云端）</view>
 
-  <!-- 启动隐私协议（首启 · 不可绕过 · 03 §6）-->
+  <!-- 启动隐私协议（首启 · 不可绕过 · r127/r128/r42701ed/r7b3d4a4/rf4a9461）-->
   <view wx:if="{{showPrivacy}}" class="mask">
-    <view class="modal">
-      <view class="m-title">🐾 欢迎来到寻宠·大理</view>
+    <view class="modal privacy-modal">
+      <view class="m-icon">🐾</view>
+      <view class="m-title">欢迎使用寻宠·大理</view>
+      <view class="m-sub">使用前请阅读《用户协议》与《隐私政策》</view>
       <view class="m-body">
-        <view>为了帮 ta 回家，我们会用到：</view>
-        <view class="m-item">📍 位置 · 发布与附近匹配（精度模糊到 500m）</view>
-        <view class="m-item">📷 照片 · 宠物识别（经平台审核）</view>
-        <view class="m-item">💬 聊天内容 · 双方沟通（经审核送达）</view>
+        <view class="m-section-label">我们会收集和使用以下信息：</view>
+        <view class="m-item"><text class="m-item-num">1</text><text><text class="b">位置</text> · 发布与附近匹配（精度模糊到 500m）</text></view>
+        <view class="m-item"><text class="m-item-num">2</text><text><text class="b">照片</text> · 宠物识别（经平台审核）</text></view>
+        <view class="m-item"><text class="m-item-num">3</text><text><text class="b">聊天内容</text> · 经审核送达，留存 6 个月以满足监管</text></view>
+        <view class="m-list-footer">你可随时在「我的 → 清除我的数据」中删除所有个人数据。</view>
       </view>
-      <view class="m-btn primary" bindtap="agreePrivacy">同意并继续</view>
+      <view class="m-agree" bindtap="togglePrivacyCheck">
+        <view class="m-check {{privacyChecked?'checked':''}}">{{privacyChecked?'✓':''}}</view>
+        <view class="m-agree-text">
+          我已阅读并同意
+          <text class="m-link" catchtap="openUserAgreement">《用户协议》</text>
+          和
+          <text class="m-link" catchtap="openPrivacyPolicy">《隐私政策》</text>
+        </view>
+      </view>
+      <view class="m-actions">
+        <view class="m-btn secondary" bindtap="declinePrivacy">暂不使用</view>
+        <view class="m-btn primary {{privacyChecked?'':'disabled'}}" bindtap="agreePrivacy">同意并继续</view>
+      </view>
     </view>
   </view>
 

@@ -1,5 +1,38 @@
-.page { min-height: 100vh; background: var(--bg); padding: 24rpx 32rpx 60rpx; }
-.sec-title { font-size: 26rpx; font-weight: 700; color: var(--ink-2); margin: 24rpx 0 16rpx; }
-.list { display: flex; flex-direction: column; gap: 24rpx; }
+.page { min-height: 100vh; background: var(--bg); padding: 0 0 60rpx; }
+
+.mp-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 32rpx 32rpx 16rpx;
+}
+.mp-title { font-size: 36rpx; font-weight: 800; color: var(--ink-1); }
+.mp-action {
+  font-size: 26rpx; color: var(--apricot-deep); font-weight: 700;
+  padding: 8rpx 20rpx;
+  background: var(--apricot-soft);
+  border-radius: var(--radius-pill);
+}
+
+.mp-tabs {
+  display: flex; gap: 0;
+  padding: 0 24rpx;
+  border-bottom: 1rpx solid var(--divider-soft);
+  margin-bottom: 16rpx;
+}
+.mp-tab {
+  padding: 16rpx 28rpx; font-size: 26rpx; color: var(--ink-3);
+  border-bottom: 3rpx solid transparent; margin-bottom: -1rpx;
+}
+.mp-tab.active { color: var(--mint-deep); font-weight: 700; border-bottom-color: var(--mint-deep); }
+
+.list { display: flex; flex-direction: column; gap: 24rpx; padding: 8rpx 32rpx; }
 .hint { text-align: center; color: var(--ink-3); padding: 80rpx 0; font-size: 26rpx; }
 .hint.small { padding: 32rpx 0; color: var(--ink-4); font-size: 24rpx; }
+
+.mp-note {
+  margin: 24rpx 32rpx 0;
+  padding: 16rpx 22rpx;
+  background: var(--mint-soft);
+  color: var(--mint-deep);
+  border-radius: var(--radius-md);
+  font-size: 22rpx; line-height: 1.5;
+}

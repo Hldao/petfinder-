@@ -2,7 +2,12 @@ const app = getApp();
 const cloud = require('../../utils/cloud.js');
 
 Page({
-  data: { active: [], done: [], loading: true, needCloud: false },
+  data: { active: [], done: [], loading: true, needCloud: false, tab: 'active' },
+
+  switchTab(e) { this.setData({ tab: e.currentTarget.dataset.tab }); },
+  goPublish() {
+    wx.switchTab({ url: '/pages/publish/index', fail: () => wx.navigateTo({ url: '/pages/publish/index' }) });
+  },
 
   onLoad() { this.load(); },
 

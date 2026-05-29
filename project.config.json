@@ -2,7 +2,7 @@
   "miniprogramRoot": "miniprogram/",
   "cloudfunctionRoot": "cloudfunctions/",
   "compileType": "miniprogram",
-  "libVersion": "3.5.5",
+  "libVersion": "3.16.1",
   "appid": "wxc94faedd7266dda4",
   "projectname": "petfinder-dadao",
   "description": "寻宠·大理 — 微信小程序原生（迁移自 prototypes/app-prototype-v10.html）",

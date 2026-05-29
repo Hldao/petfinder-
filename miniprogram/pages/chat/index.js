@@ -1,19 +1,20 @@
 const app = getApp();
 const cloud = require('../../utils/cloud.js');
 
-// Quick Reply 角色化（03 §4.3 · 短语措辞同步原型 df7fa34）：短标签显示 / 完整句插入
+// Quick Reply 角色化 · r129 文案优化（去指令感 / 软化结尾 / 更口语）
 const QUICK = {
   finder: [
-    { label: '📍 看到了', text: '刚在附近看到 ta 了！' },
-    { label: '🏠 我收着', text: 'ta 在我这里，随时可以来取 🐾' },
-    { label: '🕐 约见面', text: '我们约个时间当面确认吧？' },
-    { label: '🙏 谢谢', text: '谢谢你们，辛苦了 🙏' },
+    { label: '📍 我看到 ta 了', text: '刚在附近看到 ta 了～' },
+    { label: '🏠 ta 在我这', text: 'ta 在我这边，你方便的时候过来接就好 🐾' },
+    { label: '📷 想看张照片', text: '方便发张照片吗？我想先确认下 🙏' },
+    { label: '🐾 ta 长啥样？', text: 'ta 有什么明显的特征呀？' },
+    { label: '🤝 约个时间见？', text: '我们约个时间见个面呗？' },
   ],
   owner: [
-    { label: '📍 马上来', text: '我马上过去！在哪里方便见面？' },
-    { label: '📷 发张照片', text: '能发张照片吗？想先确认一下 🙏' },
-    { label: '🐾 问特征', text: 'ta 有什么特别的地方吗？比如颜色、斑纹、项圈' },
-    { label: '🤝 约见面', text: '我们约个时间当面确认吧？' },
+    { label: '📍 这就过去', text: '这就过去，在哪儿方便见面～' },
+    { label: '📷 想看张照片', text: '方便发张照片吗？我想先确认下 🙏' },
+    { label: '🐾 ta 长啥样？', text: 'ta 有什么明显的特征呀？' },
+    { label: '🤝 约个时间见？', text: '我们约个时间见个面呗？' },
   ],
 };
 
@@ -39,6 +40,11 @@ Page({
     peerName: '发布者', petName: '', emoji: '🐾',
     messages: [], input: '', quick: [], scrollId: '',
     cid: '', pid: '',
+    quickExpanded: false,
+  },
+
+  toggleQuick() {
+    this.setData({ quickExpanded: !this.data.quickExpanded });
   },
 
   onLoad(options) {

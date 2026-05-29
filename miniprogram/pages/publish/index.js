@@ -20,10 +20,43 @@ Page({
     photos: [],            // 本地临时路径
     petType: 'cat',
     breedChips: BREEDS.cat,
-    form: { name: '', breed: '', sex: '不确定', loc: '', timeText: '', timeMins: 0, desc: '', currentLocation: '', health: '' },
+    form: { name: '', breed: '', sex: '不确定', loc: '', timeText: '', timeMins: 0, desc: '', currentLocation: '', health: '', ageStage: 'unknown' },
     locs: LOCS, times: TIMES,
     pickedLat: null, pickedLng: null,
     submitting: false,
+    showWarmth: true,
+    showCompliance: true,
+  },
+
+  onLoad() {
+    // r127 · localStorage 持久化关闭态
+    const warmthDismissed = wx.getStorageSync('publish_warmth_dismissed');
+    const complianceDismissed = wx.getStorageSync('publish_compliance_dismissed');
+    this.setData({
+      showWarmth: !warmthDismissed,
+      showCompliance: !complianceDismissed,
+    });
+  },
+
+  dismissWarmth() {
+    wx.setStorageSync('publish_warmth_dismissed', '1');
+    this.setData({ showWarmth: false });
+  },
+  dismissCompliance() {
+    wx.setStorageSync('publish_compliance_dismissed', '1');
+    this.setData({ showCompliance: false });
+  },
+  pickAgeStage(e) {
+    this.setData({ 'form.ageStage': e.currentTarget.dataset.a });
+  },
+  saveDraft() {
+    wx.showToast({ title: '草稿已保存', icon: 'success' });
+  },
+  openUserAgreement() {
+    wx.showModal({ title: '用户协议', content: '完整内容详见运营页面（占位）。', showCancel: false });
+  },
+  openPrivacyPolicy() {
+    wx.showModal({ title: '隐私政策', content: '完整内容详见运营页面（占位）。', showCancel: false });
   },
 
   switchMode(e) {

@@ -1,24 +1,79 @@
-.page { min-height: 100vh; background: var(--bg); }
+.page { min-height: 100vh; background: var(--bg); padding-bottom: 60rpx; }
 
-.search-bar { padding: 20rpx 32rpx; }
-.box {
+/* 搜索栏 · r130/r132/r134 */
+.search-bar {
+  display: flex; align-items: center; gap: 16rpx;
+  padding: 16rpx 28rpx 20rpx;
+  background: var(--bg);
+}
+.search-input-wrap {
+  flex: 1;
   display: flex; align-items: center; gap: 14rpx;
-  background: var(--surface); border-radius: var(--radius-pill); padding: 16rpx 28rpx;
+  background: var(--surface);
+  border-radius: var(--radius-pill);
+  padding: 16rpx 28rpx;
   box-shadow: var(--shadow-card);
 }
-.box .ic { font-size: 28rpx; }
-.box .inp { flex: 1; font-size: 28rpx; color: var(--ink-1); }
-.box .clear { color: var(--ink-4); font-size: 26rpx; padding: 0 8rpx; }
-
-.default { padding: 16rpx 32rpx; }
-.sec-title { font-size: 25rpx; font-weight: 700; color: var(--ink-2); margin-bottom: 20rpx; }
-.hots { display: flex; flex-wrap: wrap; gap: 18rpx; }
-.hot {
-  padding: 14rpx 28rpx; background: var(--surface); border-radius: var(--radius-pill);
-  font-size: 26rpx; color: var(--ink-2); font-weight: 600;
+.search-input-icon { font-size: 26rpx; color: var(--ink-3); }
+.search-input { flex: 1; font-size: 28rpx; color: var(--ink-1); }
+.search-input-clear { color: var(--ink-4); font-size: 24rpx; padding: 0 8rpx; }
+.search-cancel {
+  font-size: 26rpx; color: var(--apricot-deep); font-weight: 600;
+  padding: 0 8rpx; flex-shrink: 0;
 }
 
-.result-meta { padding: 8rpx 32rpx 12rpx; font-size: 24rpx; color: var(--ink-3); }
+/* Section header */
+.section-header {
+  display: flex; align-items: baseline;
+  padding: 28rpx 32rpx 12rpx;
+}
+.section-header .title { font-size: 26rpx; font-weight: 700; color: var(--ink-1); }
+.section-header .count { font-size: 22rpx; color: var(--ink-3); margin-left: 8rpx; }
+.section-header .right { margin-left: auto; font-size: 24rpx; color: var(--ink-3); }
+
+/* Chips */
+.search-chips {
+  display: flex; flex-wrap: wrap; gap: 16rpx;
+  padding: 0 32rpx;
+}
+.search-chip {
+  padding: 14rpx 28rpx; background: var(--surface);
+  border-radius: var(--radius-pill);
+  font-size: 26rpx; color: var(--ink-2); font-weight: 600;
+  box-shadow: var(--shadow-card);
+}
+.search-chip.hot {
+  background: var(--apricot-soft); color: var(--apricot-deep);
+}
+
+/* 颜色 chip */
+.color-chip-row {
+  display: flex; flex-wrap: wrap; gap: 16rpx;
+  padding: 0 32rpx;
+}
+.color-chip {
+  display: flex; align-items: center; gap: 10rpx;
+  padding: 14rpx 24rpx; background: var(--surface);
+  border-radius: var(--radius-pill);
+  font-size: 26rpx; color: var(--ink-2); font-weight: 600;
+  box-shadow: var(--shadow-card);
+}
+.color-dot { width: 24rpx; height: 24rpx; border-radius: 50%; }
+
+/* 结果 */
+.result-meta {
+  display: flex; align-items: baseline;
+  padding: 28rpx 32rpx 12rpx;
+}
+.result-meta .title { font-size: 26rpx; font-weight: 700; color: var(--ink-1); }
+.result-meta .count { font-size: 22rpx; color: var(--ink-3); margin-left: 8rpx; }
 .list { display: flex; flex-direction: column; gap: 24rpx; padding: 8rpx 32rpx 40rpx; }
-.empty { text-align: center; color: var(--ink-3); padding: 100rpx 0; font-size: 27rpx; }
-.empty .fe-icon { font-size: 72rpx; margin-bottom: 16rpx; }
+
+/* 空结果 */
+.search-empty {
+  text-align: center; padding: 100rpx 60rpx;
+}
+.se-icon { font-size: 80rpx; margin-bottom: 20rpx; }
+.se-title { font-size: 30rpx; font-weight: 700; color: var(--ink-1); margin-bottom: 12rpx; }
+.se-sub { font-size: 24rpx; color: var(--ink-3); line-height: 1.7; }
+.se-cta { color: var(--apricot-deep); font-weight: 600; }

@@ -1,19 +1,32 @@
 <view class="page">
+  <view class="mp-header">
+    <view class="mp-title">我的发布</view>
+    <view class="mp-action" bindtap="goPublish">发布</view>
+  </view>
+
   <view wx:if="{{loading}}" class="hint">加载中…</view>
 
   <view wx:elif="{{needCloud}}" class="hint">接入云端后，这里显示你发布的帖子与进度</view>
 
   <block wx:else>
-    <view class="sec-title">进行中 · {{active.length}}</view>
-    <view wx:if="{{active.length === 0}}" class="hint small">暂无进行中的帖子</view>
-    <view class="list">
-      <pet-card wx:for="{{active}}" wx:key="id" post="{{item}}" bindtap="onCardTap" />
+    <view class="mp-tabs">
+      <view class="mp-tab {{tab==='active'?'active':''}}" data-tab="active" bindtap="switchTab">进行中 · {{active.length}}</view>
+      <view class="mp-tab {{tab==='done'?'active':''}}" data-tab="done" bindtap="switchTab">已结束 · {{done.length}}</view>
     </view>
 
-    <view class="sec-title">已结束 · {{done.length}}</view>
-    <view wx:if="{{done.length === 0}}" class="hint small">暂无已结束的帖子</view>
-    <view class="list">
-      <pet-card wx:for="{{done}}" wx:key="id" post="{{item}}" bindtap="onCardTap" />
+    <view wx:if="{{tab==='active'}}">
+      <view wx:if="{{active.length === 0}}" class="hint small">暂无进行中的帖子</view>
+      <view class="list">
+        <pet-card wx:for="{{active}}" wx:key="id" post="{{item}}" bindtap="onCardTap" />
+      </view>
+      <view wx:if="{{active.length}}" class="mp-note">🛡 归还标记需在和对方的聊天里完成（最后一道反冒领防线）</view>
+    </view>
+
+    <view wx:if="{{tab==='done'}}">
+      <view wx:if="{{done.length === 0}}" class="hint small">暂无已结束的帖子</view>
+      <view class="list">
+        <pet-card wx:for="{{done}}" wx:key="id" post="{{item}}" bindtap="onCardTap" />
+      </view>
     </view>
   </block>
 </view>
