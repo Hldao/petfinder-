@@ -292,6 +292,19 @@
     }
     /* 相邻 sub-icon 紧贴 · 不再 margin-left:auto */
     .sub-icon + .sub-icon { margin-left: 0; }
+    /* v10 r137 · sub-icon-chip 变体 · 让 ⋯ 等操作按钮独立成"按钮"
+     * 圆形米色 chip · 与 sub-title 视觉拉开 · 不再像"昵称的省略号" */
+    .sub-icon.sub-icon-chip {
+      width: 32px; height: 32px;
+      background: var(--bg);
+      border-radius: 50%;
+      margin-right: 4px;
+      transition: background-color 0.15s, transform 0.1s;
+    }
+    .sub-icon.sub-icon-chip:active {
+      background: var(--bg-deeper);
+      transform: scale(0.96);
+    }
 
     /* v10 r85 · filter-region 跟内容一起滚（删 sticky · 删 is-stuck）
      * 用户明确要求：nav 吸附 / filter 滚走 */
@@ -3168,7 +3181,8 @@
         <div class="back-btn" onclick="goBack()">←</div>
         <div class="sub-title" id="dyn-title">详情</div>
         <!-- v10 r99 · 2 独立 sub-icon → 单 ⋯ menu · 行业标配（大众点评/闲鱼/小红书同款）+ 与 chat 屏一致 -->
-        <div class="sub-icon" onclick="toggleDetailMenu(event)" title="更多" style="position:absolute;right:8px"><svg class="icon" style="width:20px;height:20px"><use href="#i-more"/></svg></div>
+        <!-- v10 r137 · 同 chat 屏 · 删 inline absolute right:8（被胶囊压住）+ 加 sub-icon-chip 让 ⋯ 独立成按钮 -->
+        <div class="sub-icon sub-icon-chip" onclick="toggleDetailMenu(event)" title="更多"><svg class="icon" style="width:18px;height:18px"><use href="#i-more"/></svg></div>
         <div class="chat-menu" id="detail-menu" onclick="event.stopPropagation()">
           <div class="chat-menu-item" id="detail-menu-share">
             <span class="cm-ic"><svg class="icon icon-sm"><use href="#i-share"/></svg></span>
@@ -3618,9 +3632,9 @@
       <div class="sub-header">
         <div class="back-btn" onclick="goBack()">←</div>
         <div class="sub-title">客栈老板娘</div>
-        <!-- v10 r136 · 删 inline style position:absolute right:8px · 该样式把 ⋯ 推到 right:8 处 · 与胶囊 right:7~94 完全重叠 · 用户找不到按钮（被胶囊盖住）
-             改回默认 flex layout · sub-icon 自带 margin-left:auto · 配合 sub-header padding-right:96 让位胶囊 · ⋯ 正确显示在 right:96 处 -->
-        <div class="sub-icon" onclick="toggleChatMenu(event)" title="更多"><svg class="icon" style="width:20px;height:20px"><use href="#i-more"/></svg></div>
+        <!-- v10 r137 · 加 sub-icon-chip class · 圆形 chip 视觉让 ⋯ 独立成"按钮"
+             之前裸 ⋯ 灰色与 sub-title 视觉太近 · 像"昵称后的省略号"而非操作按钮 -->
+        <div class="sub-icon sub-icon-chip" onclick="toggleChatMenu(event)" title="更多"><svg class="icon" style="width:18px;height:18px"><use href="#i-more"/></svg></div>
         <!-- 右上角 menu · v10 r22 归还闭环入口 -->
         <div class="chat-menu" id="chat-menu" onclick="event.stopPropagation()">
           <div class="chat-menu-item primary" onclick="confirmReturn()">
