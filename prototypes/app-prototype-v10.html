@@ -1819,9 +1819,10 @@
     }
 
     /* Search */
-    /* v10 r126 · search-input-header 让位胶囊 · padding-right 96 与 sub-header 一致
-     * 之前 padding: 8px 14px 覆盖了 sub-header 的 padding-right:96 · search-cancel 跑到 right:14 与胶囊（right:7~94）重叠 */
-    .search-input-header { padding: 8px 96px 8px 14px; gap: 10px; }
+    /* v10 r130 · padding-right 96 → 100 · 让 cancel 与胶囊 box-shadow 外扩区拉开 buffer
+     * 胶囊本体覆盖 right:7~94 · r88 加 box-shadow 外扩 ~2-3px · 实际视觉影响 right:5~97
+     * padding-right 96 → 100 = cancel 与胶囊视觉边界差 6px · 不再像贴在一起 */
+    .search-input-header { padding: 8px 100px 8px 14px; gap: 8px; }
     .search-input-wrap {
       flex: 1; display: flex; align-items: center; gap: 7px;
       background: var(--bg); padding: 0 14px;
@@ -1841,9 +1842,10 @@
       visibility: hidden;
     }
     .search-input-wrap.has-text .search-input-clear { visibility: visible; }
+    /* v10 r130 · cancel 字号 14 → 13 + padding 微缩 · 视觉更精致 · 不抢眼 */
     .search-cancel {
-      font-size: 14px; color: var(--apricot-deep); font-weight: 700;
-      cursor: pointer; padding: 0 2px; flex-shrink: 0;
+      font-size: 13px; color: var(--apricot-deep); font-weight: 700;
+      cursor: pointer; padding: 0 4px; flex-shrink: 0;
     }
     .search-chips {
       display: flex; gap: 8px; flex-wrap: wrap;
