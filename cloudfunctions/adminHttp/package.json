@@ -1,0 +1,9 @@
+{
+  "name": "adminHttp",
+  "version": "1.0.0",
+  "description": "运营后台 HTTP 代理（绕开 web SDK）",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3"
+  }
+}

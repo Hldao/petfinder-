@@ -70,14 +70,14 @@
 <div id="login">
   <div class="login-box">
     <h1>🐾 寻宠·大理 · 运营后台</h1>
-    <p>请输入运营密码</p>
-    <input type="text" id="env-input" placeholder="CloudBase 环境 ID（首次必填）" autocomplete="off">
+    <p>请输入 HTTP 服务地址 + 密码</p>
+    <input type="text" id="url-input" placeholder="adminHttp 触发器 URL（首次必填）" autocomplete="off">
     <input type="password" id="pwd-input" placeholder="密码" autocomplete="current-password">
     <button id="login-btn" onclick="doLogin()">登录</button>
     <div class="err" id="login-err"></div>
     <div class="cfg">
-      环境 ID 在腾讯云 CloudBase 控制台首页。<br>
-      密码由后端管理员设置（云函数环境变量 ADMIN_PASSWORD）。
+      HTTP 服务地址：CloudBase 控制台 → 云函数 adminHttp → 触发器，复制 URL。<br>
+      密码 = adminHttp 云函数环境变量 ADMIN_PASSWORD。
     </div>
   </div>
 </div>
@@ -114,52 +114,37 @@
 
 <div id="toast"></div>
 
-<script type="module">
-  // CloudBase v2 SDK 不出 UMD bundle，走 ESM。esm.sh 实时打包 npm 包给浏览器。
-  import cloudbase from 'https://esm.sh/@cloudbase/js-sdk@2.28.8';
-  window.cloudbase = cloudbase;
-  window.dispatchEvent(new Event('cloudbase-ready'));
-</script>
 <script>
-  // SDK 异步加载，提供一个 Promise 等它就绪
-  const cloudbaseReady = new Promise(resolve => {
-    if (window.cloudbase) resolve(window.cloudbase);
-    else window.addEventListener('cloudbase-ready', () => resolve(window.cloudbase));
-  });
-
   // === 状态 ===
-  let app = null;
-  let envId = localStorage.getItem('ADMIN_CLOUD_ENV') || '';
+  let httpUrl = localStorage.getItem('ADMIN_HTTP_URL') || '';
   let pwd = sessionStorage.getItem('ADMIN_PWD') || '';
   let currentTab = 'posts';
 
-  // 启动时如果已有 envId 和 pwd，尝试自动进入
+  // 启动时如果已有配置，尝试自动进入
   window.addEventListener('DOMContentLoaded', () => {
-    if (envId) document.getElementById('env-input').value = envId;
-    if (envId && pwd) tryAutoLogin();
+    if (httpUrl) document.getElementById('url-input').value = httpUrl;
+    if (httpUrl && pwd) tryAutoLogin();
   });
 
   async function tryAutoLogin() {
     try {
-      await initApp();
       const r = await call('adminAuth', {});
       if (r && r.ok) enterAdmin();
       else { pwd = ''; sessionStorage.removeItem('ADMIN_PWD'); }
     } catch (e) { /* 静默：留在登录页 */ }
   }
 
-  async function initApp() {
-    if (app) return;
-    const cb = await cloudbaseReady;
-    app = cb.init({ env: envId });
-    const auth = app.auth({ persistence: 'local' });
-    if (!auth.hasLoginState()) await auth.signInAnonymously();
-  }
-
-  async function call(name, data) {
-    if (!app) await initApp();
-    const res = await app.callFunction({ name, data: Object.assign({ password: pwd }, data || {}) });
-    return res.result || {};
+  async function call(fn, data) {
+    const res = await fetch(httpUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ password: pwd, fn, data: data || {} }),
+    });
+    if (!res.ok) {
+      const txt = await res.text().catch(() => '');
+      throw new Error('HTTP ' + res.status + (txt ? ' ' + txt : ''));
+    }
+    return await res.json();
   }
 
   // === 登录 ===
@@ -167,17 +152,15 @@
     const btn = document.getElementById('login-btn');
     const err = document.getElementById('login-err');
     err.textContent = '';
-    const eVal = document.getElementById('env-input').value.trim();
+    const uVal = document.getElementById('url-input').value.trim();
     const pVal = document.getElementById('pwd-input').value;
-    if (!eVal) { err.textContent = '请填环境 ID'; return; }
+    if (!uVal) { err.textContent = '请填 HTTP 服务地址'; return; }
     if (!pVal) { err.textContent = '请输入密码'; return; }
 
     btn.disabled = true; btn.textContent = '登录中…';
     try {
-      envId = eVal; pwd = pVal;
-      localStorage.setItem('ADMIN_CLOUD_ENV', envId);
-      app = null;
-      await initApp();
+      httpUrl = uVal; pwd = pVal;
+      localStorage.setItem('ADMIN_HTTP_URL', httpUrl);
       const r = await call('adminAuth', {});
       if (r.ok) {
         sessionStorage.setItem('ADMIN_PWD', pwd);
@@ -202,7 +185,7 @@
   function enterAdmin() {
     document.getElementById('login').hidden = true;
     document.getElementById('admin').hidden = false;
-    document.getElementById('env-label').textContent = envId;
+    document.getElementById('env-label').textContent = httpUrl;
     refreshAll();
   }
 
