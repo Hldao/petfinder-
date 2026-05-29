@@ -1,56 +1,94 @@
 <view wx:if="{{notFound}}" class="empty">没找到这条信息</view>
 
 <view wx:elif="{{post}}" class="page">
-  <!-- Hero -->
-  <view class="hero {{statusCls}}">
-    <text class="hero-emoji">{{post.emoji}}</text>
-    <view class="hero-badge {{statusCls}}">{{post.statusLabel}}</view>
-    <view class="hero-time">{{post.time}}</view>
-  </view>
-
-  <view class="body">
-    <view class="name-row">
-      <text class="name">{{post.name}}</text>
-      <text class="sub">{{post.breed}}{{post.sex ? ' · ' + post.sex : ''}}</text>
-    </view>
-    <view wx:if="{{emoTime}}" class="emo {{longterm ? 'longterm' : ''}}">{{emoTime}}</view>
-
-    <!-- 信息网格 -->
-    <view class="grid">
-      <view class="cell"><view class="k">{{locLabel}}</view><view class="v">{{post.loc}}</view></view>
-      <view class="cell"><view class="k">{{timeLabel}}</view><view class="v">{{post.time}}</view></view>
-      <view class="cell"><view class="k">距你</view><view class="v">{{post.distanceKm}} km</view></view>
-      <view class="cell"><view class="k">接力</view><view class="v">{{post.helpers}} 人</view></view>
+  <view class="scroll-area">
+    <!-- Hero -->
+    <view class="hero {{statusCls}}">
+      <text class="hero-emoji">{{post.emoji}}</text>
+      <view class="hero-status {{statusCls}}">{{post.statusLabel}}</view>
+      <view class="hero-time">{{post.time}}</view>
     </view>
 
-    <!-- 描述 -->
-    <view class="card desc-card">
-      <view class="card-title">{{isLost ? '失主描述' : '发现者描述'}}</view>
-      <view class="desc">{{post.desc}}</view>
-    </view>
+    <view class="detail-body">
+      <view class="detail-name">{{post.name}}</view>
+      <view class="detail-subtitle">{{post.breed}}{{post.sex ? ' · ' + post.sex : ''}}{{post.ageStage ? ' · ' + post.ageStageLabel : ''}}</view>
 
-    <!-- 招领：目前状况 -->
-    <view wx:if="{{!isLost}}" class="card">
-      <view class="card-title">目前状况</view>
-      <view class="kv"><text class="kk">目前位置</text><text>{{post.currentLocation || '—'}}</text></view>
-      <view class="kv"><text class="kk">健康状况</text><text>{{post.health || '—'}}</text></view>
-    </view>
-
-    <!-- 寻宠：线索区 -->
-    <view wx:if="{{isLost}}" class="card">
-      <view class="card-title">线索板块（{{post.clues.length}}）</view>
-      <view wx:if="{{post.clues.length === 0}}" class="clue-empty">还没有线索，你的一条留言可能就是关键</view>
-      <view wx:for="{{post.clues}}" wx:key="text" class="clue">
-        <view class="clue-meta">{{item.name}} · {{item.loc}} · {{item.timeAgo}}</view>
-        <view class="clue-text">{{item.text}}</view>
+      <!-- 距离条 · 橙色渐变 pill -->
+      <view class="detail-dist-bar">
+        <view class="dist-bar-icon">📍</view>
+        <view class="dist-bar-text">
+          <view class="dist-bar-main">{{post.loc}}{{post.distanceKm ? ' · ' + post.distanceKm + ' km' : ''}}</view>
+          <view wx:if="{{emoTime}}" class="dist-bar-sub">{{emoTime}}</view>
+        </view>
       </view>
+
+      <!-- 信息网格 2x2 -->
+      <view class="info-grid">
+        <view class="info-cell">
+          <view class="label">{{locLabel}}</view>
+          <view class="value">{{post.loc}}</view>
+        </view>
+        <view class="info-cell">
+          <view class="label">{{timeLabel}}</view>
+          <view class="value">{{post.time}}</view>
+        </view>
+        <view class="info-cell">
+          <view class="label">距你</view>
+          <view class="value">{{post.distanceKm || '—'}} km</view>
+        </view>
+        <view class="info-cell">
+          <view class="label">接力</view>
+          <view class="value">{{post.helpers || 0}} 人</view>
+        </view>
+      </view>
+
+      <!-- 招领额外信息 -->
+      <view wx:if="{{!isLost && (post.currentLocation || post.health)}}" class="info-extra">
+        <view wx:if="{{post.currentLocation}}" class="info-extra-row">
+          <view class="ie-icon">📍</view>
+          <view class="ie-label">目前位置</view>
+          <view class="ie-value">{{post.currentLocation}}</view>
+        </view>
+        <view wx:if="{{post.health}}" class="info-extra-row">
+          <view class="ie-icon honey">💛</view>
+          <view class="ie-label">健康</view>
+          <view class="ie-value">{{post.health}}</view>
+        </view>
+      </view>
+
+      <!-- 描述 -->
+      <view class="section-label">特征描述</view>
+      <view class="desc-card">{{post.desc}}</view>
+
+      <!-- 寻宠：线索区 -->
+      <block wx:if="{{isLost}}">
+        <view class="section-label">线索板块 <text class="count">{{post.clues.length || 0}}</text></view>
+        <view wx:if="{{!post.clues.length}}" class="feature-card green">
+          <text class="ic">🌿</text>
+          <text>还没有线索 · 你的一条留言可能就是关键</text>
+        </view>
+        <view wx:for="{{post.clues}}" wx:key="text" class="clue-card">
+          <view class="clue-body">
+            <view class="clue-avatar">{{item.name[0] || '陌'}}</view>
+            <view class="clue-info">
+              <view class="clue-top">
+                <text class="clue-loc-time">{{item.loc}} · {{item.timeAgo}}</text>
+                <text class="clue-badge">{{item.name}}</text>
+              </view>
+              <view class="clue-text">{{item.text}}</view>
+            </view>
+          </view>
+        </view>
+      </block>
     </view>
   </view>
 
-  <!-- 底部 CTA -->
+  <!-- 底部 action bar 双 CTA -->
   <view class="action-bar">
-    <view class="cta primary" bindtap="onContact">
-      {{isLost ? '💬 我看到 ta 了' : '💬 私聊发现者'}}
+    <view class="btn-secondary" bindtap="onShare">⤴ 转发</view>
+    <view class="btn-primary" bindtap="onContact">
+      <text>💬</text>
+      <text>{{isLost ? '我看到 ta 了' : '私聊发现者'}}</text>
     </view>
   </view>
 </view>

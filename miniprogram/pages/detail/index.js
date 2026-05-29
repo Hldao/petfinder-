@@ -51,4 +51,17 @@ Page({
       url: `/pages/chat/index?peer=${q('发布者')}&pet=${q(p.name || '')}&emoji=${q(p.emoji)}&role=${role}&pid=${p.id}`,
     });
   },
+
+  onShare() {
+    wx.showShareMenu({ withShareTicket: true, menus: ['shareAppMessage', 'shareTimeline'] });
+    wx.showToast({ title: '点右上角分享', icon: 'none' });
+  },
+
+  onShareAppMessage() {
+    const p = this.data.post || {};
+    return {
+      title: `${p.statusLabel || ''} · ${p.name || '宠物'} · ${p.loc || ''}`,
+      path: `/pages/detail/index?id=${p.id}`,
+    };
+  },
 });

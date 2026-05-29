@@ -1,11 +1,44 @@
 <view class="page">
-  <view class="emoji">🎉</view>
-  <view class="title">{{pet ? pet + ' 顺利回家了' : 'ta 顺利回家了'}}</view>
-  <view class="sub">谢谢一路接力的每个人 🐾</view>
+  <view class="success-scroll">
+    <!-- Hero · r45 庆祝时刻 -->
+    <view class="success-hero">
+      <view class="success-circle">
+        <view class="success-check">✓</view>
+      </view>
+      <view class="success-title">ta 顺利回家了 🎉</view>
+      <view class="success-sub">谢谢大理的每一份善意</view>
+    </view>
 
-  <view class="cooldown">⏳ 进入 24 小时确认期，期满归还完成</view>
+    <!-- 接力数 · 仅人数 · §6.7 不数据化 -->
+    <view class="reunion-helpers">
+      <text class="rh-emoji">🤝</text>
+      <view class="rh-text"><text class="b">{{helpers || 12}}</text> 位邻居一起接力寻找</view>
+    </view>
 
-  <view class="cta" bindtap="writeThanks">✍️ 写封感谢信</view>
-  <view class="cta ghost" bindtap="goHome">回首页</view>
-  <view class="undo" bindtap="undo">误操作？撤回归还</view>
+    <!-- 致谢卡 -->
+    <view class="reunion-thank-card" bindtap="writeThanks">
+      <view class="rtc-icon">🙏</view>
+      <view class="rtc-body">
+        <view class="rtc-title">写一句话谢谢 ta 们</view>
+        <view class="rtc-sub">站内信送达 · 你的话比平台话术真诚</view>
+      </view>
+      <view class="rtc-arrow">›</view>
+    </view>
+
+    <!-- 分享卡 -->
+    <view class="reunion-share-card" bindtap="shareStory">
+      <view class="rsc-title">⤴ 分享 · 让更多人看到大理的温暖</view>
+      <view class="rsc-sub">这份回家的故事可能正鼓励另一个失主</view>
+    </view>
+
+    <!-- 冷却提示 -->
+    <view class="cooldown-tip">⏳ 进入 24 小时确认期 · 期满归还完成</view>
+
+    <!-- 误操作撤回 -->
+    <view class="undo-link" bindtap="undo">误操作？撤回归还</view>
+  </view>
+
+  <view class="action-bar">
+    <view class="btn-primary" bindtap="goHome">回首页</view>
+  </view>
 </view>
