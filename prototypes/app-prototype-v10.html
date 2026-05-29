@@ -7228,25 +7228,26 @@
 
   /* ============== 意见反馈 ============== */
   let _feedbackCat = 'suggestion';
-  const _feedbackData = [
-    {
-      id: 1, cat: 'suggestion', text: '希望能加一个"宠物已平安归家"的状态更新提醒，这样提供过线索的人就能知道好消息了。',
-      time: '05-24 14:32',
-      reply: { text: '感谢你的建议 💛 "归还确认"功能正在开发中，完成后接力中的人会收到通知，预计下个版本上线。', time: '05-25 10:18' }
-    },
-    {
-      id: 2, cat: 'experience', text: '发帖的时候照片上传有点慢，而且选完照片页面会卡一下，希望能优化一下。',
-      time: '05-25 20:07',
-      reply: null
-    }
-  ];
+  const _feedbackData = [];
 
   // v10 r122 · 历史反馈状态分组 · 待回复 / 已回复 · 参考小红书 / B站
   function renderFeedbackList() {
     const el = document.getElementById('feedback-list');
     if (!el) return;
     if (_feedbackData.length === 0) {
-      el.innerHTML = '<div style="text-align:center;color:var(--ink-4);font-size:13px;padding:40px 0">还没有反馈记录<br><span style="font-size:11px">点右上角 ＋ 提交你的想法</span></div>';
+      el.innerHTML = `<div style="flex:1;display:flex;align-items:center;justify-content:center;padding-bottom:60px">
+        <div style="text-align:center;padding:0 32px;display:flex;flex-direction:column;align-items:center;gap:12px">
+          <div style="font-size:48px;opacity:0.5;line-height:1">🌱</div>
+          <div style="font-size:15px;font-weight:700;color:var(--ink-1)">感谢你愿意告诉我们</div>
+          <div style="font-size:13px;color:var(--ink-3);line-height:1.8">
+            我们是一支刚刚起步的小团队<br>
+            很多地方还做得不够好<br>
+            每一条反馈对我们来说都很珍贵<br><br>
+            给我们一点时间<br>
+            让这个小程序慢慢变好 🐾
+          </div>
+        </div>
+      </div>`;
       return;
     }
     const catLabel = { suggestion: '功能建议', bug: '问题反馈', experience: '体验吐槽', other: '其他' };
