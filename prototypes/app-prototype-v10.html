@@ -2613,9 +2613,18 @@
     .card-hint-strip.hint-fading { opacity: 0; }
 
     /* === 发帖情绪托住 === */
-    .publish-warmth { margin:0 16px 12px; padding:12px 14px; background:linear-gradient(135deg,var(--apricot-soft),var(--honey-soft)); border-radius:var(--radius-md); }
-    .publish-warmth .pw-title { font-size:13.5px; font-weight:700; color:var(--apricot-deep); margin-bottom:4px; }
-    .publish-warmth .pw-body { font-size:12px; color:#A05020; line-height:1.65; }
+    /* v10 r119 · publish-warmth 提升视觉份量
+     * 原 apricot-soft + honey-soft 都是 95%+ 浅色 · 与下方白色 form-section 区分弱
+     * 改：中度杏橘渐变 + 1px 杏橘边 + 微浮起 shadow · 主题感清晰 · 仍治愈不刺眼 */
+    .publish-warmth {
+      margin: 0 16px 14px; padding: 14px 16px;
+      background: linear-gradient(135deg, #FFD4B0 0%, #FFE2BD 100%);
+      border-radius: var(--radius-md);
+      border: 1px solid rgba(230,106,56,0.18);
+      box-shadow: 0 2px 6px rgba(230,106,56,0.08);
+    }
+    .publish-warmth .pw-title { font-size: 14px; font-weight: 700; color: var(--apricot-deep); margin-bottom: 5px; letter-spacing: -0.005em; }
+    .publish-warmth .pw-body { font-size: 12px; color: var(--apricot-deep); line-height: 1.65; opacity: 0.88; }
     /* === 关注按钮 === */
     /* === 失主快报条 === */
     /* === 快速目击上报按钮（feed 卡片） === */
@@ -3057,9 +3066,10 @@
           <div class="pw-title">🐾 别担心，你不是一个人</div>
           <div class="pw-body">大理有很多热心邻居，发出去就有更多眼睛帮你找。发布越早，越多人能看见 ta。</div>
         </div>
-        <div class="publish-warmth" id="publish-warmth-found" style="display:none;background:linear-gradient(135deg,var(--mint-soft),#DDF6EC)">
+        <!-- v10 r119 · found 模式横幅同步加深 · 中度薄荷渐变 + 微妙边 -->
+        <div class="publish-warmth" id="publish-warmth-found" style="display:none;background:linear-gradient(135deg,#B5DEC9 0%,#CDE9DA 100%);border-color:rgba(63,144,121,0.22);box-shadow:0 2px 6px rgba(63,144,121,0.08)">
           <div class="pw-title" style="color:var(--mint-deep)">🏠 谢谢你伸出援手</div>
-          <div class="pw-body" style="color:var(--mint-deep)">你的一个发布，可能让一个家庭团圆。我们一起帮 ta 回家。</div>
+          <div class="pw-body" style="color:var(--mint-deep);opacity:0.88">你的一个发布，可能让一个家庭团圆。我们一起帮 ta 回家。</div>
         </div>
 
         <!-- 发布须知（合规告知 + 价值观声明） -->
