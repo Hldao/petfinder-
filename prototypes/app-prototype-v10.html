@@ -1643,29 +1643,27 @@
     .feedback-list { flex: 1; overflow-y: auto; padding: 12px 16px 100px; display: flex; flex-direction: column; gap: 10px; }
     /* v10 r131 · 提交新反馈 FAB · 底部居中浮起 · 参考微信/小红书/支付宝反馈页主流模式
      * 替代之前 sub-header 右上角 + icon（用户反馈"产品中没有把按钮放到这个位置的操作布局"） */
+    .feedback-fab-row {
+      position: absolute; bottom: 24px; left: 50%; transform: translateX(-50%);
+      display: flex; gap: 10px; align-items: center; z-index: 10;
+    }
     .feedback-fab {
-      position: absolute;
-      bottom: 24px;
-      left: 50%;
-      transform: translateX(-50%);
       padding: 12px 22px;
       background: linear-gradient(135deg, #FFA378 0%, var(--apricot) 100%);
       color: white;
-      font-size: 14px;
-      font-weight: 700;
+      font-size: 14px; font-weight: 700;
       border-radius: var(--radius-pill);
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
+      display: inline-flex; align-items: center; gap: 6px;
       box-shadow: 0 6px 18px rgba(255,133,82,0.35), 0 2px 6px rgba(255,133,82,0.2);
-      cursor: pointer;
-      z-index: 10;
-      transition: transform 0.12s, box-shadow 0.15s;
-      letter-spacing: 0.02em;
+      cursor: pointer; transition: transform 0.12s; letter-spacing: 0.02em;
+      white-space: nowrap;
     }
-    .feedback-fab:active {
-      transform: translateX(-50%) scale(0.96);
+    .feedback-fab:active { transform: scale(0.96); }
+    .feedback-fab.secondary {
+      background: white; color: var(--ink-2);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06), 0 0 0 1.5px var(--divider);
     }
+    .feedback-fab.secondary:active { transform: scale(0.96); }
     .feedback-card {
       background: var(--surface); border-radius: var(--radius-md);
       box-shadow: var(--shadow-card); padding: 13px 15px;
@@ -3985,9 +3983,12 @@
       </div>
       <div class="feedback-list" id="feedback-list"></div>
       <!-- v10 r131 · sub-header + 按钮移到底部居中浮起 CTA · 参考微信/小红书/支付宝反馈模式 -->
-      <div class="feedback-fab" onclick="openFeedbackSheet()">
-        <svg class="icon icon-sm"><use href="#i-plus"/></svg>
-        <span>提交新反馈</span>
+      <div class="feedback-fab-row">
+        <div class="feedback-fab secondary" onclick="goBack()">返回</div>
+        <div class="feedback-fab" onclick="openFeedbackSheet()">
+          <svg class="icon icon-sm"><use href="#i-plus"/></svg>
+          <span>提交新反馈</span>
+        </div>
       </div>
     </div>
 
