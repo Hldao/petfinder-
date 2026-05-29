@@ -3742,10 +3742,8 @@
             <div class="toggle" id="notif-return" onclick="toggleNotif('return')"></div>
           </div>
         </div>
-        <div class="menu-section-label">微信推送</div>
-        <div class="menu-section">
-          <div class="menu-row" onclick="openMPModal()"><span class="menu-icon mi-mint"><svg class="icon"><use href="#i-megaphone"/></svg></span><span class="menu-label">关注公众号</span><span class="menu-meta" style="color:var(--mint-deep)">推送更及时</span><span class="menu-arrow">›</span></div>
-        </div>
+        <!-- v10 r127 · 砍「微信推送」section · 与 profile 屏「关注公众号」入口重复
+             notif-settings 应聚焦"通知开关细化"· 跳转关注的链接放在 profile 主入口更合理 -->
       </div>
     </div>
 
@@ -4978,8 +4976,10 @@
       return;
     }
     document.getElementById('privacy-modal').classList.add('hidden');
-    // 首次同意隐私协议后，引导关注公众号
-    if (_firstPrivacyClose) {
+    // v10 r127 · 关注公众号引导 · 仅未关闭过 mp-modal 的用户显示
+    // localStorage 持久化记录 · 后续访问不再打扰已关注/已关闭过的用户
+    // 生产环境进一步可用：后端 unionid 查询公众号关注状态 / official-account 组件间接判断
+    if (_firstPrivacyClose && !localStorage.getItem('mp-modal-seen')) {
       _firstPrivacyClose = false;
       setTimeout(() => openMPModal(), 250);
     }
@@ -4994,6 +4994,8 @@
   }
   function closeMPModal() {
     document.getElementById('mp-modal').classList.remove('show');
+    // v10 r127 · 用户关闭或点击「一键关注」后 · 永久记录已看过 · 后续不再显示
+    try { localStorage.setItem('mp-modal-seen', '1'); } catch (e) {}
   }
 
   /* ============== 首页数据 + 瀑布流渲染 ============== */
