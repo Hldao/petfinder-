@@ -1626,6 +1626,31 @@
     /* Dispute */
     /* ===== 意见反馈 ===== */
     .feedback-list { flex: 1; overflow-y: auto; padding: 12px 16px 100px; display: flex; flex-direction: column; gap: 10px; }
+    /* v10 r131 · 提交新反馈 FAB · 底部居中浮起 · 参考微信/小红书/支付宝反馈页主流模式
+     * 替代之前 sub-header 右上角 + icon（用户反馈"产品中没有把按钮放到这个位置的操作布局"） */
+    .feedback-fab {
+      position: absolute;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 12px 22px;
+      background: linear-gradient(135deg, #FFA378 0%, var(--apricot) 100%);
+      color: white;
+      font-size: 14px;
+      font-weight: 700;
+      border-radius: var(--radius-pill);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 6px 18px rgba(255,133,82,0.35), 0 2px 6px rgba(255,133,82,0.2);
+      cursor: pointer;
+      z-index: 10;
+      transition: transform 0.12s, box-shadow 0.15s;
+      letter-spacing: 0.02em;
+    }
+    .feedback-fab:active {
+      transform: translateX(-50%) scale(0.96);
+    }
     .feedback-card {
       background: var(--surface); border-radius: var(--radius-md);
       box-shadow: var(--shadow-card); padding: 13px 15px;
@@ -1672,32 +1697,39 @@
       display: flex;
       animation: onboardingMaskIn 0.3s ease both;
     }
+    /* v10 r131 · sheet 父容器统一 padding 16 + gap 14 · 子元素不再各自设 margin/padding
+     * 之前纵向间距 14/0/12/10/12 杂乱 · "失去约束"感
+     * 现：父级 flex column + gap · 整齐一致 */
     .feedback-sheet {
       width: 100%; background: var(--surface);
       border-radius: var(--radius-lg) var(--radius-lg) 0 0;
-      padding: 16px 0 40px; display: flex; flex-direction: column;
+      padding: 16px 16px 40px;
+      display: flex; flex-direction: column; gap: 14px;
       animation: slideUp 0.2s ease;
     }
-    .feedback-sheet-head { display: flex; align-items: center; justify-content: space-between; padding: 0 18px 14px; }
+    .feedback-sheet-head { display: flex; align-items: center; justify-content: space-between; }
     .feedback-sheet-title { font-size: var(--text-xl); font-weight: 700; color: var(--ink-1); }
     .feedback-sheet-close { font-size: 18px; color: var(--ink-4); cursor: pointer; padding: 4px; }
-    .feedback-cats { display: flex; flex-wrap: wrap; gap: 8px; padding: 0 16px 14px; }
+    /* v10 r131 · 走 sheet 父级 padding · 自己不再设横向 padding */
+    .feedback-cats { display: flex; flex-wrap: wrap; gap: 8px; }
     .feedback-cat {
       padding: 6px 14px; border-radius: var(--radius-pill); font-size: 12.5px;
       font-weight: 600; cursor: pointer; border: 1.5px solid var(--divider);
       background: var(--bg); color: var(--ink-3); transition: all 0.15s;
     }
     .feedback-cat.active { background: var(--apricot-soft); color: var(--apricot-deep); border-color: var(--apricot); }
+    /* v10 r131 · 删 margin · 走 sheet 父级 padding + gap */
     .feedback-textarea {
-      margin: 0 16px; font-size: 14px; font-family: var(--font-cn);
+      font-size: 14px; font-family: var(--font-cn);
       color: var(--ink-1); border: 1.5px solid var(--divider); outline: none; resize: none;
       background: var(--bg); border-radius: var(--radius-md);
       padding: 12px 14px; min-height: 120px; line-height: 1.7;
     }
     .feedback-textarea:focus { border-color: var(--apricot); }
-    /* v10 r122 · feedback 截图上传 · 参考成熟产品（微信/小红书/B站等均有）· 最多 4 张 */
+    /* v10 r122 · feedback 截图上传 · 参考成熟产品（微信/小红书/B站等均有）· 最多 4 张
+     * v10 r131 · 删 margin · 走 sheet 父级 padding + gap */
     .feedback-photo-row {
-      display: flex; gap: 8px; margin: 12px 16px 0; flex-wrap: wrap;
+      display: flex; gap: 8px; flex-wrap: wrap;
     }
     .feedback-photo-slot {
       width: 60px; height: 60px;
@@ -1721,20 +1753,23 @@
       display: flex; align-items: center; justify-content: center;
       box-shadow: 0 1px 3px rgba(0,0,0,0.2);
     }
-    /* v10 r122 · 联系方式 · 选填 · 与成熟产品对齐 */
+    /* v10 r122 · 联系方式 · 选填 · 与成熟产品对齐
+     * v10 r131 · 删 margin · 走 sheet 父级 padding + gap */
     .feedback-contact {
-      margin: 10px 16px 0; font-size: 13px;
+      font-size: 13px;
       font-family: var(--font-cn); color: var(--ink-1);
       border: 1.5px solid var(--divider); outline: none;
       background: var(--bg); border-radius: var(--radius-sm);
       padding: 10px 14px; transition: border-color 0.15s;
     }
     .feedback-contact:focus { border-color: var(--apricot); }
+    /* v10 r131 · 删 margin · 走 sheet 父级 padding + gap */
     .feedback-submit {
-      margin: 12px 16px 0; padding: 14px; border-radius: var(--radius-md);
+      padding: 14px; border-radius: var(--radius-md);
       background: var(--apricot); color: white; font-size: 15px; font-weight: 700;
       text-align: center; cursor: pointer;
       transition: opacity 0.15s;
+      margin-top: 2px;
     }
     .feedback-submit.loading { opacity: 0.6; pointer-events: none; }
 
@@ -3914,9 +3949,13 @@
       <div class="sub-header">
         <div class="back-btn" onclick="goBack()">←</div>
         <div class="sub-title">意见反馈</div>
-        <div class="sub-icon" onclick="openFeedbackSheet()"><svg class="icon" style="width:20px;height:20px"><use href="#i-plus"/></svg></div>
       </div>
       <div class="feedback-list" id="feedback-list"></div>
+      <!-- v10 r131 · sub-header + 按钮移到底部居中浮起 CTA · 参考微信/小红书/支付宝反馈模式 -->
+      <div class="feedback-fab" onclick="openFeedbackSheet()">
+        <svg class="icon icon-sm"><use href="#i-plus"/></svg>
+        <span>提交新反馈</span>
+      </div>
     </div>
 
     <!-- 提交反馈 sheet -->
