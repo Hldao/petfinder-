@@ -1240,8 +1240,9 @@
       font-size: 11px; font-weight: 700; color: var(--ink-4);
       padding: 4px 4px 2px; letter-spacing: 0.06em; text-transform: uppercase;
     }
+    /* v10 r109 · padding 13→10 · 整行高从 72→64px · 每屏多放 1-2 条 */
     .msg-row {
-      padding: 13px 14px;
+      padding: 10px 14px;
       display: flex; gap: 12px; align-items: center;
       background: var(--surface);
       border-radius: var(--radius-lg);
@@ -1262,9 +1263,9 @@
       transition: opacity 0.2s, transform 0.2s; z-index: 500;
     }
     .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-    /* v10 r108 · avatar 改圆形 50% · 微信/QQ/小红书 messages 列表通行标准 */
-    .msg-avatar { width: 46px; height: 46px; border-radius: 50%; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 22px; }
-    .msg-avatar.system { background: linear-gradient(135deg, #B0B7BF, #7A828B); color: white; font-weight: 700; font-size: 14px; }
+    /* v10 r108 · 圆形 50% · 微信标准 · r109 · 46→42 紧凑 · emoji 22→20 同步 */
+    .msg-avatar { width: 42px; height: 42px; border-radius: 50%; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 20px; }
+    .msg-avatar.system { background: linear-gradient(135deg, #B0B7BF, #7A828B); color: white; font-weight: 700; font-size: 13px; }
     .msg-body { flex: 1; min-width: 0; }
     /* v10 r108 · 微信 messages 风格收口
      * - row-head padding-right 撤销（time 在右上 · unread 移到右下不再冲突）
@@ -1279,8 +1280,9 @@
     .msg-prefix { font-size: 12px; color: var(--ink-4); font-weight: 500; margin-right: 1px; }
     .msg-context { font-size: 10.5px; color: var(--apricot-deep); margin-top: 3px; font-weight: 500; display: inline-block; }
     .msg-context.reply { color: var(--mint-deep); }
-    /* v10 r107 → r108 · 微信 messages 标准 · unread 在右下与 preview 行同高（不再右上） */
-    .msg-unread { position: absolute; bottom: 13px; right: 14px; width: 18px; height: 18px; background: var(--apricot); color: white; border-radius: 50%; font-family: var(--font-en); font-size: 10.5px; font-weight: 700; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 5px rgba(255,133,82,0.4); }
+    /* v10 r109 · unread 改右侧垂直居中（QQ/小红书标准 · 实际微信 7+ 也是这个位置）
+     * top:50% + translateY(-50%) · 不依赖具体 row 高度 · 任意行数都居中 */
+    .msg-unread { position: absolute; top: 50%; right: 14px; transform: translateY(-50%); width: 18px; height: 18px; background: var(--apricot); color: white; border-radius: 50%; font-family: var(--font-en); font-size: 10.5px; font-weight: 700; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 5px rgba(255,133,82,0.4); }
 
     /* Chat */
     .chat-pet { background: var(--surface); border-radius: var(--radius-md); margin: 10px 16px; padding: 10px 12px; display: flex; gap: 10px; align-items: center; box-shadow: var(--shadow-card); cursor: pointer; }
