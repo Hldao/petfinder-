@@ -4756,7 +4756,7 @@
           <div>我已阅读并同意 <span class="privacy-link">《用户协议》</span> 和 <span class="privacy-link">《隐私政策》</span></div>
         </div>
         <div class="privacy-actions">
-          <div class="btn-secondary" style="flex:1" onclick="alert('退出小程序')">暂不使用</div>
+          <div class="btn-secondary" style="flex:1" onclick="window.close(); setTimeout(function(){ if(!window.closed){ window.location.href='about:blank'; } }, 300);">暂不使用</div>
           <div class="btn-primary" style="flex:1.6" onclick="closePrivacyModal()">同意并继续</div>
         </div>
       </div>
