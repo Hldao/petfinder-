@@ -1002,11 +1002,29 @@
      * 内容是"温馨告知 · 不撮合金钱交易"· 不是警告/危险
      * warn 红色背景误导用户觉得"危险" · honey 暖色更贴"邻里提醒"语义
      */
+    /* v10 r120 · compliance-note 加可关闭 · §6 教育只说一次 · 用户主动 dismiss 后隐藏 */
     .compliance-note {
-      margin: 0 var(--space-4) var(--space-3); padding: var(--space-3) var(--space-4);
+      margin: 0 var(--space-4) var(--space-3); padding: var(--space-3) 38px var(--space-3) var(--space-4);
       background: var(--honey-soft); border-radius: var(--radius-md);
       font-size: var(--text-sm); color: var(--honey-deep); line-height: var(--leading-relaxed);
+      position: relative;
+      overflow: hidden;
+      max-height: 200px;
+      transition: opacity 0.4s ease, max-height 0.5s ease, padding 0.5s ease, margin 0.5s ease;
     }
+    .compliance-note.dismissed {
+      opacity: 0; max-height: 0;
+      padding-top: 0; padding-bottom: 0;
+      margin-top: 0; margin-bottom: 0;
+      pointer-events: none;
+    }
+    .compliance-note-close {
+      position: absolute; top: 10px; right: 10px;
+      width: 22px; height: 22px;
+      display: inline-flex; align-items: center; justify-content: center;
+      cursor: pointer; color: var(--honey-deep); opacity: 0.5;
+    }
+    .compliance-note-close:active { opacity: 1; }
     .compliance-note b { font-weight: 700; }
     .terms-note { padding: 8px 20px 14px; font-size: 11px; color: var(--ink-4); line-height: 1.6; }
     .terms-note .link { color: var(--apricot-deep); font-weight: 600; }
@@ -2615,14 +2633,33 @@
     /* === 发帖情绪托住 === */
     /* v10 r119 · publish-warmth 提升视觉份量
      * 原 apricot-soft + honey-soft 都是 95%+ 浅色 · 与下方白色 form-section 区分弱
-     * 改：中度杏橘渐变 + 1px 杏橘边 + 微浮起 shadow · 主题感清晰 · 仍治愈不刺眼 */
+     * 改：中度杏橘渐变 + 1px 杏橘边 + 微浮起 shadow · 主题感清晰 · 仍治愈不刺眼
+     * v10 r120 · 加可关闭按钮 · 不打扰情绪序 · 本次 session 关闭后隐藏 */
     .publish-warmth {
-      margin: 0 16px 14px; padding: 14px 16px;
+      margin: 0 16px 14px; padding: 14px 38px 14px 16px;
       background: linear-gradient(135deg, #FFD4B0 0%, #FFE2BD 100%);
       border-radius: var(--radius-md);
       border: 1px solid rgba(230,106,56,0.18);
       box-shadow: 0 2px 6px rgba(230,106,56,0.08);
+      position: relative;
+      overflow: hidden;
+      max-height: 200px;
+      transition: opacity 0.4s ease, max-height 0.5s ease, padding 0.5s ease, margin 0.5s ease, border-width 0.5s ease;
     }
+    .publish-warmth.dismissed {
+      opacity: 0; max-height: 0;
+      padding-top: 0; padding-bottom: 0;
+      margin-top: 0; margin-bottom: 0;
+      border-width: 0;
+      pointer-events: none;
+    }
+    .publish-warmth-close {
+      position: absolute; top: 10px; right: 10px;
+      width: 22px; height: 22px;
+      display: inline-flex; align-items: center; justify-content: center;
+      cursor: pointer; opacity: 0.5; flex-shrink: 0;
+    }
+    .publish-warmth-close:active { opacity: 1; }
     .publish-warmth .pw-title { font-size: 14px; font-weight: 700; color: var(--apricot-deep); margin-bottom: 5px; letter-spacing: -0.005em; }
     .publish-warmth .pw-body { font-size: 12px; color: var(--apricot-deep); line-height: 1.65; opacity: 0.88; }
     /* === 关注按钮 === */
@@ -3065,18 +3102,21 @@
         <div class="publish-warmth" id="publish-warmth-lost">
           <div class="pw-title">🐾 别担心，你不是一个人</div>
           <div class="pw-body">大理有很多热心邻居，发出去就有更多眼睛帮你找。发布越早，越多人能看见 ta。</div>
+          <span class="publish-warmth-close" style="color:var(--apricot-deep)" onclick="dismissPublishWarmth(event)"><svg class="icon icon-sm"><use href="#i-x"/></svg></span>
         </div>
         <!-- v10 r119 · found 模式横幅同步加深 · 中度薄荷渐变 + 微妙边 -->
         <div class="publish-warmth" id="publish-warmth-found" style="display:none;background:linear-gradient(135deg,#B5DEC9 0%,#CDE9DA 100%);border-color:rgba(63,144,121,0.22);box-shadow:0 2px 6px rgba(63,144,121,0.08)">
           <div class="pw-title" style="color:var(--mint-deep)">🏠 谢谢你伸出援手</div>
           <div class="pw-body" style="color:var(--mint-deep);opacity:0.88">你的一个发布，可能让一个家庭团圆。我们一起帮 ta 回家。</div>
+          <span class="publish-warmth-close" style="color:var(--mint-deep)" onclick="dismissPublishWarmth(event)"><svg class="icon icon-sm"><use href="#i-x"/></svg></span>
         </div>
 
         <!-- 发布须知（合规告知 + 价值观声明） -->
-        <div class="compliance-note">
+        <div class="compliance-note" id="compliance-note">
           <b><svg class="icon icon-sm"><use href="#i-shield"/></svg> 发布前请知悉</b><br>
           · 内容将经平台审核（约 1 分钟）<br>
           · 这里是「<b>邻里互助网络</b>」— 不展示悬赏金额、不撮合金钱交易
+          <span class="compliance-note-close" onclick="dismissComplianceNote(event)"><svg class="icon icon-sm"><use href="#i-x"/></svg></span>
         </div>
 
         <!-- 照片 -->
@@ -5702,6 +5742,22 @@
         lastStuck = stuck;
       }
     }, { passive: true });
+  }
+
+  // v10 r120 · publish 屏两个提示横幅可关闭 · §6 教育只说一次
+  // 一次 session 关闭后 dismissed · 切 mode 后仍维持（情绪 / 教育已传达过）
+  function dismissPublishWarmth(event) {
+    if (event) event.stopPropagation();
+    // 当前显示的横幅（lost 或 found）
+    const lost = document.getElementById('publish-warmth-lost');
+    const found = document.getElementById('publish-warmth-found');
+    if (lost && lost.style.display !== 'none') lost.classList.add('dismissed');
+    if (found && found.style.display !== 'none') found.classList.add('dismissed');
+  }
+  function dismissComplianceNote(event) {
+    if (event) event.stopPropagation();
+    const el = document.getElementById('compliance-note');
+    if (el) el.classList.add('dismissed');
   }
 
   // v10 r94 · 发布页 ✕ 关闭确认 · 防止误触丢失已编辑内容
