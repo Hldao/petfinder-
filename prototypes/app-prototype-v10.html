@@ -3674,9 +3674,11 @@
           <div class="chat-avatar ph-orange">🐱</div>
           <div class="chat-bubble">人民路 39 号「白桃」咖啡馆，门口绿色门帘。您能视频先确认一下吗？</div>
         </div>
-        <div style="text-align:center;padding:20px 0 12px">
-          <span onclick="openUserActionSheet('客栈老板娘')" style="font-size:11px;color:var(--ink-4);cursor:pointer;text-decoration:underline;text-underline-offset:2px">举报 / 拉黑此用户</span>
-        </div>
+        <!-- v10 r135 · 砍消息流末尾「举报/拉黑」常驻链接（zr 推过 · 哲学违和）
+             §6.7 不为焦虑增加心理负担：常驻"举报/拉黑"= 暗示对方可疑 · 在用户已焦虑状态下加压
+             §6 第 6 条「教育只说一次 · 不抢夺注意力」：低频负面操作不该常驻
+             §6 第 4 条 邻里互助调性：主流程不预设对方可能不好
+             保留路径：右上角 ⋯ chat-menu 内入口 + 长按消息触发 · 与微信/QQ 完全一致 -->
       </div>
       <div class="meet-hint" id="meet-hint">
         <svg class="icon icon-md" style="flex-shrink:0;color:var(--mint-deep)"><use href="#i-location"/></svg>
