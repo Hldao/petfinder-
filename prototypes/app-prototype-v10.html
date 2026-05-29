@@ -417,7 +417,8 @@
     .pc-info { flex: 1; min-width: 0; padding-top: 2px; }
     /* v10 r40 · pc-name-row 单行稳定布局 · 防止 breed 长内容（如「体型偏胖」）导致卡片抖动 */
     .pc-name-row { display: flex; align-items: baseline; gap: 6px; margin-bottom: 4px; min-width: 0; overflow: hidden; }
-    .pc-name { font-size: 16px; font-weight: 700; letter-spacing: -0.005em; flex-shrink: 0; max-width: 70%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    /* v10 r113 · pc-name 16→17 · 主标题作为视觉焦点更突出（与 sub-title text-xl 同级）· 强化"视觉中心"信息层级 */
+    .pc-name { font-size: var(--text-xl); font-weight: 700; letter-spacing: -0.01em; flex-shrink: 0; max-width: 70%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--ink-1); }
     /* v10 r79 · breed 「· 」分隔符抽到 ::before · 不再在内容里硬编码（一处控制颜色/间距） */
     .pc-name-row .breed { flex: 0 1 auto; min-width: 0; font-size: 11.5px; color: var(--ink-3); font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .pc-name-row .breed::before { content: '· '; color: var(--ink-4); margin-right: 1px; }
@@ -425,11 +426,13 @@
     /* v10 r79 · time 不再用 font-en（避免「30 min 前」英文数字 + 中文「前」字字体撕裂）
      * font-feature-settings: tnum 让数字 tabular（等宽对齐）· 仍统一 CN 字体 */
     .pc-meta .time { font-weight: 600; color: var(--ink-3); font-feature-settings: 'tnum'; }
-    .pc-desc { font-size: 12.5px; color: var(--ink-2); line-height: 1.55; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+    /* v10 r113 · body color ink-2 → ink-1 · 主体内容更可读 · 作为卡片次要焦点（仅次于标题） */
+    .pc-desc { font-size: 12.5px; color: var(--ink-1); line-height: 1.55; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
     .pc-footer { display: flex; align-items: center; padding: 10px 14px 12px; gap: 8px; border-top: 1px solid var(--divider-soft); }
     /* v10 r79 · 砍 .distance-tag 死代码（mkFeedCardHtml 已不再用 · 距离归并进 pc-meta） */
     .pc-actions { margin-left: auto; display: flex; gap: 12px; align-items: center; }
-    .pc-action { font-size: 11.5px; color: var(--ink-3); display: flex; align-items: center; gap: 3px; font-family: var(--font-en); font-weight: 600; }
+    /* v10 r113 · footer action ink-3 → ink-4 · 退到副位 · helpers/share 不再与标题/正文争视觉权重 */
+    .pc-action { font-size: 11.5px; color: var(--ink-4); display: flex; align-items: center; gap: 3px; font-family: var(--font-en); font-weight: 600; }
     .pc-action.clue { color: var(--apricot-deep); background: var(--apricot-soft); padding: 4px 10px; border-radius: var(--radius-pill); font-family: var(--font-cn); font-weight: 700; }
     .feed-list { padding: 0 var(--space-4); display: flex; flex-direction: column; gap: var(--space-3); }
     /* v10 r62 → r78 → r86 · stagger 简化为 3 段（之前 6 段 / 总 0.8s · 现 3 段 / 总 0.67s）
@@ -601,7 +604,8 @@
       gap: 6px;
       margin-bottom: 3px;
     }
-    .ac-name { font-size: 14px; font-weight: 700; letter-spacing: -0.005em; }
+    /* v10 r113 · ac-name 14→15 · archive 卡标题层级提升（介于 pc-name 17 与 meta 之间） */
+    .ac-name { font-size: var(--text-lg); font-weight: 700; letter-spacing: -0.005em; color: var(--ink-1); }
     .ac-breed { font-size: 11px; color: var(--ink-3); font-weight: 500; }
     /* v10 r79 · ac-breed 同 .breed · 分隔符 ::before */
     .ac-breed::before { content: '· '; color: var(--ink-4); margin-right: 1px; }
