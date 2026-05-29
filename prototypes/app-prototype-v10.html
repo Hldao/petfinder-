@@ -8,22 +8,26 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
+    /* v10 r111 · 整体配色提升对比度 · 治愈调性 + 信息层级清晰
+     * 用户反馈"整体颜色还是太浅了不好分辨"
+     * 加深：ink-3/4（meta 文字）· soft 色系（hint 背景）· divider · shadow-card
+     * 保持：ink-1/2（已稳重）· apricot/mint/honey/deep（饱和色已合理）· bg/surface */
     :root {
-      --apricot: #FF8552; --apricot-soft: #FFE9DD; --apricot-deep: #E66A38;
-      --mint: #5BB89F; --mint-soft: #DDF1EA; --mint-deep: #3F9079;
-      --honey: #F0AC32; --honey-soft: #FFF3D6; --honey-deep: #D89020;
+      --apricot: #FF8552; --apricot-soft: #FFD5B8; --apricot-deep: #E66A38;
+      --mint: #5BB89F; --mint-soft: #C3E4D3; --mint-deep: #3F9079;
+      --honey: #F0AC32; --honey-soft: #FFEAB0; --honey-deep: #D89020;
       /* v10 r73 · plum 色系删除 · MVP 不做 care 状态 · plum 全是死代码 */
       --warn: #E04E4E; --warn-soft: #FCE5E5; --warn-deep: #B83030;
       --bg: #F0E9D8; --bg-deeper: #E8DFC8;
       --surface: #FFFFFF; --surface-warm: #FFFAF2;
-      --divider: #E0D6BD; --divider-soft: #EDE5D0;
-      --ink-1: #1F1F1F; --ink-2: #4A4A4A; --ink-3: #7A7A7A;
-      --ink-4: #B0AC9E; --ink-5: #DDD6C0;
+      --divider: #C9BD9C; --divider-soft: #DAD0B7;
+      --ink-1: #1F1F1F; --ink-2: #4A4A4A; --ink-3: #5A5A5A;
+      --ink-4: #8C8676; --ink-5: #DDD6C0;
       --font-cn: 'PingFang SC', 'HarmonyOS Sans SC', 'Misans', 'Hiragino Sans GB', sans-serif;
       --font-en: 'Manrope', 'PingFang SC', sans-serif;
-      --shadow-card: 0 1px 2px rgba(31,31,31,0.04), 0 8px 20px rgba(31,31,31,0.06);
+      --shadow-card: 0 2px 4px rgba(31,31,31,0.06), 0 8px 24px rgba(31,31,31,0.10);
       --shadow-fab: 0 6px 16px rgba(255,133,82,0.35), 0 2px 6px rgba(255,133,82,0.2);
-      --shadow-pill: 0 1px 2px rgba(31,31,31,0.04);
+      --shadow-pill: 0 1px 3px rgba(31,31,31,0.06);
       --radius-pill: 999px; --radius-lg: 18px; --radius-md: 12px; --radius-sm: 8px;
 
       /* v10 r61 · Type scale · iOS-inspired · 收敛 18+ 散乱字号到 8 阶 */
