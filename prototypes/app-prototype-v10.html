@@ -931,7 +931,17 @@
      * apricot-soft (#FFE9DD) 在白底容器内差异 < 5% · deep (#E66A38) 差异显著 */
     .seg-item.active[data-mode="lost"]  { background: var(--apricot-deep); color: white; }
     .seg-item.active[data-mode="found"] { background: var(--mint-deep);    color: white; }
-    .form-section { background: var(--surface); margin: 0 16px 12px; border-radius: var(--radius-md); overflow: hidden; box-shadow: var(--shadow-card); }
+    /* v10 r118 · form-section 间距 12 → 18 · 板块视觉断开更清晰 */
+    .form-section { background: var(--surface); margin: 0 16px 18px; border-radius: var(--radius-md); overflow: hidden; box-shadow: var(--shadow-card); }
+    /* v10 r118 · 新增 form-section-label · 板块小标题（"宠物信息" / "走失地点 / 时间" 等）
+     * 灰小字 + 大写 + 字距 · 与 section-label 设计同款 · 不抢眼但有锚点 */
+    .form-section-label {
+      font-size: var(--text-xs); color: var(--ink-3);
+      font-weight: 700; letter-spacing: 0.08em;
+      padding: 4px 20px 6px;
+      font-family: var(--font-en);
+      text-transform: uppercase;
+    }
     /* v10 r70 · 表单组件 token 化 + font-size 收敛 */
     .form-row { padding: var(--space-3) var(--space-4); border-bottom: 1px solid var(--divider-soft); }
     .form-row:last-child { border-bottom: none; }
@@ -3075,6 +3085,7 @@
         </div>
 
         <!-- 宠物类型 + 名字 + 品种 + 性别年龄 -->
+        <div class="form-section-label">宠物信息</div>
         <div class="form-section">
           <div class="form-row">
             <div class="form-label"><span class="req">*</span> 宠物类型</div>
@@ -3123,6 +3134,7 @@
         </div>
 
         <!-- 地点 / 时间（我丢了） -->
+        <div class="form-section-label" id="fields-lost-label">走失地点 / 时间</div>
         <div class="form-section" id="fields-lost">
           <div class="form-row">
             <div class="form-label"><span class="req">*</span> 走失地点</div>
@@ -3141,6 +3153,7 @@
         </div>
 
         <!-- 地点 / 时间（我捡到了） -->
+        <div class="form-section-label" id="fields-found-label" style="display:none">发现地点 / 时间</div>
         <div class="form-section" id="fields-found" style="display:none">
           <div class="form-row">
             <div class="form-label"><span class="req">*</span> 发现地点</div>
@@ -3159,6 +3172,7 @@
         </div>
 
         <!-- 招领专属：目前状况 -->
+        <div class="form-section-label" id="fields-found-extra-label" style="display:none">目前状况</div>
         <div class="form-section" id="fields-found-extra" style="display:none">
           <div class="form-row">
             <div class="form-label"><span class="req">*</span> 目前位置</div>
@@ -6537,8 +6551,11 @@
     };
     if (mode === 'lost') {
       show('fields-lost', true);
+      show('fields-lost-label', true);
       show('fields-found', false);
+      show('fields-found-label', false);
       show('fields-found-extra', false);
+      show('fields-found-extra-label', false);
       show('name-row', true);
       show('age-stage-row', false); // 寻宠失主知道精确年龄 · 写进 breed 字段即可
       show('publish-warmth-lost', true);
@@ -6547,8 +6564,11 @@
       presetSex('male');
     } else {
       show('fields-lost', false);
+      show('fields-lost-label', false);
       show('fields-found', true);
+      show('fields-found-label', true);
       show('fields-found-extra', true);
+      show('fields-found-extra-label', true);
       show('name-row', false); // 捡到的不知道名字
       show('age-stage-row', true); // 招领用粗略估测代替精确年龄
       show('publish-warmth-lost', false);
