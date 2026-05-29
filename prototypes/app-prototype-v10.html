@@ -1858,10 +1858,13 @@
      * 胶囊本体覆盖 right:7~94 · r88 加 box-shadow 外扩 ~2-3px · 实际视觉影响 right:5~97
      * padding-right 96 → 100 = cancel 与胶囊视觉边界差 6px · 不再像贴在一起 */
     .search-input-header { padding: 8px 100px 8px 14px; gap: 8px; }
+    /* v10 r132 · 加 hairline ring · 米色 wrap 与白色 sub-header 视觉边界清晰
+     * 同 r110 修 search-pill 思路一致 */
     .search-input-wrap {
       flex: 1; display: flex; align-items: center; gap: 7px;
       background: var(--bg); padding: 0 14px;
       border-radius: var(--radius-pill); height: 38px;
+      box-shadow: inset 0 0 0 1px rgba(0,0,0,0.05);
     }
     .search-input-icon { font-size: 14px; color: var(--ink-3); flex-shrink: 0; }
     .search-input {
@@ -1877,10 +1880,12 @@
       visibility: hidden;
     }
     .search-input-wrap.has-text .search-input-clear { visibility: visible; }
-    /* v10 r130 · cancel 字号 14 → 13 + padding 微缩 · 视觉更精致 · 不抢眼 */
+    /* v10 r132 · cancel 字号 13 · 加 transition 平滑切换"取消"/"搜索" */
     .search-cancel {
       font-size: 13px; color: var(--apricot-deep); font-weight: 700;
       cursor: pointer; padding: 0 4px; flex-shrink: 0;
+      transition: color 0.15s;
+      min-width: 28px; text-align: center;
     }
     .search-chips {
       display: flex; gap: 8px; flex-wrap: wrap;
@@ -4246,7 +4251,8 @@
                  oninput="onSearchInput()" autocomplete="off">
           <span class="search-input-clear" onclick="clearSearchInput()"><svg class="icon" style="width:14px;height:14px"><use href="#i-x"/></svg></span>
         </div>
-        <span class="search-cancel" onclick="doSearch()">搜索</span>
+        <!-- v10 r132 · cancel 动态切换 · 无内容 = 取消（返回）· 有内容 = 搜索（执行）· 参考微信/小红书模式 -->
+        <span class="search-cancel" id="search-cancel" onclick="handleSearchCancel()">取消</span>
       </div>
 
       <div class="scroll-area" style="padding-top: 0">
@@ -6995,13 +7001,28 @@
     });
   }
 
+  // v10 r132 · cancel 动态切换 "取消" ↔ "搜索"（无内容 = 返回 / 有内容 = 执行搜索）
+  function handleSearchCancel() {
+    const box = document.getElementById('search-box');
+    const v = box ? box.value.trim() : '';
+    if (v) {
+      doSearch();
+    } else {
+      goBack();
+    }
+  }
+
   function onSearchInput() {
     const box = document.getElementById('search-box');
     const wrap = document.getElementById('search-wrap');
+    const cancel = document.getElementById('search-cancel');
     const v = box.value.trim();
 
     if (v) wrap.classList.add('has-text');
     else wrap.classList.remove('has-text');
+
+    // v10 r132 · cancel 文案随 input 内容切换
+    if (cancel) cancel.textContent = v ? '搜索' : '取消';
 
     if (!v) {
       showSearchState('default');
@@ -7109,8 +7130,10 @@
   function clearSearchInput() {
     const box = document.getElementById('search-box');
     const wrap = document.getElementById('search-wrap');
+    const cancel = document.getElementById('search-cancel');
     box.value = '';
     wrap.classList.remove('has-text');
+    if (cancel) cancel.textContent = '取消';
     box.focus();
     showSearchState('default');
   }
