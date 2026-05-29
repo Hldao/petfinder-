@@ -8,40 +8,25 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
-    /* v10 r112 · 配色再升级 · 参考 Pantone 2024-2025（Peach Fuzz · Mocha Mousse）
-     * 用户反馈 r111 仍偏浅 · 引入"高对比"思路
-     * 1. 品牌色加饱和（apricot/mint/honey 整体往饱和+深推 · 拉鲜艳度）
-     * 2. soft 系列再加深一档（与 deep 之间梯度清晰）
-     * 3. ink 文字明度对比加大（ink-2 拉深 · 标题正文有力）
-     * 4. shadow 再加重（卡片悬浮感 · 立体感强） */
+    /* v10 r116 · 配色全部回滚到 r110（"大改前"状态）
+     * 用户反馈 r111-r115 配色"太重了" · 不如改前
+     * 保留：r113 字号视觉中心强化 · r115 form-label flex 修复（这两项与配色无关） */
     :root {
-      /* 杏橘系：参考 Pantone Peach Fuzz 调性 · 但加饱和度让"治愈"不失力 */
-      --apricot: #FF6B2C; --apricot-soft: #FFC299; --apricot-deep: #C9501D;
-      /* 薄荷系：加饱和度 · 与 apricot 形成补色对比锚（暖橙 vs 冷绿）*/
-      --mint: #43A88B; --mint-soft: #A6D5BD; --mint-deep: #2C7B65;
-      /* 蜂蜜金：加深一档 · 用作 warm hint 强调 */
-      --honey: #E89818; --honey-soft: #FFDF8A; --honey-deep: #B87000;
+      --apricot: #FF8552; --apricot-soft: #FFE9DD; --apricot-deep: #E66A38;
+      --mint: #5BB89F; --mint-soft: #DDF1EA; --mint-deep: #3F9079;
+      --honey: #F0AC32; --honey-soft: #FFF3D6; --honey-deep: #D89020;
       /* v10 r73 · plum 色系删除 · MVP 不做 care 状态 · plum 全是死代码 */
       --warn: #E04E4E; --warn-soft: #FCE5E5; --warn-deep: #B83030;
-      /* v10 r114 · 配色重构 · 米色三阶（参考 Notion / 微信读书 / Apple Notes 阅读类减疲劳方案）
-       * 全产品统一暖米调 · 卡片不再纯白 · 长时间使用更柔和
-       * - bg 深米：页面底
-       * - surface 浅米白：卡片底（替代刺眼纯白）
-       * - surface-warm 强暖米：装饰强调
-       * - surface-bright 纯白：仅 modal / overlay / 必须强对比的极少场景 */
-      /* v10 r115 · surface 再深一档 · 米色调更浓 · 与 bg 形成清晰梯度 */
       --bg: #F0E9D8; --bg-deeper: #E8DFC8;
-      --surface: #FAF1D2; --surface-warm: #FFF3C4; --surface-bright: #FFFFFF;
-      --divider: #C9BD9C; --divider-soft: #DAD0B7;
-      /* ink 拉大明度对比 · ink-1 关键标题更黑 · ink-2 正文加深 · meta 层级清晰 */
-      --ink-1: #141414; --ink-2: #2E2E2E; --ink-3: #5A5A5A;
-      --ink-4: #8C8676; --ink-5: #DDD6C0;
+      --surface: #FFFFFF; --surface-warm: #FFFAF2;
+      --divider: #E0D6BD; --divider-soft: #EDE5D0;
+      --ink-1: #1F1F1F; --ink-2: #4A4A4A; --ink-3: #7A7A7A;
+      --ink-4: #B0AC9E; --ink-5: #DDD6C0;
       --font-cn: 'PingFang SC', 'HarmonyOS Sans SC', 'Misans', 'Hiragino Sans GB', sans-serif;
       --font-en: 'Manrope', 'PingFang SC', sans-serif;
-      /* shadow 再加重 · 卡片浮起感更强 */
-      --shadow-card: 0 2px 6px rgba(20,20,20,0.08), 0 10px 28px rgba(20,20,20,0.12);
-      --shadow-fab: 0 8px 20px rgba(255,107,44,0.4), 0 3px 8px rgba(255,107,44,0.25);
-      --shadow-pill: 0 1px 4px rgba(20,20,20,0.08);
+      --shadow-card: 0 1px 2px rgba(31,31,31,0.04), 0 8px 20px rgba(31,31,31,0.06);
+      --shadow-fab: 0 6px 16px rgba(255,133,82,0.35), 0 2px 6px rgba(255,133,82,0.2);
+      --shadow-pill: 0 1px 2px rgba(31,31,31,0.04);
       --radius-pill: 999px; --radius-lg: 18px; --radius-md: 12px; --radius-sm: 8px;
 
       /* v10 r61 · Type scale · iOS-inspired · 收敛 18+ 散乱字号到 8 阶 */
