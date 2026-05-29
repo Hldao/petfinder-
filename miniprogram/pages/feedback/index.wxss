@@ -76,15 +76,27 @@
   box-shadow: var(--shadow-card);
 }
 
-/* 底部 FAB · r131 */
-.fab {
+/* 底部 FAB Row · r131 + a6fb507 · 返回 + 提交 并排 */
+.fab-row {
   position: fixed; left: 32rpx; right: 32rpx;
   bottom: calc(40rpx + env(safe-area-inset-bottom));
+  display: flex; gap: 20rpx;
+}
+.fab {
   height: 96rpx; border-radius: var(--radius-pill);
-  background: var(--apricot); color: #fff;
   font-size: 30rpx; font-weight: 700;
   display: flex; align-items: center; justify-content: center;
+}
+.fab.secondary {
+  flex: 1;
+  background: var(--surface); color: var(--ink-2);
+  border: 2rpx solid var(--divider);
+}
+.fab:not(.secondary) {
+  flex: 2;
+  background: linear-gradient(135deg, #FFA378 0%, var(--apricot) 100%);
+  color: #fff;
   box-shadow: 0 12rpx 32rpx rgba(255,133,82,0.35), 0 4rpx 12rpx rgba(255,133,82,0.2);
 }
 .fab.disabled { opacity: 0.5; }
-.fab:active { background: var(--apricot-deep); }
+.fab:not(.secondary):active { background: var(--apricot-deep); }

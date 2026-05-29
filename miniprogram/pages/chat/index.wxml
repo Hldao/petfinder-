@@ -3,7 +3,7 @@
   <view class="pet-bar">
     <text class="pet-emoji">{{emoji}}</text>
     <text class="pet-name">{{petName ? '关于 ' + petName : '会话'}}</text>
-    <view class="more-btn" bindtap="onMore">⋯</view>
+    <view class="more-btn" bindtap="onMore">⋮</view>
   </view>
 
   <!-- 举报/拉黑 入口 · r277d552 + r2299c2f 移至宠物信息栏下方 · 小红书风格纯文字链接 -->

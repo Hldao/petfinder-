@@ -17,6 +17,7 @@ Page({
   },
 
   pickCat(e) { this.setData({ cat: e.currentTarget.dataset.k }); },
+  goBack() { wx.navigateBack({ fail: () => wx.switchTab({ url: '/pages/feed/index' }) }); },
   onInput(e) { this.setData({ text: e.detail.value }); },
   onContact(e) { this.setData({ contact: e.detail.value }); },
 

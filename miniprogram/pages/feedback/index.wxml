@@ -27,6 +27,9 @@
   <!-- 联系方式 · r122 -->
   <input class="contact" placeholder="微信号 / 手机号（选填 · 用于回复你）" value="{{contact}}" bindinput="onContact" />
 
-  <!-- 底部 FAB · r131 -->
-  <view class="fab {{submitting?'disabled':''}}" bindtap="submit">提交反馈</view>
+  <!-- 底部 FAB · r131 + a6fb507 加返回按钮并排 -->
+  <view class="fab-row">
+    <view class="fab secondary" bindtap="goBack">返回</view>
+    <view class="fab {{submitting?'disabled':''}}" bindtap="submit">提交反馈</view>
+  </view>
 </view>

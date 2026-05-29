@@ -8,10 +8,16 @@
 }
 .pet-emoji { font-size: 32rpx; }
 .pet-name { font-size: 24rpx; color: var(--ink-2); font-weight: 600; }
+/* ⋮ r137/r138 · 独立 chip 视觉 · 与微信横向 ⋯ 区分 */
 .more-btn {
   margin-left: auto;
-  font-size: 36rpx; color: var(--ink-3);
-  padding: 8rpx 16rpx; line-height: 1;
+  width: 56rpx; height: 56rpx;
+  border-radius: 50%;
+  background: var(--surface);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 36rpx; color: var(--ink-2);
+  font-weight: 700; line-height: 1;
+  box-shadow: var(--shadow-card);
 }
 
 /* 举报/拉黑 · 小红书风格纯文字链接 */
