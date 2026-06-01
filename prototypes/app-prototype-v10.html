@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>寻宠 · 大理 — 原型 v10（v8 UI + v7 地图交互）</title>
+  <title>寻宠 · 大理</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -79,25 +79,6 @@
       font-family: var(--font-en); font-style: italic; font-weight: 800; color: var(--apricot);
     }
     .stage-head .sub { font-size: 13px; color: var(--ink-3); margin-top: 6px; max-width: 560px; line-height: 1.6; }
-    .v-pill {
-      display: inline-flex; align-items: center; gap: 8px;
-      padding: 5px 12px 5px 8px;
-      background: var(--apricot-soft); color: var(--apricot-deep);
-      border-radius: var(--radius-pill);
-      font-size: 12px; font-weight: 600; font-family: var(--font-en); letter-spacing: 0.04em;
-    }
-    .v-pill .dot { width: 8px; height: 8px; background: var(--apricot); border-radius: 50%; }
-    .stage-actions { display: flex; gap: 8px; }
-    .head-btn {
-      padding: 8px 14px;
-      background: var(--surface);
-      border-radius: var(--radius-pill);
-      font-size: 12.5px; font-weight: 600;
-      box-shadow: var(--shadow-pill);
-      cursor: pointer;
-      color: var(--ink-2);
-      display: flex; align-items: center; gap: 6px;
-    }
 
     /* ============== 主舞台 · 单设备居中 ============== */
     .stage {
@@ -2555,45 +2536,6 @@
     .privacy-link { color: var(--apricot-deep); font-weight: 600; }
     .privacy-actions { display: flex; gap: var(--space-3); margin-top: var(--space-4); }
 
-    /* 底部交互说明 */
-    .interaction-map {
-      max-width: 1100px; margin: 24px auto 60px;
-      padding: 28px 32px; background: var(--surface); border-radius: 18px;
-      box-shadow: var(--shadow-card);
-    }
-    .im-section {
-      font-family: var(--font-en); font-size: 11px; letter-spacing: 0.14em;
-      text-transform: uppercase; color: var(--apricot-deep);
-      font-weight: 700; margin: 0 0 12px;
-      display: flex; align-items: center; gap: 12px;
-    }
-    .im-section::after { content: ''; flex: 1; height: 1px; background: var(--divider); }
-    .im-section:not(:first-of-type) { margin-top: 26px; }
-    .im-title { font-size: 22px; font-weight: 700; letter-spacing: -0.01em; margin-bottom: 6px; }
-    .im-title .accent { font-family: var(--font-en); font-style: italic; font-weight: 800; color: var(--apricot); }
-    .im-sub { font-size: 13px; color: var(--ink-3); margin-bottom: 10px; line-height: 1.7; }
-    .im-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
-    .im-jump {
-      padding: 9px 12px;
-      background: var(--bg); border-radius: var(--radius-sm);
-      font-size: 12px; color: var(--ink-2); cursor: pointer;
-      display: flex; align-items: center; gap: 8px;
-    }
-    .im-jump .num {
-      font-family: var(--font-en); font-weight: 800;
-      color: var(--apricot-deep); font-style: italic;
-      flex-shrink: 0;
-    }
-
-    .flow-list { list-style: none; padding: 0; display: grid; gap: 6px; }
-    .flow-item {
-      padding: 10px 14px; background: var(--bg); border-radius: var(--radius-md);
-      font-size: 12.5px; color: var(--ink-2); line-height: 1.6;
-      display: flex; align-items: center; gap: 10px;
-    }
-    .flow-item b { color: var(--ink-1); font-weight: 700; }
-    .flow-arrow { color: var(--apricot); font-weight: 800; font-family: var(--font-en); flex-shrink: 0; }
-
     /* ── 地图交互增强（可拖拽 + 视口筛选 + 弹卡 + 区域搜索） ── */
     .map-layer { position:absolute; inset:0; will-change:transform; touch-action:none; }
     .map-layer.dragging { cursor:grabbing!important; }
@@ -2953,17 +2895,11 @@
 </svg>
 
 
-<!-- ============== 顶部说明 ============== -->
+<!-- 桌面端预览标识（移动端通过 @media 自动隐藏） -->
 <div class="stage-head">
   <div>
-    <div class="v-pill"><span class="dot"></span>v8 · 可交互原型</div>
-    <h1 style="margin-top:10px">寻宠 <span class="accent">·</span> 大理</h1>
-    <div class="sub">15 屏 + 隐私 Modal · 点击任意卡片 / Tab / 按钮跳转 · 底部「返回」按上一屏回退。</div>
-  </div>
-  <div class="stage-actions">
-    <div class="head-btn" onclick="showScreen('feed', true)"><svg class="icon icon-sm"><use href="#i-home"/></svg> 回首页</div>
-    <div class="head-btn" onclick="showPrivacyModal()"><svg class="icon icon-sm"><use href="#i-shield"/></svg> 隐私 Modal</div>
-    <div class="head-btn" onclick="openMPModal()"><svg class="icon icon-sm"><use href="#i-megaphone"/></svg> 关注公众号</div>
+    <h1>寻宠 <span class="accent">·</span> 大理</h1>
+    <div class="sub">本地化宠物走失与招领互助 · 苍山洱海间的小事</div>
   </div>
 </div>
 
@@ -4859,42 +4795,6 @@
       </div>
     </div>
 
-  </div>
-</div>
-
-<!-- ============== 底部交互说明 ============== -->
-<div class="interaction-map">
-  <div class="im-section">总览 · OVERVIEW</div>
-  <div class="im-title">v8 <span class="accent">·</span> 15 屏 + 隐私 Modal 已联通</div>
-  <p class="im-sub">所有屏之间的核心跳转路径已连接。点击卡片进详情、tab 切主屏、返回按上一屏回退、按钮按业务逻辑跳转。</p>
-
-  <div class="im-section">核心流程 · KEY FLOWS</div>
-  <ul class="flow-list">
-    <li class="flow-item"><b>发布寻宠流</b><span class="flow-arrow">→</span><span>首页 FAB → 发布 → 发布成功回首页</span></li>
-    <li class="flow-item"><b>寻找匹配流</b><span class="flow-arrow">→</span><span>首页卡片 → 寻宠详情 → 留言（聊天）/ 我捡到了（联系建议）</span></li>
-    <li class="flow-item"><b>归还流</b><span class="flow-arrow">→</span><span>招领详情 → 联系建议（含自检步骤）→ 归还成功（一键致谢）→ 回首页</span></li>
-    <li class="flow-item"><b>沟通流</b><span class="flow-arrow">→</span><span>消息列表 → 聊天 → 点顶部宠物卡跳详情</span></li>
-    <li class="flow-item"><b>我的数据流</b><span class="flow-arrow">→</span><span>我的 → 我的贡献 / 我的发布 / 争议申诉</span></li>
-    <li class="flow-item"><b>异常流</b><span class="flow-arrow">→</span><span>归还自检底部「争议申诉」/ 我的 → 争议申诉</span></li>
-    <li class="flow-item"><b>搜索流</b><span class="flow-arrow">→</span><span>首页搜索栏 → 历史/热门/输入 → 建议 → 结果 / 空状态（无果时引导发布）</span></li>
-  </ul>
-
-  <div class="im-section">快速跳转 · DEBUG NAV</div>
-  <div class="im-grid">
-    <div class="im-jump" onclick="showScreen('feed', true)"><span class="num">01</span>首页 Feed</div>
-    <div class="im-jump" onclick="showScreen('map')"><span class="num">02</span>地图</div>
-    <div class="im-jump" onclick="showDetailScreen(1)"><span class="num">03</span>寻宠详情</div>
-    <div class="im-jump" onclick="showDetailScreen(0)"><span class="num">04</span>招领详情</div>
-    <div class="im-jump" onclick="showScreen('publish')"><span class="num">05</span>发布</div>
-    <div class="im-jump" onclick="showScreen('contact-guide')"><span class="num">06</span>联系建议</div>
-    <div class="im-jump" onclick="showScreen('return-success')"><span class="num">08</span>归还成功</div>
-    <div class="im-jump" onclick="showScreen('messages')"><span class="num">10</span>消息列表</div>
-    <div class="im-jump" onclick="showScreen('chat')"><span class="num">11</span>聊天</div>
-    <div class="im-jump" onclick="showScreen('profile')"><span class="num">12</span>个人中心</div>
-    <div class="im-jump" onclick="showScreen('my-posts')"><span class="num">14</span>我的发布</div>
-    <div class="im-jump" onclick="showScreen('dispute')"><span class="num">15</span>争议申诉</div>
-    <div class="im-jump" onclick="showScreen('search')"><span class="num">16</span>搜索 Search</div>
-    <div class="im-jump" onclick="showPrivacyModal()"><span class="num">00</span>隐私 Modal</div>
   </div>
 </div>
 

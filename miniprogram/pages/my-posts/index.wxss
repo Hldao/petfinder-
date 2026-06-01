@@ -1,32 +1,69 @@
-.page { min-height: 100vh; background: var(--bg); padding: 0 0 60rpx; }
+/* 我的发布 · 对齐 prototype v10 r123/r125
+ * r123/r125 mine tag 4 次重定位至 footer · 砍 photo 右下 corner（在 pet-card 组件里改）
+ * 本页只调整 tabs 视觉为 pill chip · 与 messages r139 一致 */
+
+.page {
+  min-height: 100vh;
+  background: var(--bg);
+  padding: 0 0 60rpx;
+}
 
 .mp-header {
-  display: flex; align-items: center; justify-content: space-between;
+  display: flex; align-items: center;
+  justify-content: space-between;
   padding: 32rpx 32rpx 16rpx;
 }
-.mp-title { font-size: 36rpx; font-weight: 800; color: var(--ink-1); }
+.mp-title {
+  font-size: 36rpx;
+  font-weight: 800;
+  color: var(--ink-1);
+}
 .mp-action {
-  font-size: 26rpx; color: var(--apricot-deep); font-weight: 700;
+  font-size: 26rpx;
+  color: var(--apricot-deep);
+  font-weight: 700;
   padding: 8rpx 20rpx;
   background: var(--apricot-soft);
   border-radius: var(--radius-pill);
 }
 
+/* mp-tabs · pill chip 样式 · 与 messages r139 一致 */
 .mp-tabs {
-  display: flex; gap: 0;
-  padding: 0 24rpx;
-  border-bottom: 1rpx solid var(--divider-soft);
-  margin-bottom: 16rpx;
+  display: flex;
+  padding: 12rpx 32rpx 24rpx;
+  gap: 12rpx;
 }
 .mp-tab {
-  padding: 16rpx 28rpx; font-size: 26rpx; color: var(--ink-3);
-  border-bottom: 3rpx solid transparent; margin-bottom: -1rpx;
+  padding: 12rpx 28rpx;
+  font-size: 26rpx;
+  color: var(--ink-3);
+  font-weight: 600;
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+  box-shadow: 0 2rpx 6rpx rgba(31,31,31,0.04);
 }
-.mp-tab.active { color: var(--mint-deep); font-weight: 700; border-bottom-color: var(--mint-deep); }
+.mp-tab.active {
+  background: var(--apricot-deep);
+  color: #fff;
+}
 
-.list { display: flex; flex-direction: column; gap: 24rpx; padding: 8rpx 32rpx; }
-.hint { text-align: center; color: var(--ink-3); padding: 80rpx 0; font-size: 26rpx; }
-.hint.small { padding: 32rpx 0; color: var(--ink-4); font-size: 24rpx; }
+.list {
+  display: flex; flex-direction: column;
+  gap: 24rpx;
+  padding: 8rpx 32rpx;
+}
+
+.hint {
+  text-align: center;
+  color: var(--ink-3);
+  padding: 80rpx 0;
+  font-size: 26rpx;
+}
+.hint.small {
+  padding: 32rpx 0;
+  color: var(--ink-4);
+  font-size: 24rpx;
+}
 
 .mp-note {
   margin: 24rpx 32rpx 0;
@@ -34,5 +71,6 @@
   background: var(--mint-soft);
   color: var(--mint-deep);
   border-radius: var(--radius-md);
-  font-size: 22rpx; line-height: 1.5;
+  font-size: 22rpx;
+  line-height: 1.5;
 }

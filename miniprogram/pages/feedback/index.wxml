@@ -1,35 +1,96 @@
+<!-- 意见反馈 · 对齐 prototype v10 r131 (list + FAB row + sheet) -->
 <view class="page">
-  <view class="header">
-    <view class="title">说说你的想法</view>
-    <view class="sub">我们会认真阅读每一条反馈</view>
-  </view>
 
-  <!-- 分类 · r122 加体验吐槽 -->
-  <view class="cats">
-    <view wx:for="{{cats}}" wx:key="k" class="cat {{cat===item.k?'active':''}}" data-k="{{item.k}}" bindtap="pickCat">{{item.label}}</view>
-  </view>
-
-  <!-- 描述 -->
-  <textarea class="textarea" placeholder="详细描述你的想法或遇到的问题" value="{{text}}" bindinput="onInput" maxlength="500" />
-
-  <!-- 截图 · r122 最多 4 张 -->
-  <view class="photo-row">
-    <view wx:for="{{photos}}" wx:key="*this" class="photo-slot filled">
-      <image src="{{item}}" mode="aspectFill" class="photo-img" />
-      <view class="photo-x" data-i="{{index}}" catchtap="removePhoto">✕</view>
+  <!-- 反馈历史列表 -->
+  <scroll-view class="feedback-list" scroll-y>
+    <view wx:if="{{feedbackList.length === 0}}" class="fb-empty-wrap">
+      <view class="fb-empty">
+        <view class="fb-empty-icon">🌱</view>
+        <view class="fb-empty-title">感谢你愿意告诉我们</view>
+        <view class="fb-empty-desc">我们是一支刚刚起步的小团队\n很多地方还做得不够好\n每一条反馈对我们来说都很珍贵\n\n给我们一点时间\n让这个小程序慢慢变好 🐾</view>
+      </view>
     </view>
-    <view wx:if="{{photos.length < 4}}" class="photo-slot add" bindtap="choosePhoto">
-      <view class="add-plus">+</view>
-      <view class="add-label">截图</view>
+
+    <block wx:else>
+      <view wx:if="{{pending.length > 0}}" class="feedback-group-title">
+        待回复<text class="count"> · {{pending.length}}</text>
+      </view>
+      <view wx:for="{{pending}}" wx:key="id" class="feedback-card">
+        <view class="feedback-card-head">
+          <view class="feedback-tag {{item.cat}}">{{catLabel[item.cat]}}</view>
+          <text class="feedback-time">{{item.time}}</text>
+        </view>
+        <view class="feedback-content">{{item.text}}</view>
+        <view class="feedback-pending">⏳ 待回复 · 通常 3 个工作日内处理</view>
+      </view>
+
+      <view wx:if="{{replied.length > 0}}" class="feedback-group-title">
+        已回复<text class="count"> · {{replied.length}}</text>
+      </view>
+      <view wx:for="{{replied}}" wx:key="id" class="feedback-card">
+        <view class="feedback-card-head">
+          <view class="feedback-tag {{item.cat}}">{{catLabel[item.cat]}}</view>
+          <text class="feedback-time">{{item.time}}</text>
+        </view>
+        <view class="feedback-content">{{item.text}}</view>
+        <view class="feedback-reply">
+          <view class="feedback-reply-label">官方回复 · {{item.reply.time}}</view>
+          <view class="feedback-reply-text">{{item.reply.text}}</view>
+        </view>
+      </view>
+    </block>
+  </scroll-view>
+
+  <!-- 底部居中浮起 FAB row · r131 参考微信/小红书/支付宝反馈页 -->
+  <view class="feedback-fab-row">
+    <view class="feedback-fab secondary" bindtap="goBack">返回</view>
+    <view class="feedback-fab" bindtap="openSheet">
+      <text class="fab-plus">+</text>
+      <text>提交新反馈</text>
     </view>
   </view>
 
-  <!-- 联系方式 · r122 -->
-  <input class="contact" placeholder="微信号 / 手机号（选填 · 用于回复你）" value="{{contact}}" bindinput="onContact" />
+  <!-- 提交反馈 sheet -->
+  <view wx:if="{{showSheet}}" class="feedback-sheet-overlay" bindtap="closeSheet">
+    <view class="feedback-sheet" catchtap="stopProp">
+      <view class="feedback-sheet-head">
+        <view class="feedback-sheet-title">提交反馈</view>
+        <view class="feedback-sheet-close" catchtap="closeSheet">✕</view>
+      </view>
 
-  <!-- 底部 FAB · r131 + a6fb507 加返回按钮并排 -->
-  <view class="fab-row">
-    <view class="fab secondary" bindtap="goBack">返回</view>
-    <view class="fab {{submitting?'disabled':''}}" bindtap="submit">提交反馈</view>
+      <view class="feedback-cats">
+        <view wx:for="{{cats}}" wx:key="k"
+              class="feedback-cat {{cat===item.k?'active':''}}"
+              data-k="{{item.k}}" bindtap="pickCat">{{item.label}}</view>
+      </view>
+
+      <textarea class="feedback-textarea"
+                placeholder="详细描述你的想法或遇到的问题，我们会认真阅读每一条反馈"
+                value="{{text}}" bindinput="onInput"
+                maxlength="500"
+                placeholder-class="ta-ph" />
+
+      <!-- r122 截图上传（最多 4 张）-->
+      <view class="feedback-photo-row">
+        <view wx:for="{{photos}}" wx:key="*this" class="feedback-photo-slot filled">
+          <image src="{{item}}" mode="aspectFill" class="photo-img" />
+          <view class="feedback-photo-x" data-i="{{index}}" catchtap="removePhoto">✕</view>
+        </view>
+        <view wx:if="{{photos.length < 4}}" class="feedback-photo-slot" bindtap="choosePhoto">
+          <text class="add-plus">+</text>
+          <text class="add-label">截图</text>
+        </view>
+      </view>
+
+      <!-- r122 联系方式 选填 -->
+      <input class="feedback-contact"
+             placeholder="微信号 / 手机号（选填 · 用于回复你）"
+             value="{{contact}}" bindinput="onContact"
+             placeholder-class="ct-ph" />
+
+      <view class="feedback-submit {{submitting?'loading':''}}" bindtap="submit">
+        {{submitting?'提交中...':'提交反馈'}}
+      </view>
+    </view>
   </view>
 </view>

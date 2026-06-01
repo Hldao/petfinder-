@@ -1,8 +1,39 @@
-.page { position: relative; width: 100%; height: 100vh; }
-.map { width: 100%; height: 100vh; }
-.tip {
-  position: fixed; left: 50%; top: 24rpx; transform: translateX(-50%);
-  background: rgba(255,255,255,0.92); color: var(--ink-2);
-  font-size: 23rpx; font-weight: 600; padding: 12rpx 28rpx; border-radius: var(--radius-pill);
-  box-shadow: var(--shadow-card); z-index: 10;
+/* 地图 · 对齐 prototype v10 r87/r90 */
+
+.page {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+}
+
+.map {
+  width: 100%;
+  height: 100vh;
+}
+
+/* r90 precision-hint · 让位胶囊（top 50~82 / right 7~94）+ 5s 后猫猫可加 dismiss */
+.map-precision-hint {
+  position: fixed;
+  left: 32rpx;
+  right: 192rpx;
+  top: 180rpx;
+  background: rgba(255,255,255,0.92);
+  border-radius: var(--radius-pill);
+  padding: 14rpx 28rpx;
+  display: flex; align-items: center;
+  gap: 12rpx;
+  box-shadow: 0 4rpx 16rpx rgba(31,31,31,0.08);
+  font-size: 22rpx;
+  color: var(--ink-2);
+  z-index: 10;
+}
+.mph-icon {
+  font-size: 26rpx;
+  flex-shrink: 0;
+}
+.mph-text {
+  font-size: 22rpx;
+  color: var(--ink-2);
+  font-weight: 600;
+  flex: 1;
 }

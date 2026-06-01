@@ -1,27 +1,41 @@
+/* 发布 · 对齐 prototype v10 r115/r118/r120
+ * 严格按原型 px 数值换算到 rpx（1px ≈ 2rpx）
+ * token 缺失项（--text-* / --space-* / --leading-* / --shadow-fab）用具体数值
+ * Task 43 时统一改回 token */
+
 .page {
   min-height: 100vh; background: var(--bg);
-  padding: 24rpx 32rpx;
+  padding: 0;
   padding-bottom: calc(180rpx + env(safe-area-inset-bottom));
 }
 
-/* Seg 切换 */
+/* ============== Seg · r97 mode 联动配色 ============== */
 .seg {
-  display: flex; background: var(--surface); border-radius: var(--radius-pill);
-  padding: 6rpx; margin-bottom: 28rpx;
+  display: flex; gap: 12rpx;
+  margin: 24rpx 36rpx 28rpx;
+  background: var(--surface);
+  border-radius: var(--radius-pill);
+  padding: 8rpx;
+  box-shadow: 0 2rpx 8rpx rgba(31,31,31,0.04);
 }
 .seg-item {
-  flex: 1; text-align: center; padding: 18rpx 0;
-  font-size: 28rpx; font-weight: 700; color: var(--ink-3);
+  flex: 1; padding: 18rpx;
+  text-align: center;
+  font-size: 26rpx; font-weight: 600;
+  color: var(--ink-3);
   border-radius: var(--radius-pill);
+  transition: background-color 0.18s, color 0.18s;
 }
-.seg-item.active { background: var(--apricot); color: #fff; }
+/* r110 升级 soft → deep + white · 主决策按钮（丢/捡 mode 切换）应该有强 active 信号 */
+.seg-item.active[data-mode="lost"] { background: var(--apricot-deep); color: #fff; }
+.seg-item.active[data-mode="found"] { background: var(--mint-deep); color: #fff; }
 
-/* 情绪横幅 · r118-r120 */
+/* ============== 情绪横幅 · r127 ============== */
 .publish-warmth {
   position: relative;
-  border-radius: var(--radius-lg);
-  padding: 24rpx 56rpx 24rpx 28rpx;
-  margin-bottom: 24rpx;
+  margin: 0 36rpx 16rpx;
+  border-radius: var(--radius-md);
+  padding: 22rpx 76rpx 22rpx 28rpx;
   border: 1rpx solid;
 }
 .publish-warmth.lost {
@@ -34,145 +48,244 @@
   border-color: rgba(63,144,121,0.22);
   box-shadow: 0 4rpx 12rpx rgba(63,144,121,0.08);
 }
-.pw-title { font-size: 28rpx; font-weight: 700; margin-bottom: 8rpx; }
+.pw-title { font-size: 28rpx; font-weight: 700; margin-bottom: 10rpx; letter-spacing: -0.005em; }
 .publish-warmth.lost .pw-title { color: var(--apricot-deep); }
 .publish-warmth.found .pw-title { color: var(--mint-deep); }
-.pw-body { font-size: 24rpx; line-height: 1.5; }
-.publish-warmth.lost .pw-body { color: var(--apricot-deep); opacity: 0.85; }
-.publish-warmth.found .pw-body { color: var(--mint-deep); opacity: 0.85; }
-.pw-close {
-  position: absolute; top: 16rpx; right: 16rpx;
-  width: 40rpx; height: 40rpx; border-radius: 50%;
+.pw-body { font-size: 24rpx; line-height: 1.65; opacity: 0.88; }
+.publish-warmth.lost .pw-body { color: var(--apricot-deep); }
+.publish-warmth.found .pw-body { color: var(--mint-deep); }
+.publish-warmth-close {
+  position: absolute; top: 14rpx; right: 16rpx;
+  width: 44rpx; height: 44rpx;
+  border-radius: 50%;
   display: flex; align-items: center; justify-content: center;
-  font-size: 24rpx; color: inherit; opacity: 0.6;
+  font-size: 24rpx;
+  opacity: 0.6;
 }
-.publish-warmth.lost .pw-close { color: var(--apricot-deep); }
-.publish-warmth.found .pw-close { color: var(--mint-deep); }
+.publish-warmth.lost .publish-warmth-close { color: var(--apricot-deep); }
+.publish-warmth.found .publish-warmth-close { color: var(--mint-deep); }
+.publish-warmth-close:active { opacity: 1; }
 
-/* 合规告知 */
+/* ============== 合规告知 · r75 honey 暖色 + r120 可关闭 ============== */
 .compliance-note {
   position: relative;
-  background: var(--surface-warm);
+  margin: 0 36rpx 24rpx;
+  padding: 22rpx 76rpx 22rpx 28rpx;
+  background: var(--honey-soft);
   border-radius: var(--radius-md);
-  padding: 22rpx 56rpx 22rpx 28rpx;
-  margin-bottom: 28rpx;
-  border: 1rpx solid var(--divider-soft);
+  font-size: 25rpx; color: var(--honey-deep);
+  line-height: 1.7;
 }
-.cn-title { font-size: 24rpx; font-weight: 700; color: var(--ink-1); margin-bottom: 8rpx; }
-.cn-body { font-size: 22rpx; color: var(--ink-3); line-height: 1.6; }
-.cn-close {
-  position: absolute; top: 12rpx; right: 16rpx;
-  width: 40rpx; height: 40rpx; border-radius: 50%;
+.cn-line { font-size: 25rpx; color: var(--honey-deep); line-height: 1.7; }
+.cn-b { font-weight: 700; }
+.compliance-note-close {
+  position: absolute; top: 14rpx; right: 16rpx;
+  width: 44rpx; height: 44rpx;
+  border-radius: 50%;
   display: flex; align-items: center; justify-content: center;
-  font-size: 24rpx; color: var(--ink-4);
+  font-size: 24rpx;
+  color: var(--honey-deep);
+  opacity: 0.65;
 }
+.compliance-note-close:active { opacity: 1; }
 
-/* Section 卡片 + 小标题 · r118 */
+/* ============== Section · r118 间距 18 ============== */
 .form-section-label {
-  font-size: 22rpx; font-weight: 700; color: var(--ink-3);
-  letter-spacing: 0.08em; text-transform: uppercase;
-  padding: 16rpx 8rpx 8rpx;
+  font-size: 22rpx; color: var(--ink-3);
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  padding: 8rpx 40rpx 12rpx;
+  text-transform: uppercase;
 }
 .form-section {
   background: var(--surface);
-  border-radius: var(--radius-lg);
-  padding: 8rpx 28rpx;
-  margin-bottom: 24rpx;
+  margin: 0 36rpx 36rpx;
+  border-radius: var(--radius-md);
+  overflow: hidden;
   box-shadow: var(--shadow-card);
 }
 
-/* Field */
-.field { padding: 20rpx 0; border-bottom: 1rpx solid var(--divider-soft); }
-.field:last-child { border-bottom: none; }
-.label {
-  font-size: 26rpx; font-weight: 700; color: var(--ink-1);
-  margin-bottom: 14rpx;
-  display: flex; justify-content: space-between; align-items: baseline;
+/* form-row · r70 token 化 */
+.form-row {
+  padding: 24rpx 32rpx;
+  border-bottom: 1rpx solid var(--divider-soft);
 }
-.label .req { color: var(--warn); margin-right: 4rpx; }
-.label .count { font-size: 22rpx; color: var(--ink-4); font-weight: 500; }
-.field-hint {
+.form-row:last-child { border-bottom: none; }
+.form-row.no-border { border-bottom: none; }
+
+/* r115 form-label flex 修复 · 单 span 自然左对齐 · 双 span 第二个 auto margin */
+.form-label {
   font-size: 22rpx; color: var(--ink-3);
-  margin-top: 10rpx; line-height: 1.5;
+  margin-bottom: 16rpx;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  display: flex; gap: 12rpx;
+  align-items: center;
+}
+.form-label > text + text { margin-left: auto; }
+.form-label .req { color: var(--apricot); }
+
+.form-input, .form-textarea {
+  width: 100%; border: none; background: transparent;
+  font-size: 28rpx; color: var(--ink-1);
+  padding: 0;
+  font-weight: 600;
+}
+.form-textarea {
+  min-height: 128rpx;
+  font-weight: 400;
+  line-height: 1.55;
+}
+.ta-ph { color: var(--ink-4); }
+
+.form-hint {
+  font-size: 22rpx; color: var(--ink-3);
+  margin-top: 14rpx; line-height: 1.5;
 }
 
-/* 照片 */
-.photo-row { display: flex; flex-wrap: wrap; gap: 16rpx; }
-.photo-slot, .photo-add {
-  width: 156rpx; height: 156rpx; border-radius: var(--radius-md); position: relative;
+/* ============== pet-types / pet-type · r56 wrap ============== */
+.pet-types {
+  display: flex; gap: 16rpx;
+  flex-wrap: wrap;
 }
-.photo-img { width: 100%; height: 100%; border-radius: var(--radius-md); }
-.photo-del {
-  position: absolute; top: -10rpx; right: -10rpx;
-  width: 36rpx; height: 36rpx; border-radius: 50%; background: rgba(31,31,31,0.7);
-  color: #fff; font-size: 22rpx; display: flex; align-items: center; justify-content: center;
-}
-.photo-add {
-  background: var(--bg); border: 2rpx dashed var(--ink-4);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 56rpx; color: var(--ink-4); font-weight: 300;
-}
-
-/* Chips */
-.chips { display: flex; flex-wrap: wrap; gap: 14rpx; }
-.chip {
-  padding: 12rpx 26rpx; background: var(--bg);
+.pet-type {
+  padding: 14rpx 30rpx;
+  background: var(--bg);
+  color: var(--ink-2);
+  font-size: 25rpx; font-weight: 600;
   border-radius: var(--radius-pill);
-  font-size: 25rpx; color: var(--ink-2); font-weight: 600;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
-.chip.active { background: var(--apricot); color: #fff; }
-.chip.map-pick { border: 2rpx dashed var(--apricot); color: var(--apricot-deep); background: var(--apricot-soft); }
-
-/* Input / Textarea */
-.input, .textarea {
-  width: 100%; background: var(--bg);
-  border-radius: var(--radius-md);
-  padding: 22rpx 24rpx; font-size: 27rpx; color: var(--ink-1);
-  box-sizing: border-box;
+.pet-type.active { background: var(--apricot); color: #fff; }
+.pet-type.map-pick {
+  border: 2rpx dashed var(--apricot);
+  color: var(--apricot-deep);
+  background: var(--apricot-soft);
 }
-.textarea { height: 180rpx; }
 
-/* 通知保障卡 */
+/* ============== breed-chips · r95 ============== */
+.breed-chips {
+  display: flex; flex-wrap: wrap;
+  gap: 12rpx;
+  margin-top: 18rpx;
+}
+.breed-chip {
+  padding: 10rpx 22rpx;
+  background: var(--bg);
+  color: var(--ink-2);
+  font-size: 23rpx; font-weight: 600;
+  border-radius: var(--radius-pill);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.breed-chip.active {
+  background: var(--apricot-soft);
+  color: var(--apricot-deep);
+}
+.breed-chip:active {
+  background: var(--bg-deeper);
+}
+
+/* ============== 照片 ============== */
+.photo-row {
+  white-space: nowrap;
+  padding: 24rpx 32rpx;
+}
+.photo-slot {
+  display: inline-flex;
+  width: 136rpx; height: 136rpx;
+  border-radius: 28rpx;
+  background: var(--bg);
+  margin-right: 16rpx;
+  flex-direction: column;
+  align-items: center; justify-content: center;
+  color: var(--ink-4);
+  font-size: 21rpx;
+  gap: 4rpx;
+  vertical-align: top;
+  position: relative;
+}
+.photo-slot.filled {
+  overflow: hidden;
+}
+.photo-slot.filled .x {
+  position: absolute;
+  top: 8rpx; right: 8rpx;
+  width: 36rpx; height: 36rpx;
+  background: rgba(0,0,0,0.6);
+  border-radius: 50%;
+  color: #fff; font-size: 22rpx;
+  display: flex; align-items: center; justify-content: center;
+}
+.photo-img {
+  width: 100%; height: 100%;
+  border-radius: 28rpx;
+}
+.add-plus {
+  font-size: 36rpx; line-height: 1;
+}
+.add-label {
+  font-size: 21rpx;
+}
+
+/* ============== 通知保障卡 ============== */
 .notify-card {
-  background: var(--mint-soft);
+  margin: 0 36rpx 24rpx;
+  padding: 20rpx 28rpx;
+  background: rgba(91,184,159,0.10);
+  border: 1rpx solid rgba(91,184,159,0.25);
   border-radius: var(--radius-md);
-  padding: 20rpx 24rpx;
-  display: flex; align-items: center; gap: 14rpx;
-  margin-bottom: 20rpx;
-  font-size: 24rpx; color: var(--mint-deep);
+  font-size: 25rpx;
+  color: #2F8C75;
+  font-weight: 600;
+  display: flex; align-items: center; gap: 16rpx;
+  line-height: 1.5;
 }
-.nc-ic { font-size: 30rpx; }
+.nc-ic { font-size: 32rpx; flex-shrink: 0; }
 
-/* 协议 */
+/* ============== 协议 ============== */
 .terms-note {
-  font-size: 21rpx; color: var(--ink-4);
-  text-align: center; line-height: 1.7;
-  padding: 16rpx 0 8rpx;
+  padding: 16rpx 40rpx 28rpx;
+  font-size: 22rpx; color: var(--ink-4);
+  line-height: 1.6;
+  text-align: center;
 }
-.terms-note .link { color: var(--mint-deep); }
+.terms-note .link {
+  color: var(--apricot-deep);
+  font-weight: 600;
+}
 
 .bottom-pad { height: 40rpx; }
 
-/* 底部 action bar · r131 */
+/* ============== 底部按钮 ============== */
 .action-bar {
   position: fixed; left: 0; right: 0; bottom: 0;
   display: flex; gap: 20rpx;
-  padding: 20rpx 32rpx;
-  padding-bottom: calc(20rpx + env(safe-area-inset-bottom));
+  padding: 24rpx 32rpx;
+  padding-bottom: calc(48rpx + env(safe-area-inset-bottom));
   background: var(--surface);
-  box-shadow: 0 -2rpx 12rpx rgba(0,0,0,0.04);
-  z-index: 100;
+  border-top: 1rpx solid var(--divider);
+  z-index: 15;
 }
 .btn-secondary, .btn-primary {
-  height: 88rpx; border-radius: var(--radius-pill);
+  height: 92rpx;
+  border-radius: 28rpx;
+  font-size: 28rpx; font-weight: 700;
   display: flex; align-items: center; justify-content: center;
-  font-size: 30rpx; font-weight: 700;
+  gap: 12rpx;
 }
 .btn-secondary {
-  flex: 1; background: var(--bg); color: var(--ink-2);
+  flex: 1;
+  background: var(--bg);
+  color: var(--ink-1);
 }
 .btn-primary {
-  flex: 2; background: var(--apricot); color: #fff;
+  flex: 1.4;
+  background: linear-gradient(135deg, #FFA378 0%, var(--apricot) 100%);
+  color: #fff;
+  box-shadow: 0 8rpx 20rpx rgba(255,133,82,0.25);
 }
 .btn-primary.disabled { opacity: 0.5; }
-.btn-primary:active { background: var(--apricot-deep); }
+.btn-secondary:active, .btn-primary:active { transform: scale(0.98); }

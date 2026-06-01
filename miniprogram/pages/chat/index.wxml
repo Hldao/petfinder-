@@ -1,44 +1,45 @@
+<!-- 聊天 · 对齐 prototype v10 r129/r135/r138
+ * 注：chat 是张润江模块
+ * r129 短语文案 · r135 砍消息流末尾「举报/拉黑」常驻链接 · r138 ⋯ → 竖向 ⋮
+ * 高级功能（cooldown-bar / meet-hint / chat-menu）留给张润江补 -->
 <view class="page">
-  <!-- 顶部宠物卡 · r2ae0ba2 ⋯ 绝对定位贴右边缘 -->
-  <view class="pet-bar">
-    <text class="pet-emoji">{{emoji}}</text>
-    <text class="pet-name">{{petName ? '关于 ' + petName : '会话'}}</text>
-    <view class="more-btn" bindtap="onMore">⋮</view>
-  </view>
 
-  <!-- 举报/拉黑 入口 · r277d552 + r2299c2f 移至宠物信息栏下方 · 小红书风格纯文字链接 -->
-  <view class="report-link" bindtap="onMore">
-    <text>举报 / 拉黑此用户</text>
+  <!-- chat-pet 卡片 · 顶部宠物信息条 -->
+  <view wx:if="{{petName}}" class="chat-pet">
+    <view class="chat-pet-thumb">{{emoji}}</view>
+    <view class="chat-pet-body">
+      <view class="chat-pet-name">关于 {{petName}}</view>
+      <view class="chat-pet-meta">{{peerName}}</view>
+    </view>
+    <!-- r138 竖向 ⋮ · 与微信原生横向 ⋯ 视觉区分 -->
+    <view class="sub-icon-chip" catchtap="onMore">⋮</view>
   </view>
-
-  <!-- 审核提示条 -->
-  <view class="audit-bar">🛡 消息经审核后送达 · 含微信号 / 电话 / 二维码将被过滤</view>
 
   <!-- 消息流 -->
-  <scroll-view scroll-y class="stream" scroll-into-view="{{scrollId}}" scroll-with-animation>
-    <view wx:for="{{messages}}" wx:key="index" id="msg-{{index}}" class="msg {{item.mine ? 'mine' : 'peer'}}">
-      <view class="bubble">{{item.content}}</view>
-      <view class="time">{{item.time}}</view>
+  <scroll-view scroll-y class="chat-msgs" scroll-into-view="{{scrollId}}" scroll-with-animation>
+    <!-- 审核提示条 · 移入流顶 -->
+    <view class="chat-audit-bar">🛡 消息经审核后送达 · 含微信号 / 电话 / 二维码将被过滤</view>
+
+    <view wx:for="{{messages}}" wx:key="index" id="msg-{{index}}" class="chat-msg {{item.mine ? 'me' : 'them'}}">
+      <view class="chat-avatar">{{item.mine ? '😊' : emoji}}</view>
+      <view class="chat-bubble">{{item.content}}</view>
     </view>
+
     <view wx:if="{{messages.length === 0}}" class="empty-hint">开始和 {{peerName}} 聊聊吧</view>
     <view class="stream-pad"></view>
   </scroll-view>
 
-  <!-- Quick Reply · r f4941ef 点击 ⚡ 展开/收起 · 换行显示全部 -->
-  <view wx:if="{{quick.length}}" class="quick-section">
-    <view class="quick-trigger" bindtap="toggleQuick">
-      <text class="quick-trigger-ic">⚡</text>
-      <text>{{quickExpanded?'收起':'快捷回复'}}</text>
-      <text class="quick-trigger-chev">{{quickExpanded?'▾':'▸'}}</text>
-    </view>
+  <!-- Quick Reply · r129 文案 + 展开/收起 -->
+  <view wx:if="{{quick.length}}" class="quick-replies {{quickExpanded?'expanded':''}}">
     <view wx:if="{{quickExpanded}}" class="quick-list">
-      <view wx:for="{{quick}}" wx:key="label" class="quick-chip" data-text="{{item.text}}" bindtap="pickQuick">{{item.label}}</view>
+      <view wx:for="{{quick}}" wx:key="label" class="qr-chip" data-text="{{item.text}}" bindtap="pickQuick">{{item.label}}</view>
     </view>
   </view>
 
-  <!-- 输入栏 -->
-  <view class="input-bar">
+  <!-- 输入栏 · 含 ⚡ 快捷触发 + 附件 + 发送 -->
+  <view class="chat-input-bar">
+    <view class="chat-attach qr-toggle {{quickExpanded?'active':''}}" bindtap="toggleQuick">⚡</view>
     <input class="chat-input" placeholder="输入消息…" value="{{input}}" bindinput="onInput" confirm-type="send" bindconfirm="send" />
-    <view class="send-btn" bindtap="send">↑</view>
+    <view class="chat-attach chat-send" bindtap="send">↑</view>
   </view>
 </view>

@@ -1,90 +1,187 @@
-.page { display: flex; flex-direction: column; height: 100vh; background: var(--bg); }
+/* 聊天 · 对齐 prototype v10 r129/r135/r138
+ * 注：chat 是张润江模块 · 本次只做视觉对齐 · js 业务流不动 */
 
-/* 宠物卡 · r136 走自然 flex · ⋯ margin-left:auto 靠右 */
-.pet-bar {
-  display: flex; align-items: center; gap: 12rpx;
-  padding: 16rpx 32rpx;
-  background: var(--surface-warm); flex-shrink: 0;
+.page {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background: var(--bg);
 }
-.pet-emoji { font-size: 32rpx; }
-.pet-name { font-size: 24rpx; color: var(--ink-2); font-weight: 600; }
-/* ⋮ r137/r138 · 独立 chip 视觉 · 与微信横向 ⋯ 区分 */
-.more-btn {
-  margin-left: auto;
-  width: 56rpx; height: 56rpx;
-  border-radius: 50%;
+
+/* ============== chat-pet · 顶部宠物条 ============== */
+.chat-pet {
   background: var(--surface);
+  border-radius: var(--radius-md);
+  margin: 20rpx 32rpx;
+  padding: 20rpx 24rpx;
+  display: flex; gap: 20rpx;
+  align-items: center;
+  box-shadow: var(--shadow-card);
+}
+.chat-pet-thumb {
+  width: 76rpx; height: 76rpx;
+  border-radius: 20rpx;
+  background: var(--apricot-soft);
   display: flex; align-items: center; justify-content: center;
-  font-size: 36rpx; color: var(--ink-2);
-  font-weight: 700; line-height: 1;
-  box-shadow: var(--shadow-card);
+  font-size: 36rpx;
+  flex-shrink: 0;
 }
-
-/* 举报/拉黑 · 小红书风格纯文字链接 */
-.report-link {
-  text-align: center;
-  padding: 12rpx 0 14rpx;
-  background: var(--surface-warm);
+.chat-pet-body { flex: 1; min-width: 0; }
+.chat-pet-name {
+  font-size: 26rpx; font-weight: 700;
+  color: var(--ink-1);
+}
+.chat-pet-meta {
   font-size: 22rpx;
+  color: var(--ink-3);
+  margin-top: 4rpx;
+}
+
+/* r137 sub-icon-chip · 让 ⋮ 操作按钮独立成"按钮" + r138 竖向 */
+.sub-icon-chip {
+  width: 64rpx; height: 64rpx;
+  background: var(--bg);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 36rpx;
+  color: var(--ink-2);
+  flex-shrink: 0;
+  font-weight: 700;
+  letter-spacing: -2rpx;
+}
+.sub-icon-chip:active {
+  background: var(--bg-deeper);
+  transform: scale(0.96);
+}
+
+/* ============== 消息流 ============== */
+.chat-msgs {
+  flex: 1;
+  padding: 16rpx 32rpx 0;
+}
+
+/* 审核提示条 · honey 暖色 */
+.chat-audit-bar {
+  padding: 12rpx 32rpx;
+  background: var(--honey-soft);
+  border-radius: var(--radius-md);
+  font-size: 21rpx;
+  color: var(--honey-deep);
+  text-align: center;
+  font-weight: 600;
+  margin-bottom: 24rpx;
+}
+
+.chat-msg {
+  margin-bottom: 24rpx;
+  display: flex;
+  gap: 16rpx;
+}
+.chat-msg.me {
+  flex-direction: row-reverse;
+}
+.chat-avatar {
+  width: 64rpx; height: 64rpx;
+  border-radius: 50%;
+  flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 30rpx;
+  background: var(--apricot-soft);
+}
+.chat-bubble {
+  max-width: 70%;
+  padding: 16rpx 24rpx;
+  font-size: 28rpx;
+  line-height: 1.6;
+}
+.chat-msg.me .chat-bubble {
+  background: var(--apricot);
+  color: #fff;
+  border-radius: 32rpx 32rpx 8rpx 32rpx;
+}
+.chat-msg.them .chat-bubble {
+  background: var(--surface);
+  color: var(--ink-1);
+  border-radius: 32rpx 32rpx 32rpx 8rpx;
+  box-shadow: var(--shadow-card);
+}
+
+.empty-hint {
+  text-align: center;
   color: var(--ink-4);
-  text-decoration: underline;
-  text-underline-offset: 4rpx;
+  font-size: 24rpx;
+  padding: 80rpx 0;
 }
+.stream-pad { height: 24rpx; }
 
-.audit-bar {
-  flex-shrink: 0; font-size: 21rpx; color: var(--mint-deep); background: var(--mint-soft);
-  padding: 12rpx 32rpx; text-align: center;
-}
-
-.stream { flex: 1; padding: 24rpx 32rpx; box-sizing: border-box; }
-.msg { display: flex; flex-direction: column; margin-bottom: 24rpx; max-width: 72%; }
-.msg.mine { margin-left: auto; align-items: flex-end; }
-.msg.peer { margin-right: auto; align-items: flex-start; }
-.bubble {
-  padding: 18rpx 24rpx; border-radius: 20rpx; font-size: 28rpx; line-height: 1.5; word-break: break-all;
-}
-.msg.mine .bubble { background: var(--apricot); color: #fff; border-bottom-right-radius: 6rpx; }
-.msg.peer .bubble { background: var(--surface); color: var(--ink-1); border-bottom-left-radius: 6rpx; box-shadow: var(--shadow-card); }
-.time { font-size: 19rpx; color: var(--ink-4); margin-top: 6rpx; }
-.empty-hint { text-align: center; color: var(--ink-4); font-size: 25rpx; padding: 80rpx 0; }
-.stream-pad { height: 20rpx; }
-
-/* Quick reply · 点击展开/收起 */
-.quick-section { flex-shrink: 0; background: var(--bg); padding: 8rpx 24rpx 12rpx; }
-.quick-trigger {
-  display: inline-flex; align-items: center; gap: 8rpx;
-  padding: 12rpx 24rpx;
+/* ============== Quick Reply · r129 文案 + 展开收起 ============== */
+.quick-replies {
   background: var(--surface);
-  border-radius: var(--radius-pill);
-  font-size: 24rpx; color: var(--ink-2); font-weight: 600;
-  box-shadow: var(--shadow-card);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16rpx;
+  align-items: center;
+  overflow: hidden;
+  max-height: 0;
+  padding: 0 28rpx;
+  border-top: 0 solid var(--divider-soft);
+  transition: max-height 0.25s ease, padding 0.25s ease, border-top-width 0.25s ease;
 }
-.quick-trigger-ic { font-size: 26rpx; }
-.quick-trigger-chev { color: var(--ink-4); font-size: 20rpx; margin-left: 4rpx; }
+.quick-replies.expanded {
+  max-height: 280rpx;
+  padding: 20rpx 28rpx;
+  border-top-width: 2rpx;
+}
 .quick-list {
-  display: flex; flex-wrap: wrap; gap: 14rpx;
-  margin-top: 14rpx;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16rpx;
 }
-.quick-chip {
-  padding: 12rpx 24rpx;
-  background: var(--surface);
+.qr-chip {
+  padding: 14rpx 28rpx;
+  background: var(--bg);
+  border: 2rpx solid var(--divider);
   border-radius: var(--radius-pill);
-  font-size: 24rpx; color: var(--ink-2); font-weight: 600;
-  box-shadow: var(--shadow-card);
+  font-size: 24rpx;
+  font-weight: 600;
+  color: var(--ink-2);
+  white-space: nowrap;
 }
-.quick-chip:active { background: var(--apricot-soft); color: var(--apricot-deep); }
 
-.input-bar {
-  flex-shrink: 0; display: flex; align-items: center; gap: 16rpx;
-  padding: 16rpx 32rpx calc(16rpx + env(safe-area-inset-bottom));
-  background: var(--surface); box-shadow: 0 -2rpx 12rpx rgba(31,31,31,0.05);
+/* ============== 输入栏 ============== */
+.chat-input-bar {
+  background: var(--surface);
+  border-top: 1rpx solid var(--divider);
+  padding: 20rpx 28rpx;
+  padding-bottom: calc(20rpx + env(safe-area-inset-bottom));
+  display: flex; gap: 16rpx;
+  align-items: center;
+}
+.chat-attach {
+  width: 72rpx; height: 72rpx;
+  background: var(--bg);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 32rpx;
+  color: var(--ink-2);
+  flex-shrink: 0;
+}
+.chat-attach.qr-toggle.active {
+  color: var(--apricot-deep);
+  background: var(--apricot-soft);
 }
 .chat-input {
-  flex: 1; background: var(--bg); border-radius: var(--radius-pill);
-  padding: 18rpx 28rpx; font-size: 28rpx;
+  flex: 1;
+  height: 72rpx;
+  background: var(--bg);
+  border-radius: 36rpx;
+  padding: 0 28rpx;
+  font-size: 28rpx;
+  color: var(--ink-1);
+  min-width: 0;
 }
-.send-btn {
-  width: 72rpx; height: 72rpx; border-radius: 50%; background: var(--apricot); color: #fff;
-  display: flex; align-items: center; justify-content: center; font-size: 36rpx; flex-shrink: 0;
+.chat-send {
+  background: var(--apricot);
+  color: #fff;
+  font-weight: 700;
 }
-.send-btn:active { background: var(--apricot-deep); }

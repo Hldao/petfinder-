@@ -1,50 +1,71 @@
+<!-- 首页 Feed · 对齐 prototype v10 r45/r110/r124
+ * 注：feed 是猫猫模块（按 memory：地图+首页捏造数据）
+ * 本次只做 class 命名与视觉对齐 · 不动 js 业务流（applyFilter/onSearchTap/onCardTap）
+ * 缺漏（需猫猫补 js）：sort-sheet · ptr · archive-section -->
 <view class="page">
-  <!-- 顶部导航：城市固定大理 + 搜索 -->
-  <view class="nav-row">
-    <view class="city-tag"><text class="pin">📍</text><text>大理</text></view>
-    <view class="search-pill" bindtap="onSearchTap">
-      <text>🔍</text><text class="ph">搜品种、地点、特征...</text>
+
+  <!-- 顶部 nav-region · 吸顶 -->
+  <view class="nav-region">
+    <view class="nav-row">
+      <view class="city-tag">
+        <view class="pin">📍</view>
+        <text class="city-name">大理</text>
+      </view>
+      <view class="search-pill" bindtap="onSearchTap">
+        <text class="sp-icon">🔍</text>
+        <text class="sp-placeholder">搜品种、地点、特征...</text>
+      </view>
     </view>
   </view>
 
-  <!-- 筛选 chip（全部 / 寻宠 / 招领）· 紧急已砍(r49) -->
-  <view class="filter-row">
-    <view class="chip {{filter==='all'?'active':''}}" data-filter="all" bindtap="applyFilter">全部</view>
-    <view class="chip {{filter==='lost'?'active':''}}" data-filter="lost" bindtap="applyFilter">
-      <text class="dot" style="background:var(--apricot)"></text>寻宠
+  <!-- 滚动区 -->
+  <view class="scroll-area">
+    <!-- 筛选 chip · r124 chip-sort 占位（猫猫补完整 sort-sheet） -->
+    <view class="filter-region">
+      <view class="filter-row">
+        <view class="chip {{filter==='all'?'active':''}}" data-filter="all" bindtap="applyFilter">全部</view>
+        <view class="chip {{filter==='lost'?'active':''}}" data-filter="lost" bindtap="applyFilter">
+          <view class="chip-dot" style="background:var(--apricot)"></view>寻宠
+        </view>
+        <view class="chip {{filter==='found'?'active':''}}" data-filter="found" bindtap="applyFilter">
+          <view class="chip-dot" style="background:var(--mint)"></view>招领
+        </view>
+        <view class="chip chip-sort">
+          <text class="cs-ic">⏱</text>
+          <text>最新</text>
+          <text class="chevron-down">▾</text>
+        </view>
+      </view>
     </view>
-    <view class="chip {{filter==='found'?'active':''}}" data-filter="found" bindtap="applyFilter">
-      <text class="dot" style="background:var(--mint)"></text>招领
+
+    <!-- 希望叙事条 · r45 §6.7 去成就数字 -->
+    <view class="feed-stat-bar">
+      <view class="fsb-ic">🐾</view>
+      <view class="fsb-body">
+        <view class="fsb-line">今天有小朋友<text class="fsb-soft">在等好心人</text> · <text class="fsb-soft">附近有人在一起找</text></view>
+        <text class="fsb-tagline">在大理，走失的小朋友正被大家一起找回 🐾</text>
+      </view>
     </view>
-  </view>
 
-  <!-- 希望叙事条 · §6.7 去成就数字(r49) -->
-  <view class="stat-bar">
-    <text class="sb-ic">🐾</text>
-    <view class="sb-body">
-      <view class="sb-line">今天有小朋友在等好心人 · 附近有人在一起找</view>
-      <view class="sb-tag">每一次转发，都是一份可能的奇迹</view>
+    <view class="section-header">
+      <text class="title">大理的小朋友</text>
+      <text class="count"> · {{posts.length}} 条</text>
     </view>
+
+    <!-- 列表 -->
+    <view wx:if="{{loading}}" class="hint">加载中…</view>
+    <view wx:elif="{{posts.length === 0}}" class="feed-empty-state">
+      <view class="fe-icon">🐾</view>
+      <view class="fe-title">附近暂时没有这类信息</view>
+    </view>
+    <view wx:else class="feed-list">
+      <pet-card wx:for="{{posts}}" wx:key="id" post="{{item}}" bindtap="onCardTap" />
+    </view>
+
+    <view wx:if="{{fromSeed}}" class="seed-note">本地示例数据（config.js 填好 CLOUD_ENV 后接入云端）</view>
   </view>
 
-  <view class="section-header">
-    <text class="title">大理的小朋友</text>
-    <text class="count"> · {{posts.length}} 条</text>
-  </view>
-
-  <!-- 列表 -->
-  <view wx:if="{{loading}}" class="hint">加载中…</view>
-  <view wx:elif="{{posts.length === 0}}" class="empty">
-    <view class="fe-icon">🐾</view>
-    <view>附近暂时没有这类信息</view>
-  </view>
-  <view wx:else class="feed-list">
-    <pet-card wx:for="{{posts}}" wx:key="id" post="{{item}}" bindtap="onCardTap" />
-  </view>
-
-  <view wx:if="{{fromSeed}}" class="seed-note">本地示例数据（config.js 填好 CLOUD_ENV 后接入云端）</view>
-
-  <!-- 启动隐私协议（首启 · 不可绕过 · r127/r128/r42701ed/r7b3d4a4/rf4a9461）-->
+  <!-- 启动隐私协议（首启 · 不可绕过） -->
   <view wx:if="{{showPrivacy}}" class="mask">
     <view class="modal privacy-modal">
       <view class="m-icon">🐾</view>
@@ -73,7 +94,7 @@
     </view>
   </view>
 
-  <!-- 公众号关注（关一次后不再主动弹 · 06 第 6 条）-->
+  <!-- 公众号关注 modal -->
   <view wx:if="{{showMp}}" class="mask">
     <view class="modal">
       <view class="m-title">📣 关注公众号，推送更及时</view>

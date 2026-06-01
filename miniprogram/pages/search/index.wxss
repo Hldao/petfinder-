@@ -1,79 +1,165 @@
-.page { min-height: 100vh; background: var(--bg); padding-bottom: 60rpx; }
+/* 搜索 · 对齐 prototype v10 r130/r132/r134 */
 
-/* 搜索栏 · r130/r132/r134 */
-.search-bar {
-  display: flex; align-items: center; gap: 16rpx;
-  padding: 16rpx 28rpx 20rpx;
+.page {
+  min-height: 100vh;
   background: var(--bg);
+  padding-bottom: 60rpx;
 }
+
+/* ============== 搜索栏 · r134 拆出独立一行 ============== */
+.search-bar {
+  display: flex; align-items: center;
+  gap: 16rpx;
+  padding: 16rpx 28rpx 24rpx;
+  background: var(--surface);
+  border-bottom: 1rpx solid var(--divider);
+}
+
+/* r130 加 hairline ring · 米色 wrap 与白色 search-bar 视觉边界清晰 */
 .search-input-wrap {
   flex: 1;
-  display: flex; align-items: center; gap: 14rpx;
-  background: var(--surface);
+  display: flex; align-items: center;
+  gap: 14rpx;
+  background: var(--bg);
+  padding: 0 28rpx;
   border-radius: var(--radius-pill);
-  padding: 16rpx 28rpx;
-  box-shadow: var(--shadow-card);
+  height: 76rpx;
+  box-shadow: inset 0 0 0 2rpx rgba(0,0,0,0.05);
 }
-.search-input-icon { font-size: 26rpx; color: var(--ink-3); }
-.search-input { flex: 1; font-size: 28rpx; color: var(--ink-1); }
-.search-input-clear { color: var(--ink-4); font-size: 24rpx; padding: 0 8rpx; }
+.search-input-icon {
+  font-size: 28rpx;
+  color: var(--ink-3);
+  flex-shrink: 0;
+}
+.search-input {
+  flex: 1;
+  font-size: 27rpx;
+  color: var(--ink-1);
+  min-width: 0;
+}
+.si-ph { color: var(--ink-4); }
+.search-input-clear {
+  width: 36rpx; height: 36rpx;
+  background: var(--ink-4); color: #fff;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22rpx;
+  flex-shrink: 0;
+}
+
+/* r132 cancel 动态切换 · 取消 ↔ 搜索 */
 .search-cancel {
-  font-size: 26rpx; color: var(--apricot-deep); font-weight: 600;
-  padding: 0 8rpx; flex-shrink: 0;
+  font-size: 26rpx;
+  color: var(--apricot-deep);
+  font-weight: 700;
+  padding: 0 8rpx;
+  flex-shrink: 0;
+  min-width: 56rpx;
+  text-align: center;
+  transition: color 0.15s;
+}
+
+/* ============== 滚动区 ============== */
+.scroll-area {
+  padding-top: 0;
 }
 
 /* Section header */
 .section-header {
   display: flex; align-items: baseline;
-  padding: 28rpx 32rpx 12rpx;
+  padding: 28rpx 40rpx 12rpx;
 }
-.section-header .title { font-size: 26rpx; font-weight: 700; color: var(--ink-1); }
-.section-header .count { font-size: 22rpx; color: var(--ink-3); margin-left: 8rpx; }
-.section-header .right { margin-left: auto; font-size: 24rpx; color: var(--ink-3); }
+.section-header .title {
+  font-size: 26rpx; font-weight: 700;
+  color: var(--ink-1);
+}
+.section-header .count {
+  font-size: 22rpx; color: var(--ink-3);
+  margin-left: 8rpx;
+}
+.section-header .right {
+  margin-left: auto;
+  font-size: 24rpx;
+  color: var(--ink-3);
+}
 
-/* Chips */
+/* ============== Chips ============== */
 .search-chips {
-  display: flex; flex-wrap: wrap; gap: 16rpx;
-  padding: 0 32rpx;
+  display: flex; gap: 16rpx;
+  flex-wrap: wrap;
+  padding: 0 40rpx 8rpx;
 }
 .search-chip {
-  padding: 14rpx 28rpx; background: var(--surface);
+  padding: 14rpx 28rpx;
+  background: var(--surface);
   border-radius: var(--radius-pill);
-  font-size: 26rpx; color: var(--ink-2); font-weight: 600;
-  box-shadow: var(--shadow-card);
+  font-size: 26rpx;
+  color: var(--ink-2);
+  font-weight: 500;
+  box-shadow: 0 2rpx 6rpx rgba(31,31,31,0.04);
 }
 .search-chip.hot {
-  background: var(--apricot-soft); color: var(--apricot-deep);
+  color: var(--apricot-deep);
+  font-weight: 600;
 }
 
-/* 颜色 chip */
+/* ============== 颜色 chip ============== */
 .color-chip-row {
-  display: flex; flex-wrap: wrap; gap: 16rpx;
-  padding: 0 32rpx;
+  display: flex; gap: 16rpx;
+  flex-wrap: wrap;
+  padding: 0 40rpx 8rpx;
 }
 .color-chip {
-  display: flex; align-items: center; gap: 10rpx;
-  padding: 14rpx 24rpx; background: var(--surface);
+  display: inline-flex; align-items: center;
+  gap: 12rpx;
+  padding: 12rpx 24rpx;
+  background: var(--surface);
   border-radius: var(--radius-pill);
-  font-size: 26rpx; color: var(--ink-2); font-weight: 600;
-  box-shadow: var(--shadow-card);
+  font-size: 26rpx;
+  color: var(--ink-2);
+  font-weight: 500;
+  box-shadow: 0 2rpx 6rpx rgba(31,31,31,0.04);
 }
-.color-dot { width: 24rpx; height: 24rpx; border-radius: 50%; }
-
-/* 结果 */
-.result-meta {
-  display: flex; align-items: baseline;
-  padding: 28rpx 32rpx 12rpx;
+.color-chip:active { opacity: 0.7; }
+.color-dot {
+  width: 24rpx; height: 24rpx;
+  border-radius: 50%;
+  flex-shrink: 0;
 }
-.result-meta .title { font-size: 26rpx; font-weight: 700; color: var(--ink-1); }
-.result-meta .count { font-size: 22rpx; color: var(--ink-3); margin-left: 8rpx; }
-.list { display: flex; flex-direction: column; gap: 24rpx; padding: 8rpx 32rpx 40rpx; }
 
-/* 空结果 */
+/* ============== 结果列表 ============== */
+.result-list {
+  display: flex; flex-direction: column;
+  gap: 24rpx;
+  padding: 8rpx 32rpx 40rpx;
+}
+
+/* ============== 空结果 · r68 ============== */
 .search-empty {
-  text-align: center; padding: 100rpx 60rpx;
+  padding: 120rpx 64rpx 64rpx;
+  text-align: center;
 }
-.se-icon { font-size: 80rpx; margin-bottom: 20rpx; }
-.se-title { font-size: 30rpx; font-weight: 700; color: var(--ink-1); margin-bottom: 12rpx; }
-.se-sub { font-size: 24rpx; color: var(--ink-3); line-height: 1.7; }
-.se-cta { color: var(--apricot-deep); font-weight: 600; }
+.search-empty-icon {
+  font-size: 112rpx;
+  opacity: 0.35;
+  line-height: 1;
+}
+.search-empty-title {
+  margin-top: 32rpx;
+  font-size: 30rpx;
+  font-weight: 700;
+  color: var(--ink-1);
+}
+.search-empty-sub {
+  margin-top: 16rpx;
+  font-size: 26rpx;
+  color: var(--ink-3);
+  line-height: 1.7;
+  white-space: pre-line;
+}
+.search-empty-cta {
+  color: var(--apricot-deep);
+  font-weight: 700;
+  text-decoration: underline;
+  text-decoration-style: dotted;
+}

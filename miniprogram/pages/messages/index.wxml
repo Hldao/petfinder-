@@ -1,43 +1,24 @@
+<!-- 消息列表 · 对齐 prototype v10 r108/r109/r139
+ * r108 圆形头像 · r109 紧凑 + unread 右侧居中 · r139 mp-tabs 上下间距对称 -->
 <view class="page">
   <view class="title-bar">消息</view>
 
-  <!-- Tab 栏 -->
-  <view class="tab-bar">
-    <view
-      class="tab {{currentTab === 'all' ? 'active' : ''}}"
-      data-tab="all"
-      bindtap="switchTab"
-    >全部</view>
-    <view
-      class="tab {{currentTab === 'replies' ? 'active' : ''}}"
-      data-tab="replies"
-      bindtap="switchTab"
-    >帖子回复</view>
-    <view
-      class="tab {{currentTab === 'dm' ? 'active' : ''}}"
-      data-tab="dm"
-      bindtap="switchTab"
-    >私信</view>
+  <!-- mp-tabs · r139 padding 12 16 对称 -->
+  <view class="mp-tabs">
+    <view class="mp-tab {{currentTab === 'all' ? 'active' : ''}}" data-tab="all" bindtap="switchTab">全部</view>
+    <view class="mp-tab {{currentTab === 'replies' ? 'active' : ''}}" data-tab="replies" bindtap="switchTab">帖子回复</view>
+    <view class="mp-tab {{currentTab === 'dm' ? 'active' : ''}}" data-tab="dm" bindtap="switchTab">私信</view>
   </view>
 
   <!-- 消息列表 -->
   <view class="msg-list">
-    <view
-      wx:for="{{displayMessages}}"
-      wx:key="id"
-      class="msg-row"
-      data-msg="{{item}}"
-      bindtap="openMsg"
-    >
-      <!-- 头像 -->
+    <view wx:for="{{displayMessages}}" wx:key="id" class="msg-row" data-msg="{{item}}" bindtap="openMsg">
       <view class="msg-avatar {{item.avatarStyle}}">{{item.avatar}}</view>
-
-      <!-- 正文 -->
       <view class="msg-body">
         <view class="msg-row-head">
           <view class="msg-name-wrap">
             <text class="msg-name">{{item.peerName}}</text>
-            <text wx:if="{{item.mpTag}}" class="mp-tag">服务号</text>
+            <text wx:if="{{item.mpTag}}" class="msg-mp-tag">服务号</text>
           </view>
           <text class="msg-time">{{item.lastTime}}</text>
         </view>
@@ -46,12 +27,9 @@
         </view>
         <view class="msg-context {{item.type === 'reply' ? 'reply' : ''}}">{{item.context}}</view>
       </view>
-
-      <!-- 未读徽标 · 右侧垂直居中 -->
       <view wx:if="{{item.unread > 0}}" class="msg-unread">{{item.unread}}</view>
     </view>
 
-    <!-- 空状态 -->
     <view wx:if="{{displayMessages.length === 0}}" class="empty">暂无消息</view>
   </view>
 </view>

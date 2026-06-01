@@ -1,3 +1,8 @@
+<!-- 地图 · 对齐 prototype v10 r87/r90/r102
+ * 注：map 是猫猫模块（按 memory：地图+首页捏造数据）
+ * 小程序原生 <map> 组件 vs prototype 用 div 模拟 · 实现方式必然不同
+ * 完整功能（pin-popup / map-fab / bottom-sheet / drag 区域筛选）留给猫猫补
+ * 本次只做：r90 precision-hint 视觉对齐（隐私精度提示） -->
 <view class="page">
   <map
     class="map"
@@ -8,5 +13,10 @@
     bindmarkertap="onMarkerTap"
     show-location="{{false}}"
   ></map>
-  <view class="tip">📍 点标记查看详情 · 大理</view>
+
+  <!-- r90 precision-hint · 隐私精度提示 -->
+  <cover-view class="map-precision-hint">
+    <cover-view class="mph-icon">🛡</cover-view>
+    <cover-view class="mph-text">位置精度模糊处理至 500m 以保护隐私</cover-view>
+  </cover-view>
 </view>
