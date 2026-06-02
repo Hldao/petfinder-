@@ -5,8 +5,7 @@
   display: flex; gap: 8rpx;
   padding: 16rpx 24rpx;
   padding-bottom: calc(16rpx + env(safe-area-inset-bottom));
-  background: rgba(255,255,255,0.95);
-  backdrop-filter: blur(20rpx);
+  background: #fff;                         /* 纯白实色 · 小程序 backdrop-filter 支持不稳故不用毛玻璃 */
   border-top: 2rpx solid #E0D6BD;          /* --divider · 组件取不到 page 变量故硬编码 */
 }
 
@@ -65,7 +64,7 @@
   display: flex; align-items: center; justify-content: center;
   box-shadow: 0 12rpx 32rpx rgba(255,133,82,0.4),
               0 4rpx 12rpx rgba(255,133,82,0.2),
-              0 0 0 8rpx rgba(255,255,255,0.6);
+              0 0 0 6rpx #fff;             /* 实心白环 · 半透明会透出下方页面看着像透明 */
   transition: transform 0.15s;
 }
 .fab-plus { color: #fff; font-size: 52rpx; font-weight: 300; line-height: 1; margin-top: -4rpx; }
