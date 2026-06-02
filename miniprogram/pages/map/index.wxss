@@ -164,13 +164,22 @@
   border-radius: 40rpx 40rpx 0 0;
   box-shadow: 0 -16rpx 48rpx rgba(0,0,0,0.1);
   z-index: 10;
+  display: flex; flex-direction: column;
+  overflow: hidden;
+  transition: height 0.28s cubic-bezier(0.34, 1.2, 0.64, 1);
 }
-.sheet-drag { padding: 4rpx 0 0; }
+.map-sheet.dragging { transition: none; }   /* 拖动中跟手，不过渡 */
+.sheet-drag {
+  flex-shrink: 0;
+  padding: 12rpx 0 8rpx;
+  display: flex; flex-direction: column; align-items: center; gap: 6rpx;
+}
 .sheet-handle {
   width: 72rpx; height: 8rpx;
   background: var(--ink-4); opacity: 0.5;
-  border-radius: 4rpx; margin: 12rpx auto;
+  border-radius: 4rpx;
 }
+.sheet-drag-hint { font-size: 20rpx; color: var(--ink-4); letter-spacing: 0.04em; }
 .sheet-header {
   display: flex; align-items: center; justify-content: space-between;
   padding: 4rpx 36rpx 12rpx;
@@ -191,11 +200,9 @@
 .sfc-dot.found { background: var(--mint); }
 
 .sheet-scroll {
-  max-height: 220rpx;
+  flex: 1; min-height: 0;
   padding: 0 24rpx 16rpx;
-  transition: max-height 0.28s ease;
 }
-.map-sheet.expanded .sheet-scroll { max-height: 52vh; }
 .sheet-empty { text-align: center; color: var(--ink-4); font-size: 24rpx; padding: 60rpx 0; }
 
 .sheet-card {

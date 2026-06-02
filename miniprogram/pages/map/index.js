@@ -20,6 +20,8 @@ Page({
     sheetFilter: '',
     sheetExpanded: false,
     sheetCount: 0,
+    sheetH: 240,        // 面板当前高度(px) · 可拖动
+    dragging: false,
     // 浮层
     showHint: true,
     searchOpen: false,
@@ -33,6 +35,14 @@ Page({
   _canvas: null,
   _dpr: 2,
   _iconCache: {},
+
+  onLoad() {
+    let wh = 667;
+    try { wh = wx.getSystemInfoSync().windowHeight || 667; } catch (e) {}
+    this._minH = 240;                                   // 收起高度(px)
+    this._maxH = Math.max(360, Math.round(wh * 0.62));  // 展开高度(px)
+    this.setData({ sheetH: this._minH });
+  },
 
   onShow() {
     if (typeof this.getTabBar === 'function' && this.getTabBar()) {
@@ -108,7 +118,28 @@ Page({
       }));
     this.setData({ sheetCards: cards, sheetCount: cards.length });
   },
-  toggleSheet() { this.setData({ sheetExpanded: !this.data.sheetExpanded }); },
+  toggleSheet() {
+    const expanded = !this.data.sheetExpanded;
+    this.setData({ sheetExpanded: expanded, sheetH: expanded ? this._maxH : this._minH });
+  },
+  // 拖动抽屉
+  onDragStart(e) {
+    this._sy = e.touches[0].clientY;
+    this._sh = this.data.sheetH;
+    this.setData({ dragging: true });
+  },
+  onDragMove(e) {
+    const dy = this._sy - e.touches[0].clientY; // 上滑为正
+    let h = this._sh + dy;
+    if (h < this._minH) h = this._minH;
+    if (h > this._maxH) h = this._maxH;
+    this.setData({ sheetH: h });
+  },
+  onDragEnd() {
+    const mid = (this._minH + this._maxH) / 2;
+    const expanded = this.data.sheetH > mid;
+    this.setData({ sheetH: expanded ? this._maxH : this._minH, dragging: false, sheetExpanded: expanded });
+  },
   applySheetFilter(e) {
     this.setData({ sheetFilter: e.currentTarget.dataset.sf }, () => this.buildSheet());
   },
