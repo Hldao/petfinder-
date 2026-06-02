@@ -34,7 +34,7 @@
 .chat-pet-meta {
   font-size: 22rpx;
   color: var(--ink-3);
-  margin-top: 4rpx;
+  margin-top: 2rpx;
 }
 
 /* r137 sub-icon-chip · 让 ⋮ 操作按钮独立成"按钮" + r138 竖向 */
@@ -91,7 +91,7 @@
 .chat-bubble {
   max-width: 70%;
   padding: 16rpx 24rpx;
-  font-size: 28rpx;
+  font-size: 26rpx;
   line-height: 1.6;
 }
 .chat-msg.me .chat-bubble {
@@ -151,7 +151,7 @@
 /* ============== 输入栏 ============== */
 .chat-input-bar {
   background: var(--surface);
-  border-top: 1rpx solid var(--divider);
+  border-top: 2rpx solid var(--divider);
   padding: 20rpx 28rpx;
   padding-bottom: calc(20rpx + env(safe-area-inset-bottom));
   display: flex; gap: 16rpx;
@@ -174,9 +174,9 @@
   flex: 1;
   height: 72rpx;
   background: var(--bg);
-  border-radius: 36rpx;
+  border-radius: var(--radius-pill);
   padding: 0 28rpx;
-  font-size: 28rpx;
+  font-size: 26rpx;
   color: var(--ink-1);
   min-width: 0;
 }
