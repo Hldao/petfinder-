@@ -17,7 +17,8 @@
       <view class="detail-dist-bar">
         <view class="dist-bar-icon">📍</view>
         <view class="dist-bar-text">
-          <view class="dist-bar-main">{{post.loc}}{{post.distanceKm ? ' · ' + post.distanceKm + ' km' : ''}}</view>
+          <view class="dist-bar-main">{{post.distanceKm ? '距你 ' + post.distanceKm + ' km' : post.loc}}</view>
+          <view wx:if="{{post.distanceKm}}" class="dist-bar-sub">{{post.loc}}</view>
         </view>
       </view>
 
@@ -30,14 +31,6 @@
         <view class="info-cell">
           <view class="label">{{timeLabel}}</view>
           <view class="value">{{post.time}}</view>
-        </view>
-        <view class="info-cell">
-          <view class="label">距你</view>
-          <view class="value">{{post.distanceKm || '—'}} km</view>
-        </view>
-        <view class="info-cell">
-          <view class="label">接力</view>
-          <view class="value">{{post.helpers || 0}} 人</view>
         </view>
       </view>
 
