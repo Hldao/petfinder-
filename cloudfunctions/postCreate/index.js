@@ -4,6 +4,11 @@ const cloud = require('wx-server-sdk');
 cloud.init({ env: cloud.DYNAMIC_CURRENT_ENV });
 const db = cloud.database();
 
+// 开发期开关 · 仅当内容安全接口不可用(pass:null·未发布小程序调不通 msgSecCheck/imgSecCheck)时生效
+// 在 postCreate 函数配置 → 环境变量 设 DEV_AUTO_APPROVE=1 即开发期自动通过；
+// ⚠ 生产环境不要设此变量 → null 仍走 pending_review 交人工审核
+const DEV_AUTO_APPROVE = process.env.DEV_AUTO_APPROVE === '1';
+
 exports.main = async (event = {}) => {
   const { OPENID } = cloud.getWXContext();
   const {
@@ -27,8 +32,10 @@ exports.main = async (event = {}) => {
     const r = (safe && safe.result) || {};
     if (r.pass === false) return { ok: false, msg: '内容含敏感信息（如微信/电话/悬赏），请修改后重发' };
     if (r.pass === true) status = 'approved';
+    else if (DEV_AUTO_APPROVE) status = 'approved'; // pass:null 接口不可用 + 开发开关 → 直接通过
   } catch (e) {
-    // contentSafety 调用异常 → 保持 pending_review
+    // contentSafety 调用异常 → 默认 pending_review；开发期开关下直接通过
+    if (DEV_AUTO_APPROVE) status = 'approved';
   }
 
   const doc = {
