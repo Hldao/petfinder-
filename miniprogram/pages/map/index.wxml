@@ -20,6 +20,32 @@
     <cover-view class="mph-text">位置精度模糊处理至 500m 以保护隐私</cover-view>
   </cover-view>
 
+  <!-- 底部宠物面板（对齐原型 map-bottom-sheet）-->
+  <view class="map-sheet {{sheetExpanded ? 'expanded' : ''}}">
+    <view class="sheet-drag" bindtap="toggleSheet">
+      <view class="sheet-handle"></view>
+    </view>
+    <view class="sheet-header">
+      <view class="sheet-title">附近 · {{sheetCount}} 条信息</view>
+      <view class="sheet-toggle" bindtap="toggleSheet">{{sheetExpanded ? '收起' : '展开'}}</view>
+    </view>
+    <view class="sheet-filter-row">
+      <view class="sfc {{sheetFilter === '' ? 'active' : ''}}" data-sf="" bindtap="applySheetFilter">全部</view>
+      <view class="sfc {{sheetFilter === 'lost' ? 'active' : ''}}" data-sf="lost" bindtap="applySheetFilter"><view class="sfc-dot lost"></view>寻宠</view>
+      <view class="sfc {{sheetFilter === 'found' ? 'active' : ''}}" data-sf="found" bindtap="applySheetFilter"><view class="sfc-dot found"></view>招领</view>
+    </view>
+    <scroll-view scroll-y class="sheet-scroll" enable-flex>
+      <view wx:if="{{!sheetCards.length}}" class="sheet-empty">这一带暂时还没有信息</view>
+      <view wx:for="{{sheetCards}}" wx:key="id" class="sheet-card" data-id="{{item.id}}" bindtap="onSheetCardTap">
+        <view class="sheet-thumb {{item.statusCls}}">{{item.emoji}}</view>
+        <view class="sheet-info">
+          <view class="sheet-pet-name">{{item.name}} <text class="sheet-tag {{item.statusCls}}">{{item.statusLabel}}</text></view>
+          <view class="sheet-pet-meta">{{item.loc}}{{item.distText}}</view>
+        </view>
+      </view>
+    </scroll-view>
+  </view>
+
   <!-- 离屏 canvas · 运行时绘制 橙/绿水滴+emoji 的 marker 图标（对齐原型 .map-pin）-->
   <canvas type="2d" id="pinCanvas" class="pin-canvas"></canvas>
 </view>

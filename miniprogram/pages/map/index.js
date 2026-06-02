@@ -10,8 +10,14 @@ Page({
   data: {
     latitude: 25.61, longitude: 100.20, scale: 12, // 大理中心
     markers: [],
+    // 底部面板（对齐原型 map-bottom-sheet）
+    sheetCards: [],
+    sheetFilter: '',     // '' | 'lost' | 'found'
+    sheetExpanded: false,
+    sheetCount: 0,
   },
   _pids: [],
+  _allPosts: [],
   _canvas: null,
   _dpr: 2,
   _iconCache: {}, // `${status}|${emoji}` -> tempFilePath
@@ -24,14 +30,47 @@ Page({
   },
 
   load() {
-    const build = posts => this.buildMarkers(posts);
+    const handle = posts => {
+      this._allPosts = posts || [];
+      this.buildMarkers(this._allPosts);
+      this.buildSheet();
+    };
     if (app.globalData.cloudReady) {
-      cloud.call('feedQuery', { filter: 'all' }).then(r => build((r && r.posts) || [])).catch(() => build(seed));
+      cloud.call('feedQuery', { filter: 'all' }).then(r => handle((r && r.posts) || [])).catch(() => handle(seed));
     } else {
-      build(seed);
+      handle(seed);
     }
   },
 
+  // ============ 底部面板 ============
+  buildSheet() {
+    const f = this.data.sheetFilter;
+    const cards = this._allPosts
+      .filter(p => !f || (p.status === f))
+      .map(p => {
+        const st = p.status === 'found' ? 'found' : 'lost';
+        return {
+          id: p.id,
+          emoji: p.emoji || '🐾',
+          name: p.name || p.breed || '宠物',
+          statusLabel: p.statusLabel || (st === 'found' ? '招领' : '寻宠'),
+          statusCls: st,
+          loc: p.loc || '',
+          distText: p.distanceKm ? ` · 距你 ${p.distanceKm} km` : '',
+        };
+      });
+    this.setData({ sheetCards: cards, sheetCount: cards.length });
+  },
+  toggleSheet() { this.setData({ sheetExpanded: !this.data.sheetExpanded }); },
+  applySheetFilter(e) {
+    this.setData({ sheetFilter: e.currentTarget.dataset.sf }, () => this.buildSheet());
+  },
+  onSheetCardTap(e) {
+    const id = e.currentTarget.dataset.id;
+    if (id != null) wx.navigateTo({ url: `/pages/detail/index?id=${id}` });
+  },
+
+  // ============ 地图标记 ============
   async buildMarkers(posts) {
     const withGeo = posts.filter(p => p.lat && p.lng);
     this._pids = withGeo.map(p => p.id);
@@ -44,7 +83,7 @@ Page({
       const m = {
         id: i, latitude: p.lat, longitude: p.lng,
         width: 36, height: 47,
-        anchor: { x: 0.5, y: 1 }, // 尖端对准坐标点
+        anchor: { x: 0.5, y: 1 },
         callout: {
           content: p.name || p.statusLabel || '',
           color: LABEL_COLOR[st], fontSize: 11, fontWeight: 'bold',
@@ -52,13 +91,12 @@ Page({
           display: 'ALWAYS', textAlign: 'center',
         },
       };
-      if (iconPath) m.iconPath = iconPath; // 取不到则回退系统默认针
+      if (iconPath) m.iconPath = iconPath;
       markers.push(m);
     }
     this.setData({ markers });
   },
 
-  // 取 canvas 节点（缓存）
   _getCanvas() {
     if (this._canvas) return Promise.resolve(this._canvas);
     return new Promise((resolve, reject) => {
@@ -73,21 +111,19 @@ Page({
     });
   },
 
-  // 画「水滴 pin + emoji」→ 导出临时图片路径
   async getPinIcon(status, emoji) {
     const key = status + '|' + emoji;
     if (this._iconCache[key]) return this._iconCache[key];
 
     const canvas = await this._getCanvas();
     const dpr = this._dpr;
-    const W = 40, H = 52, r = 14, cx = W / 2, cy = r + 4; // 逻辑尺寸
+    const W = 40, H = 52, r = 14, cx = W / 2, cy = r + 4;
     canvas.width = W * dpr;
     canvas.height = H * dpr;
     const ctx = canvas.getContext('2d');
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     ctx.clearRect(0, 0, W, H);
 
-    // 水滴形：圆头 + 下尖（单一闭合路径）
     ctx.beginPath();
     ctx.moveTo(cx, H - 2);
     ctx.quadraticCurveTo(cx - r, cy + r * 0.55, cx - r, cy);
@@ -101,7 +137,6 @@ Page({
     ctx.shadowColor = 'transparent';
     ctx.lineWidth = 3; ctx.strokeStyle = '#fff'; ctx.stroke();
 
-    // 宠物 emoji
     ctx.font = '17px sans-serif';
     ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
     ctx.fillText(emoji, cx, cy + 1);
