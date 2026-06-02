@@ -6,21 +6,33 @@ const seed = require('../../utils/seed.js');
 const PIN_FILL = { lost: '#FF8552', found: '#5BB89F' };
 const LABEL_COLOR = { lost: '#E66A38', found: '#3F9079' };
 
+function petName(p) { return p.name || p.breed || '宠物'; }
+function statusCls(p) { return p.status === 'found' ? 'found' : 'lost'; }
+function distText(p) { return p.distanceKm ? ` · 距你 ${p.distanceKm} km` : ''; }
+
 Page({
   data: {
     latitude: 25.61, longitude: 100.20, scale: 12, // 大理中心
+    showLoc: false,
     markers: [],
-    // 底部面板（对齐原型 map-bottom-sheet）
+    // 底部面板
     sheetCards: [],
-    sheetFilter: '',     // '' | 'lost' | 'found'
+    sheetFilter: '',
     sheetExpanded: false,
     sheetCount: 0,
+    // 浮层
+    showHint: true,
+    searchOpen: false,
+    searchKw: '',
+    searchResults: [],
+    selected: null,
   },
   _pids: [],
+  _geoPosts: [],
   _allPosts: [],
   _canvas: null,
   _dpr: 2,
-  _iconCache: {}, // `${status}|${emoji}` -> tempFilePath
+  _iconCache: {},
 
   onShow() {
     if (typeof this.getTabBar === 'function' && this.getTabBar()) {
@@ -42,23 +54,54 @@ Page({
     }
   },
 
+  // ============ 浮层交互 ============
+  dismissHint() { this.setData({ showHint: false }); },
+  onMapTap() { this.setData({ selected: null, searchOpen: false }); },
+
+  locateMe() {
+    wx.getLocation({
+      type: 'gcj02',
+      success: res => this.setData({ latitude: res.latitude, longitude: res.longitude, scale: 14, showLoc: true }),
+      fail: () => wx.showToast({ title: '无法获取定位，请检查授权', icon: 'none' }),
+    });
+  },
+
+  toggleSearch() {
+    const open = !this.data.searchOpen;
+    this.setData({ searchOpen: open, selected: null });
+    if (!open) this.setData({ searchKw: '', searchResults: [] });
+  },
+  onSearchInput(e) {
+    const kw = (e.detail.value || '').trim().toLowerCase();
+    const results = !kw ? [] : this._allPosts
+      .filter(p => `${petName(p)} ${p.breed || ''} ${p.loc || ''} ${p.desc || ''}`.toLowerCase().includes(kw))
+      .slice(0, 20)
+      .map(p => ({ id: p.id, emoji: p.emoji || '🐾', name: petName(p), loc: p.loc || '', statusCls: statusCls(p) }));
+    this.setData({ searchKw: e.detail.value, searchResults: results });
+  },
+  onResultTap(e) {
+    const id = e.currentTarget.dataset.id;
+    const p = this._allPosts.find(x => String(x.id) === String(id));
+    this.setData({ searchOpen: false, searchKw: '', searchResults: [] });
+    if (p && p.lat && p.lng) {
+      this.setData({ latitude: p.lat, longitude: p.lng, scale: 15, selected: this.makeSelected(p) });
+    } else if (id != null) {
+      wx.navigateTo({ url: `/pages/detail/index?id=${id}` });
+    }
+  },
+
+  toggleFilter() { this.setData({ sheetExpanded: true, selected: null }); },
+
   // ============ 底部面板 ============
   buildSheet() {
     const f = this.data.sheetFilter;
     const cards = this._allPosts
       .filter(p => !f || (p.status === f))
-      .map(p => {
-        const st = p.status === 'found' ? 'found' : 'lost';
-        return {
-          id: p.id,
-          emoji: p.emoji || '🐾',
-          name: p.name || p.breed || '宠物',
-          statusLabel: p.statusLabel || (st === 'found' ? '招领' : '寻宠'),
-          statusCls: st,
-          loc: p.loc || '',
-          distText: p.distanceKm ? ` · 距你 ${p.distanceKm} km` : '',
-        };
-      });
+      .map(p => ({
+        id: p.id, emoji: p.emoji || '🐾', name: petName(p),
+        statusLabel: p.statusLabel || (statusCls(p) === 'found' ? '招领' : '寻宠'),
+        statusCls: statusCls(p), loc: p.loc || '', distText: distText(p),
+      }));
     this.setData({ sheetCards: cards, sheetCount: cards.length });
   },
   toggleSheet() { this.setData({ sheetExpanded: !this.data.sheetExpanded }); },
@@ -70,14 +113,39 @@ Page({
     if (id != null) wx.navigateTo({ url: `/pages/detail/index?id=${id}` });
   },
 
+  // ============ 迷你详情卡（点针弹出）============
+  makeSelected(p) {
+    const st = statusCls(p);
+    return {
+      id: p.id, emoji: p.emoji || '🐾', statusCls: st,
+      name: petName(p),
+      breed: [p.breed, p.sex].filter(Boolean).join(' · '),
+      statusLabel: p.statusLabel || (st === 'found' ? '招领' : '寻宠'),
+      loc: p.loc || '', distText: distText(p), desc: p.desc || '',
+    };
+  },
+  closeSelected() { this.setData({ selected: null }); },
+  onSelectedContact() {
+    const s = this.data.selected;
+    if (!s) return;
+    const role = s.statusCls === 'lost' ? 'finder' : 'owner';
+    const q = encodeURIComponent;
+    wx.navigateTo({ url: `/pages/chat/index?peer=${q('发布者')}&pet=${q(s.name)}&emoji=${q(s.emoji)}&role=${role}&pid=${s.id}` });
+  },
+  onSelectedDetail(e) {
+    const id = e.currentTarget.dataset.id;
+    if (id != null) wx.navigateTo({ url: `/pages/detail/index?id=${id}` });
+  },
+
   // ============ 地图标记 ============
   async buildMarkers(posts) {
     const withGeo = posts.filter(p => p.lat && p.lng);
+    this._geoPosts = withGeo;
     this._pids = withGeo.map(p => p.id);
     const markers = [];
     for (let i = 0; i < withGeo.length; i++) {
       const p = withGeo[i];
-      const st = p.status === 'found' ? 'found' : 'lost';
+      const st = statusCls(p);
       let iconPath = '';
       try { iconPath = await this.getPinIcon(st, p.emoji || '🐾'); } catch (e) {}
       const m = {
@@ -85,7 +153,7 @@ Page({
         width: 36, height: 47,
         anchor: { x: 0.5, y: 1 },
         callout: {
-          content: p.name || p.statusLabel || '',
+          content: petName(p),
           color: LABEL_COLOR[st], fontSize: 11, fontWeight: 'bold',
           borderRadius: 6, padding: 5, bgColor: '#FFFFFF',
           display: 'ALWAYS', textAlign: 'center',
@@ -155,7 +223,8 @@ Page({
   },
 
   onMarkerTap(e) {
-    const pid = this._pids[e.detail.markerId];
-    if (pid != null) wx.navigateTo({ url: `/pages/detail/index?id=${pid}` });
+    const i = e.detail.markerId;
+    const p = this._geoPosts[i];
+    if (p) this.setData({ selected: this.makeSelected(p), searchOpen: false });
   },
 });

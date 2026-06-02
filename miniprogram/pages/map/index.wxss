@@ -37,6 +37,127 @@
   font-weight: 600;
   flex: 1;
 }
+.mph-close {
+  flex-shrink: 0;
+  width: 36rpx; height: 36rpx;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22rpx; color: var(--ink-4);
+}
+
+/* ============ map-fab 工具按钮（定位/查找/筛选）============ */
+.map-fab {
+  position: fixed; right: 28rpx; top: 290rpx;
+  display: flex; flex-direction: column; gap: 16rpx;
+  z-index: 8;
+}
+.mf-btn {
+  width: 76rpx; height: 76rpx;
+  background: var(--surface);
+  border-radius: 50%;
+  box-shadow: var(--shadow-card);
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 40rpx 40rpx;
+}
+.mf-btn:active { transform: scale(0.94); }
+.mf-search.on { background-color: var(--apricot-soft); }
+.mf-locate {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%231F1F1F' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 10c0 7-8 13-8 13s-8-6-8-13a8 8 0 0 1 16 0Z'/%3E%3Ccircle cx='12' cy='10' r='3'/%3E%3C/svg%3E");
+}
+.mf-search {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%231F1F1F' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.3-4.3'/%3E%3C/svg%3E");
+}
+.mf-filter {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%231F1F1F' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolygon points='22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3'/%3E%3C/svg%3E");
+}
+
+/* ============ 地图内搜索面板 ============ */
+.map-search-panel {
+  position: fixed; top: 290rpx; left: 32rpx; right: 32rpx;
+  z-index: 22;
+  background: var(--surface);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-card);
+  padding: 24rpx;
+}
+.map-search-input {
+  width: 100%; box-sizing: border-box;
+  border: 2rpx solid var(--divider);
+  border-radius: var(--radius-sm);
+  padding: 16rpx 24rpx;
+  font-size: 28rpx; color: var(--ink-1);
+  background: var(--bg);
+}
+.map-search-results { margin-top: 16rpx; max-height: 480rpx; }
+.msr-empty { text-align: center; color: var(--ink-4); font-size: 24rpx; padding: 32rpx 0; }
+.msr-row { display: flex; align-items: center; gap: 16rpx; padding: 12rpx 8rpx; }
+.msr-row:active { background: var(--bg); border-radius: var(--radius-sm); }
+.msr-thumb {
+  width: 64rpx; height: 64rpx; flex-shrink: 0;
+  border-radius: 16rpx;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 32rpx;
+}
+.msr-thumb.lost  { background: linear-gradient(135deg, var(--apricot-soft) 0%, #FFCDA8 100%); }
+.msr-thumb.found { background: linear-gradient(135deg, var(--mint-soft) 0%, #ABDDCB 100%); }
+.msr-info { flex: 1; min-width: 0; }
+.msr-name { font-size: 26rpx; font-weight: 700; color: var(--ink-1); }
+.msr-meta { font-size: 22rpx; color: var(--ink-3); margin-top: 2rpx; }
+
+/* ============ 点针迷你详情卡（对齐原型 sheet-detail-card）============ */
+.sheet-detail-card {
+  position: fixed; left: 0; right: 0;
+  bottom: calc(132rpx + env(safe-area-inset-bottom));
+  z-index: 12;
+  background: var(--surface);
+  border-radius: 40rpx 40rpx 0 0;
+  box-shadow: 0 -16rpx 48rpx rgba(0,0,0,0.12);
+  padding: 28rpx 28rpx 16rpx;
+}
+.sdc-close {
+  position: absolute; top: 16rpx; right: 24rpx;
+  width: 44rpx; height: 44rpx;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 26rpx; color: var(--ink-4);
+}
+.sdc-hero { display: flex; align-items: center; gap: 24rpx; margin-bottom: 20rpx; padding-right: 44rpx; }
+.sdc-emoji {
+  width: 112rpx; height: 112rpx; flex-shrink: 0;
+  border-radius: 24rpx;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 56rpx;
+  box-shadow: inset 0 2rpx 6rpx rgba(0,0,0,0.05), inset 0 0 0 2rpx rgba(255,255,255,0.4);
+}
+.sdc-emoji.lost  { background: linear-gradient(135deg, var(--apricot-soft) 0%, #FFCDA8 100%); }
+.sdc-emoji.found { background: linear-gradient(135deg, var(--mint-soft) 0%, #ABDDCB 100%); }
+.sdc-meta { flex: 1; min-width: 0; }
+.sdc-name { font-size: 34rpx; font-weight: 700; letter-spacing: -0.01em; color: var(--ink-1); }
+.sdc-breed { font-size: 24rpx; color: var(--ink-3); margin-top: 4rpx; }
+.sdc-status {
+  font-size: 22rpx; font-weight: 700; padding: 6rpx 16rpx;
+  border-radius: var(--radius-sm); flex-shrink: 0; align-self: flex-start;
+}
+.sdc-status.lost  { background: var(--apricot-soft); color: var(--apricot-deep); }
+.sdc-status.found { background: var(--mint-soft); color: var(--mint-deep); }
+.sdc-loc { font-size: 24rpx; color: var(--ink-3); margin-bottom: 16rpx; }
+.sdc-loc .hl { font-weight: 600; color: var(--ink-2); }
+.sdc-desc {
+  font-size: 26rpx; color: var(--ink-2); line-height: 1.55; margin-bottom: 24rpx;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+}
+.sdc-actions { display: flex; gap: 16rpx; padding-bottom: 16rpx; }
+.sdc-btn-primary, .sdc-btn-detail {
+  flex: 1; text-align: center;
+  border-radius: 20rpx; padding: 20rpx;
+  font-size: 26rpx; font-weight: 700;
+}
+.sdc-btn-primary { color: #fff; }
+.sdc-btn-primary.lost  { background: var(--apricot); }
+.sdc-btn-primary.found { background: var(--mint-deep); }
+.sdc-btn-detail { border: 2rpx solid var(--divider); background: var(--surface); color: var(--ink-2); }
+
+/* 离屏绘制用 canvas · 移出可视区（不可用 display:none，否则取不到 node 尺寸）*/
+.pin-canvas {
 
 /* ============ 底部宠物面板 · 对齐原型 map-bottom-sheet ============ */
 .map-sheet {

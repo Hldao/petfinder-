@@ -1,8 +1,4 @@
-<!-- 地图 · 对齐 prototype v10 r87/r90/r102
- * 注：map 是猫猫模块（按 memory：地图+首页捏造数据）
- * 小程序原生 <map> 组件 vs prototype 用 div 模拟 · 实现方式必然不同
- * 完整功能（pin-popup / map-fab / bottom-sheet / drag 区域筛选）留给猫猫补
- * 本次只做：r90 precision-hint 视觉对齐（隐私精度提示） -->
+<!-- 地图 · 对齐 prototype v10 全套（marker 水滴针 / 底部面板 / 迷你详情卡 / map-fab / 搜索 / 精度提示）-->
 <view class="page">
   <map
     class="map"
@@ -11,14 +7,57 @@
     scale="{{scale}}"
     markers="{{markers}}"
     bindmarkertap="onMarkerTap"
-    show-location="{{false}}"
+    bindtap="onMapTap"
+    show-location="{{showLoc}}"
   ></map>
 
-  <!-- r90 precision-hint · 隐私精度提示 -->
-  <cover-view class="map-precision-hint">
-    <cover-view class="mph-icon">🛡</cover-view>
-    <cover-view class="mph-text">位置精度模糊处理至 500m 以保护隐私</cover-view>
-  </cover-view>
+  <!-- r90 precision-hint · 隐私精度提示（可✕关闭）-->
+  <view wx:if="{{showHint}}" class="map-precision-hint">
+    <text class="mph-icon">🛡</text>
+    <text class="mph-text">位置精度模糊处理至 500m 以保护隐私</text>
+    <view class="mph-close" catchtap="dismissHint">✕</view>
+  </view>
+
+  <!-- 地图工具按钮 map-fab：定位 / 查找 / 筛选 -->
+  <view class="map-fab">
+    <view class="mf-btn mf-locate" catchtap="locateMe"></view>
+    <view class="mf-btn mf-search {{searchOpen ? 'on' : ''}}" catchtap="toggleSearch"></view>
+    <view class="mf-btn mf-filter" catchtap="toggleFilter"></view>
+  </view>
+
+  <!-- 地图内搜索面板 -->
+  <view wx:if="{{searchOpen}}" class="map-search-panel">
+    <input class="map-search-input" placeholder="输入宠物名称或特征…" value="{{searchKw}}" bindinput="onSearchInput" confirm-type="search"/>
+    <scroll-view wx:if="{{searchKw}}" scroll-y class="map-search-results">
+      <view wx:if="{{!searchResults.length}}" class="msr-empty">没有匹配的宠物</view>
+      <view wx:for="{{searchResults}}" wx:key="id" class="msr-row" data-id="{{item.id}}" catchtap="onResultTap">
+        <view class="msr-thumb {{item.statusCls}}">{{item.emoji}}</view>
+        <view class="msr-info">
+          <view class="msr-name">{{item.name}}</view>
+          <view class="msr-meta">{{item.loc}}</view>
+        </view>
+      </view>
+    </scroll-view>
+  </view>
+
+  <!-- 点针弹出的迷你详情卡（对齐原型 pin-popup / sheet-detail-card）-->
+  <view wx:if="{{selected}}" class="sheet-detail-card">
+    <view class="sdc-close" catchtap="closeSelected">✕</view>
+    <view class="sdc-hero">
+      <view class="sdc-emoji {{selected.statusCls}}">{{selected.emoji}}</view>
+      <view class="sdc-meta">
+        <view class="sdc-name">{{selected.name}}</view>
+        <view class="sdc-breed">{{selected.breed}}</view>
+      </view>
+      <view class="sdc-status {{selected.statusCls}}">{{selected.statusLabel}}</view>
+    </view>
+    <view class="sdc-loc">📍 <text class="hl">{{selected.loc}}</text>{{selected.distText}}</view>
+    <view wx:if="{{selected.desc}}" class="sdc-desc">{{selected.desc}}</view>
+    <view class="sdc-actions">
+      <view class="sdc-btn-primary {{selected.statusCls}}" catchtap="onSelectedContact">💬 {{selected.statusCls === 'lost' ? '我看到 ta 了' : '私聊发现者'}}</view>
+      <view class="sdc-btn-detail" data-id="{{selected.id}}" catchtap="onSelectedDetail">查看详情</view>
+    </view>
+  </view>
 
   <!-- 底部宠物面板（对齐原型 map-bottom-sheet）-->
   <view class="map-sheet {{sheetExpanded ? 'expanded' : ''}}">
@@ -46,6 +85,6 @@
     </scroll-view>
   </view>
 
-  <!-- 离屏 canvas · 运行时绘制 橙/绿水滴+emoji 的 marker 图标（对齐原型 .map-pin）-->
+  <!-- 离屏 canvas · 运行时绘制 橙/绿水滴+emoji 的 marker 图标 -->
   <canvas type="2d" id="pinCanvas" class="pin-canvas"></canvas>
 </view>
