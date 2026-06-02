@@ -8,6 +8,15 @@ const BREEDS = {
 };
 const EMOJI = { cat: '🐱', dog: '🐶', other: '🐾' };
 const LOCS = ['古城北门', '人民路三月街', '下关泰安路', '喜洲古镇', '海东'];
+// 预设地点的大理近似坐标（区域中心点）· 让不走「地图选点」的帖子也能在地图显示
+// 只给区域中心而非精确点 · 符合「精度模糊到 500m」隐私原则（本就只知道大致区域）
+const LOC_COORDS = {
+  '古城北门': { lat: 25.696, lng: 100.161 },
+  '人民路三月街': { lat: 25.690, lng: 100.163 },
+  '下关泰安路': { lat: 25.597, lng: 100.267 },
+  '喜洲古镇': { lat: 25.847, lng: 100.116 },
+  '海东': { lat: 25.600, lng: 100.290 },
+};
 const TIMES = [
   { label: '刚刚', mins: 5 }, { label: '1 小时前', mins: 60 },
   { label: '今天上午', mins: 300 }, { label: '今天下午', mins: 120 },
@@ -90,7 +99,11 @@ Page({
   },
   pickBreed(e) { this.setData({ 'form.breed': e.currentTarget.dataset.b }); },
   pickSex(e) { this.setData({ 'form.sex': e.currentTarget.dataset.s }); },
-  pickLoc(e) { this.setData({ 'form.loc': e.currentTarget.dataset.v, pickedLat: null, pickedLng: null }); },
+  pickLoc(e) {
+    const v = e.currentTarget.dataset.v;
+    const c = LOC_COORDS[v] || {};
+    this.setData({ 'form.loc': v, pickedLat: c.lat || null, pickedLng: c.lng || null });
+  },
   chooseLocation() {
     wx.chooseLocation({
       success: res => this.setData({
