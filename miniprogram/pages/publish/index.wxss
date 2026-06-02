@@ -1,7 +1,4 @@
-/* 发布 · 对齐 prototype v10 r115/r118/r120
- * 严格按原型 px 数值换算到 rpx（1px ≈ 2rpx）
- * token 缺失项（--text-* / --space-* / --leading-* / --shadow-fab）用具体数值
- * Task 43 时统一改回 token */
+/* 发布 · 对齐 prototype v10（值 = 原型 px×2 → rpx）· token 引用 app.wxss */
 
 .page {
   min-height: 100vh; background: var(--bg);
@@ -16,7 +13,7 @@
   background: var(--surface);
   border-radius: var(--radius-pill);
   padding: 8rpx;
-  box-shadow: 0 2rpx 8rpx rgba(31,31,31,0.04);
+  box-shadow: var(--shadow-pill);
 }
 .seg-item {
   flex: 1; padding: 18rpx;
@@ -26,21 +23,20 @@
   border-radius: var(--radius-pill);
   transition: background-color 0.18s, color 0.18s;
 }
-/* r110 升级 soft → deep + white · 主决策按钮（丢/捡 mode 切换）应该有强 active 信号 */
 .seg-item.active[data-mode="lost"] { background: var(--apricot-deep); color: #fff; }
 .seg-item.active[data-mode="found"] { background: var(--mint-deep); color: #fff; }
 
 /* ============== 情绪横幅 · r127 ============== */
 .publish-warmth {
   position: relative;
-  margin: 0 36rpx 16rpx;
+  margin: 0 32rpx 28rpx;
   border-radius: var(--radius-md);
-  padding: 22rpx 76rpx 22rpx 28rpx;
-  border: 1rpx solid;
+  padding: 28rpx 76rpx 28rpx 32rpx;
+  border: 2rpx solid;
 }
 .publish-warmth.lost {
-  background: linear-gradient(135deg, #FFD9C1 0%, #FFE7D4 100%);
-  border-color: rgba(230,106,56,0.22);
+  background: linear-gradient(135deg, #FFD4B0 0%, #FFE2BD 100%);
+  border-color: rgba(230,106,56,0.18);
   box-shadow: 0 4rpx 12rpx rgba(230,106,56,0.08);
 }
 .publish-warmth.found {
@@ -55,7 +51,7 @@
 .publish-warmth.lost .pw-body { color: var(--apricot-deep); }
 .publish-warmth.found .pw-body { color: var(--mint-deep); }
 .publish-warmth-close {
-  position: absolute; top: 14rpx; right: 16rpx;
+  position: absolute; top: 20rpx; right: 20rpx;
   width: 44rpx; height: 44rpx;
   border-radius: 50%;
   display: flex; align-items: center; justify-content: center;
@@ -69,17 +65,17 @@
 /* ============== 合规告知 · r75 honey 暖色 + r120 可关闭 ============== */
 .compliance-note {
   position: relative;
-  margin: 0 36rpx 24rpx;
-  padding: 22rpx 76rpx 22rpx 28rpx;
+  margin: 0 32rpx 24rpx;
+  padding: 24rpx 76rpx 24rpx 32rpx;
   background: var(--honey-soft);
   border-radius: var(--radius-md);
-  font-size: 25rpx; color: var(--honey-deep);
+  font-size: 23rpx; color: var(--honey-deep);
   line-height: 1.7;
 }
-.cn-line { font-size: 25rpx; color: var(--honey-deep); line-height: 1.7; }
+.cn-line { font-size: 23rpx; color: var(--honey-deep); line-height: 1.7; }
 .cn-b { font-weight: 700; }
 .compliance-note-close {
-  position: absolute; top: 14rpx; right: 16rpx;
+  position: absolute; top: 20rpx; right: 20rpx;
   width: 44rpx; height: 44rpx;
   border-radius: 50%;
   display: flex; align-items: center; justify-content: center;
@@ -89,17 +85,17 @@
 }
 .compliance-note-close:active { opacity: 1; }
 
-/* ============== Section · r118 间距 18 ============== */
+/* ============== Section · r118 ============== */
 .form-section-label {
-  font-size: 22rpx; color: var(--ink-3);
+  font-size: 21rpx; color: var(--ink-3);
   font-weight: 700;
-  letter-spacing: 0.16em;
+  letter-spacing: 0.08em;
   padding: 8rpx 40rpx 12rpx;
   text-transform: uppercase;
 }
 .form-section {
   background: var(--surface);
-  margin: 0 36rpx 36rpx;
+  margin: 0 32rpx 36rpx;
   border-radius: var(--radius-md);
   overflow: hidden;
   box-shadow: var(--shadow-card);
@@ -108,17 +104,17 @@
 /* form-row · r70 token 化 */
 .form-row {
   padding: 24rpx 32rpx;
-  border-bottom: 1rpx solid var(--divider-soft);
+  border-bottom: 2rpx solid var(--divider-soft);
 }
 .form-row:last-child { border-bottom: none; }
 .form-row.no-border { border-bottom: none; }
 
-/* r115 form-label flex 修复 · 单 span 自然左对齐 · 双 span 第二个 auto margin */
+/* r115 form-label flex 修复 */
 .form-label {
-  font-size: 22rpx; color: var(--ink-3);
+  font-size: 21rpx; color: var(--ink-3);
   margin-bottom: 16rpx;
   font-weight: 700;
-  letter-spacing: 0.16em;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
   display: flex; gap: 12rpx;
   align-items: center;
@@ -135,7 +131,7 @@
 .form-textarea {
   min-height: 128rpx;
   font-weight: 400;
-  line-height: 1.55;
+  line-height: 1.5;
 }
 .ta-ph { color: var(--ink-4); }
 
@@ -150,10 +146,10 @@
   flex-wrap: wrap;
 }
 .pet-type {
-  padding: 14rpx 30rpx;
+  padding: 16rpx 32rpx;
   background: var(--bg);
   color: var(--ink-2);
-  font-size: 25rpx; font-weight: 600;
+  font-size: 26rpx; font-weight: 600;
   border-radius: var(--radius-pill);
   white-space: nowrap;
   flex-shrink: 0;
@@ -168,14 +164,14 @@
 /* ============== breed-chips · r95 ============== */
 .breed-chips {
   display: flex; flex-wrap: wrap;
-  gap: 12rpx;
-  margin-top: 18rpx;
+  gap: 16rpx;
+  margin-top: 20rpx;
 }
 .breed-chip {
-  padding: 10rpx 22rpx;
+  padding: 12rpx 24rpx;
   background: var(--bg);
   color: var(--ink-2);
-  font-size: 23rpx; font-weight: 600;
+  font-size: 24rpx; font-weight: 500;
   border-radius: var(--radius-pill);
   white-space: nowrap;
   flex-shrink: 0;
@@ -232,10 +228,10 @@
 
 /* ============== 通知保障卡 ============== */
 .notify-card {
-  margin: 0 36rpx 24rpx;
+  margin: 0 32rpx 24rpx;
   padding: 20rpx 28rpx;
   background: rgba(91,184,159,0.10);
-  border: 1rpx solid rgba(91,184,159,0.25);
+  border: 2rpx solid rgba(91,184,159,0.25);
   border-radius: var(--radius-md);
   font-size: 25rpx;
   color: #2F8C75;
@@ -266,7 +262,7 @@
   padding: 24rpx 32rpx;
   padding-bottom: calc(48rpx + env(safe-area-inset-bottom));
   background: var(--surface);
-  border-top: 1rpx solid var(--divider);
+  border-top: 2rpx solid var(--divider);
   z-index: 15;
 }
 .btn-secondary, .btn-primary {
@@ -285,7 +281,7 @@
   flex: 1.4;
   background: linear-gradient(135deg, #FFA378 0%, var(--apricot) 100%);
   color: #fff;
-  box-shadow: 0 8rpx 20rpx rgba(255,133,82,0.25);
+  box-shadow: var(--shadow-fab);
 }
 .btn-primary.disabled { opacity: 0.5; }
 .btn-secondary:active, .btn-primary:active { transform: scale(0.98); }
