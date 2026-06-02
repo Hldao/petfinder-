@@ -156,9 +156,6 @@
 .sdc-btn-primary.found { background: var(--mint-deep); }
 .sdc-btn-detail { border: 2rpx solid var(--divider); background: var(--surface); color: var(--ink-2); }
 
-/* 离屏绘制用 canvas · 移出可视区（不可用 display:none，否则取不到 node 尺寸）*/
-.pin-canvas {
-
 /* ============ 底部宠物面板 · 对齐原型 map-bottom-sheet ============ */
 .map-sheet {
   position: fixed; left: 0; right: 0;
