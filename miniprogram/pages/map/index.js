@@ -167,16 +167,23 @@ Page({
 
   _getCanvas() {
     if (this._canvas) return Promise.resolve(this._canvas);
-    return new Promise((resolve, reject) => {
+    // 首次进页面 canvas 可能还没渲染好 → 重试至多 8 次（每次 80ms）
+    const tryGet = attempt => new Promise((resolve, reject) => {
       wx.createSelectorQuery().in(this)
         .select('#pinCanvas').fields({ node: true, size: true })
         .exec(res => {
-          if (!res || !res[0] || !res[0].node) return reject(new Error('no canvas'));
-          this._canvas = res[0].node;
-          try { this._dpr = wx.getSystemInfoSync().pixelRatio || 2; } catch (e) { this._dpr = 2; }
-          resolve(this._canvas);
+          if (res && res[0] && res[0].node) {
+            this._canvas = res[0].node;
+            try { this._dpr = wx.getSystemInfoSync().pixelRatio || 2; } catch (e) { this._dpr = 2; }
+            resolve(this._canvas);
+          } else if (attempt < 8) {
+            setTimeout(() => tryGet(attempt + 1).then(resolve, reject), 80);
+          } else {
+            reject(new Error('no canvas'));
+          }
         });
     });
+    return tryGet(0);
   },
 
   async getPinIcon(status, emoji) {
