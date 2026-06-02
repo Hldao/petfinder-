@@ -110,7 +110,11 @@ Page({
   },
   onSheetCardTap(e) {
     const id = e.currentTarget.dataset.id;
-    if (id != null) wx.navigateTo({ url: `/pages/detail/index?id=${id}` });
+    const p = this._allPosts.find(x => String(x.id) === String(id));
+    if (!p) return;
+    // 点宠物卡 → 下方弹出迷你详情卡（对齐原型）；有坐标则把地图定位过去
+    if (p.lat && p.lng) this.setData({ latitude: p.lat, longitude: p.lng, scale: 15 });
+    this.setData({ selected: this.makeSelected(p) });
   },
 
   // ============ 迷你详情卡（点针弹出）============
