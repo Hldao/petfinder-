@@ -181,6 +181,27 @@ Page({
     const withGeo = posts.filter(p => p.lat && p.lng);
     this._geoPosts = withGeo;
     this._pids = withGeo.map(p => p.id);
+
+    // 同坐标（如都在「古城北门」）的针展开成小圆环 · 仅改显示摆位，不动库数据
+    const disp = withGeo.map(p => ({ lat: p.lat, lng: p.lng }));
+    const groups = {};
+    withGeo.forEach((p, idx) => {
+      const key = Number(p.lat).toFixed(5) + '|' + Number(p.lng).toFixed(5);
+      (groups[key] = groups[key] || []).push(idx);
+    });
+    Object.keys(groups).forEach(k => {
+      const idxs = groups[k];
+      if (idxs.length < 2) return;
+      const R = 0.00045; // 约 50m 展开半径（仍在 500m 模糊范围内）
+      idxs.forEach((idx, j) => {
+        const ang = (2 * Math.PI * j) / idxs.length;
+        disp[idx] = {
+          lat: withGeo[idx].lat + R * Math.cos(ang),
+          lng: withGeo[idx].lng + R * Math.sin(ang),
+        };
+      });
+    });
+
     const markers = [];
     for (let i = 0; i < withGeo.length; i++) {
       const p = withGeo[i];
@@ -188,7 +209,7 @@ Page({
       let iconPath = '';
       try { iconPath = await this.getPinIcon(st, p.emoji || '🐾'); } catch (e) {}
       const m = {
-        id: i, latitude: p.lat, longitude: p.lng,
+        id: i, latitude: disp[i].lat, longitude: disp[i].lng,
         width: 36, height: 47,
         anchor: { x: 0.5, y: 1 },
         callout: {
