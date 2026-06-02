@@ -62,7 +62,11 @@ Page({
     wx.getLocation({
       type: 'gcj02',
       success: res => this.setData({ latitude: res.latitude, longitude: res.longitude, scale: 14, showLoc: true }),
-      fail: () => wx.showToast({ title: '无法获取定位，请检查授权', icon: 'none' }),
+      fail: () => {
+        // 开发者工具未设模拟定位 / 真机未授权 → 优雅回到大理中心，不卡住
+        this.setData({ latitude: 25.61, longitude: 100.20, scale: 12 });
+        wx.showToast({ title: '定位不可用，已回到大理中心', icon: 'none' });
+      },
     });
   },
 
