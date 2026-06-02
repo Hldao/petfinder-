@@ -1,17 +1,18 @@
 <view class="tab-bar">
-  <view
-    wx:for="{{list}}"
-    wx:key="text"
-    class="tab-item {{selected === index ? 'active' : ''}}"
-    data-path="{{item.pagePath}}"
-    bindtap="switchTab"
-  >
-    <text class="ti-icon">{{item.icon}}</text>
-    <text class="ti-text">{{item.text}}</text>
-  </view>
+  <block wx:for="{{list}}" wx:key="text">
+    <view
+      class="tab {{selected === index ? 'active' : ''}}"
+      data-path="{{item.pagePath}}"
+      bindtap="switchTab"
+    >
+      <view class="ti-icon">{{item.icon}}</view>
+      <text class="ti-text">{{item.text}}</text>
+    </view>
 
-  <!-- 中央凸起发布 FAB（原型中央凸起键的小程序实现）-->
-  <view class="fab" bindtap="onPublish">
-    <text class="fab-plus">＋</text>
-  </view>
+    <!-- 中央内嵌发布键 · 排在 地图(index 1) 之后 · 对齐原型 5 格布局 -->
+    <view wx:if="{{index === 1}}" class="fab-tab" bindtap="onPublish">
+      <view class="fab-bubble"><text class="fab-plus">＋</text></view>
+      <text class="fab-label">发布</text>
+    </view>
+  </block>
 </view>
