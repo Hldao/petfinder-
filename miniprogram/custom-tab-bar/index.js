@@ -2,10 +2,10 @@ Component({
   data: {
     selected: 0,
     list: [
-      { pagePath: '/pages/feed/index', text: '首页', icon: '🏠' },
-      { pagePath: '/pages/map/index', text: '地图', icon: '🗺️' },
-      { pagePath: '/pages/messages/index', text: '消息', icon: '💬' },
-      { pagePath: '/pages/profile/index', text: '我的', icon: '👤' },
+      { pagePath: '/pages/feed/index', text: '首页', icon: '', iconCls: 'i-home' },
+      { pagePath: '/pages/map/index', text: '地图', icon: '', iconCls: 'i-map' },
+      { pagePath: '/pages/messages/index', text: '消息', icon: '', iconCls: 'i-message' },
+      { pagePath: '/pages/profile/index', text: '我的', icon: '🐾', iconCls: '' },
     ],
   },
   methods: {
