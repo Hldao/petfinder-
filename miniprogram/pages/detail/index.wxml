@@ -18,7 +18,6 @@
         <view class="dist-bar-icon">📍</view>
         <view class="dist-bar-text">
           <view class="dist-bar-main">{{post.loc}}{{post.distanceKm ? ' · ' + post.distanceKm + ' km' : ''}}</view>
-          <view wx:if="{{emoTime}}" class="dist-bar-sub">{{emoTime}}</view>
         </view>
       </view>
 

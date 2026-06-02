@@ -5,7 +5,7 @@ Component({
     post: { type: Object, value: {} },
   },
   data: {
-    locLine: '', emoTime: '', longterm: false, helpersText: '', statusCls: 'lost',
+    locLine: '', helpersText: '', statusCls: 'lost',
   },
   observers: {
     post(d) {
@@ -13,8 +13,6 @@ Component({
       this.setData({
         statusCls: d.status === 'found' ? 'found' : 'lost',
         locLine: fmt.locLine(d),
-        emoTime: fmt.emotionalTime(d),
-        longterm: fmt.isLongterm(d),
         helpersText: fmt.helpersText(d),
       });
     },

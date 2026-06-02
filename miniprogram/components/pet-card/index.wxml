@@ -10,7 +10,6 @@
         <text class="breed">· {{post.breed}}{{post.sex ? ' ' + post.sex : ''}}</text>
       </view>
       <view class="pc-meta">{{locLine}}<text class="time"> · {{post.time}}</text></view>
-      <view wx:if="{{emoTime}}" class="emo-time {{longterm ? 'longterm' : ''}}">{{emoTime}}</view>
       <view class="pc-desc">{{post.desc}}</view>
     </view>
   </view>

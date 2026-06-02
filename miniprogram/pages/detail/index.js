@@ -10,8 +10,6 @@ Page({
     isLost: true,
     locLabel: '走失地点',
     timeLabel: '走失时间',
-    emoTime: '',
-    longterm: false,
     notFound: false,
   },
 
@@ -36,8 +34,6 @@ Page({
       statusCls: isLost ? 'lost' : 'found',
       locLabel: isLost ? '走失地点' : '发现地点',
       timeLabel: isLost ? '走失时间' : '发现时间',
-      emoTime: fmt.emotionalTime(post),
-      longterm: fmt.isLongterm(post),
     });
     wx.setNavigationBarTitle({ title: post.statusLabel + ' · ' + post.name });
   },
