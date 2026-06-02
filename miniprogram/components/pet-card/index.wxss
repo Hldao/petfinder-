@@ -1,36 +1,64 @@
+/* pet-card · 对齐原型 prototypes/app-prototype-v10.html .pet-card 全套
+ * 数值 = 原型 px × 2 → rpx · token 引用 app.wxss */
 .pet-card {
+  position: relative;
   background: var(--surface);
   border-radius: var(--radius-lg);
   overflow: hidden;
   box-shadow: var(--shadow-card);
+  transition: transform 0.18s, box-shadow 0.18s;
 }
-.pet-card { transition: transform 0.1s; }
 .pet-card:active { transform: scale(0.99); }
 
-.pc-body { display: flex; padding: 24rpx; gap: 24rpx; }
+/* 自己发布的帖 · 浅杏橘渐变 + 专属阴影（原型 .my-card）*/
+.pet-card.my-card {
+  background: linear-gradient(135deg, #FFFAF4 0%, #FFFFFF 40%);
+  box-shadow: 0 12rpx 36rpx rgba(255,133,82,0.12),
+              0 0 0 2rpx rgba(255,133,82,0.10);
+}
+.pet-card.my-card .pc-photo {
+  box-shadow: inset 0 2rpx 6rpx rgba(0,0,0,0.05),
+              inset 0 0 0 2rpx rgba(255,255,255,0.4),
+              0 0 0 4rpx var(--surface);
+}
+
+.pc-body { display: flex; padding: var(--space-4); gap: var(--space-4); align-items: flex-start; }
 .pc-photo {
-  width: 168rpx; height: 168rpx; border-radius: var(--radius-md);
+  width: 148rpx; height: 148rpx; flex-shrink: 0; border-radius: 32rpx;
   display: flex; align-items: center; justify-content: center;
-  position: relative; flex-shrink: 0;
+  position: relative;
+  box-shadow: inset 0 2rpx 6rpx rgba(0,0,0,0.05),
+              inset 0 0 0 2rpx rgba(255,255,255,0.4);
 }
 .pc-photo.lost  { background: linear-gradient(135deg, var(--apricot-soft) 0%, #FFCDA8 100%); }
 .pc-photo.found { background: linear-gradient(135deg, var(--mint-soft) 0%, #ABDDCB 100%); }
-.pc-photo .emoji { font-size: 76rpx; }
+.pc-photo .emoji { font-size: 72rpx; line-height: 1; display: block; }
 
 .status-bubble {
-  position: absolute; top: -10rpx; left: -10rpx;
+  position: absolute; top: -6rpx; left: -6rpx;
   padding: 6rpx 18rpx; border-radius: var(--radius-pill);
-  font-size: 21rpx; font-weight: 700; color: #fff;
+  font-size: var(--text-xs); font-weight: 700; color: #fff;
+  box-shadow: 0 6rpx 16rpx rgba(0,0,0,0.12),
+              0 0 0 4rpx rgba(255,255,255,0.95);
+  z-index: 2; white-space: nowrap; letter-spacing: 0.02em;
 }
 .status-bubble.lost  { background: var(--apricot); }
 .status-bubble.found { background: var(--mint); }
 
 .pc-info { flex: 1; min-width: 0; padding-top: 4rpx; }
-.pc-name-row { display: flex; align-items: baseline; gap: 12rpx; margin-bottom: 8rpx; }
-.pc-name { font-size: 32rpx; font-weight: 700; }
-.breed { font-size: 23rpx; color: var(--ink-3); font-weight: 500; }
-.pc-meta { font-size: 24rpx; color: var(--ink-3); margin-bottom: 8rpx; }
-.pc-meta .time { color: var(--ink-3); }
+.pc-name-row { display: flex; align-items: baseline; gap: 12rpx; margin-bottom: 8rpx; min-width: 0; overflow: hidden; }
+.pc-name {
+  font-size: 32rpx; font-weight: 700; letter-spacing: -0.005em;
+  flex-shrink: 0; max-width: 70%;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.breed {
+  font-size: 23rpx; color: var(--ink-3); font-weight: 500;
+  flex: 0 1 auto; min-width: 0;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.pc-meta { font-size: 24rpx; color: var(--ink-3); margin-bottom: 12rpx; display: flex; align-items: center; gap: 12rpx; flex-wrap: wrap; }
+.pc-meta .time { color: var(--ink-3); font-weight: 600; font-feature-settings: 'tnum'; }
 .emo-time { font-size: 22rpx; color: var(--apricot-deep); font-weight: 600; margin-bottom: 8rpx; }
 .emo-time.longterm { color: var(--warn-deep); }
 .pc-desc {
@@ -40,16 +68,19 @@
 
 .pc-footer {
   display: flex; align-items: center; gap: 16rpx;
-  padding: 20rpx 24rpx; border-top: 2rpx solid var(--divider-soft);
+  padding: 20rpx 28rpx 24rpx; border-top: 2rpx solid var(--divider-soft);
 }
-.pc-action { font-size: 23rpx; color: var(--ink-3); font-weight: 600; }
+.pc-action { font-size: 23rpx; color: var(--ink-3); font-weight: 600; display: flex; align-items: center; gap: 6rpx; }
 .pc-action.share {
   margin-left: auto; color: var(--apricot-deep);
   background: var(--apricot-soft); padding: 8rpx 20rpx; border-radius: var(--radius-pill); font-weight: 700;
 }
-/* 我发布的小标识 · r125 footer 左侧 */
+/* found 卡转发按钮换薄荷色（原型 .found-card .pc-action.share）*/
+.pet-card.found-card .pc-action.share { color: var(--mint-deep); background: var(--mint-soft); }
+
+/* 「我发布的」小标识 · footer 左下角（原型 .pc-mine）*/
 .pc-mine {
-  display: inline-flex; align-items: center; gap: 6rpx;
+  display: inline-flex; align-items: center; gap: 8rpx;
   padding: 6rpx 18rpx;
   background: var(--apricot-soft);
   color: var(--apricot-deep);
