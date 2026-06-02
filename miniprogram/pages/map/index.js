@@ -8,7 +8,14 @@ const LABEL_COLOR = { lost: '#E66A38', found: '#3F9079' };
 
 function petName(p) { return p.name || p.breed || '宠物'; }
 function statusCls(p) { return p.status === 'found' ? 'found' : 'lost'; }
-function distText(p) { return p.distanceKm ? ` · 距你 ${p.distanceKm} km` : ''; }
+// 地图语境用「丢失/招领」（对齐原型 sheet/filter），与 feed 的「寻宠」区分
+const MAP_LABEL = { lost: '丢失', found: '招领' };
+// 距离文案：<1km → 约 N 米；否则 约 N 公里（对齐原型 renderSheetCards）
+function distStr(km) {
+  if (!km) return '';
+  return km < 1 ? `约 ${Math.round(km * 1000)} 米` : `约 ${km} 公里`;
+}
+function sheetDist(p) { return p.distanceKm ? ` · ${distStr(p.distanceKm)}` : ''; }
 
 Page({
   data: {
@@ -42,7 +49,10 @@ Page({
     this._minH = 240;                                   // 收起高度(px)
     this._maxH = Math.max(360, Math.round(wh * 0.62));  // 展开高度(px)
     this.setData({ sheetH: this._minH });
+    // 精度提示 5s 自动消失（对齐原型 r90 · 教育只说一次）
+    this._hintTimer = setTimeout(() => this.setData({ showHint: false }), 5000);
   },
+  onUnload() { if (this._hintTimer) clearTimeout(this._hintTimer); },
 
   onShow() {
     if (typeof this.getTabBar === 'function' && this.getTabBar()) {
@@ -113,8 +123,8 @@ Page({
       .filter(p => !f || (p.status === f))
       .map(p => ({
         id: p.id, emoji: p.emoji || '🐾', name: petName(p),
-        statusLabel: p.statusLabel || (statusCls(p) === 'found' ? '招领' : '寻宠'),
-        statusCls: statusCls(p), loc: p.loc || '', distText: distText(p),
+        statusLabel: MAP_LABEL[statusCls(p)],
+        statusCls: statusCls(p), loc: p.loc || '', distText: sheetDist(p),
       }));
     this.setData({ sheetCards: cards, sheetCount: cards.length });
   },
@@ -159,8 +169,8 @@ Page({
       id: p.id, emoji: p.emoji || '🐾', statusCls: st,
       name: petName(p),
       breed: [p.breed, p.sex].filter(Boolean).join(' · '),
-      statusLabel: p.statusLabel || (st === 'found' ? '招领' : '寻宠'),
-      loc: p.loc || '', distText: distText(p), desc: p.desc || '',
+      statusLabel: MAP_LABEL[st],
+      loc: p.loc || '', distText: p.distanceKm ? ` · 距你 ${distStr(p.distanceKm)}` : '', desc: p.desc || '',
     };
   },
   closeSelected() { this.setData({ selected: null }); },

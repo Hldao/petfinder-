@@ -72,7 +72,7 @@
     </view>
     <view class="sheet-filter-row">
       <view class="sfc {{sheetFilter === '' ? 'active' : ''}}" data-sf="" bindtap="applySheetFilter">全部</view>
-      <view class="sfc {{sheetFilter === 'lost' ? 'active' : ''}}" data-sf="lost" bindtap="applySheetFilter"><view class="sfc-dot lost"></view>寻宠</view>
+      <view class="sfc {{sheetFilter === 'lost' ? 'active' : ''}}" data-sf="lost" bindtap="applySheetFilter"><view class="sfc-dot lost"></view>丢失</view>
       <view class="sfc {{sheetFilter === 'found' ? 'active' : ''}}" data-sf="found" bindtap="applySheetFilter"><view class="sfc-dot found"></view>招领</view>
     </view>
     <scroll-view scroll-y class="sheet-scroll" enable-flex>
