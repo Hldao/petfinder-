@@ -11,6 +11,27 @@
   height: 100vh;
 }
 
+/* 点针自定义气泡（cover-view · 颜色硬编码，cover-view 取 page 变量不稳）*/
+.mc {
+  background: #FFFFFF;
+  border-radius: 16rpx;
+  padding: 16rpx 20rpx;
+  min-width: 220rpx;
+  box-shadow: 0 6rpx 20rpx rgba(31,31,31,0.12);
+}
+.mc-top { display: flex; flex-direction: row; align-items: center; }
+.mc-name { font-size: 26rpx; color: #1F1F1F; font-weight: 700; }
+.mc-tag {
+  font-size: 18rpx; margin-left: 12rpx;
+  padding: 2rpx 14rpx; border-radius: 999rpx; font-weight: 700;
+}
+.mc.lost .mc-tag  { background: #FFE9DD; color: #E66A38; }
+.mc.found .mc-tag { background: #DDF1EA; color: #3F9079; }
+.mc-dist { font-size: 20rpx; color: #7A7A7A; margin-top: 8rpx; }
+.mc-go { font-size: 22rpx; font-weight: 700; margin-top: 10rpx; }
+.mc.lost .mc-go  { color: #E66A38; }
+.mc.found .mc-go { color: #3F9079; }
+
 /* r90 precision-hint · 让位胶囊（top 50~82 / right 7~94）+ 5s 后猫猫可加 dismiss */
 .map-precision-hint {
   position: fixed;

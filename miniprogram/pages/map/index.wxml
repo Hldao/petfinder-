@@ -7,9 +7,22 @@
     scale="{{scale}}"
     markers="{{markers}}"
     bindmarkertap="onMarkerTap"
+    bindcallouttap="onCalloutTap"
     bindtap="onMapTap"
     show-location="{{showLoc}}"
-  ></map>
+  >
+    <!-- 点针弹出的自定义气泡（跟随针 · 对齐原型 pin-popup）-->
+    <cover-view slot="callout">
+      <cover-view wx:for="{{markers}}" wx:key="id" marker-id="{{item.id}}" class="mc {{item.statusCls}}">
+        <cover-view class="mc-top">
+          <cover-view class="mc-name">{{item.calloutName}}</cover-view>
+          <cover-view class="mc-tag">{{item.calloutTag}}</cover-view>
+        </cover-view>
+        <cover-view class="mc-dist">{{item.calloutDist}}</cover-view>
+        <cover-view class="mc-go">查看详情 ›</cover-view>
+      </cover-view>
+    </cover-view>
+  </map>
 
   <!-- r90 precision-hint · 隐私精度提示（可✕关闭）-->
   <view wx:if="{{showHint}}" class="map-precision-hint">

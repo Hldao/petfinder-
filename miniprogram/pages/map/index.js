@@ -222,12 +222,12 @@ Page({
         id: i, latitude: disp[i].lat, longitude: disp[i].lng,
         width: 36, height: 47,
         anchor: { x: 0.5, y: 1 },
-        callout: {
-          content: petName(p),
-          color: LABEL_COLOR[st], fontSize: 11, fontWeight: 'bold',
-          borderRadius: 6, padding: 5, bgColor: '#FFFFFF',
-          display: 'ALWAYS', textAlign: 'center',
-        },
+        // 点针弹出跟随针的自定义气泡（对齐原型 pin-popup）· 内容见 wxml slot cover-view
+        customCallout: { display: 'BYCLICK', anchorX: 0, anchorY: -6 },
+        statusCls: st,
+        calloutName: petName(p),
+        calloutTag: MAP_LABEL[st],
+        calloutDist: p.distanceKm ? '距你 ' + distStr(p.distanceKm) : (p.loc || ''),
       };
       if (iconPath) m.iconPath = iconPath;
       markers.push(m);
@@ -300,8 +300,16 @@ Page({
   },
 
   onMarkerTap(e) {
+    // customCallout(BYCLICK) 会自动弹出跟随针的气泡；这里仅收起其它浮层 + 定位过去
     const i = e.detail.markerId;
     const p = this._geoPosts[i];
-    if (p) this.setData({ selected: this.makeSelected(p), searchOpen: false });
+    this.setData({ selected: null, searchOpen: false });
+    if (p && p.lat && p.lng) this.setData({ latitude: p.lat, longitude: p.lng });
+  },
+  // 点气泡 → 进详情
+  onCalloutTap(e) {
+    const i = e.detail.markerId;
+    const p = this._geoPosts[i];
+    if (p) wx.navigateTo({ url: `/pages/detail/index?id=${p.id}` });
   },
 });
