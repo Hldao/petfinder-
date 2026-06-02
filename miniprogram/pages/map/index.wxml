@@ -19,4 +19,7 @@
     <cover-view class="mph-icon">🛡</cover-view>
     <cover-view class="mph-text">位置精度模糊处理至 500m 以保护隐私</cover-view>
   </cover-view>
+
+  <!-- 离屏 canvas · 运行时绘制 橙/绿水滴+emoji 的 marker 图标（对齐原型 .map-pin）-->
+  <canvas type="2d" id="pinCanvas" class="pin-canvas"></canvas>
 </view>

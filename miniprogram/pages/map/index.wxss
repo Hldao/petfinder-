@@ -37,3 +37,10 @@
   font-weight: 600;
   flex: 1;
 }
+
+/* 离屏绘制用 canvas · 移出可视区（不可用 display:none，否则取不到 node 尺寸）*/
+.pin-canvas {
+  position: fixed;
+  left: -9999rpx; top: -9999rpx;
+  width: 40px; height: 52px;
+}
