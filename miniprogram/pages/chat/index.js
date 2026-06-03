@@ -1,5 +1,6 @@
 const app = getApp();
 const cloud = require('../../utils/cloud.js');
+const chatUtil = require('../../utils/chat.js');
 
 // Quick Reply 角色化 · r129 文案优化（去指令感 / 软化结尾 / 更口语）
 const QUICK = {
@@ -39,7 +40,7 @@ Page({
   data: {
     peerName: '发布者', petName: '', emoji: '🐾',
     messages: [], input: '', quick: [], scrollId: '',
-    cid: '', pid: '',
+    cid: '', pid: '', peerId: '', myId: '',
     quickExpanded: false,
   },
 
@@ -52,43 +53,61 @@ Page({
     const petName = decodeURIComponent(options.pet || '');
     const emoji = decodeURIComponent(options.emoji || '🐾');
     const role = options.role === 'owner' ? 'owner' : 'finder';
-    const cid = options.cid || '';
-    const messages = SEED_MSGS[cid] ? SEED_MSGS[cid].slice() : [];
+    const cid = decodeURIComponent(options.cid || '');
+    const peerId = decodeURIComponent(options.peerId || '');
+    // 云端未就绪 / 无会话标识 → 用本地示例消息（离线演示）
+    const messages = (app.globalData.cloudReady && cid) ? [] : (SEED_MSGS[cid] ? SEED_MSGS[cid].slice() : []);
     this.setData({
-      peerName, petName, emoji, cid, pid: options.pid || '',
+      peerName, petName, emoji, cid, peerId, pid: options.pid || '',
       quick: QUICK[role], messages,
     });
     wx.setNavigationBarTitle({ title: peerName });
     this.scrollBottom();
 
-    // 实时消息（03 §4.6：MVP 用 db.watch · 不自建 WebSocket）
-    if (app.globalData.cloudReady && cid) this.setupWatch(cid);
-  },
-
-  setupWatch(cid) {
-    try {
-      const db = wx.cloud.database();
-      this._watcher = db.collection('messages').where({ chatId: cid }).watch({
-        onChange: snapshot => {
-          if (snapshot.type === 'init') return; // 初始快照跳过，避免与已显示重复
-          const my = app.globalData.openid;
-          const adds = (snapshot.docChanges || []).filter(c =>
-            c.dataType === 'add' && c.doc && c.doc.sender_id !== my && c.doc.status !== 'blocked');
-          if (!adds.length) return;
-          const newMsgs = adds.map(c => ({ mine: false, content: c.doc.content, time: now() }));
-          this.setData({ messages: this.data.messages.concat(newMsgs) });
-          this.scrollBottom();
-        },
-        onError: e => console.error('[chat] watch error', e),
+    // 云端真实会话：拉历史 + 轻量轮询看对方新消息
+    // （messages 集合"仅创建者可读写" → db.watch 收不到对方消息，故走云函数 + 轮询）
+    if (app.globalData.cloudReady && cid) {
+      chatUtil.ensureOpenid().then(id => {
+        this.setData({ myId: id });
+        this.loadHistory();
       });
-    } catch (e) {
-      console.error('[chat] setupWatch fail', e);
     }
   },
 
-  onUnload() {
-    if (this._watcher) { try { this._watcher.close(); } catch (e) {} }
+  // 拉云端历史（以云端为准；保留本地末尾"发送中"的乐观消息避免闪烁）
+  loadHistory() {
+    const cid = this.data.cid;
+    if (!cid) return;
+    cloud.call('chatMessages', { chatId: cid })
+      .then(res => {
+        const cloudMsgs = ((res && res.messages) || []).map(m => ({
+          mine: m.mine, content: m.content, time: chatUtil.fmtTime(m.ts),
+        }));
+        const cloudKeys = new Set(cloudMsgs.map(m => (m.mine ? '1|' : '0|') + m.content));
+        // 本地自己刚发、云端还没回灌到的，临时保留在末尾
+        const pending = this.data.messages.filter(m => m.mine && !cloudKeys.has('1|' + m.content));
+        this.setData({ messages: cloudMsgs.concat(pending) });
+        this.scrollBottom();
+      })
+      .catch(e => console.error('[chat] loadHistory 失败', e));
   },
+
+  startPolling() {
+    this.stopPolling();
+    this._poll = setInterval(() => this.loadHistory(), 5000);
+  },
+  stopPolling() {
+    if (this._poll) { clearInterval(this._poll); this._poll = null; }
+  },
+
+  onShow() {
+    if (this.data.cid && app.globalData.cloudReady) {
+      this.loadHistory();
+      this.startPolling();
+    }
+  },
+  onHide() { this.stopPolling(); },
+  onUnload() { this.stopPolling(); },
 
   onInput(e) { this.setData({ input: e.detail.value }); },
   pickQuick(e) { this.setData({ input: e.currentTarget.dataset.text }); },
@@ -143,17 +162,22 @@ Page({
       });
       return;
     }
+    // 乐观追加：立即显示自己这条
     const messages = this.data.messages.concat({ mine: true, content: text, time: now() });
     this.setData({ messages, input: '' });
     this.scrollBottom();
 
     // 云端就绪：每条过 msgSecCheck + 入库（03 §4.7）
     if (app.globalData.cloudReady && this.data.cid) {
-      cloud.call('sendMessage', { chatId: this.data.cid, content: text })
+      cloud.call('sendMessage', {
+        chatId: this.data.cid, content: text,
+        postId: this.data.pid, peerId: this.data.peerId,
+      })
         .then(res => {
           if (res && res.status === 'blocked') {
             wx.showToast({ title: '该消息被审核拦截', icon: 'none' });
           }
+          this.loadHistory(); // 入库后回灌：乐观消息换成云端版本 + 同步时间
         })
         .catch(err => console.error('[chat] sendMessage 失败', err));
     }

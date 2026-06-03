@@ -2,6 +2,7 @@ const app = getApp();
 const cloud = require('../../utils/cloud.js');
 const seed = require('../../utils/seed.js');
 const fmt = require('../../utils/format.js');
+const chatUtil = require('../../utils/chat.js');
 
 Page({
   data: {
@@ -38,13 +39,23 @@ Page({
     wx.setNavigationBarTitle({ title: post.statusLabel + ' · ' + post.name });
   },
 
-  onContact() {
+  async onContact() {
     // 详情页主 CTA → 直接进 chat（无门槛 · r16 信息架构）
     const p = this.data.post;
     const role = this.data.isLost ? 'finder' : 'owner'; // 寻宠帖→我是拾主/路人；招领帖→我是失主
     const q = s => encodeURIComponent(s);
+    const peerId = p.poster_id || ''; // 帖子发布者 = 私聊对方
+    let cid = '';
+    if (app.globalData.cloudReady) {
+      const myId = await chatUtil.ensureOpenid();
+      if (myId && peerId && myId === peerId) {
+        wx.showToast({ title: '这是你发布的帖子', icon: 'none' });
+        return; // 不和自己私聊
+      }
+      if (myId && peerId) cid = chatUtil.makeChatId(p.id, myId, peerId);
+    }
     wx.navigateTo({
-      url: `/pages/chat/index?peer=${q('发布者')}&pet=${q(p.name || '')}&emoji=${q(p.emoji)}&role=${role}&pid=${p.id}`,
+      url: `/pages/chat/index?peer=${q('发布者')}&pet=${q(p.name || '')}&emoji=${q(p.emoji)}&role=${role}&pid=${p.id}&cid=${q(cid)}&peerId=${q(peerId)}`,
     });
   },
 

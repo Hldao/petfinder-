@@ -1,3 +1,8 @@
+const cloud = require('../../utils/cloud.js');
+const chatUtil = require('../../utils/chat.js');
+const app = getApp();
+
+// 离线 / 云端不可用时的示例消息（真实 > 看起来繁荣：云端就绪时只显示真实会话）
 const ALL_MESSAGES = [
   {
     id: 'sys1', type: 'system',
@@ -61,53 +66,93 @@ const ALL_MESSAGES = [
   },
 ];
 
-function filterByTab(tab) {
-  if (tab === 'all') return ALL_MESSAGES;
-  if (tab === 'replies') return ALL_MESSAGES.filter(m => m.type === 'reply');
-  if (tab === 'dm') return ALL_MESSAGES.filter(m => m.type === 'dm' || m.type === 'system');
-  return ALL_MESSAGES;
+function filterByTab(list, tab) {
+  if (tab === 'replies') return list.filter(m => m.type === 'reply');
+  if (tab === 'dm') return list.filter(m => m.type === 'dm' || m.type === 'system');
+  return list;
 }
 
 function hasUnread(list) {
   return list.some(m => m.unread > 0);
 }
 
+// chatList 云端会话 → 列表渲染字段
+// 不收集真实昵称（反例库「发布者信息卡=信任剧场」）→ 对方名用角色占位
+function mapChats(chats) {
+  return chats.map(c => ({
+    id: c.chatId,
+    type: 'dm',
+    avatar: c.emoji,
+    avatarStyle: c.type === 'found' ? 'orange' : 'blue',
+    peerName: c.role === 'owner' ? '热心人' : '发布者',
+    petName: c.petName,
+    context: '关于 · ' + c.petName + ' ' + c.statusLabel,
+    prefix: c.lastMine ? '我：' : 'ta：',
+    lastMsg: c.lastMsg,
+    lastTime: chatUtil.fmtTime(c.lastTs),
+    unread: 0, // MVP 暂不做未读计数（需已读位点）
+    chatId: c.chatId, pid: c.postId, peerId: c.peerId, role: c.role,
+  }));
+}
+
 Page({
   data: {
     currentTab: 'all',
-    displayMessages: filterByTab('all'),
-    hasUnread: hasUnread(ALL_MESSAGES),
+    displayMessages: [],
+    hasUnread: false,
   },
 
   onShow() {
     if (typeof this.getTabBar === 'function' && this.getTabBar()) {
       this.getTabBar().setData({ selected: 2 });
     }
+    this.refresh();
+  },
+
+  refresh() {
+    if (app.globalData.cloudReady) {
+      cloud.call('chatList', {})
+        .then(res => {
+          this._source = mapChats((res && res.chats) || []);
+          this.applyTab();
+        })
+        .catch(err => {
+          console.error('[messages] chatList 失败', err);
+          this._source = [];
+          this.applyTab();
+        });
+    } else {
+      this._source = ALL_MESSAGES.slice();
+      this.applyTab();
+    }
+  },
+
+  applyTab() {
+    const src = this._source || [];
+    this.setData({
+      displayMessages: filterByTab(src, this.data.currentTab),
+      hasUnread: hasUnread(src),
+    });
   },
 
   switchTab(e) {
-    const tab = e.currentTarget.dataset.tab;
-    const list = filterByTab(tab);
-    this.setData({ currentTab: tab, displayMessages: list });
+    this.setData({ currentTab: e.currentTarget.dataset.tab }, () => this.applyTab());
   },
 
   openMsg(e) {
     const msg = e.currentTarget.dataset.msg;
 
-    // 消除未读
-    const updated = ALL_MESSAGES.map(m => m.id === msg.id ? { ...m, unread: 0 } : m);
-    Object.assign(ALL_MESSAGES, updated.reduce((acc, m, i) => { acc[i] = m; return acc; }, {}));
-    const list = filterByTab(this.data.currentTab);
-    this.setData({ displayMessages: list, hasUnread: hasUnread(ALL_MESSAGES) });
-
+    // 帖子回复 / 系统通知 → 跳详情
     if (msg.type === 'reply' || msg.type === 'system') {
       wx.navigateTo({ url: `/pages/detail/index?id=${msg.petId}&role=${msg.role || 'owner'}` });
       return;
     }
-    if (msg.type === 'dm') {
-      wx.navigateTo({
-        url: `/pages/chat/index?cid=${msg.chatId}&peer=${encodeURIComponent(msg.peerName)}&pet=${encodeURIComponent(msg.context)}&emoji=${encodeURIComponent(msg.avatar)}&role=${msg.role || 'finder'}`,
-      });
-    }
+
+    // 私信 → 进真实会话（带 cid / pid / peerId）
+    const q = s => encodeURIComponent(s || '');
+    wx.navigateTo({
+      url: `/pages/chat/index?cid=${q(msg.chatId)}&pid=${q(msg.pid || '')}&peerId=${q(msg.peerId || '')}` +
+        `&peer=${q(msg.peerName)}&pet=${q(msg.petName || msg.context)}&emoji=${q(msg.avatar)}&role=${msg.role || 'finder'}`,
+    });
   },
 });
