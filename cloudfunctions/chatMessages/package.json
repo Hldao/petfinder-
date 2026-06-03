@@ -1,0 +1,9 @@
+{
+  "name": "chatMessages",
+  "version": "1.0.0",
+  "description": "拉取某会话历史消息（绕开仅创建者可读写权限）",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3"
+  }
+}

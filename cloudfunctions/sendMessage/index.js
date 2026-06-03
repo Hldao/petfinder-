@@ -6,8 +6,12 @@ const db = cloud.database();
 
 exports.main = async (event = {}) => {
   const { OPENID } = cloud.getWXContext();
-  const { chatId = '', content = '' } = event;
+  const { chatId = '', content = '', postId = '', peerId = '' } = event;
   if (!content) return { ok: false, msg: '空消息' };
+  if (!chatId) return { ok: false, msg: '缺少会话标识' };
+
+  // participants：会话双方（去重 + 去空）→ chatList 据此聚合"我参与的会话"
+  const participants = [...new Set([OPENID, peerId].filter(Boolean))];
 
   let status = 'sent';
   try {
@@ -20,7 +24,8 @@ exports.main = async (event = {}) => {
   }
 
   const doc = {
-    chatId, sender_id: OPENID, content, type: 'text', status,
+    chatId, postId, sender_id: OPENID, peer_id: peerId, participants,
+    content, type: 'text', status,
     createdAt: db.serverDate(),
   };
   try {

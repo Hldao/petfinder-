@@ -1,0 +1,9 @@
+{
+  "name": "chatList",
+  "version": "1.0.0",
+  "description": "当前用户参与的所有会话列表",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3"
+  }
+}
