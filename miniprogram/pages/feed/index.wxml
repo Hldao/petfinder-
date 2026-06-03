@@ -30,19 +30,19 @@
         <view class="chip {{filter==='found'?'active':''}}" data-filter="found" bindtap="applyFilter">
           <view class="chip-dot" style="background:var(--mint)"></view>招领
         </view>
-        <view class="chip chip-sort">
-          <text class="cs-ic">⏱</text>
-          <text>最新</text>
+        <view class="chip chip-sort" bindtap="openSort">
+          <text class="cs-ic">{{sortMode==='distance'?'📍':'⏱'}}</text>
+          <text>{{sortMode==='distance'?'最近':'最新'}}</text>
           <text class="chevron-down">▾</text>
         </view>
       </view>
     </view>
 
     <!-- 希望叙事条 · r45 §6.7 去成就数字 -->
-    <view class="feed-stat-bar">
+    <view class="feed-stat-bar {{statBarHide?'dismissed':''}}">
       <view class="fsb-ic">🐾</view>
       <view class="fsb-body">
-        <view class="fsb-line">今天有小朋友<text class="fsb-soft">在等好心人</text> · <text class="fsb-soft">附近有人在一起找</text></view>
+        <view class="fsb-line">今天有小朋友<text class="fsb-soft">在等好心人</text><text class="fsb-sep"> · </text><text class="fsb-soft">附近有人在一起找</text></view>
         <text class="fsb-tagline">在大理，走失的小朋友正被大家一起找回 🐾</text>
       </view>
     </view>
@@ -101,6 +101,23 @@
       <view class="m-body"><view>有人留线索 / 匹配到 ta 时，第一时间通知你。</view></view>
       <view class="m-btn primary" bindtap="followMp">去关注</view>
       <view class="m-btn ghost" bindtap="dismissMp">稍后再说</view>
+    </view>
+  </view>
+
+  <!-- 排序 action-sheet -->
+  <view wx:if="{{showSort}}" class="as-mask" bindtap="closeSort">
+    <view class="action-sheet" catchtap="noop">
+      <view class="as-handle"></view>
+      <view class="as-title">排序方式</view>
+      <view class="as-option {{sortMode==='time'?'active':''}}" data-mode="time" bindtap="pickSort">
+        <text class="as-opt-ic">⏱</text><text>最新发布</text>
+        <text wx:if="{{sortMode==='time'}}" class="as-opt-check">✓</text>
+      </view>
+      <view class="as-option {{sortMode==='distance'?'active':''}}" data-mode="distance" bindtap="pickSort">
+        <text class="as-opt-ic">📍</text><text>距离最近</text>
+        <text wx:if="{{sortMode==='distance'}}" class="as-opt-check">✓</text>
+      </view>
+      <view class="as-cancel" bindtap="closeSort">取消</view>
     </view>
   </view>
 </view>

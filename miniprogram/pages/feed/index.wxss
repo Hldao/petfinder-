@@ -114,14 +114,41 @@
   flex-shrink: 0;
 }
 
+/* feed 筛选 chip 等宽铺满（对齐原型 #feed-filter-row）· sort chip 不拉伸 */
+.filter-row > .chip { flex: 1; justify-content: center; }
+.filter-row > .chip.chip-sort { flex: 0 0 auto; }
 /* r124 chip-sort · 与普通 chip 同款（surface + shadow-pill）+ chevron 提示 */
 .chip.chip-sort {
   background: var(--surface);
   color: var(--ink-2);
   font-weight: 600;
   box-shadow: var(--shadow-pill);
-  margin-left: auto;
+  margin-left: 8rpx;
 }
+
+/* 排序 action-sheet */
+@keyframes asMaskIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes asSheetUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+.as-mask {
+  position: fixed; left: 0; right: 0; top: 0; bottom: 0;
+  background: rgba(0,0,0,0.4); z-index: 50;
+  animation: asMaskIn 0.22s ease;
+}
+.action-sheet {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 51;
+  background: var(--surface);
+  border-radius: 32rpx 32rpx 0 0;
+  padding: 12rpx 0 calc(16rpx + env(safe-area-inset-bottom));
+  animation: asSheetUp 0.32s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.as-handle { width: 72rpx; height: 8rpx; background: var(--ink-5); border-radius: 4rpx; margin: 12rpx auto 8rpx; }
+.as-title { text-align: center; font-size: 23rpx; color: var(--ink-3); padding: 12rpx 0 8rpx; }
+.as-option { display: flex; align-items: center; gap: 20rpx; padding: 28rpx 40rpx; font-size: 30rpx; color: var(--ink-1); }
+.as-option.active { color: var(--apricot-deep); font-weight: 700; }
+.as-opt-ic { font-size: 32rpx; }
+.as-opt-sub { font-size: 21rpx; color: var(--ink-4); margin-left: 4rpx; }
+.as-opt-check { margin-left: auto; color: var(--apricot-deep); font-weight: 700; font-size: 30rpx; }
+.as-cancel { margin: 12rpx 32rpx 0; padding: 26rpx; text-align: center; background: var(--bg); border-radius: var(--radius-pill); font-size: 30rpx; color: var(--ink-2); font-weight: 600; }
 .cs-ic { font-size: 22rpx; }
 .chevron-down {
   font-size: 20rpx;
@@ -138,6 +165,15 @@
   border: 2rpx solid rgba(255,133,82,0.16);
   display: flex; align-items: center;
   gap: 22rpx;
+  max-height: 240rpx; overflow: hidden;
+  transition: opacity 0.5s ease, max-height 0.5s ease, margin 0.5s ease, padding 0.5s ease, border-width 0.5s ease;
+}
+/* 教育只说一次 · 5s 后柔和折叠淡出（对齐原型 dismissed）*/
+.feed-stat-bar.dismissed {
+  opacity: 0; max-height: 0;
+  margin-top: 0; margin-bottom: 0;
+  padding-top: 0; padding-bottom: 0;
+  border-width: 0;
 }
 .fsb-ic {
   width: 56rpx; height: 56rpx;
@@ -156,6 +192,7 @@
   line-height: 1.5;
 }
 .fsb-soft { color: var(--ink-3); }
+.fsb-sep { color: var(--ink-4); }
 .fsb-tagline {
   display: block;
   margin-top: 4rpx;

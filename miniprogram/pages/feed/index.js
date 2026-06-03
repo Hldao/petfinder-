@@ -6,6 +6,9 @@ Page({
   data: {
     posts: [],        // 当前筛选后展示的
     filter: 'all',    // all | lost | found
+    sortMode: 'time', // time | distance
+    showSort: false,
+    statBarHide: false, // 希望叙事条 5s 后柔和折叠（教育只说一次）
     loading: true,
     fromSeed: false,  // 是否在用本地 seed（提示开发者）
     showPrivacy: false, // 启动隐私协议（首启 · 不可绕过）
@@ -18,6 +21,18 @@ Page({
   onLoad() {
     this.loadFeed();
     this.checkOnboarding();
+    // 希望叙事条 5s 后柔和折叠（教育只说一次 · 不长期占注意力）
+    this._statTimer = setTimeout(() => this.setData({ statBarHide: true }), 5000);
+  },
+  onUnload() { if (this._statTimer) clearTimeout(this._statTimer); },
+
+  // 排序 sheet
+  openSort() { this.setData({ showSort: true }); },
+  closeSort() { this.setData({ showSort: false }); },
+  noop() {},
+  pickSort(e) {
+    this.setData({ sortMode: e.currentTarget.dataset.mode, showSort: false });
+    this.applyCurrentFilter();
   },
 
   // 03 §6 流程：首启隐私 modal → 同意 → 0.25s 公众号 modal
@@ -97,7 +112,10 @@ Page({
 
   applyCurrentFilter() {
     const f = this.data.filter;
-    const posts = f === 'all' ? this._all : this._all.filter(d => d.status === f);
+    let posts = f === 'all' ? this._all.slice() : this._all.filter(d => d.status === f);
+    if (this.data.sortMode === 'distance') {
+      posts = posts.slice().sort((a, b) => (a.distanceKm || 99999) - (b.distanceKm || 99999));
+    }
     this.setData({ posts });
   },
 
