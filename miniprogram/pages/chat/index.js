@@ -139,7 +139,14 @@ Page({
   blockPeer() {
     const name = this.data.peerName;
     const blocked = wx.getStorageSync('blocked') || [];
-    if (!blocked.includes(name)) { blocked.push(name); wx.setStorageSync('blocked', blocked); }
+    const exists = blocked.some(it => (typeof it === 'string' ? it : it.name) === name);
+    if (!exists) {
+      const d = new Date();
+      const p = n => String(n).padStart(2, '0');
+      const time = `${p(d.getMonth() + 1)}-${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}`;
+      blocked.push({ name, time });
+      wx.setStorageSync('blocked', blocked);
+    }
     wx.showToast({ title: '已拉黑', icon: 'none' });
     setTimeout(() => wx.navigateBack(), 600);
   },

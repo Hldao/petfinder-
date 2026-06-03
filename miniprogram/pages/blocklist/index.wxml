@@ -3,11 +3,16 @@
     <view class="fe-icon">🌿</view>
     <view class="empty-title">一片清净</view>
     <view class="empty-sub">希望你在这里遇到的，都是善意</view>
+    <view class="exit-btn" hover-class="exit-hover" bindtap="goBack">返回</view>
   </view>
   <view wx:else class="list">
-    <view wx:for="{{blocked}}" wx:key="*this" class="row">
-      <text class="name">{{item}}</text>
-      <view class="unblock" data-name="{{item}}" bindtap="unblock">移出</view>
+    <view wx:for="{{blocked}}" wx:key="name" class="row">
+      <view class="b-avatar">🚫</view>
+      <view class="b-info">
+        <view class="b-name">{{item.name}}</view>
+        <view wx:if="{{item.time}}" class="b-time">拉黑于 {{item.time}}</view>
+      </view>
+      <view class="unblock" hover-class="unblock-hover" data-name="{{item.name}}" bindtap="unblock">解除</view>
     </view>
   </view>
 </view>
