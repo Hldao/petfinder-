@@ -40,6 +40,9 @@
         <view class="add-label">截图/照片</view>
       </view>
     </view>
+
+    <!-- 保密承诺 · 信任建立 -->
+    <view class="warn-block">🔒 我们承诺：所有申诉由平台审核员保密处理，证据材料留存 6 个月。一旦核实存在冒领，将永久封号处理。</view>
   </view>
 
   <view class="action-bar">
