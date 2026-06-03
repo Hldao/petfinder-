@@ -27,23 +27,23 @@ exports.main = async (event = {}) => {
 
   // 内容审核：pass→approved，risky→拒绝，不可用→pending_review 交人工
   let status = 'pending_review';
-  try {
-    const safe = await cloud.callFunction({ name: 'contentSafety', data: { text: `${desc} ${name} ${breed}`, images: photos } });
-    const r = (safe && safe.result) || {};
-    if (r.pass === false) {
-      // risky：正常拒绝。但开发期未发布小程序 msgSecCheck 不可信——正常中文也会
-      // 误判 87014（招领帖 name 为空恰好没命中、寻宠帖带 name 就被拦 = 真机联调撞到的现象）。
-      // 故 DEV_AUTO_APPROVE 下连「误判违规」一并放过。⚠ 生产环境不设此变量 → 仍正常拒绝。
-      if (!DEV_AUTO_APPROVE) return { ok: false, msg: '内容含敏感信息（如微信/电话/悬赏），请修改后重发' };
-      status = 'approved';
-    } else if (r.pass === true) {
-      status = 'approved';
-    } else if (DEV_AUTO_APPROVE) {
-      status = 'approved'; // pass:null 接口不可用 + 开发开关 → 直接通过
+  if (DEV_AUTO_APPROVE) {
+    // ⚠ 开发期专用：未发布小程序的 msgSecCheck/imgSecCheck 在真机上会发起真实网络请求并
+    // 挂起到超时（imgSecCheck 还逐张 downloadFile，更慢）。postCreate 串行等 contentSafety
+    // 就会超过云函数默认 3s 执行上限被杀（-504003 FUNCTIONS_TIME_LIMIT_EXCEEDED · 真机联调撞到）。
+    // 开发期审核结果反正一律放过 → 干脆跳过整个审核调用，直接 approved。
+    // 生产环境不设 DEV_AUTO_APPROVE → 走下面真实审核链路。
+    status = 'approved';
+  } else {
+    try {
+      const safe = await cloud.callFunction({ name: 'contentSafety', data: { text: `${desc} ${name} ${breed}`, images: photos } });
+      const r = (safe && safe.result) || {};
+      if (r.pass === false) return { ok: false, msg: '内容含敏感信息（如微信/电话/悬赏），请修改后重发' };
+      if (r.pass === true) status = 'approved';
+      // pass:null（接口不可用）→ 保持 pending_review 交人工
+    } catch (e) {
+      // contentSafety 调用异常 → 保持 pending_review 交人工
     }
-  } catch (e) {
-    // contentSafety 调用异常 → 默认 pending_review；开发期开关下直接通过
-    if (DEV_AUTO_APPROVE) status = 'approved';
   }
 
   const doc = {
