@@ -30,9 +30,17 @@ exports.main = async (event = {}) => {
   try {
     const safe = await cloud.callFunction({ name: 'contentSafety', data: { text: `${desc} ${name} ${breed}`, images: photos } });
     const r = (safe && safe.result) || {};
-    if (r.pass === false) return { ok: false, msg: '内容含敏感信息（如微信/电话/悬赏），请修改后重发' };
-    if (r.pass === true) status = 'approved';
-    else if (DEV_AUTO_APPROVE) status = 'approved'; // pass:null 接口不可用 + 开发开关 → 直接通过
+    if (r.pass === false) {
+      // risky：正常拒绝。但开发期未发布小程序 msgSecCheck 不可信——正常中文也会
+      // 误判 87014（招领帖 name 为空恰好没命中、寻宠帖带 name 就被拦 = 真机联调撞到的现象）。
+      // 故 DEV_AUTO_APPROVE 下连「误判违规」一并放过。⚠ 生产环境不设此变量 → 仍正常拒绝。
+      if (!DEV_AUTO_APPROVE) return { ok: false, msg: '内容含敏感信息（如微信/电话/悬赏），请修改后重发' };
+      status = 'approved';
+    } else if (r.pass === true) {
+      status = 'approved';
+    } else if (DEV_AUTO_APPROVE) {
+      status = 'approved'; // pass:null 接口不可用 + 开发开关 → 直接通过
+    }
   } catch (e) {
     // contentSafety 调用异常 → 默认 pending_review；开发期开关下直接通过
     if (DEV_AUTO_APPROVE) status = 'approved';
