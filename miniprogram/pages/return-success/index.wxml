@@ -16,7 +16,7 @@
     </view>
 
     <!-- 致谢卡 -->
-    <view class="reunion-thank-card" bindtap="writeThanks">
+    <view class="reunion-thank-card" hover-class="card-hover" hover-stay-time="80" bindtap="writeThanks">
       <view class="rtc-icon">🙏</view>
       <view class="rtc-body">
         <view class="rtc-title">写一句话谢谢 ta 们</view>
@@ -26,7 +26,7 @@
     </view>
 
     <!-- 分享卡 -->
-    <view class="reunion-share-card" bindtap="shareStory">
+    <view class="reunion-share-card" hover-class="card-hover" hover-stay-time="80" bindtap="shareStory">
       <view class="rsc-title">⤴ 分享 · 让更多人看到大理的温暖</view>
       <view class="rsc-sub">这份回家的故事可能正鼓励另一个失主</view>
     </view>
