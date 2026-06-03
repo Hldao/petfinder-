@@ -5,17 +5,17 @@ const chatUtil = require('../../utils/chat.js');
 // Quick Reply 角色化 · r129 文案优化（去指令感 / 软化结尾 / 更口语）
 const QUICK = {
   finder: [
-    { label: '📍 我看到 ta 了', text: '刚在附近看到 ta 了～' },
-    { label: '🏠 ta 在我这', text: 'ta 在我这边，你方便的时候过来接就好 🐾' },
-    { label: '📷 想看张照片', text: '方便发张照片吗？我想先确认下 🙏' },
-    { label: '🐾 ta 长啥样？', text: 'ta 有什么明显的特征呀？' },
-    { label: '🤝 约个时间见？', text: '我们约个时间见个面呗？' },
+    { label: '📍 我看到 ta 了', text: '刚在附近看到 ta 了～', cls: 'primary' },
+    { label: '🏠 ta 在我这', text: 'ta 在我这边，你方便的时候过来接就好 🐾', cls: 'action' },
+    { label: '📷 想看张照片', text: '方便发张照片吗？我想先确认下 🙏', cls: '' },
+    { label: '🐾 ta 长啥样？', text: 'ta 有什么明显的特征呀？', cls: '' },
+    { label: '🤝 约个时间见？', text: '我们约个时间见个面呗？', cls: 'action' },
   ],
   owner: [
-    { label: '📍 这就过去', text: '这就过去，在哪儿方便见面～' },
-    { label: '📷 想看张照片', text: '方便发张照片吗？我想先确认下 🙏' },
-    { label: '🐾 ta 长啥样？', text: 'ta 有什么明显的特征呀？' },
-    { label: '🤝 约个时间见？', text: '我们约个时间见个面呗？' },
+    { label: '📍 这就过去', text: '这就过去，在哪儿方便见面～', cls: 'primary' },
+    { label: '📷 想看张照片', text: '方便发张照片吗？我想先确认下 🙏', cls: '' },
+    { label: '🐾 ta 长啥样？', text: 'ta 有什么明显的特征呀？', cls: '' },
+    { label: '🤝 约个时间见？', text: '我们约个时间见个面呗？', cls: 'action' },
   ],
 };
 
@@ -42,10 +42,23 @@ Page({
     messages: [], input: '', quick: [], scrollId: '',
     cid: '', pid: '', peerId: '', myId: '',
     quickExpanded: false,
+    meetHintShow: true,
   },
 
   toggleQuick() {
     this.setData({ quickExpanded: !this.data.quickExpanded });
+  },
+
+  closeMeetHint() {
+    this.setData({ meetHintShow: false });
+  },
+  onMeetGuide() {
+    wx.showModal({
+      title: '大理 · 安全见面建议',
+      content: '① 约古城北门、人民路等人多的地方，白天见面\n② 见面时留意宠物对认领人的反应（认得主人会亲近）\n③ 可请对方出示疫苗本 / 购买凭证核对\n④ 全程在站内沟通，不轻易转账',
+      showCancel: false,
+      confirmText: '我记下了',
+    });
   },
 
   onLoad(options) {

@@ -29,10 +29,17 @@
     <view class="stream-pad"></view>
   </scroll-view>
 
+  <!-- 见面安全提示 · 防冒领靠见面反应（哲学第2条）· 可关闭 -->
+  <view wx:if="{{meetHintShow}}" class="meet-hint">
+    <view class="meet-hint-text">聊到要见面了？大理有安全见面建议，帮你避免冒领</view>
+    <view class="meet-hint-btn" catchtap="onMeetGuide">查看建议</view>
+    <view class="meet-hint-close" catchtap="closeMeetHint">✕</view>
+  </view>
+
   <!-- Quick Reply · r129 文案 + 展开/收起 -->
   <view wx:if="{{quick.length}}" class="quick-replies {{quickExpanded?'expanded':''}}">
     <view wx:if="{{quickExpanded}}" class="quick-list">
-      <view wx:for="{{quick}}" wx:key="label" class="qr-chip" data-text="{{item.text}}" bindtap="pickQuick">{{item.label}}</view>
+      <view wx:for="{{quick}}" wx:key="label" class="qr-chip {{item.cls}}" data-text="{{item.text}}" bindtap="pickQuick">{{item.label}}</view>
     </view>
   </view>
 

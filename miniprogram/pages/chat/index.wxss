@@ -147,6 +147,27 @@
   color: var(--ink-2);
   white-space: nowrap;
 }
+.qr-chip.primary {
+  background: var(--apricot-soft);
+  color: var(--apricot-deep);
+  border-color: var(--apricot);
+}
+.qr-chip.action {
+  background: var(--mint-soft);
+  color: var(--mint-deep);
+  border-color: var(--mint);
+}
+
+/* 见面安全提示条 · 对齐原型 meet-hint */
+.meet-hint {
+  margin: 0 32rpx 12rpx; padding: 20rpx 26rpx;
+  background: linear-gradient(135deg, var(--apricot-soft), var(--honey-soft));
+  border-radius: var(--radius-md); border: 3rpx solid var(--apricot);
+  display: flex; align-items: center; gap: 20rpx;
+}
+.meet-hint-text { flex: 1; font-size: 24rpx; color: var(--apricot-deep); font-weight: 600; line-height: 1.4; }
+.meet-hint-btn { font-size: 23rpx; font-weight: 700; color: #fff; background: var(--apricot); padding: 10rpx 24rpx; border-radius: var(--radius-pill); white-space: nowrap; flex-shrink: 0; }
+.meet-hint-close { font-size: 28rpx; color: var(--apricot-deep); opacity: 0.5; flex-shrink: 0; line-height: 1; padding: 4rpx; }
 
 /* ============== 输入栏 ============== */
 .chat-input-bar {
