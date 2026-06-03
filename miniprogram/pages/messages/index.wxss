@@ -52,7 +52,9 @@
   box-shadow: var(--shadow-card);
   padding: 20rpx 28rpx;
   position: relative;
+  transition: transform 0.12s;
 }
+.msg-row-hover { transform: scale(0.99); }
 
 /* r108 圆形 / r109 84rpx 紧凑 */
 .msg-avatar {
@@ -122,6 +124,7 @@
 
 /* r108 视觉降级 · 去 chip 背景 · 仅留颜色提示 */
 .msg-context {
+  display: inline-block;
   font-size: 21rpx;
   color: var(--apricot-deep);
   margin-top: 6rpx;

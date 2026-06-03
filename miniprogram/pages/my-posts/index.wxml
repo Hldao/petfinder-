@@ -11,7 +11,7 @@
   <block wx:else>
     <view class="mp-tabs">
       <view class="mp-tab {{tab==='active'?'active':''}}" data-tab="active" bindtap="switchTab">进行中 · {{active.length}}</view>
-      <view class="mp-tab {{tab==='done'?'active':''}}" data-tab="done" bindtap="switchTab">已结束 · {{done.length}}</view>
+      <view class="mp-tab {{tab==='done'?'active':''}}" data-tab="done" bindtap="switchTab">已完成 · {{done.length}}</view>
     </view>
 
     <view wx:if="{{tab==='active'}}">
@@ -23,7 +23,7 @@
     </view>
 
     <view wx:if="{{tab==='done'}}">
-      <view wx:if="{{done.length === 0}}" class="hint small">暂无已结束的帖子</view>
+      <view wx:if="{{done.length === 0}}" class="hint small">暂无已完成的帖子</view>
       <view class="list">
         <pet-card wx:for="{{done}}" wx:key="id" post="{{item}}" bindtap="onCardTap" />
       </view>

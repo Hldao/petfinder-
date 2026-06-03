@@ -218,6 +218,7 @@
   line-height: 1.7;
 }
 .ta-ph { color: var(--ink-4); }
+.feedback-textarea:focus, .feedback-contact:focus { border-color: var(--apricot); }
 
 /* r122 截图上传 */
 .feedback-photo-row {

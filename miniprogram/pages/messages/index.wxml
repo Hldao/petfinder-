@@ -12,7 +12,7 @@
 
   <!-- 消息列表 -->
   <view class="msg-list">
-    <view wx:for="{{displayMessages}}" wx:key="id" class="msg-row" data-msg="{{item}}" bindtap="openMsg">
+    <view wx:for="{{displayMessages}}" wx:key="id" class="msg-row" hover-class="msg-row-hover" hover-stay-time="80" data-msg="{{item}}" bindtap="openMsg">
       <view class="msg-avatar {{item.avatarStyle}}">{{item.avatar}}</view>
       <view class="msg-body">
         <view class="msg-row-head">
