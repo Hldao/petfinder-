@@ -13,13 +13,14 @@
       <view class="detail-name">{{post.name}}</view>
       <view class="detail-subtitle">{{post.breed}}{{post.sex ? ' · ' + post.sex : ''}}{{post.ageStage ? ' · ' + post.ageStageLabel : ''}}</view>
 
-      <!-- 距离条 · 橙色渐变 pill -->
-      <view class="detail-dist-bar">
+      <!-- 距离条 · 橙色渐变 pill · 点击唤起地图导航 -->
+      <view class="detail-dist-bar" hover-class="dist-bar-hover" hover-stay-time="80" bindtap="onOpenMap">
         <view class="dist-bar-icon">📍</view>
         <view class="dist-bar-text">
           <view class="dist-bar-main">{{post.distanceKm ? '距你 ' + post.distanceKm + ' km' : post.loc}}</view>
           <view wx:if="{{post.distanceKm}}" class="dist-bar-sub">{{post.loc}}</view>
         </view>
+        <view class="dist-bar-go">导航 ›</view>
       </view>
 
       <!-- 信息网格 2x2 -->
@@ -49,7 +50,7 @@
       </view>
 
       <!-- 描述 -->
-      <view class="section-label">特征描述</view>
+      <view class="section-label">{{isLost ? '特征描述' : '发现者描述'}}</view>
       <view class="desc-card">{{post.desc}}</view>
 
       <!-- 寻宠：线索区 -->
@@ -75,10 +76,14 @@
     </view>
   </view>
 
-  <!-- 底部 action bar 双 CTA -->
+  <!-- 底部 action bar · owner 视角 / 公开视角双形态 -->
   <view class="action-bar">
     <view class="btn-secondary" bindtap="onShare">⤴ 转发</view>
-    <view class="btn-primary" bindtap="onContact">
+    <view wx:if="{{isOwner}}" class="btn-primary" bindtap="onManage">
+      <text>📋</text>
+      <text>管理我的帖子</text>
+    </view>
+    <view wx:else class="btn-primary" bindtap="onContact">
       <text>💬</text>
       <text>{{isLost ? '我看到 ta 了' : '私聊发现者'}}</text>
     </view>

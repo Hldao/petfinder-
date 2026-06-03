@@ -59,7 +59,9 @@
   padding: 24rpx 32rpx;
   margin-bottom: 32rpx;
   display: flex; align-items: center; gap: 24rpx;
+  transition: filter 0.15s;
 }
+.dist-bar-hover { filter: brightness(0.96); }
 .dist-bar-icon { font-size: 40rpx; }
 .dist-bar-text { flex: 1; }
 .dist-bar-main {
@@ -67,6 +69,10 @@
 }
 .dist-bar-sub {
   font-size: 23rpx; color: var(--ink-3); margin-top: 4rpx;
+}
+.dist-bar-go {
+  font-size: 24rpx; font-weight: 700; color: var(--apricot-deep);
+  flex-shrink: 0; opacity: 0.85;
 }
 
 /* Info Grid · 2 格（地点 / 时间）· 对齐原型 */

@@ -12,6 +12,7 @@ Page({
     locLabel: '走失地点',
     timeLabel: '走失时间',
     notFound: false,
+    isOwner: false,
   },
 
   onLoad(options) {
@@ -37,6 +38,28 @@ Page({
       timeLabel: isLost ? '走失时间' : '发现时间',
     });
     wx.setNavigationBarTitle({ title: post.statusLabel + ' · ' + post.name });
+
+    // 是否本人帖子 → 切换 owner 视角操作栏（不让自己看到「私聊自己」）
+    if (app.globalData.cloudReady && post.poster_id) {
+      chatUtil.ensureOpenid().then(id => {
+        this.setData({ isOwner: !!id && id === post.poster_id });
+      });
+    }
+  },
+
+  // 距离条点击 → 唤起地图导航（对齐原型 openMapNavigation）
+  onOpenMap() {
+    const p = this.data.post;
+    if (p && p.lat && p.lng) {
+      wx.openLocation({ latitude: p.lat, longitude: p.lng, name: p.loc || '位置', scale: 16 });
+    } else {
+      wx.showToast({ title: '该帖未设精确位置', icon: 'none' });
+    }
+  },
+
+  // owner 视角 → 去「我的发布」管理
+  onManage() {
+    wx.navigateTo({ url: '/pages/my-posts/index' });
   },
 
   async onContact() {
