@@ -46,7 +46,7 @@ Page({
   onLoad() {
     let wh = 667;
     try { wh = wx.getSystemInfoSync().windowHeight || 667; } catch (e) {}
-    this._minH = 240;                                   // 收起高度(px)
+    this._minH = 210;                                   // 收起高度(px · 对齐原型)
     this._maxH = Math.max(360, Math.round(wh * 0.62));  // 展开高度(px)
     this.setData({ sheetH: this._minH });
     // 精度提示 5s 自动消失（对齐原型 r90 · 教育只说一次）

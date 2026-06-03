@@ -38,14 +38,14 @@
   left: 32rpx;
   right: 192rpx;
   top: 180rpx;
-  background: rgba(255,255,255,0.92);
+  background: var(--honey-soft);
   border-radius: var(--radius-pill);
   padding: 14rpx 28rpx;
   display: flex; align-items: center;
   gap: 12rpx;
   box-shadow: 0 4rpx 16rpx rgba(31,31,31,0.08);
   font-size: 22rpx;
-  color: var(--ink-2);
+  color: var(--honey-deep);
   z-index: 10;
 }
 .mph-icon {
@@ -54,7 +54,7 @@
 }
 .mph-text {
   font-size: 22rpx;
-  color: var(--ink-2);
+  color: var(--honey-deep);
   font-weight: 600;
   flex: 1;
 }
@@ -67,7 +67,7 @@
 
 /* ============ map-fab 工具按钮（定位/查找/筛选）============ */
 .map-fab {
-  position: fixed; right: 28rpx; top: 290rpx;
+  position: fixed; right: 28rpx; top: 180rpx;
   display: flex; flex-direction: column; gap: 16rpx;
   z-index: 8;
 }
@@ -94,7 +94,7 @@
 
 /* ============ 地图内搜索面板 ============ */
 .map-search-panel {
-  position: fixed; top: 290rpx; left: 32rpx; right: 32rpx;
+  position: fixed; top: 180rpx; left: 32rpx; right: 32rpx;
   z-index: 22;
   background: var(--surface);
   border-radius: var(--radius-md);
@@ -164,7 +164,7 @@
 .sdc-loc .hl { font-weight: 600; color: var(--ink-2); }
 .sdc-desc {
   font-size: 26rpx; color: var(--ink-2); line-height: 1.55; margin-bottom: 24rpx;
-  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+  display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
 }
 .sdc-actions { display: flex; gap: 16rpx; padding-bottom: 16rpx; }
 .sdc-btn-primary, .sdc-btn-detail {
