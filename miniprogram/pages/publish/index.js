@@ -6,7 +6,7 @@ const BREEDS = {
   dog: ['中华田园犬', '金毛', '柯基', '泰迪', '比熊'],
   other: ['兔子', '仓鼠', '龙猫'],
 };
-const EMOJI = { cat: '🐱', dog: '🐶', other: '🐾' };
+const EMOJI = { cat: '🐱', dog: '🐶', other: '🐰' };
 const LOCS = ['古城北门', '人民路三月街', '下关泰安路', '喜洲古镇', '海东'];
 // 预设地点的大理近似坐标（区域中心点）· 让不走「地图选点」的帖子也能在地图显示
 // 只给区域中心而非精确点 · 符合「精度模糊到 500m」隐私原则（本就只知道大致区域）
@@ -35,6 +35,7 @@ Page({
     submitting: false,
     showWarmth: true,
     showCompliance: true,
+    breedFocus: false,
   },
 
   onLoad() {
@@ -45,6 +46,11 @@ Page({
       showWarmth: !warmthDismissed,
       showCompliance: !complianceDismissed,
     });
+  },
+
+  // 「+ 其他品种」→ 聚焦品种输入框让用户自由填
+  focusBreed() {
+    this.setData({ breedFocus: true, 'form.breed': '' });
   },
 
   dismissWarmth() {
@@ -73,6 +79,7 @@ Page({
     // 招领默认性别不确定（拾主翻看陌生宠物有应激风险 · §6.6）；寻宠默认 ♂
     const form = Object.assign({}, this.data.form, { sex: mode === 'found' ? '不确定' : '♂' });
     this.setData({ mode, form });
+    wx.setNavigationBarTitle({ title: mode === 'lost' ? '发布寻宠信息' : '发布招领信息' });
   },
 
   choosePhoto() {

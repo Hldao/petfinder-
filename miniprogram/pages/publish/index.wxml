@@ -57,7 +57,7 @@
       <view class="pet-types">
         <view class="pet-type {{petType==='cat'?'active':''}}" data-t="cat" bindtap="pickType">🐱 猫</view>
         <view class="pet-type {{petType==='dog'?'active':''}}" data-t="dog" bindtap="pickType">🐶 狗</view>
-        <view class="pet-type {{petType==='other'?'active':''}}" data-t="other" bindtap="pickType">🐾 其他</view>
+        <view class="pet-type {{petType==='other'?'active':''}}" data-t="other" bindtap="pickType">🐰 其他</view>
       </view>
     </view>
 
@@ -73,7 +73,7 @@
         <view class="pet-type {{form.sex==='♀'?'active':''}}" data-s="♀" bindtap="pickSex">♀ 母</view>
         <view class="pet-type {{form.sex==='不确定'?'active':''}}" data-s="不确定" bindtap="pickSex">? 不确定</view>
       </view>
-      <view wx:if="{{mode==='found'}}" class="form-hint">ⓘ 不需要勉强翻看陌生宠物 · 应激可能咬伤</view>
+      <view wx:if="{{mode==='found' && form.sex==='不确定'}}" class="form-hint">ⓘ 不需要勉强翻看陌生宠物 · 应激可能咬伤</view>
     </view>
 
     <!-- 招领专属：年龄段 · r39 -->
@@ -90,9 +90,10 @@
 
     <view class="form-row">
       <view class="form-label">品种 / 外观</view>
-      <input class="form-input" placeholder="比如：英短蓝猫" value="{{form.breed}}" data-field="breed" bindinput="onInput" />
+      <input class="form-input" placeholder="比如：英短蓝猫" value="{{form.breed}}" focus="{{breedFocus}}" data-field="breed" bindinput="onInput" />
       <view class="breed-chips">
         <view wx:for="{{breedChips}}" wx:key="*this" class="breed-chip {{form.breed===item?'active':''}}" data-b="{{item}}" bindtap="pickBreed">{{item}}</view>
+        <view class="breed-chip other" bindtap="focusBreed">+ 其他品种</view>
       </view>
     </view>
   </view>

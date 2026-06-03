@@ -180,6 +180,11 @@
   background: var(--apricot-soft);
   color: var(--apricot-deep);
 }
+.breed-chip.other {
+  background: transparent;
+  border: 2rpx dashed var(--apricot);
+  color: var(--apricot-deep);
+}
 .breed-chip:active {
   background: var(--bg-deeper);
 }
