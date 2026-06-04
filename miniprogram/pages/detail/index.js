@@ -47,6 +47,13 @@ Page({
     }
   },
 
+  // 点 hero 照片 → 全屏预览（可放大看特征 · 找宠物刚需）
+  previewPhoto(e) {
+    const photos = (this.data.post && this.data.post.photos) || [];
+    if (!photos.length) return;
+    wx.previewImage({ current: e.currentTarget.dataset.src, urls: photos });
+  },
+
   // 距离条点击 → 唤起地图导航（对齐原型 openMapNavigation）
   onOpenMap() {
     const p = this.data.post;

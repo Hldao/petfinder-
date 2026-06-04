@@ -33,6 +33,8 @@
 .pc-photo.lost  { background: linear-gradient(135deg, var(--apricot-soft) 0%, #FFCDA8 100%); }
 .pc-photo.found { background: linear-gradient(135deg, var(--mint-soft) 0%, #ABDDCB 100%); }
 .pc-photo .emoji { font-size: 72rpx; line-height: 1; display: block; }
+/* 真实照片 · 填满方框（fileID 直接作 src，cloud.init 后小程序自动解析）*/
+.pc-photo .pc-img { width: 100%; height: 100%; border-radius: 32rpx; display: block; }
 
 .status-bubble {
   position: absolute; top: -6rpx; left: -6rpx;

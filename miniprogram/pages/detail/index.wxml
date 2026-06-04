@@ -4,7 +4,14 @@
   <view class="scroll-area">
     <!-- Hero -->
     <view class="hero {{statusCls}}">
-      <text class="hero-emoji">{{post.emoji}}</text>
+      <swiper wx:if="{{post.photos && post.photos.length}}" class="hero-swiper"
+              indicator-dots="{{post.photos.length > 1}}" indicator-active-color="#fff"
+              circular="{{post.photos.length > 1}}">
+        <swiper-item wx:for="{{post.photos}}" wx:key="*this">
+          <image class="hero-img" src="{{item}}" mode="aspectFill" data-src="{{item}}" bindtap="previewPhoto"></image>
+        </swiper-item>
+      </swiper>
+      <text wx:else class="hero-emoji">{{post.emoji}}</text>
       <view class="hero-status {{statusCls}}">{{post.statusLabel}}</view>
       <view class="hero-time">{{post.time}}</view>
     </view>
