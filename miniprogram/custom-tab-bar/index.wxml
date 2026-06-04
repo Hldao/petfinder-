@@ -12,7 +12,6 @@
     <!-- 中央内嵌发布键 · 排在 地图(index 1) 之后 · 对齐原型 5 格布局 -->
     <view wx:if="{{index === 1}}" class="fab-tab" bindtap="onPublish">
       <view class="fab-bubble"><text class="fab-plus">＋</text></view>
-      <text class="fab-label">发布</text>
     </view>
   </block>
 </view>
