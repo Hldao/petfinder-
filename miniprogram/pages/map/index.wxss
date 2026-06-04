@@ -121,6 +121,8 @@
 }
 .msr-thumb.lost  { background: linear-gradient(135deg, var(--apricot-soft) 0%, #FFCDA8 100%); }
 .msr-thumb.found { background: linear-gradient(135deg, var(--mint-soft) 0%, #ABDDCB 100%); }
+/* 真实照片缩略图 · 填满头像方框并继承各自圆角（msr/sdc/sheet 共用）*/
+.thumb-img { width: 100%; height: 100%; border-radius: inherit; display: block; }
 .msr-info { flex: 1; min-width: 0; }
 .msr-name { font-size: 26rpx; font-weight: 700; color: var(--ink-1); }
 .msr-meta { font-size: 22rpx; color: var(--ink-3); margin-top: 2rpx; }

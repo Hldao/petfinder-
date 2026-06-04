@@ -44,7 +44,7 @@
     <scroll-view wx:if="{{searchKw}}" scroll-y class="map-search-results">
       <view wx:if="{{!searchResults.length}}" class="msr-empty">没有匹配的宠物</view>
       <view wx:for="{{searchResults}}" wx:key="id" class="msr-row" data-id="{{item.id}}" catchtap="onResultTap">
-        <view class="msr-thumb {{item.statusCls}}">{{item.emoji}}</view>
+        <view class="msr-thumb {{item.statusCls}}"><image wx:if="{{item.photo}}" class="thumb-img" src="{{item.photo}}" mode="aspectFill"></image><text wx:else>{{item.emoji}}</text></view>
         <view class="msr-info">
           <view class="msr-name">{{item.name}}</view>
           <view class="msr-meta">{{item.loc}}</view>
@@ -57,7 +57,7 @@
   <view wx:if="{{selected}}" class="sheet-detail-card">
     <view class="sdc-close" catchtap="closeSelected">✕</view>
     <view class="sdc-hero">
-      <view class="sdc-emoji {{selected.statusCls}}">{{selected.emoji}}</view>
+      <view class="sdc-emoji {{selected.statusCls}}"><image wx:if="{{selected.photo}}" class="thumb-img" src="{{selected.photo}}" mode="aspectFill"></image><text wx:else>{{selected.emoji}}</text></view>
       <view class="sdc-meta">
         <view class="sdc-name">{{selected.name}}</view>
         <view class="sdc-breed">{{selected.breed}}</view>
@@ -91,7 +91,7 @@
     <scroll-view scroll-y class="sheet-scroll" enable-flex>
       <view wx:if="{{!sheetCards.length}}" class="sheet-empty">这一带暂时还没有信息</view>
       <view wx:for="{{sheetCards}}" wx:key="id" class="sheet-card" data-id="{{item.id}}" bindtap="onSheetCardTap">
-        <view class="sheet-thumb {{item.statusCls}}">{{item.emoji}}</view>
+        <view class="sheet-thumb {{item.statusCls}}"><image wx:if="{{item.photo}}" class="thumb-img" src="{{item.photo}}" mode="aspectFill"></image><text wx:else>{{item.emoji}}</text></view>
         <view class="sheet-info">
           <view class="sheet-pet-name">{{item.name}} <text class="sheet-tag {{item.statusCls}}">{{item.statusLabel}}</text></view>
           <view class="sheet-pet-meta">{{item.loc}}{{item.distText}}</view>

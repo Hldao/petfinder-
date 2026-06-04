@@ -100,7 +100,7 @@ Page({
     const results = !kw ? [] : this._allPosts
       .filter(p => `${petName(p)} ${p.breed || ''} ${p.loc || ''} ${p.desc || ''}`.toLowerCase().includes(kw))
       .slice(0, 20)
-      .map(p => ({ id: p.id, emoji: p.emoji || '🐾', name: petName(p), loc: p.loc || '', statusCls: statusCls(p) }));
+      .map(p => ({ id: p.id, emoji: p.emoji || '🐾', photo: (p.photos && p.photos[0]) || '', name: petName(p), loc: p.loc || '', statusCls: statusCls(p) }));
     this.setData({ searchKw: e.detail.value, searchResults: results });
   },
   onResultTap(e) {
@@ -122,7 +122,7 @@ Page({
     const cards = this._allPosts
       .filter(p => !f || (p.status === f))
       .map(p => ({
-        id: p.id, emoji: p.emoji || '🐾', name: petName(p),
+        id: p.id, emoji: p.emoji || '🐾', photo: (p.photos && p.photos[0]) || '', name: petName(p),
         statusLabel: MAP_LABEL[statusCls(p)],
         statusCls: statusCls(p), loc: p.loc || '', distText: sheetDist(p),
       }));
@@ -166,7 +166,7 @@ Page({
   makeSelected(p) {
     const st = statusCls(p);
     return {
-      id: p.id, emoji: p.emoji || '🐾', statusCls: st,
+      id: p.id, emoji: p.emoji || '🐾', photo: (p.photos && p.photos[0]) || '', statusCls: st,
       name: petName(p),
       breed: [p.breed, p.sex].filter(Boolean).join(' · '),
       statusLabel: MAP_LABEL[st],
