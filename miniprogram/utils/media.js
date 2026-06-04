@@ -30,9 +30,15 @@ function resolvePhotos(posts, opts, cb) {
     success: res => {
       const map = {};
       (res.fileList || []).forEach(f => { if (f.fileID && f.tempFileURL) map[f.fileID] = f.tempFileURL; });
-      cb((posts || []).map(p => (p && p.photos && p.photos.length)
-        ? Object.assign({}, p, { photos: p.photos.map(f => map[f] || f) })
-        : p));
+      cb((posts || []).map(p => {
+        if (!p || !p.photos || !p.photos.length) return p;
+        // cloud:// → 临时链接；解析不到(文件不存在/失败)则丢弃，绝不把 cloud:// 交给 <image>
+        // （否则渲染层会 500「local image resource cloud://」）。非云链接(本地/https)原样保留。
+        const photos = p.photos
+          .map(f => (typeof f === 'string' && f.indexOf('cloud://') === 0) ? (map[f] || null) : f)
+          .filter(Boolean);
+        return Object.assign({}, p, { photos });
+      }));
     },
     fail: () => cb(posts),
   });
