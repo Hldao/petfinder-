@@ -115,12 +115,13 @@ Page({
 
   // 真实帖入库时 distanceKm=0 → 用当前定位现场算「距你」（诚实数据，非捏造）
   // 仅补无距离的帖；种子帖自带演示距离不动。定位失败/拒绝则静默跳过（卡片省略距离）
+  // 一次会话最多尝试一次：开发者工具未开"位置模拟"时 getLocation 会超时，避免每次刷新都报
   fillDistances() {
-    if (this._located) return;
+    if (this._locTried) return;
+    this._locTried = true;
     wx.getLocation({
       type: 'gcj02',
       success: res => {
-        this._located = true;
         const { latitude, longitude } = res;
         this._all = this._all.map(p => {
           if (p.lat && p.lng && !(p.distanceKm > 0)) {
