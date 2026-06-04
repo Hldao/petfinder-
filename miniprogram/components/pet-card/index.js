@@ -1,4 +1,12 @@
 const fmt = require('../../utils/format.js');
+const chatUtil = require('../../utils/chat.js');
+
+// 当前用户是否该帖发布者（区分「我的帖子」）：比对 poster_id 与登录 openid
+function computeMine(d) {
+  const app = getApp();
+  const myId = app && app.globalData && app.globalData.openid;
+  return !!(myId && d && d.poster_id && d.poster_id === myId);
+}
 
 // 照片底色 · 无 photoClass 的帖按 id 确定性取一种（让无照片卡片像原型一样 6 色多彩，不再单调一色）
 const PHOTO_CLASSES = ['ph-orange', 'ph-blue', 'ph-cream', 'ph-mint', 'ph-pink', 'ph-plum'];
@@ -16,7 +24,16 @@ Component({
   },
   data: {
     locLine: '', helpersText: '', statusCls: 'lost', metaText: '', photoCls: '',
-    displayName: '', imgError: false, hintText: '',
+    displayName: '', imgError: false, hintText: '', isMine: false,
+  },
+  // openid 可能晚于首帧就绪 → 就绪后重算一次「我的帖子」标识
+  attached() {
+    const app = getApp();
+    if (!(app && app.globalData && app.globalData.openid)) {
+      chatUtil.ensureOpenid().then(() => {
+        if (this.data.post && this.data.post.id) this.setData({ isMine: computeMine(this.data.post) });
+      });
+    }
   },
   observers: {
     post(d) {
@@ -51,6 +68,7 @@ Component({
         // 照片底色：优先用宠物自己的 photoClass，无则按 id 确定性取一色（6 色多彩，对齐原型）
         photoCls: pickPhotoClass(d),
         imgError: false, // 新数据重置图片错误态
+        isMine: computeMine(d), // 我发布的帖 → 杏橘卡 + 「✏ 我发布的」角标
       });
     },
   },
