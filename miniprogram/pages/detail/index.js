@@ -5,6 +5,9 @@ const fmt = require('../../utils/format.js');
 const chatUtil = require('../../utils/chat.js');
 const media = require('../../utils/media.js');
 
+// 前端关键词预筛（与 chat 同源）· 后端 contentSafety 是第二层
+const BAD = /微信|wechat|wx\s*[:：]|\bqq\b|加我|私聊|联系方式|二维码|1[3-9]\d{9}/i;
+
 Page({
   data: {
     post: null,
@@ -14,6 +17,8 @@ Page({
     timeLabel: '走失时间',
     notFound: false,
     isOwner: false,
+    showClue: false,
+    clueText: '',
   },
 
   onLoad(options) {
@@ -99,6 +104,44 @@ Page({
   onShare() {
     wx.showShareMenu({ withShareTicket: true, menus: ['shareAppMessage', 'shareTimeline'] });
     wx.showToast({ title: '点右上角分享', icon: 'none' });
+  },
+
+  // ===== 留一条公开线索（r17）=====
+  openClue() { this.setData({ showClue: true }); },
+  closeClue() { this.setData({ showClue: false }); },
+  noop() {},
+  onClueInput(e) { this.setData({ clueText: e.detail.value }); },
+
+  submitClue() {
+    const text = (this.data.clueText || '').trim();
+    if (text.length < 2) { wx.showToast({ title: '请说一下你看到的', icon: 'none' }); return; }
+    if (BAD.test(text)) {
+      wx.showModal({ title: '线索未发布', content: '内容含敏感信息（如微信号/电话），请改用站内方式。', showCancel: false });
+      return;
+    }
+    const p = this.data.post;
+    const addLocal = clue => {
+      const clues = [clue].concat((p && p.clues) || []); // 新线索置顶
+      this.setData({ 'post.clues': clues, showClue: false, clueText: '' });
+      wx.showToast({ title: '线索已发布', icon: 'success' });
+    };
+    const localClue = { name: '热心人', loc: '', timeAgo: '刚刚', text };
+
+    if (app.globalData.cloudReady && p && p.id) {
+      wx.showLoading({ title: '发布中…' });
+      cloud.call('submitClue', { postId: p.id, text })
+        .then(res => {
+          wx.hideLoading();
+          if (!res || res.ok === false) {
+            wx.showModal({ title: '线索未发布', content: (res && res.msg) || '请稍后重试', showCancel: false });
+            return;
+          }
+          addLocal(res.clue || localClue);
+        })
+        .catch(err => { wx.hideLoading(); console.error('[detail] submitClue 失败', err); wx.showToast({ title: '发布失败', icon: 'none' }); });
+    } else {
+      addLocal(localClue); // 离线演示
+    }
   },
 
   onShareAppMessage() {

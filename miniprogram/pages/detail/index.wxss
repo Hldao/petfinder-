@@ -232,3 +232,55 @@
   box-shadow: var(--shadow-fab);
 }
 .btn-secondary:active, .btn-primary:active { transform: scale(0.98); }
+
+/* 留线索按钮 · 杏橘虚线（克制 · 不抢主 CTA）*/
+.clue-add-btn {
+  margin-top: 8rpx;
+  padding: 22rpx;
+  border: 2rpx dashed var(--apricot);
+  border-radius: var(--radius-md);
+  color: var(--apricot-deep);
+  background: var(--apricot-soft);
+  font-size: 25rpx; font-weight: 700;
+  text-align: center;
+}
+.clue-add-btn:active { opacity: 0.85; }
+
+/* 留线索弹窗 · bottom sheet */
+.clue-mask {
+  position: fixed; inset: 0; z-index: 30;
+  background: rgba(0,0,0,0.4);
+  display: flex; align-items: flex-end;
+}
+.clue-sheet {
+  width: 100%; box-sizing: border-box;
+  background: var(--surface);
+  border-radius: 32rpx 32rpx 0 0;
+  padding: 36rpx 36rpx calc(36rpx + env(safe-area-inset-bottom));
+}
+.clue-head { display: flex; align-items: center; justify-content: space-between; }
+.clue-title { font-size: 32rpx; font-weight: 700; color: var(--ink-1); letter-spacing: -0.005em; }
+.clue-x { font-size: 30rpx; color: var(--ink-3); padding: 8rpx; }
+.clue-sub { display: block; font-size: 23rpx; color: var(--ink-3); margin: 8rpx 0 24rpx; }
+.clue-ta {
+  width: 100%; box-sizing: border-box;
+  min-height: 160rpx;
+  background: var(--bg);
+  border-radius: var(--radius-md);
+  padding: 24rpx;
+  font-size: 27rpx; line-height: 1.6; color: var(--ink-1);
+}
+.clue-hint { display: block; font-size: 22rpx; color: var(--ink-3); margin: 16rpx 0 28rpx; }
+.clue-actions { display: flex; gap: 20rpx; }
+.clue-act {
+  height: 88rpx; border-radius: 24rpx;
+  font-size: 28rpx; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+}
+.clue-act.cancel { flex: 1; background: var(--bg); color: var(--ink-1); }
+.clue-act.submit {
+  flex: 1.4;
+  background: linear-gradient(135deg, #FFA378 0%, var(--apricot) 100%);
+  color: #fff; box-shadow: var(--shadow-fab);
+}
+.clue-act:active { transform: scale(0.98); }

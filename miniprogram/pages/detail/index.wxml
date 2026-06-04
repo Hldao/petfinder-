@@ -72,13 +72,16 @@
             <view class="clue-avatar">{{item.name[0] || '陌'}}</view>
             <view class="clue-info">
               <view class="clue-top">
-                <text class="clue-loc-time">{{item.loc}} · {{item.timeAgo}}</text>
+                <text class="clue-loc-time">{{item.loc ? item.loc + ' · ' : ''}}{{item.timeAgo}}</text>
                 <text class="clue-badge">{{item.name}}</text>
               </view>
               <view class="clue-text">{{item.text}}</view>
             </view>
           </view>
         </view>
+
+        <!-- 留一条公开线索（r17 哲学：主动发布"我看到了"，直接公开，不依赖失主筛选）-->
+        <view class="clue-add-btn" bindtap="openClue">✏️ 我看到 ta 了 · 留条线索</view>
       </block>
     </view>
   </view>
@@ -93,6 +96,23 @@
     <view wx:else class="btn-primary" bindtap="onContact">
       <text>💬</text>
       <text>{{isLost ? '我看到 ta 了' : '私聊发现者'}}</text>
+    </view>
+  </view>
+
+  <!-- 留线索弹窗 · bottom sheet（对齐原型 clue-modal）-->
+  <view wx:if="{{showClue}}" class="clue-mask" bindtap="closeClue">
+    <view class="clue-sheet" catchtap="noop">
+      <view class="clue-head">
+        <text class="clue-title">留下你看到的</text>
+        <text class="clue-x" bindtap="closeClue">✕</text>
+      </view>
+      <text class="clue-sub">不用纠结格式 · 一句话也可以</text>
+      <textarea class="clue-ta" placeholder="在哪儿？什么时候？看到什么？地点和时间会很有帮助。" value="{{clueText}}" bindinput="onClueInput" maxlength="200" auto-height="{{true}}" />
+      <view class="clue-hint">ℹ️ 这条会公开展示给所有帮忙的人</view>
+      <view class="clue-actions">
+        <view class="clue-act cancel" bindtap="closeClue">取消</view>
+        <view class="clue-act submit" bindtap="submitClue">发布线索</view>
+      </view>
     </view>
   </view>
 </view>

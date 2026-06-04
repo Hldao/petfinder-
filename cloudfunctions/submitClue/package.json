@@ -1,0 +1,9 @@
+{
+  "name": "submitClue",
+  "version": "1.0.0",
+  "description": "给某帖追加一条公开线索（我看到了）",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3"
+  }
+}
