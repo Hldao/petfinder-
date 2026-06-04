@@ -58,6 +58,9 @@
 .chat-msgs {
   flex: 1;
   padding: 16rpx 32rpx 0;
+  /* scroll-view 不被全局 view{box-sizing:border-box} 覆盖，默认 content-box →
+     width:100% + 左右 padding 会超宽 64rpx，把 me 消息右对齐的头像挤出屏幕 */
+  box-sizing: border-box;
 }
 
 /* 审核提示条 · honey 暖色 */
