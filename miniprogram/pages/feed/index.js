@@ -1,6 +1,7 @@
 const app = getApp();
 const cloud = require('../../utils/cloud.js');
 const seed = require('../../utils/seed.js');
+const fmt = require('../../utils/format.js');
 
 Page({
   data: {
@@ -95,7 +96,7 @@ Page({
 
     if (app.globalData.cloudReady) {
       cloud.call('feedQuery', { filter: 'all' })
-        .then(res => finish((res && res.posts) || [], false))
+        .then(res => { finish((res && res.posts) || [], false); this.fillDistances(); })
         .catch(err => {
           console.error('[feed] feedQuery 失败，回退 seed', err);
           finish(seed, true);
@@ -103,6 +104,28 @@ Page({
     } else {
       finish(seed, true);
     }
+  },
+
+  // 真实帖入库时 distanceKm=0 → 用当前定位现场算「距你」（诚实数据，非捏造）
+  // 仅补无距离的帖；种子帖自带演示距离不动。定位失败/拒绝则静默跳过（卡片省略距离）
+  fillDistances() {
+    if (this._located) return;
+    wx.getLocation({
+      type: 'gcj02',
+      success: res => {
+        this._located = true;
+        const { latitude, longitude } = res;
+        this._all = this._all.map(p => {
+          if (p.lat && p.lng && !(p.distanceKm > 0)) {
+            const km = fmt.haversineKm(latitude, longitude, p.lat, p.lng);
+            return Object.assign({}, p, { distanceKm: Math.round(km * 10) / 10 });
+          }
+          return p;
+        });
+        this.applyCurrentFilter();
+      },
+      fail: () => {},
+    });
   },
 
   applyFilter(e) {

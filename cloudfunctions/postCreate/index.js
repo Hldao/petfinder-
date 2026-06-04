@@ -13,7 +13,7 @@ exports.main = async (event = {}) => {
   const { OPENID } = cloud.getWXContext();
   const {
     type = 'lost', petType = 'other', emoji = '🐾',
-    name = '', breed = '', sex = '不确定',
+    name = '', breed = '', sex = '不确定', ageStage = 'unknown',
     loc = '', time = '', timeMins = 0, desc = '', photos = [],
     lat = null, lng = null,
     currentLocation = '', health = '',
@@ -50,7 +50,7 @@ exports.main = async (event = {}) => {
     type, status, statusLabel: type === 'lost' ? '寻宠' : '招领',
     emoji, petType,
     name: type === 'lost' ? name : '',
-    breed, sex,
+    breed, sex, ageStage,
     loc, time, timeMins: Number(timeMins) || 0,
     lat, lng, distanceKm: 0, helpers: 0,
     desc, photos, clues: [],

@@ -156,6 +156,7 @@ Page({
         loc: form.loc, time: form.timeText, timeMins: form.timeMins,
         lat: this.data.pickedLat, lng: this.data.pickedLng,
         desc: form.desc, photos: fileIDs,
+        ageStage: form.ageStage,
         currentLocation: mode === 'found' ? form.currentLocation : '',
         health: mode === 'found' ? form.health : '',
       });

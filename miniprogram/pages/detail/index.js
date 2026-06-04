@@ -29,6 +29,7 @@ Page({
 
   render(post) {
     if (!post) { this.setData({ notFound: true }); return; }
+    post.ageStageLabel = fmt.ageStageLabel(post.ageStage); // 副标题年龄段中文（之前没算→空）
     const isLost = post.status !== 'found';
     this.setData({
       post,

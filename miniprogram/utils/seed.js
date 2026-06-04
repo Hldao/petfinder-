@@ -4,7 +4,7 @@
 // lat/lng 为大理大致坐标（地图标记用 · 非精确）
 module.exports = [
   {
-    id: 1, emoji: '🐱', status: 'lost', statusLabel: '寻宠',
+    id: 1, emoji: '🐱', status: 'lost', statusLabel: '寻宠', photoClass: 'ph-orange',
     name: '胖丁', sex: '♂', ageStage: 'adult', breed: '橘猫', color: '橘白',
     loc: '古城北门', time: '6 小时前', timeMins: 360, distanceKm: 1.2, helpers: 3,
     lat: 25.617, lng: 100.162,
@@ -12,7 +12,7 @@ module.exports = [
     clues: [{ name: '陈*', loc: '洋人街', timeAgo: '2 小时前', text: '好像在洋人街口看到一只橘猫钻进绿化带' }],
   },
   {
-    id: 2, emoji: '🐶', status: 'found', statusLabel: '招领',
+    id: 2, emoji: '🐶', status: 'found', statusLabel: '招领', photoClass: 'ph-cream',
     name: '暂称「小白」', sex: '不确定', ageStage: 'unknown', breed: '比熊（疑似）', color: '白色',
     loc: '人民路', time: '1 小时前', timeMins: 60, distanceKm: 0.6, helpers: 5,
     lat: 25.606, lng: 100.167,
@@ -20,7 +20,7 @@ module.exports = [
     currentLocation: '人民路「白桃」咖啡馆', health: '精神好，已喂水',
   },
   {
-    id: 3, emoji: '🐱', status: 'lost', statusLabel: '寻宠',
+    id: 3, emoji: '🐱', status: 'lost', statusLabel: '寻宠', photoClass: 'ph-blue',
     name: '咖啡', sex: '♀', ageStage: 'adult', breed: '田园猫', color: '狸花',
     loc: '下关泰安路', time: '昨天', timeMins: 1500, distanceKm: 4.8, helpers: 8,
     lat: 25.591, lng: 100.226,
@@ -28,7 +28,7 @@ module.exports = [
     clues: [],
   },
   {
-    id: 4, emoji: '🐶', status: 'found', statusLabel: '招领',
+    id: 4, emoji: '🐶', status: 'found', statusLabel: '招领', photoClass: 'ph-pink',
     name: '暂称「金宝」', sex: '♂', ageStage: 'adult', breed: '金毛', color: '金黄',
     loc: '喜洲古镇', time: '3 小时前', timeMins: 180, distanceKm: 11, helpers: 2,
     lat: 25.852, lng: 100.122,
@@ -36,7 +36,7 @@ module.exports = [
     currentLocation: '喜洲古镇游客中心', health: '健康，能吃能跑',
   },
   {
-    id: 5, emoji: '🐱', status: 'lost', statusLabel: '寻宠',
+    id: 5, emoji: '🐱', status: 'lost', statusLabel: '寻宠', photoClass: 'ph-mint',
     name: '奶糖', sex: '♀', ageStage: 'puppy', breed: '布偶', color: '海双',
     loc: '海东', time: '5 天前', timeMins: 7200, distanceKm: 9.3, helpers: 12,
     lat: 25.601, lng: 100.281,

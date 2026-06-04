@@ -1,6 +1,6 @@
 <view class="pet-card {{post.isMine ? 'my-card' : ''}} {{statusCls === 'found' ? 'found-card' : ''}}" bindtap="onTap">
   <view class="pc-body">
-    <view class="pc-photo {{statusCls}}">
+    <view class="pc-photo {{photoCls}}">
       <image wx:if="{{post.photos && post.photos.length}}" class="pc-img" src="{{post.photos[0]}}" mode="aspectFill" lazy-load></image>
       <text wx:else class="emoji">{{post.emoji}}</text>
       <view class="status-bubble {{statusCls}}">{{post.statusLabel}}</view>
@@ -8,7 +8,7 @@
     <view class="pc-info">
       <view class="pc-name-row">
         <text class="pc-name">{{post.name}}</text>
-        <text class="breed">· {{post.breed}}{{post.sex ? ' ' + post.sex : ''}}</text>
+        <text wx:if="{{metaText}}" class="breed">· {{metaText}}</text>
       </view>
       <view class="pc-meta">{{locLine}}<text class="time"> · {{post.time}}</text></view>
       <view class="pc-desc">{{post.desc}}</view>

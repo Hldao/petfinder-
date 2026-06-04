@@ -32,6 +32,13 @@
 }
 .pc-photo.lost  { background: linear-gradient(135deg, var(--apricot-soft) 0%, #FFCDA8 100%); }
 .pc-photo.found { background: linear-gradient(135deg, var(--mint-soft) 0%, #ABDDCB 100%); }
+/* 6 色 photoClass · 对齐原型 .ph-*（无真实照片时让卡片底色多彩，不再寻宠/招领两色单调）*/
+.pc-photo.ph-orange { background: linear-gradient(135deg, #FFE9DD 0%, #FFCDA8 100%); }
+.pc-photo.ph-blue   { background: linear-gradient(135deg, #DDE7F4 0%, #B5C7E0 100%); }
+.pc-photo.ph-cream  { background: linear-gradient(135deg, #FFF3D6 0%, #FFDD9C 100%); }
+.pc-photo.ph-mint   { background: linear-gradient(135deg, #DDF1EA 0%, #ABDDCB 100%); }
+.pc-photo.ph-pink   { background: linear-gradient(135deg, #FCE4E4 0%, #F5BFBF 100%); }
+.pc-photo.ph-plum   { background: linear-gradient(135deg, #EDE2F8 0%, #CFB5E6 100%); }
 .pc-photo .emoji { font-size: 72rpx; line-height: 1; display: block; }
 /* 真实照片 · 填满方框（fileID 直接作 src，cloud.init 后小程序自动解析）*/
 .pc-photo .pc-img { width: 100%; height: 100%; border-radius: 32rpx; display: block; }

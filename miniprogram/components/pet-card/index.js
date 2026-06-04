@@ -5,15 +5,19 @@ Component({
     post: { type: Object, value: {} },
   },
   data: {
-    locLine: '', helpersText: '', statusCls: 'lost',
+    locLine: '', helpersText: '', statusCls: 'lost', metaText: '', photoCls: '',
   },
   observers: {
     post(d) {
       if (!d || !d.id) return;
+      const statusCls = d.status === 'found' ? 'found' : 'lost';
       this.setData({
-        statusCls: d.status === 'found' ? 'found' : 'lost',
+        statusCls,
+        metaText: fmt.petMeta(d),
         locLine: fmt.locLine(d),
         helpersText: fmt.helpersText(d),
+        // 照片底色：优先用宠物自己的 photoClass（6 色），无则退回按状态 2 色
+        photoCls: d.photoClass || statusCls,
       });
     },
   },
