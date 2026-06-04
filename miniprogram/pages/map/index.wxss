@@ -182,7 +182,7 @@
 /* ============ 底部宠物面板 · 对齐原型 map-bottom-sheet ============ */
 .map-sheet {
   position: fixed; left: 0; right: 0;
-  bottom: calc(132rpx + env(safe-area-inset-bottom));   /* 让位底部 tabBar */
+  bottom: 0;                                            /* 铺到屏幕最底，白底藏在 tabBar 后，杜绝缝隙露地图 */
   background: var(--surface);
   border-radius: 40rpx 40rpx 0 0;
   box-shadow: 0 -16rpx 48rpx rgba(0,0,0,0.1);
@@ -224,7 +224,8 @@
 
 .sheet-scroll {
   flex: 1; min-height: 0;
-  padding: 0 24rpx 16rpx;
+  /* 底部留出 tabBar 占位，最后一张卡不被 tabBar 盖住（面板已铺到 bottom:0）*/
+  padding: 0 24rpx calc(140rpx + env(safe-area-inset-bottom));
 }
 .sheet-empty { text-align: center; color: var(--ink-4); font-size: 24rpx; padding: 60rpx 0; }
 

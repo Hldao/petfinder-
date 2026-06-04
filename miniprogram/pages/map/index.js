@@ -45,10 +45,17 @@ Page({
   _iconCache: {},
 
   onLoad() {
-    let wh = 667;
-    try { wh = wx.getSystemInfoSync().windowHeight || 667; } catch (e) {}
-    this._minH = 64;                                    // 收起高度(px)·只留拖动条+头部，筛选/卡片列表收进去
-    this._maxH = Math.max(360, Math.round(wh * 0.62));  // 展开高度(px)
+    let wh = 667, safeBottom = 0;
+    try {
+      const info = wx.getSystemInfoSync();
+      wh = info.windowHeight || 667;
+      if (info.safeArea && info.screenHeight) safeBottom = Math.max(0, info.screenHeight - info.safeArea.bottom);
+    } catch (e) {}
+    // 面板 bottom:0 铺到屏幕最底（白底藏在 tabBar 后，杜绝缝隙）→ 高度需含 tabBar 占位
+    // tabBar 高度 ≈ 130rpx/2(=65px) + 安全区底
+    const tabBar = 65 + safeBottom;
+    this._minH = tabBar + 64;                             // 收起：tabBar 之上露 64px(拖动条+头部)
+    this._maxH = tabBar + Math.max(360, Math.round(wh * 0.62)); // 展开
     this.setData({ sheetH: this._minH });
     // 精度提示 5s 自动消失（对齐原型 r90 · 教育只说一次）
     this._hintTimer = setTimeout(() => this.setData({ showHint: false }), 5000);
