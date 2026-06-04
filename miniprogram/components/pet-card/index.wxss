@@ -97,6 +97,15 @@
 }
 /* found 卡转发按钮换薄荷色（原型 .found-card .pc-action.share）*/
 .pet-card.found-card .pc-action.share { color: var(--mint-deep); background: var(--mint-soft); }
+/* 转发是 <button open-type=share> · 重置 button 默认样式贴合原 pill */
+button.pc-action.share {
+  display: inline-flex; align-items: center; gap: 6rpx;
+  min-height: 0; line-height: 1.2;
+  margin: 0 0 0 auto; padding: 8rpx 20rpx;
+  font-size: 23rpx; font-weight: 700;
+  border: none;
+}
+button.pc-action.share::after { border: none; }
 
 /* 「我发布的」小标识 · footer 左下角（原型 .pc-mine）*/
 .pc-mine {

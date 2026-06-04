@@ -62,6 +62,7 @@ Component({
     onImgError() {
       this.setData({ imgError: true });
     },
+    noop() {}, // 转发按钮 catchtap 占位：拦住 tap 不冒泡到卡片，open-type=share 仍触发原生转发
     // 点地点·距离 → 跳到小程序自己的地图页并定位到该宠物（不打开系统地图）；catchtap 不冒泡到卡片
     onLoc() {
       const p = this.data.post;

@@ -160,4 +160,17 @@ Page({
   onSearchTap() {
     wx.navigateTo({ url: '/pages/search/index' });
   },
+
+  // 卡片「转发」(button open-type=share) 触发 · 转发该宠物帖到好友/群
+  onShareAppMessage(e) {
+    const d = (e.target && e.target.dataset) || {};
+    if (d.id) {
+      return {
+        title: `${d.status || ''} · ${d.name || '宠物'} · 大理${d.loc || ''} 帮 ta 回家 🐾`,
+        path: `/pages/detail/index?id=${d.id}`,
+        imageUrl: d.img || '',
+      };
+    }
+    return { title: '寻宠·大理 · 帮走失的小朋友回家 🐾', path: '/pages/feed/index' };
+  },
 });

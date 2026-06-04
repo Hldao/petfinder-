@@ -89,4 +89,16 @@ Page({
   goPublish() {
     wx.switchTab({ url: '/pages/publish/index', fail: () => wx.navigateTo({ url: '/pages/publish/index' }) });
   },
+
+  onShareAppMessage(e) {
+    const d = (e.target && e.target.dataset) || {};
+    if (d.id) {
+      return {
+        title: `${d.status || ''} · ${d.name || '宠物'} · 大理${d.loc || ''} 帮 ta 回家 🐾`,
+        path: `/pages/detail/index?id=${d.id}`,
+        imageUrl: d.img || '',
+      };
+    }
+    return { title: '寻宠·大理 · 帮走失的小朋友回家 🐾', path: '/pages/feed/index' };
+  },
 });

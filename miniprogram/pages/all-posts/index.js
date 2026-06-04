@@ -18,4 +18,16 @@ Page({
   },
 
   onCardTap(e) { wx.navigateTo({ url: `/pages/detail/index?id=${e.detail.id}` }); },
+
+  onShareAppMessage(e) {
+    const d = (e.target && e.target.dataset) || {};
+    if (d.id) {
+      return {
+        title: `${d.status || ''} · ${d.name || '宠物'} · 大理${d.loc || ''} 帮 ta 回家 🐾`,
+        path: `/pages/detail/index?id=${d.id}`,
+        imageUrl: d.img || '',
+      };
+    }
+    return { title: '寻宠·大理 · 帮走失的小朋友回家 🐾', path: '/pages/feed/index' };
+  },
 });

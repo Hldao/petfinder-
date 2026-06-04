@@ -25,6 +25,9 @@
   <view class="pc-footer">
     <view wx:if="{{post.isMine}}" class="pc-mine">✏ 我发布的</view>
     <text class="pc-action">{{helpersText}}</text>
-    <text class="pc-action share">⤴ 转发</text>
+    <!-- 真转发：open-type=share 触发微信原生转发；catchtap 拦住不冒泡到卡片(进详情) -->
+    <button class="pc-action share" open-type="share"
+            data-id="{{post.id}}" data-name="{{displayName}}" data-loc="{{post.loc}}" data-status="{{post.statusLabel}}" data-img="{{post.photos[0]}}"
+            catchtap="noop">⤴ 转发</button>
   </view>
 </view>
