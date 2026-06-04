@@ -1,6 +1,7 @@
 <!-- 地图 · 对齐 prototype v10 全套（marker 水滴针 / 底部面板 / 迷你详情卡 / map-fab / 搜索 / 精度提示）-->
 <view class="page">
   <map
+    id="map"
     class="map"
     latitude="{{latitude}}"
     longitude="{{longitude}}"

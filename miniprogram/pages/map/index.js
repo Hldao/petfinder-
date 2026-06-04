@@ -347,12 +347,19 @@ Page({
     const i = e.detail.markerId;
     const p = this._geoPosts[i];
     if (!p) return;
-    // 面板升到详情档 + 内容切为该宠物详情；并平移地图让针落在面板上方可见区中央（苹果地图式）
-    const c = this._centerAboveSheet(p.lat, p.lng, this.data.scale);
-    this.setData({
-      selected: this.makeSelected(p), searchOpen: false, sheetH: this._detailH,
-      latitude: c.lat, longitude: c.lng,
-    });
+    // 面板升到详情档 + 内容切为该宠物详情
+    this.setData({ selected: this.makeSelected(p), searchOpen: false, sheetH: this._detailH });
+    // 平滑平移地图，让针落在面板上方可见区中央（moveToLocation 带动画，比 setData 瞬移丝滑）
+    if (p.lat && p.lng) {
+      const c = this._centerAboveSheet(p.lat, p.lng, this.data.scale);
+      this._panTo(c.lat, c.lng);
+    }
+  },
+
+  // 用地图组件带动画平移到指定中心（丝滑），避免 setData 经纬度的瞬移
+  _panTo(lat, lng) {
+    if (!this._mapCtx) this._mapCtx = wx.createMapContext('map');
+    this._mapCtx.moveToLocation({ latitude: lat, longitude: lng });
   },
 
   // 算出一个地图中心，使目标点(lat,lng)上移半个详情面板高度→落在面板上方可见区中点
