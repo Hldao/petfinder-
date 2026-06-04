@@ -47,20 +47,21 @@
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+.city-chev { font-size: 20rpx; color: var(--ink-3); margin-left: -4rpx; }
 
-/* r110 · search-pill 米色 + inset hairline · 凹陷输入区观感 */
+/* 样式3「白底浮起胶囊」· 白底 + 柔和投影（替代发灰的米底凹陷感）*/
 .search-pill {
   flex: 1; min-width: 0;
   height: 72rpx;
   display: flex; align-items: center;
-  gap: 14rpx;
-  background: var(--bg);
+  gap: 16rpx;
+  background: var(--surface);
   border-radius: var(--radius-pill);
-  padding: 0 28rpx;
+  padding: 0 32rpx;
   font-size: 25rpx;
   color: var(--ink-4);
   overflow: hidden;
-  box-shadow: inset 0 0 0 2rpx rgba(0,0,0,0.05);
+  box-shadow: 0 4rpx 20rpx rgba(0,0,0,0.06);
 }
 .sp-icon { flex-shrink: 0; }
 .sp-placeholder {

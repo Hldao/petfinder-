@@ -10,6 +10,7 @@
       <view class="city-tag">
         <view class="pin">📍</view>
         <text class="city-name">大理</text>
+        <text class="city-chev">▾</text>
       </view>
       <view class="search-pill" bindtap="onSearchTap">
         <text class="sp-icon">🔍</text>
