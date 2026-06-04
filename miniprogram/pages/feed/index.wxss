@@ -14,7 +14,7 @@
   z-index: 10;
   background: var(--surface);
   padding: 8rpx 36rpx 24rpx;
-  /* 用默认导航栏 → 胶囊在原生栏上，搜索行不需让位；搜索框铺满到右边（对齐原型）*/
+  padding-right: 192rpx;          /* 原初样式：搜索栏右侧留白、不铺满 */
   border-bottom: 2rpx solid var(--divider);
 }
 .nav-row { display: flex; align-items: center; gap: 20rpx; }
