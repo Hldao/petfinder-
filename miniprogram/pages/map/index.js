@@ -67,7 +67,24 @@ Page({
     if (typeof this.getTabBar === 'function' && this.getTabBar()) {
       this.getTabBar().setData({ selected: 1 });
     }
+    // 从首页卡片「点地址」跳来：记下要聚焦的宠物，待数据加载后定位+弹详情
+    const f = app.globalData && app.globalData.mapFocus;
+    if (f) { this._pendingFocus = f; app.globalData.mapFocus = null; }
     this.load();
+  },
+
+  // 聚焦某宠物：定位到面板上方 + 弹详情（供首页卡片点地址跳转用）
+  _applyFocus() {
+    const f = this._pendingFocus;
+    if (!f) return;
+    this._pendingFocus = null;
+    const p = (this._allPosts || []).find(x => String(x.id) === String(f.id));
+    const lat = (p && p.lat) || f.lat, lng = (p && p.lng) || f.lng;
+    if (!lat || !lng) return;
+    const c = this._centerAboveSheet(lat, lng, 16);
+    const patch = { latitude: c.lat, longitude: c.lng, scale: 16 };
+    if (p) { patch.selected = this.makeSelected(p); patch.sheetH = this._detailH; }
+    this.setData(patch);
   },
 
   load() {
@@ -75,6 +92,7 @@ Page({
       this._allPosts = posts || [];
       this.buildMarkers(this._allPosts);
       this.buildSheet();
+      this._applyFocus(); // 数据就绪后再聚焦（首页点地址跳来时）
     };
     if (app.globalData.cloudReady) {
       cloud.call('feedQuery', { filter: 'all' })

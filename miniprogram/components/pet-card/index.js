@@ -62,12 +62,14 @@ Component({
     onImgError() {
       this.setData({ imgError: true });
     },
-    // 点地点·距离 → 唤起地图导航（对齐原型 loc-link openMapNavigation）；catchtap 不冒泡到卡片
+    // 点地点·距离 → 跳到小程序自己的地图页并定位到该宠物（不打开系统地图）；catchtap 不冒泡到卡片
     onLoc() {
       const p = this.data.post;
-      if (p && p.lat && p.lng) {
-        wx.openLocation({ latitude: p.lat, longitude: p.lng, name: p.loc || '位置', scale: 16 });
-      }
+      if (!(p && p.lat && p.lng)) return;
+      const app = getApp();
+      app.globalData = app.globalData || {};
+      app.globalData.mapFocus = { id: p.id, lat: p.lat, lng: p.lng };
+      wx.switchTab({ url: '/pages/map/index' });
     },
   },
 });
