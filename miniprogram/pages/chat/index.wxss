@@ -93,6 +93,9 @@
   padding: 16rpx 24rpx;
   font-size: 26rpx;
   line-height: 1.6;
+  /* 长串(fileID/URL/长数字)强制换行，防止撑破气泡溢出右侧 */
+  word-break: break-word;
+  overflow-wrap: anywhere;
 }
 .chat-msg.me .chat-bubble {
   background: var(--apricot);
