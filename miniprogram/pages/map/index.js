@@ -108,6 +108,12 @@ Page({
   dismissHint() { this.setData({ showHint: false }); },
   onMapTap() { this.setData({ selected: null, searchOpen: false, sheetH: this._minH, sheetExpanded: false }); },
 
+  // 用户手势拖动/缩放地图 → 收起详情卡（程序平移 causedBy='update' 不触发，避免点针自弹自收）
+  onRegionChange(e) {
+    if (!this.data.selected) return;
+    if (e.type === 'begin' && e.causedBy === 'gesture') this.closeSelected();
+  },
+
   locateMe() {
     wx.getLocation({
       type: 'gcj02',

@@ -10,6 +10,7 @@
     bindmarkertap="onMarkerTap"
     bindcallouttap="onCalloutTap"
     bindtap="onMapTap"
+    bindregionchange="onRegionChange"
     show-location="{{showLoc}}"
   >
     <!-- 点针弹出的自定义气泡（跟随针 · 对齐原型 pin-popup）-->
