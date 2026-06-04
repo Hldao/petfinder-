@@ -311,11 +311,9 @@ Page({
   },
 
   onMarkerTap(e) {
-    // customCallout(BYCLICK) 会自动弹出跟随针的气泡；这里仅收起其它浮层 + 定位过去
-    const i = e.detail.markerId;
-    const p = this._geoPosts[i];
+    // customCallout(BYCLICK) 点针即自动弹出跟随针的气泡。
+    // ⚠ 不要在此重设 latitude/longitude——那会让 <map> 重渲染、把刚弹出的气泡立刻冲掉（气泡不显示的真因）。
     this.setData({ selected: null, searchOpen: false });
-    if (p && p.lat && p.lng) this.setData({ latitude: p.lat, longitude: p.lng });
   },
   // 点气泡 → 进详情
   onCalloutTap(e) {
