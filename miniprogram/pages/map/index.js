@@ -56,6 +56,7 @@ Page({
     const tabBar = 65 + safeBottom;
     this._minH = tabBar + 34;                             // 收起：tabBar 之上只露拖动条(把手+上滑提示)，头部/筛选/卡片全收进去
     this._maxH = tabBar + Math.max(360, Math.round(wh * 0.62)); // 展开
+    this._detailH = tabBar + 250;                         // 点针/点卡：升到详情档（苹果地图式中档），刚好放下详情卡内容
     this.setData({ sheetH: this._minH });
     // 精度提示 5s 自动消失（对齐原型 r90 · 教育只说一次）
     this._hintTimer = setTimeout(() => this.setData({ showHint: false }), 5000);
@@ -87,7 +88,7 @@ Page({
 
   // ============ 浮层交互 ============
   dismissHint() { this.setData({ showHint: false }); },
-  onMapTap() { this.setData({ selected: null, searchOpen: false }); },
+  onMapTap() { this.setData({ selected: null, searchOpen: false, sheetH: this._minH, sheetExpanded: false }); },
 
   locateMe() {
     wx.getLocation({
@@ -119,13 +120,13 @@ Page({
     const p = this._allPosts.find(x => String(x.id) === String(id));
     this.setData({ searchOpen: false, searchKw: '', searchResults: [] });
     if (p && p.lat && p.lng) {
-      this.setData({ latitude: p.lat, longitude: p.lng, scale: 15, selected: this.makeSelected(p) });
+      this.setData({ latitude: p.lat, longitude: p.lng, scale: 15, selected: this.makeSelected(p), sheetH: this._detailH });
     } else if (id != null) {
       wx.navigateTo({ url: `/pages/detail/index?id=${id}` });
     }
   },
 
-  toggleFilter() { this.setData({ sheetExpanded: true, selected: null }); },
+  toggleFilter() { this.setData({ sheetExpanded: true, selected: null, sheetH: this._maxH }); },
 
   // ============ 底部面板 ============
   buildSheet() {
@@ -157,8 +158,18 @@ Page({
     this.setData({ sheetH: h });
   },
   onDragEnd() {
+    const cur = this.data.sheetH;
+    // 详情态：明显下拉 → 返回列表(收起)；否则吸回详情档
+    if (this.data.selected) {
+      if (cur < this._detailH - 80) {
+        this.setData({ selected: null, sheetH: this._minH, dragging: false, sheetExpanded: false });
+      } else {
+        this.setData({ sheetH: this._detailH, dragging: false });
+      }
+      return;
+    }
     const mid = (this._minH + this._maxH) / 2;
-    const expanded = this.data.sheetH > mid;
+    const expanded = cur > mid;
     this.setData({ sheetH: expanded ? this._maxH : this._minH, dragging: false, sheetExpanded: expanded });
   },
   applySheetFilter(e) {
@@ -168,9 +179,9 @@ Page({
     const id = e.currentTarget.dataset.id;
     const p = this._allPosts.find(x => String(x.id) === String(id));
     if (!p) return;
-    // 点宠物卡 → 下方弹出迷你详情卡（对齐原型）；有坐标则把地图定位过去
+    // 点列表卡 → 面板内切详情视图(升到详情档)；有坐标则把地图定位过去
     if (p.lat && p.lng) this.setData({ latitude: p.lat, longitude: p.lng, scale: 15 });
-    this.setData({ selected: this.makeSelected(p) });
+    this.setData({ selected: this.makeSelected(p), sheetH: this._detailH });
   },
 
   // ============ 迷你详情卡（点针弹出）============
@@ -184,7 +195,7 @@ Page({
       loc: p.loc || '', distText: p.distanceKm ? ` · 距你 ${distStr(p.distanceKm)}` : '', desc: p.desc || '',
     };
   },
-  closeSelected() { this.setData({ selected: null }); },
+  closeSelected() { this.setData({ selected: null, sheetH: this._minH, sheetExpanded: false }); },
   onSelectedContact() {
     const s = this.data.selected;
     if (!s) return;
@@ -314,7 +325,8 @@ Page({
     const i = e.detail.markerId;
     const p = this._geoPosts[i];
     if (!p) return;
-    this.setData({ selected: this.makeSelected(p), searchOpen: false });
+    // 面板升到详情档 + 内容切为该宠物详情（苹果地图式：抽屉本身变详情）
+    this.setData({ selected: this.makeSelected(p), searchOpen: false, sheetH: this._detailH });
   },
   // 点气泡 → 进详情
   onCalloutTap(e) {

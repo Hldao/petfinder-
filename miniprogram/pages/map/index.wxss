@@ -127,23 +127,16 @@
 .msr-name { font-size: 26rpx; font-weight: 700; color: var(--ink-1); }
 .msr-meta { font-size: 22rpx; color: var(--ink-3); margin-top: 2rpx; }
 
-/* ============ 点针迷你详情卡（对齐原型 sheet-detail-card）============ */
-.sheet-detail-card {
-  position: fixed; left: 0; right: 0;
-  bottom: 0;                                /* 铺到底，白底藏 tabBar 后，杜绝漏缝 */
-  z-index: 12;
-  background: var(--surface);
-  border-radius: 40rpx 40rpx 0 0;
-  box-shadow: 0 -16rpx 48rpx rgba(0,0,0,0.12);
-  padding: 28rpx 28rpx calc(16rpx + 140rpx + env(safe-area-inset-bottom));  /* 底部留出 tabBar 占位 */
+/* ============ 宠物详情（并入底部抽屉 · 苹果地图式）============ */
+.sheet-detail-inner {
+  /* 面板内流式：左右内边距 + 底部留 tabBar 占位（面板已 bottom:0）*/
+  padding: 0 32rpx calc(16rpx + 140rpx + env(safe-area-inset-bottom));
 }
-.sdc-close {
-  position: absolute; top: 16rpx; right: 24rpx;
-  width: 44rpx; height: 44rpx;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 26rpx; color: var(--ink-4);
+.sdc-back {
+  font-size: 24rpx; color: var(--apricot-deep); font-weight: 600;
+  padding: 4rpx 0 18rpx;
 }
-.sdc-hero { display: flex; align-items: center; gap: 24rpx; margin-bottom: 20rpx; padding-right: 44rpx; }
+.sdc-hero { display: flex; align-items: center; gap: 24rpx; margin-bottom: 20rpx; }
 .sdc-emoji {
   width: 112rpx; height: 112rpx; flex-shrink: 0;
   border-radius: 24rpx;
