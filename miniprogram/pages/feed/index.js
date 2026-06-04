@@ -80,6 +80,9 @@ Page({
     if (typeof this.getTabBar === 'function' && this.getTabBar()) {
       this.getTabBar().setData({ selected: 0 });
     }
+    // 从详情页返回时重新拉取，让新发布的线索/帖子反映到卡片（首次进入由 onLoad 负责，避免双载）
+    if (this._didFirstLoad) this.loadFeed();
+    this._didFirstLoad = true;
   },
 
   onPullDownRefresh() {

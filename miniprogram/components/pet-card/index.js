@@ -24,9 +24,10 @@ Component({
         metaParts = [d.sex, ageLabel];
       }
       // 真实目击横幅：只在有线索时显示（对齐原型 card-hint-strip · 真实信号高纯度，不假装活跃）
+      // 取最新一条（submitClue 往数组末尾追加）→ 播报最近目击
       let hintText = '';
       if (d.clues && d.clues.length) {
-        const c = d.clues[0];
+        const c = d.clues[d.clues.length - 1];
         const t = (c.text || '').trim();
         if (t) hintText = `🐾 ${t}${c.timeAgo ? ' · ' + c.timeAgo : ''}`;
       }
