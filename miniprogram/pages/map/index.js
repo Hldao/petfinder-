@@ -28,7 +28,7 @@ Page({
     sheetFilter: '',
     sheetExpanded: false,
     sheetCount: 0,
-    sheetH: 240,        // 面板当前高度(px) · 可拖动
+    sheetH: 64,         // 面板当前高度(px) · 可拖动 · 默认收起
     dragging: false,
     // 浮层
     showHint: true,
@@ -47,7 +47,7 @@ Page({
   onLoad() {
     let wh = 667;
     try { wh = wx.getSystemInfoSync().windowHeight || 667; } catch (e) {}
-    this._minH = 210;                                   // 收起高度(px · 对齐原型)
+    this._minH = 64;                                    // 收起高度(px)·只留拖动条+头部，筛选/卡片列表收进去
     this._maxH = Math.max(360, Math.round(wh * 0.62));  // 展开高度(px)
     this.setData({ sheetH: this._minH });
     // 精度提示 5s 自动消失（对齐原型 r90 · 教育只说一次）
