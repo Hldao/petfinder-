@@ -22,7 +22,15 @@
 
     <view wx:for="{{messages}}" wx:key="index" id="msg-{{index}}" class="chat-msg {{item.mine ? 'me' : 'them'}}">
       <view class="chat-avatar">{{item.mine ? '😊' : emoji}}</view>
-      <view class="chat-bubble">{{item.content}}</view>
+      <!-- 图片消息 -->
+      <image wx:if="{{item.type === 'image'}}" class="chat-bubble-img" src="{{item.content}}" mode="widthFix" data-src="{{item.content}}" bindtap="previewImg"></image>
+      <!-- 定位消息 -->
+      <view wx:elif="{{item.type === 'location'}}" class="chat-bubble chat-bubble-loc" data-lat="{{item.lat}}" data-lng="{{item.lng}}" data-name="{{item.content}}" bindtap="openMsgLoc">
+        <view class="loc-row">📍 {{item.content}}</view>
+        <view class="loc-hint">[位置] 点击查看地图</view>
+      </view>
+      <!-- 文字消息 -->
+      <view wx:else class="chat-bubble">{{item.content}}</view>
     </view>
 
     <view wx:if="{{messages.length === 0}}" class="empty-hint">开始和 {{peerName}} 聊聊吧</view>
@@ -46,6 +54,8 @@
   <!-- 输入栏 · 含 ⚡ 快捷触发 + 附件 + 发送 -->
   <view class="chat-input-bar">
     <view class="chat-attach qr-toggle {{quickExpanded?'active':''}}" bindtap="toggleQuick">⚡</view>
+    <view class="chat-attach" bindtap="chooseImg">📷</view>
+    <view class="chat-attach" bindtap="sendLoc">📍</view>
     <input class="chat-input" placeholder="输入消息…" value="{{input}}" bindinput="onInput" confirm-type="send" bindconfirm="send" />
     <view class="chat-attach chat-send" bindtap="send">↑</view>
   </view>

@@ -94,7 +94,9 @@ Page({
     cloud.call('chatMessages', { chatId: cid })
       .then(res => {
         const cloudMsgs = ((res && res.messages) || []).map(m => ({
-          mine: m.mine, content: m.content, time: chatUtil.fmtTime(m.ts),
+          mine: m.mine, content: m.content,
+          type: m.type || 'text', lat: m.lat, lng: m.lng,
+          time: chatUtil.fmtTime(m.ts),
         }));
         const cloudKeys = new Set(cloudMsgs.map(m => (m.mine ? '1|' : '0|') + m.content));
         // 本地自己刚发、云端还没回灌到的，临时保留在末尾
@@ -124,6 +126,78 @@ Page({
 
   onInput(e) { this.setData({ input: e.detail.value }); },
   pickQuick(e) { this.setData({ input: e.currentTarget.dataset.text }); },
+
+  // 乐观追加一条消息并滚到底
+  appendMsg(m) {
+    this.setData({ messages: this.data.messages.concat(m) });
+    this.scrollBottom();
+  },
+
+  // 📷 发图片：选图 → 传云存储 → sendMessage(type=image, content=fileID)
+  // （图片确认是反冒领核心 · 哲学第2条：靠宠物反应 + 照片确认，不靠身份信号）
+  chooseImg() {
+    wx.chooseMedia({
+      count: 1, mediaType: ['image'], sizeType: ['compressed'],
+      success: res => {
+        const tempPath = res.tempFiles[0].tempFilePath;
+        // 离线 / 无会话：本地直接显示演示
+        if (!(app.globalData.cloudReady && this.data.cid)) {
+          this.appendMsg({ mine: true, type: 'image', content: tempPath, time: now() });
+          return;
+        }
+        wx.showLoading({ title: '发送中…' });
+        wx.cloud.uploadFile({
+          cloudPath: `chat/${Date.now()}-${Math.random().toString(36).slice(2)}.jpg`,
+          filePath: tempPath,
+        }).then(up => {
+          wx.hideLoading();
+          const fileID = up.fileID;
+          this.appendMsg({ mine: true, type: 'image', content: fileID, time: now() });
+          cloud.call('sendMessage', {
+            chatId: this.data.cid, content: fileID, type: 'image',
+            postId: this.data.pid, peerId: this.data.peerId,
+          }).then(() => this.loadHistory()).catch(err => console.error('[chat] 发图失败', err));
+        }).catch(err => {
+          wx.hideLoading();
+          console.error('[chat] 图片上传失败', err);
+          wx.showToast({ title: '图片上传失败', icon: 'none' });
+        });
+      },
+    });
+  },
+
+  // 📍 发定位：选点 → sendMessage(type=location, content=地名 + lat/lng)
+  sendLoc() {
+    wx.chooseLocation({
+      success: res => {
+        const name = res.name || res.address || '位置';
+        const lat = res.latitude, lng = res.longitude;
+        this.appendMsg({ mine: true, type: 'location', content: name, lat, lng, time: now() });
+        if (app.globalData.cloudReady && this.data.cid) {
+          cloud.call('sendMessage', {
+            chatId: this.data.cid, content: name, type: 'location', lat, lng,
+            postId: this.data.pid, peerId: this.data.peerId,
+          }).then(() => this.loadHistory()).catch(err => console.error('[chat] 发定位失败', err));
+        }
+      },
+      fail: () => {}, // 用户取消选点
+    });
+  },
+
+  // 点图片 → 全屏预览（可放大看特征），左右滑动浏览本会话所有图片
+  previewImg(e) {
+    const src = e.currentTarget.dataset.src;
+    const urls = this.data.messages.filter(m => m.type === 'image').map(m => m.content);
+    wx.previewImage({ current: src, urls: urls.length ? urls : [src] });
+  },
+
+  // 点定位气泡 → 唤起地图查看 / 导航
+  openMsgLoc(e) {
+    const d = e.currentTarget.dataset;
+    if (d.lat && d.lng) {
+      wx.openLocation({ latitude: Number(d.lat), longitude: Number(d.lng), name: d.name || '位置', scale: 16 });
+    }
+  },
 
   // ⋯ 菜单（r22：完成归还 + 举报）
   onMore() {

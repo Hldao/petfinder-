@@ -29,6 +29,8 @@ exports.main = async (event = {}) => {
         sender_id: m.sender_id,
         mine: m.sender_id === OPENID,
         content: m.content,
+        type: m.type || 'text', // text | image(content=fileID) | location(content=地名 + lat/lng)
+        lat: m.lat, lng: m.lng,
         status: m.status,
         ts: m.createdAt ? new Date(m.createdAt).getTime() : 0,
       }));

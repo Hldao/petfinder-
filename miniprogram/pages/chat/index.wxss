@@ -106,6 +106,17 @@
   box-shadow: var(--shadow-card);
 }
 
+/* 图片消息气泡 · 宽度自适应高度，点击全屏预览 */
+.chat-bubble-img {
+  max-width: 56%;
+  border-radius: 24rpx;
+  box-shadow: var(--shadow-card);
+}
+/* 定位消息气泡 · 复用 .chat-bubble 的 me/them 配色 */
+.chat-bubble-loc { display: block; }
+.loc-row { font-weight: 600; }
+.loc-hint { font-size: 20rpx; opacity: 0.7; margin-top: 4rpx; }
+
 .empty-hint {
   text-align: center;
   color: var(--ink-4);
