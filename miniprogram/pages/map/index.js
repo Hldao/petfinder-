@@ -120,7 +120,8 @@ Page({
     const p = this._allPosts.find(x => String(x.id) === String(id));
     this.setData({ searchOpen: false, searchKw: '', searchResults: [] });
     if (p && p.lat && p.lng) {
-      this.setData({ latitude: p.lat, longitude: p.lng, scale: 15, selected: this.makeSelected(p), sheetH: this._detailH });
+      const c = this._centerAboveSheet(p.lat, p.lng, 15);
+      this.setData({ latitude: c.lat, longitude: c.lng, scale: 15, selected: this.makeSelected(p), sheetH: this._detailH });
     } else if (id != null) {
       wx.navigateTo({ url: `/pages/detail/index?id=${id}` });
     }
@@ -179,8 +180,11 @@ Page({
     const id = e.currentTarget.dataset.id;
     const p = this._allPosts.find(x => String(x.id) === String(id));
     if (!p) return;
-    // 点列表卡 → 面板内切详情视图(升到详情档)；有坐标则把地图定位过去
-    if (p.lat && p.lng) this.setData({ latitude: p.lat, longitude: p.lng, scale: 15 });
+    // 点列表卡 → 面板内切详情视图(升到详情档)；地图平移让针落在面板上方可见区中央
+    if (p.lat && p.lng) {
+      const c = this._centerAboveSheet(p.lat, p.lng, 15);
+      this.setData({ latitude: c.lat, longitude: c.lng, scale: 15 });
+    }
     this.setData({ selected: this.makeSelected(p), sheetH: this._detailH });
   },
 
@@ -325,8 +329,21 @@ Page({
     const i = e.detail.markerId;
     const p = this._geoPosts[i];
     if (!p) return;
-    // 面板升到详情档 + 内容切为该宠物详情（苹果地图式：抽屉本身变详情）
-    this.setData({ selected: this.makeSelected(p), searchOpen: false, sheetH: this._detailH });
+    // 面板升到详情档 + 内容切为该宠物详情；并平移地图让针落在面板上方可见区中央（苹果地图式）
+    const c = this._centerAboveSheet(p.lat, p.lng, this.data.scale);
+    this.setData({
+      selected: this.makeSelected(p), searchOpen: false, sheetH: this._detailH,
+      latitude: c.lat, longitude: c.lng,
+    });
+  },
+
+  // 算出一个地图中心，使目标点(lat,lng)上移半个详情面板高度→落在面板上方可见区中点
+  _centerAboveSheet(lat, lng, scale) {
+    const z = scale || this.data.scale || 14;
+    const dpx = (this._detailH || 300) / 2;                       // 需上移的屏幕像素 ≈ 面板高一半
+    const mpp = 156543.03392 * Math.cos(lat * Math.PI / 180) / Math.pow(2, z); // 米/像素(Web Mercator)
+    const dlat = (dpx * mpp) / 111320;                            // 换算成纬度增量
+    return { lat: lat - dlat, lng };                              // 中心南移→针在屏幕上移
   },
   // 点气泡 → 进详情
   onCalloutTap(e) {
