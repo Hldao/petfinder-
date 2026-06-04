@@ -1,6 +1,7 @@
 const app = getApp();
 const cloud = require('../../utils/cloud.js');
 const chatUtil = require('../../utils/chat.js');
+const media = require('../../utils/media.js');
 
 // Quick Reply 角色化 · r129 文案优化（去指令感 / 软化结尾 / 更口语）
 const QUICK = {
@@ -93,16 +94,27 @@ Page({
     if (!cid) return;
     cloud.call('chatMessages', { chatId: cid })
       .then(res => {
-        const cloudMsgs = ((res && res.messages) || []).map(m => ({
-          mine: m.mine, content: m.content,
-          type: m.type || 'text', lat: m.lat, lng: m.lng,
-          time: chatUtil.fmtTime(m.ts),
-        }));
-        const cloudKeys = new Set(cloudMsgs.map(m => (m.mine ? '1|' : '0|') + m.content));
-        // 本地自己刚发、云端还没回灌到的，临时保留在末尾
-        const pending = this.data.messages.filter(m => m.mine && !cloudKeys.has('1|' + m.content));
-        this.setData({ messages: cloudMsgs.concat(pending) });
-        this.scrollBottom();
+        const raw = (res && res.messages) || [];
+        // 图片消息 content 是 cloud:// fileID，<image> 无法直接渲染 → 换临时 https 链接
+        const imgIds = raw.filter(m => (m.type || 'text') === 'image').map(m => m.content);
+        media.tempUrlMap(imgIds, urlMap => {
+          const cloudMsgs = raw.map(m => {
+            const type = m.type || 'text';
+            return {
+              mine: m.mine,
+              content: type === 'image' ? (urlMap[m.content] || m.content) : m.content,
+              type, lat: m.lat, lng: m.lng,
+              time: chatUtil.fmtTime(m.ts),
+            };
+          });
+          const cloudKeys = new Set(cloudMsgs.map(m => (m.mine ? '1|' : '0|') + m.content));
+          // 本地自己刚发、云端还没回灌的文字消息临时保留；图片/定位以云端为准（避免本地路径与
+          // 临时链接不等导致重复），云端写入在 send 之后即可见
+          const pending = this.data.messages.filter(m =>
+            m.mine && m.type !== 'image' && !cloudKeys.has('1|' + m.content));
+          this.setData({ messages: cloudMsgs.concat(pending) });
+          this.scrollBottom();
+        });
       })
       .catch(e => console.error('[chat] loadHistory 失败', e));
   },
@@ -146,15 +158,15 @@ Page({
           return;
         }
         wx.showLoading({ title: '发送中…' });
+        // 乐观用本地路径即时显示（cloud:// fileID 在 <image> 渲染会 500，故先用本地）
+        this.appendMsg({ mine: true, type: 'image', content: tempPath, time: now() });
         wx.cloud.uploadFile({
           cloudPath: `chat/${Date.now()}-${Math.random().toString(36).slice(2)}.jpg`,
           filePath: tempPath,
         }).then(up => {
           wx.hideLoading();
-          const fileID = up.fileID;
-          this.appendMsg({ mine: true, type: 'image', content: fileID, time: now() });
           cloud.call('sendMessage', {
-            chatId: this.data.cid, content: fileID, type: 'image',
+            chatId: this.data.cid, content: up.fileID, type: 'image',
             postId: this.data.pid, peerId: this.data.peerId,
           }).then(() => this.loadHistory()).catch(err => console.error('[chat] 发图失败', err));
         }).catch(err => {

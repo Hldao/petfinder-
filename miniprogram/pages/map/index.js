@@ -1,6 +1,7 @@
 const app = getApp();
 const cloud = require('../../utils/cloud.js');
 const seed = require('../../utils/seed.js');
+const media = require('../../utils/media.js');
 
 // 对齐原型 .map-pin 配色：寻宠=杏橘 / 招领=薄荷
 const PIN_FILL = { lost: '#FF8552', found: '#5BB89F' };
@@ -68,7 +69,10 @@ Page({
       this.buildSheet();
     };
     if (app.globalData.cloudReady) {
-      cloud.call('feedQuery', { filter: 'all' }).then(r => handle((r && r.posts) || [])).catch(() => handle(seed));
+      cloud.call('feedQuery', { filter: 'all' })
+        // 云 fileID 换临时 https 链接再渲染头像（底部面板/迷你卡/搜索结果只需首图）
+        .then(r => media.resolvePhotos((r && r.posts) || [], { firstOnly: true }, handle))
+        .catch(() => handle(seed));
     } else {
       handle(seed);
     }

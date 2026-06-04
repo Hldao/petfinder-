@@ -38,4 +38,23 @@ function resolvePhotos(posts, opts, cb) {
   });
 }
 
-module.exports = { resolvePhotos };
+// 通用：把一批 cloud:// fileID 换成 {fileID: tempURL} 映射（聊天图片消息用）
+function tempUrlMap(ids, cb) {
+  const app = getApp();
+  const unique = [...new Set((ids || []).filter(f => typeof f === 'string' && f.indexOf('cloud://') === 0))].slice(0, 50);
+  if (!unique.length || !(app.globalData && app.globalData.cloudReady) || !wx.cloud) {
+    cb({});
+    return;
+  }
+  wx.cloud.getTempFileURL({
+    fileList: unique,
+    success: res => {
+      const map = {};
+      (res.fileList || []).forEach(f => { if (f.fileID && f.tempFileURL) map[f.fileID] = f.tempFileURL; });
+      cb(map);
+    },
+    fail: () => cb({}),
+  });
+}
+
+module.exports = { resolvePhotos, tempUrlMap };
