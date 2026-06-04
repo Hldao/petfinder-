@@ -2,6 +2,7 @@ const app = getApp();
 const cloud = require('../../utils/cloud.js');
 const seed = require('../../utils/seed.js');
 const fmt = require('../../utils/format.js');
+const media = require('../../utils/media.js');
 
 Page({
   data: {
@@ -96,7 +97,13 @@ Page({
 
     if (app.globalData.cloudReady) {
       cloud.call('feedQuery', { filter: 'all' })
-        .then(res => { finish((res && res.posts) || [], false); this.fillDistances(); })
+        .then(res => {
+          // 云 fileID 在组件里 <image> 无法直接渲染 → 先换临时 https 链接（列表只需首图）
+          media.resolvePhotos((res && res.posts) || [], { firstOnly: true }, posts => {
+            finish(posts, false);
+            this.fillDistances();
+          });
+        })
         .catch(err => {
           console.error('[feed] feedQuery 失败，回退 seed', err);
           finish(seed, true);

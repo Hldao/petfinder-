@@ -3,6 +3,7 @@ const cloud = require('../../utils/cloud.js');
 const seed = require('../../utils/seed.js');
 const fmt = require('../../utils/format.js');
 const chatUtil = require('../../utils/chat.js');
+const media = require('../../utils/media.js');
 
 Page({
   data: {
@@ -20,7 +21,12 @@ Page({
     const eq = p => String(p.id) === String(id);
     if (app.globalData.cloudReady) {
       cloud.call('feedQuery', { filter: 'all' })
-        .then(res => this.render(((res && res.posts) || []).find(eq)))
+        .then(res => {
+          const post = ((res && res.posts) || []).find(eq);
+          // 云 fileID 换临时 https 链接再渲染 hero / 预览（详情需全部图）
+          if (post) media.resolvePhotos([post], resolved => this.render(resolved[0]));
+          else this.render(post);
+        })
         .catch(() => this.render(seed.find(eq)));
     } else {
       this.render(seed.find(eq));
