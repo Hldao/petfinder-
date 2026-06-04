@@ -1,5 +1,15 @@
 const fmt = require('../../utils/format.js');
 
+// 照片底色 · 无 photoClass 的帖按 id 确定性取一种（让无照片卡片像原型一样 6 色多彩，不再单调一色）
+const PHOTO_CLASSES = ['ph-orange', 'ph-blue', 'ph-cream', 'ph-mint', 'ph-pink', 'ph-plum'];
+function pickPhotoClass(d) {
+  if (d.photoClass) return d.photoClass;
+  const s = String(d.id || d.emoji || '');
+  let h = 0;
+  for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) >>> 0;
+  return PHOTO_CLASSES[h % PHOTO_CLASSES.length];
+}
+
 Component({
   properties: {
     post: { type: Object, value: {} },
@@ -38,8 +48,8 @@ Component({
         locLine: fmt.locLine(d),
         helpersText: fmt.helpersText(d),
         hintText,
-        // 照片底色：优先用宠物自己的 photoClass（6 色），无则退回按状态 2 色
-        photoCls: d.photoClass || statusCls,
+        // 照片底色：优先用宠物自己的 photoClass，无则按 id 确定性取一色（6 色多彩，对齐原型）
+        photoCls: pickPhotoClass(d),
         imgError: false, // 新数据重置图片错误态
       });
     },
