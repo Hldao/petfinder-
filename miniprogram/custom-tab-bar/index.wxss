@@ -58,7 +58,8 @@
 }
 .fab-bubble {
   width: 104rpx; height: 104rpx;
-  margin-top: -12rpx;
+  margin-top: -44rpx;                      /* 上浮够高，让「发布」标签露在圆下方不被压住 */
+  position: relative; z-index: 2;          /* 不透明橙圆盖在 absolute 标签之上，杜绝文字透出 */
   background: linear-gradient(135deg, #FFA378 0%, #FF8552 100%);  /* --apricot */
   border-radius: 50%;
   display: flex; align-items: center; justify-content: center;
