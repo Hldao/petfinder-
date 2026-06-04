@@ -130,12 +130,12 @@
 /* ============ 点针迷你详情卡（对齐原型 sheet-detail-card）============ */
 .sheet-detail-card {
   position: fixed; left: 0; right: 0;
-  bottom: calc(132rpx + env(safe-area-inset-bottom));
+  bottom: 0;                                /* 铺到底，白底藏 tabBar 后，杜绝漏缝 */
   z-index: 12;
   background: var(--surface);
   border-radius: 40rpx 40rpx 0 0;
   box-shadow: 0 -16rpx 48rpx rgba(0,0,0,0.12);
-  padding: 28rpx 28rpx 16rpx;
+  padding: 28rpx 28rpx calc(16rpx + 140rpx + env(safe-area-inset-bottom));  /* 底部留出 tabBar 占位 */
 }
 .sdc-close {
   position: absolute; top: 16rpx; right: 24rpx;

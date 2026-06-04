@@ -233,8 +233,7 @@ Page({
         id: i, latitude: disp[i].lat, longitude: disp[i].lng,
         width: 36, height: 47,
         anchor: { x: 0.5, y: 1 },
-        // 点针弹出跟随针的自定义气泡（对齐原型 pin-popup）· 内容见 wxml slot cover-view
-        customCallout: { display: 'BYCLICK', anchorX: 0, anchorY: -6 },
+        // 点针改为弹「底部详情卡」(onMarkerTap→selected)，不再用针上 customCallout 气泡
         statusCls: st,
         calloutName: petName(p),
         calloutTag: MAP_LABEL[st],
@@ -311,9 +310,11 @@ Page({
   },
 
   onMarkerTap(e) {
-    // customCallout(BYCLICK) 点针即自动弹出跟随针的气泡。
-    // ⚠ 不要在此重设 latitude/longitude——那会让 <map> 重渲染、把刚弹出的气泡立刻冲掉（气泡不显示的真因）。
-    this.setData({ selected: null, searchOpen: false });
+    // 点针 → 下方弹出该宠物的详情卡（与「上滑查看更多」面板联动，对齐原型）
+    const i = e.detail.markerId;
+    const p = this._geoPosts[i];
+    if (!p) return;
+    this.setData({ selected: this.makeSelected(p), searchOpen: false });
   },
   // 点气泡 → 进详情
   onCalloutTap(e) {
