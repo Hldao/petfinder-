@@ -1,5 +1,6 @@
 const app = getApp();
 const cloud = require('../../utils/cloud.js');
+const media = require('../../utils/media.js');
 
 Page({
   data: { active: [], done: [], loading: true, needCloud: false, tab: 'active' },
@@ -17,7 +18,8 @@ Page({
       return;
     }
     cloud.call('myPosts', {})
-      .then(res => this.split((res && res.posts) || []))
+      // 云 fileID 换临时 https 链接再传 pet-card（组件内 <image cloud://> 无法渲染）
+      .then(res => media.resolvePhotos((res && res.posts) || [], { firstOnly: true }, posts => this.split(posts)))
       .catch(() => this.setData({ loading: false }));
   },
 

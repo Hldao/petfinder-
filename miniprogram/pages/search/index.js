@@ -1,6 +1,7 @@
 const app = getApp();
 const cloud = require('../../utils/cloud.js');
 const seed = require('../../utils/seed.js');
+const media = require('../../utils/media.js');
 
 const BREEDS = [
   { name: '英短', hot: true }, { name: '橘猫', hot: true }, { name: '布偶', hot: true },
@@ -36,7 +37,8 @@ Page({
     this.setData({ history });
     if (app.globalData.cloudReady) {
       cloud.call('feedQuery', { filter: 'all' })
-        .then(res => { this._all = (res && res.posts) || []; })
+        // 云 fileID 换临时 https 链接（组件内 <image cloud://> 无法渲染）
+        .then(res => media.resolvePhotos((res && res.posts) || [], { firstOnly: true }, posts => { this._all = posts; }))
         .catch(() => { this._all = seed; });
     } else {
       this._all = seed;
