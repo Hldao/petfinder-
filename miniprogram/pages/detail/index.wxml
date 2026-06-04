@@ -65,7 +65,7 @@
         <view class="section-label">线索板块 <text class="count">{{post.clues.length || 0}}</text></view>
         <view wx:if="{{!post.clues.length}}" class="feature-card green">
           <text class="ic">🌿</text>
-          <text>还没有线索 · 你的一条留言可能就是关键</text>
+          <text>{{isOwner ? '还没有人留线索 · 有人看到 ta 会显示在这里' : '还没有线索 · 你的一条留言可能就是关键'}}</text>
         </view>
         <view wx:for="{{post.clues}}" wx:key="text" class="clue-card">
           <view class="clue-body">
@@ -80,8 +80,8 @@
           </view>
         </view>
 
-        <!-- 留一条公开线索（r17 哲学：主动发布"我看到了"，直接公开，不依赖失主筛选）-->
-        <view class="clue-add-btn" bindtap="openClue">✏️ 我看到 ta 了 · 留条线索</view>
+        <!-- 留一条公开线索（r17）· 仅非本人可留：「我看到了」是路人报目击，失主不目击自己的宠物 -->
+        <view wx:if="{{!isOwner}}" class="clue-add-btn" bindtap="openClue">✏️ 我看到 ta 了 · 留条线索</view>
       </block>
     </view>
   </view>
