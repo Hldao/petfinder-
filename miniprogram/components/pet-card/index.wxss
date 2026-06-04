@@ -10,6 +10,17 @@
 }
 .pet-card:active { transform: scale(0.99); }
 
+/* 真实目击横幅 · 对齐原型 .card-hint-strip（顶部一条，卡片 overflow:hidden 已裁圆角）*/
+.card-hint-strip {
+  display: flex; align-items: center; gap: 12rpx;
+  padding: 16rpx 28rpx;
+  font-size: 23rpx; font-weight: 600;
+}
+.card-hint-strip.lost  { background: var(--apricot-soft); color: var(--apricot-deep); border-bottom: 2rpx solid rgba(255,133,82,0.15); }
+.card-hint-strip.found { background: var(--mint-soft);    color: var(--mint-deep);    border-bottom: 2rpx solid rgba(91,184,159,0.15); }
+.card-hint-strip .hint-text { flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.card-hint-strip .hint-arrow { flex-shrink: 0; font-size: 26rpx; opacity: 0.7; }
+
 /* 自己发布的帖 · 浅杏橘渐变 + 专属阴影（原型 .my-card）*/
 .pet-card.my-card {
   background: linear-gradient(135deg, #FFFAF4 0%, #FFFFFF 40%);

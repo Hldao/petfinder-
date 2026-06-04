@@ -1,4 +1,9 @@
 <view class="pet-card {{post.isMine ? 'my-card' : ''}} {{statusCls === 'found' ? 'found-card' : ''}}" bindtap="onTap">
+  <!-- 真实目击横幅 · 仅有线索时显示（点击冒泡到卡片进详情）-->
+  <view wx:if="{{hintText}}" class="card-hint-strip {{statusCls}}">
+    <text class="hint-text">{{hintText}}</text>
+    <text class="hint-arrow">›</text>
+  </view>
   <view class="pc-body">
     <view class="pc-photo {{photoCls}}">
       <image wx:if="{{post.photos && post.photos.length && !imgError}}" class="pc-img" src="{{post.photos[0]}}" mode="aspectFill" lazy-load binderror="onImgError"></image>

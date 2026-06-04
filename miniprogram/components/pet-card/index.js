@@ -6,7 +6,7 @@ Component({
   },
   data: {
     locLine: '', helpersText: '', statusCls: 'lost', metaText: '', photoCls: '',
-    displayName: '', imgError: false,
+    displayName: '', imgError: false, hintText: '',
   },
   observers: {
     post(d) {
@@ -23,12 +23,20 @@ Component({
         displayName = d.breed || (statusCls === 'found' ? '待认领的小家伙' : '走失的小家伙');
         metaParts = [d.sex, ageLabel];
       }
+      // 真实目击横幅：只在有线索时显示（对齐原型 card-hint-strip · 真实信号高纯度，不假装活跃）
+      let hintText = '';
+      if (d.clues && d.clues.length) {
+        const c = d.clues[0];
+        const t = (c.text || '').trim();
+        if (t) hintText = `🐾 ${t}${c.timeAgo ? ' · ' + c.timeAgo : ''}`;
+      }
       this.setData({
         statusCls,
         displayName,
         metaText: metaParts.filter(Boolean).join(' · '),
         locLine: fmt.locLine(d),
         helpersText: fmt.helpersText(d),
+        hintText,
         // 照片底色：优先用宠物自己的 photoClass（6 色），无则退回按状态 2 色
         photoCls: d.photoClass || statusCls,
         imgError: false, // 新数据重置图片错误态
