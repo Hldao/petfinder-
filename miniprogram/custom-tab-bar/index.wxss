@@ -58,7 +58,7 @@
 }
 .fab-bubble {
   width: 104rpx; height: 104rpx;
-  margin-top: -16rpx;                      /* 微抬内嵌（已去掉「发布」标签，不必再为躲文字上浮）*/
+  margin-top: -8rpx;                       /* 再下移一点（更贴近底栏，仅极轻微抬）*/
   background: linear-gradient(135deg, #FFA378 0%, #FF8552 100%);  /* --apricot */
   border-radius: 50%;
   display: flex; align-items: center; justify-content: center;
