@@ -6,6 +6,14 @@ function distanceStr(km) {
   return km < 10 ? km.toFixed(1) : km.toFixed(0);
 }
 
+// 距离文案 · 对齐原型 formatDistance：<1km 显示「约 N 米」，否则「N km」
+function formatDistance(km) {
+  if (km == null || km <= 0) return '';
+  if (km < 1) return `约 ${Math.round(km * 1000)} 米`;
+  if (km < 10) return `${km.toFixed(1)} km`;
+  return `${km.toFixed(0)} km`;
+}
+
 // 两点球面距离（haversine）· 返回 km · 给真实帖现场算「距你」
 function haversineKm(lat1, lng1, lat2, lng2) {
   if (lat1 == null || lng1 == null || lat2 == null || lng2 == null) return 0;
@@ -42,10 +50,11 @@ function helpersText(d) {
   return `🤝 ${n} 人接力`;
 }
 
-// 卡片地点行 · 对齐原型：「📍 地点 · 距你 N km」（无距离时只显地点）
+// 卡片地点行 · 对齐原型：「📍 地点 · 距你 约 N 米 / N km」（无距离时只显地点）
 function locLine(d) {
   const base = `📍 ${d.loc}`;
-  return d.distanceKm > 0 ? `${base} · 距你 ${distanceStr(d.distanceKm)} km` : base;
+  const dist = formatDistance(d.distanceKm);
+  return dist ? `${base} · 距你 ${dist}` : base;
 }
 
-module.exports = { distanceStr, haversineKm, ageStageLabel, petMeta, helpersText, locLine };
+module.exports = { distanceStr, formatDistance, haversineKm, ageStageLabel, petMeta, helpersText, locLine };

@@ -67,6 +67,8 @@
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
 .pc-meta { font-size: 24rpx; color: var(--ink-3); margin-bottom: 12rpx; display: flex; align-items: center; gap: 12rpx; flex-wrap: wrap; }
+/* 地点·距离 = 可点击导航链接 · 对齐原型 .loc-link 点状下划线 */
+.pc-meta .loc-link { border-bottom: 1rpx dotted var(--ink-4); }
 .pc-meta .time { color: var(--ink-3); font-weight: 600; font-feature-settings: 'tnum'; }
 .pc-desc {
   font-size: 25rpx; color: var(--ink-2); line-height: 1.55;

@@ -10,7 +10,10 @@
         <text class="pc-name">{{post.name}}</text>
         <text wx:if="{{metaText}}" class="breed">· {{metaText}}</text>
       </view>
-      <view class="pc-meta">{{locLine}}<text class="time"> · {{post.time}}</text></view>
+      <view class="pc-meta">
+        <text class="loc-link" catchtap="onLoc">{{locLine}}</text>
+        <text class="time">{{post.time}}</text>
+      </view>
       <view class="pc-desc">{{post.desc}}</view>
     </view>
   </view>

@@ -25,5 +25,12 @@ Component({
     onTap() {
       this.triggerEvent('tap', { id: this.data.post.id });
     },
+    // 点地点·距离 → 唤起地图导航（对齐原型 loc-link openMapNavigation）；catchtap 不冒泡到卡片
+    onLoc() {
+      const p = this.data.post;
+      if (p && p.lat && p.lng) {
+        wx.openLocation({ latitude: p.lat, longitude: p.lng, name: p.loc || '位置', scale: 16 });
+      }
+    },
   },
 });
