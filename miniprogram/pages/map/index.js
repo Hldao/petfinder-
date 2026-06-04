@@ -54,7 +54,7 @@ Page({
     // 面板 bottom:0 铺到屏幕最底（白底藏在 tabBar 后，杜绝缝隙）→ 高度需含 tabBar 占位
     // tabBar 高度 ≈ 130rpx/2(=65px) + 安全区底
     const tabBar = 65 + safeBottom;
-    this._minH = tabBar + 64;                             // 收起：tabBar 之上露 64px(拖动条+头部)
+    this._minH = tabBar + 34;                             // 收起：tabBar 之上只露拖动条(把手+上滑提示)，头部/筛选/卡片全收进去
     this._maxH = tabBar + Math.max(360, Math.round(wh * 0.62)); // 展开
     this.setData({ sheetH: this._minH });
     // 精度提示 5s 自动消失（对齐原型 r90 · 教育只说一次）
