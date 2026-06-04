@@ -52,6 +52,15 @@
   gap: 24rpx;
   padding: 8rpx 32rpx;
 }
+/* 每张卡 + 其下删除操作 */
+.mp-item { display: flex; flex-direction: column; }
+.mp-card-actions { display: flex; justify-content: flex-end; padding: 12rpx 8rpx 0; }
+.mp-del {
+  font-size: 23rpx; font-weight: 600; color: var(--ink-3);
+  padding: 10rpx 26rpx; border-radius: var(--radius-pill);
+  background: var(--bg); border: 2rpx solid var(--divider);
+}
+.mp-del:active { background: var(--bg-deeper); color: #E2492F; }
 
 .hint {
   text-align: center;

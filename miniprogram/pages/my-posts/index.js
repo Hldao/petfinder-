@@ -32,4 +32,40 @@ Page({
   },
 
   onCardTap(e) { wx.navigateTo({ url: `/pages/detail/index?id=${e.detail.id}` }); },
+
+  onDelete(e) {
+    const id = e.currentTarget.dataset.id;
+    if (!id) return;
+    wx.showModal({
+      title: '删除帖子',
+      content: '删除后将从所有列表移除，无法恢复。确定删除吗？',
+      confirmText: '删除', confirmColor: '#E2492F',
+      success: r => {
+        if (!r.confirm) return;
+        if (!app.globalData.cloudReady) {
+          // 离线演示：仅本地移除
+          this.removeLocal(id);
+          return;
+        }
+        wx.showLoading({ title: '删除中…' });
+        cloud.call('deletePost', { postId: id })
+          .then(res => {
+            wx.hideLoading();
+            if (!res || res.ok === false) {
+              wx.showModal({ title: '删除失败', content: (res && res.msg) || '请稍后重试', showCancel: false });
+              return;
+            }
+            this.removeLocal(id);
+            wx.showToast({ title: '已删除', icon: 'success' });
+          })
+          .catch(err => { wx.hideLoading(); console.error('[my-posts] deletePost 失败', err); wx.showToast({ title: '删除失败', icon: 'none' }); });
+      },
+    });
+  },
+
+  // 从当前列表本地移除（避免重新请求）
+  removeLocal(id) {
+    const keep = arr => arr.filter(p => String(p.id) !== String(id));
+    this.setData({ active: keep(this.data.active), done: keep(this.data.done) });
+  },
 });

@@ -17,7 +17,12 @@
     <view wx:if="{{tab==='active'}}">
       <view wx:if="{{active.length === 0}}" class="hint small">暂无进行中的帖子</view>
       <view class="list">
-        <pet-card wx:for="{{active}}" wx:key="id" post="{{item}}" bindtap="onCardTap" />
+        <view class="mp-item" wx:for="{{active}}" wx:key="id">
+          <pet-card post="{{item}}" bindtap="onCardTap" />
+          <view class="mp-card-actions">
+            <view class="mp-del" catchtap="onDelete" data-id="{{item.id}}">🗑 删除</view>
+          </view>
+        </view>
       </view>
       <view wx:if="{{active.length}}" class="mp-note">🛡 归还标记需在和对方的聊天里完成（最后一道反冒领防线）</view>
     </view>
@@ -25,7 +30,12 @@
     <view wx:if="{{tab==='done'}}">
       <view wx:if="{{done.length === 0}}" class="hint small">暂无已完成的帖子</view>
       <view class="list">
-        <pet-card wx:for="{{done}}" wx:key="id" post="{{item}}" bindtap="onCardTap" />
+        <view class="mp-item" wx:for="{{done}}" wx:key="id">
+          <pet-card post="{{item}}" bindtap="onCardTap" />
+          <view class="mp-card-actions">
+            <view class="mp-del" catchtap="onDelete" data-id="{{item.id}}">🗑 删除</view>
+          </view>
+        </view>
       </view>
     </view>
   </block>
