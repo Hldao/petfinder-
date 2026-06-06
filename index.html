@@ -60,6 +60,7 @@
   .m-hero .mname{font-size:23px;font-weight:800;position:relative}
   .m-hero .mdate{font-size:13px;opacity:.95;margin-top:6px;position:relative}
   .m-hero .mtog{font-size:12.5px;opacity:.9;margin-top:4px;position:relative}
+  .m-hero .m-edit{position:absolute;top:16px;right:16px;background:rgba(255,255,255,.25);color:#fff;font-size:12px;font-weight:700;padding:5px 13px;border-radius:20px;cursor:pointer;z-index:2}
 
   .candle-row{display:flex;flex-direction:column;align-items:center;gap:10px;background:#fff;border-radius:20px;padding:22px;box-shadow:var(--shadow-sm);margin-bottom:14px}
   .candle{font-size:46px;cursor:pointer;transition:.3s;filter:grayscale(.6) opacity(.75)}
@@ -250,7 +251,7 @@
   function openMem(id){
     curMem=id; const m=MEMS.find(x=>x.id===id);
     document.getElementById('memBody').innerHTML=`
-      <div class="m-hero"><div class="glow"></div>
+      <div class="m-hero"><div class="glow"></div><div class="m-edit" onclick="openSheet('editmem')">编辑</div>
         <div class="mphoto">${m.emoji}</div><div class="mname">${m.name}</div>
         <div class="mdate">🤍 ${m.date}</div><div class="mtog">${m.tog}</div></div>
       <div class="candle-row">
@@ -266,6 +267,7 @@
       <div class="card">
         <div class="card-h">🐾 我们一起的日子</div>
         ${m.tl.map(t=>`<div class="tl"><div class="dot"></div><div class="tt"><div class="a">${t.a}</div><div class="b">${t.b}</div></div></div>`).join('')}
+        <div class="add-line" style="margin-top:12px" onclick="openSheet('moment')">＋ 添加一段和 ta 的回忆</div>
       </div>
       <div class="add-line" onclick="toast('已生成 ta 的纪念卡 · 发给家人，一起记得 ta 🤍')">🤍 把 ta 的纪念，分享给想念 ta 的人</div>
       <div class="note">ta 来过，爱过，被好好记得 —— 这就够了 🤍</div>`;
@@ -319,6 +321,21 @@
       <div class="lab" style="margin-top:14px">相伴的日子（可留空）</div><input class="f" id="bDate" placeholder="例如：2012 — 2024 · 相伴 12 年">
       <div class="lab" style="margin-top:14px">想先写下的一句话</div><textarea class="f" id="bWord" placeholder="想对 ta 说的、或想记住的一个瞬间…"></textarea>
       <button class="save-btn" onclick="buildMem()" style="margin-top:14px">建立纪念 🕯️</button>`;
+    } else if(type==='editmem'){
+      const m=MEMS.find(x=>x.id===curMem);
+      h+=`<h2>编辑纪念</h2><div class="sub">让 ta 的样子更像记忆里的 ta</div>
+      <div class="lab">ta 是</div>
+      <div class="chips">${['🐱','🐶','🐰','🐹','🐦','🐢'].map(e=>`<div class="ch ${m.emoji===e?'on':''}" onclick="pickChip(this,'emoji','${e}')">${e}</div>`).join('')}</div>
+      <div class="lab">名字</div><input class="f" id="emName" value="${m.name}">
+      <div class="lab" style="margin-top:14px">相伴的日子</div><input class="f" id="emDate" value="${m.date}">
+      <div class="lab" style="margin-top:14px">一句话形容 ta</div><input class="f" id="emTog" value="${m.tog}">
+      <button class="save-btn" onclick="saveMemEdit()" style="margin-top:14px">保存</button>`;
+    } else if(type==='moment'){
+      const m=MEMS.find(x=>x.id===curMem);
+      h+=`<h2>添加一段回忆</h2><div class="sub">关于 ${m.name} 的一个瞬间、一件小事 —— 都值得记下来</div>
+      <div class="lab">这段回忆叫</div><input class="f" id="moT" placeholder="例如：最爱的窗台 / 第一次见雪">
+      <div class="lab" style="margin-top:14px">想多说几句（可留空）</div><textarea class="f" id="moB" placeholder="那天发生了什么…"></textarea>
+      <button class="save-btn" onclick="addMoment()" style="margin-top:14px">记下这段 🤍</button>`;
     } else if(type==='consult'){
       const s=SVCS[arg];
       h+=`<h2>温和咨询</h2><div class="sub">${s.nm} · 先问清楚，完全不勉强。</div><div class="kn">
@@ -338,6 +355,20 @@
     const m={id:'m'+(MEMS.length+1),name:nm,emoji:pick.emoji||'🐱',bg:'var(--gold-soft)',date:date,tog:'被好好记得',lit:true,litToday:true,
       words:word?[{nm:'我',av:'🙂',txt:word}]:[],tl:[{a:'建立纪念',b:'今天 · 在念宠为 ta 留一个想念的地方'}]};
     MEMS.unshift(m); closeSheet(); openMem(m.id); toast('🕯️ 纪念建好了 · 灯为 ta 亮着');
+  }
+  function saveMemEdit(){
+    const m=MEMS.find(x=>x.id===curMem);
+    m.emoji=pick.emoji||m.emoji;
+    const nm=(document.getElementById('emName').value||'').trim(); if(nm)m.name=nm;
+    const d=(document.getElementById('emDate').value||'').trim(); if(d)m.date=d;
+    const t=(document.getElementById('emTog').value||'').trim(); if(t)m.tog=t;
+    closeSheet(); openMem(curMem); toast('已更新 ta 的纪念 🤍');
+  }
+  function addMoment(){
+    const m=MEMS.find(x=>x.id===curMem);
+    const a=(document.getElementById('moT').value||'').trim()||'一段回忆';
+    const b=(document.getElementById('moB').value||'').trim()||'想 ta 了';
+    m.tl.push({a,b}); closeSheet(); openMem(curMem); toast('记下了 · ta 一直都在 🤍');
   }
 
   let toastT;
