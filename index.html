@@ -269,7 +269,7 @@
         ${m.tl.map(t=>`<div class="tl"><div class="dot"></div><div class="tt"><div class="a">${t.a}</div><div class="b">${t.b}</div></div></div>`).join('')}
         <div class="add-line" style="margin-top:12px" onclick="openSheet('moment')">＋ 添加一段和 ta 的回忆</div>
       </div>
-      <div class="add-line" onclick="toast('已生成 ta 的纪念卡 · 发给家人，一起记得 ta 🤍')">🤍 把 ta 的纪念，分享给想念 ta 的人</div>
+      <div class="add-line" onclick="openSheet('share')">🤍 把 ta 的纪念，分享给想念 ta 的人</div>
       <div class="note">ta 来过，爱过，被好好记得 —— 这就够了 🤍</div>`;
     go('memorial');
   }
@@ -297,7 +297,7 @@
       + SVCS.map((s,i)=>`<div class="svc"><div class="sh"><div class="se">${s.e}</div><div class="st"><div class="a">${s.nm}</div><div class="b">${s.meta}</div></div><div class="star">${s.star}</div></div>
         <div class="price">${s.price.map(p=>`<span class="p">${p}</span>`).join('')}</div>
         <div class="rev">💬 ${s.rev}</div>
-        <button class="svc-btn" onclick="openSheet('consult',${i})">温和咨询 · 先问问不勉强</button></div>`).join('')
+        ${s.consulted?`<button class="svc-btn" style="background:var(--gold-soft);color:var(--gold)">已咨询 · ta 们会温和联系你 🤍</button>`:`<button class="svc-btn" onclick="openSheet('consult',${i})">温和咨询 · 先问问不勉强</button>`}</div>`).join('')
       + `<div class="svc-note">价格为示意区间，以服务方实际报价为准 · 念宠不替你决定，只帮你找到靠谱的人。</div>`;
   }
 
@@ -342,7 +342,16 @@
       <div class="li">可以先<b>电话/微信问</b>：流程、价格、能不能上门、多久。</div>
       <div class="li">想观礼/全程陪同，提前说一声一般都可以。</div>
       <div class="li">不舒服、被催、被加价 —— 随时可以不选，回来告诉我们。</div></div>
-      <button class="save-btn" onclick="closeSheet();toast('已为你转达 · ta 们会温和联系你 🤍')">让 ta 们联系我</button>`;
+      <button class="save-btn" onclick="consultDone(${arg})">让 ta 们联系我</button>`;
+    } else if(type==='share'){
+      const m=MEMS.find(x=>x.id===curMem);
+      h+=`<h2>分享 ${m.name} 的纪念</h2><div class="sub">发给家人朋友，一起记得 ta</div>
+      <div style="background:linear-gradient(165deg,#E8C98B,#C99A4E);border-radius:18px;padding:24px;text-align:center;color:#fff;margin-bottom:16px">
+        <div style="font-size:42px">${m.emoji}</div><div style="font-size:18px;font-weight:800;margin-top:8px">${m.name}</div>
+        <div style="font-size:12px;opacity:.95;margin-top:5px">🤍 ${m.date}</div><div style="font-size:12px;opacity:.9;margin-top:3px">${m.tog}</div>
+        <div style="font-size:11px;opacity:.85;margin-top:14px">—— 在念宠，ta 一直被记得 ——</div></div>
+      <button class="save-btn" onclick="copyMemLink()">复制纪念链接</button>
+      <button class="save-btn" style="background:var(--sage);margin-top:10px" onclick="closeSheet();toast('已保存纪念卡到相册 🤍')">保存纪念卡图片</button>`;
     }
     sh.innerHTML=h; document.getElementById('mask').classList.add('show'); sh.classList.add('show');
   }
@@ -370,6 +379,8 @@
     const b=(document.getElementById('moB').value||'').trim()||'想 ta 了';
     m.tl.push({a,b}); closeSheet(); openMem(curMem); toast('记下了 · ta 一直都在 🤍');
   }
+  function consultDone(i){SVCS[i].consulted=true;closeSheet();renderService();toast('已为你转达 · ta 们会温和联系你 🤍');}
+  function copyMemLink(){const link='https://nianchong.app/m/'+curMem;try{if(navigator.clipboard)navigator.clipboard.writeText(link);}catch(e){}closeSheet();toast('链接已复制 · 发给家人吧 🤍');}
 
   let toastT;
   function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('show'),2000);}
