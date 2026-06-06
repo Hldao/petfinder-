@@ -116,7 +116,7 @@
   .tabbar{height:66px;flex-shrink:0;background:#fff;border-top:1px solid var(--line);display:flex;padding-bottom:6px;position:relative}
   .tab{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:10.5px;color:var(--faint);cursor:pointer}
   .tab .ti{font-size:20px;opacity:.55}.tab.on{color:var(--apricot)}.tab.on .ti{opacity:1}
-  .fab{position:absolute;top:-18px;left:50%;transform:translateX(-50%);width:54px;height:54px;border-radius:50%;background:linear-gradient(150deg,var(--apricot-light),var(--apricot));box-shadow:0 8px 20px rgba(232,116,59,.4),0 0 0 5px #fff;display:flex;align-items:center;justify-content:center;color:#fff;font-size:28px;cursor:pointer;font-weight:300}
+  .fab{position:absolute;top:2px;left:50%;transform:translateX(-50%);width:54px;height:54px;border-radius:50%;background:linear-gradient(150deg,var(--apricot-light),var(--apricot));box-shadow:0 8px 20px rgba(232,116,59,.4),0 0 0 5px #fff;display:flex;align-items:center;justify-content:center;color:#fff;font-size:28px;cursor:pointer;font-weight:300}
 
   /* overlay (post detail / chat / search) */
   .overlay{position:absolute;inset:0;z-index:100;background:var(--cream);display:flex;flex-direction:column;transform:translateX(100%);transition:.3s cubic-bezier(.3,.9,.3,1)}
@@ -155,6 +155,8 @@
   .u-acts button{flex:1;border:none;border-radius:14px;padding:12px;font-size:14px;font-weight:800;cursor:pointer}
   .u-acts .u-dm{background:var(--apricot);color:#fff}
   .u-acts .u-fr{flex:0 0 120px;background:#fff;color:var(--apricot);box-shadow:inset 0 0 0 1.5px var(--apricot)}
+  .u-acts .u-fr.following{background:var(--apricot);color:#fff;box-shadow:none}
+  .act.faved{color:var(--honey)}
   .clk{cursor:pointer}
   .nm.clk{display:inline-block}
   .composer{flex-shrink:0;display:flex;gap:9px;padding:11px 14px;background:#fff;border-top:1px solid var(--line)}
@@ -206,6 +208,51 @@
   .msg-context{font-size:10.5px;color:#E66A38;margin-top:3px;font-weight:500;display:inline-block}
   .msg-context.reply{color:#2f6b5c}
   .msg-unread{position:absolute;top:50%;right:14px;transform:translateY(-50%);min-width:18px;height:18px;padding:0 5px;background:var(--apricot);color:#fff;border-radius:9px;font-size:10.5px;font-weight:700;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 5px rgba(232,116,59,.4)}
+  .msg-cats{display:flex;background:#fff;border-radius:18px;box-shadow:var(--shadow-sm);padding:15px 4px;margin-bottom:14px}
+  .cat-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:8px;cursor:pointer;position:relative;transition:transform .15s}
+  .cat-col:active{transform:scale(.95)}
+  .cat-ic{width:44px;height:44px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:21px;color:#fff;box-shadow:var(--shadow-sm)}
+  .cat-l{font-size:11px;color:#6b6354;font-weight:600}
+  .cat-dot{position:absolute;top:-3px;left:calc(50% + 8px);min-width:16px;height:16px;padding:0 4px;background:var(--apricot);color:#fff;border-radius:8px;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 5px rgba(232,116,59,.4)}
+  .dm-h{font-size:13px;font-weight:800;color:var(--ink);margin:8px 6px 11px}
+  /* 小红书式笔记网格 */
+  .note-grid{column-count:2;column-gap:10px;margin-top:6px}
+  .note-card{break-inside:avoid;background:#fff;border-radius:14px;overflow:hidden;box-shadow:var(--shadow-sm);margin-bottom:10px;cursor:pointer;transition:transform .15s}
+  .note-card:active{transform:scale(.98)}
+  .nc-cover{height:112px;display:flex;align-items:center;justify-content:center;font-size:40px;gap:4px}
+  .nc-cover.nc-text{height:auto;min-height:72px;padding:14px;font-size:13.5px;font-weight:700;color:var(--ink);text-align:left;line-height:1.55;align-items:flex-start}
+  .nc-body{padding:9px 10px 10px}
+  .nc-title{font-size:12.5px;line-height:1.5;color:var(--ink);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+  .nc-foot{display:flex;align-items:center;justify-content:space-between;margin-top:8px;gap:6px}
+  .nc-who{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--muted);min-width:0;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+  .nc-av{width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0}
+  .nc-like{font-size:11px;color:var(--muted);flex-shrink:0}
+  .grid-empty{text-align:center;color:var(--faint);padding:36px 0;font-size:12.5px}
+  /* 编辑资料整页 */
+  .edit-av{display:flex;flex-direction:column;align-items:center;gap:9px;padding:18px 0 6px;cursor:pointer}
+  .edit-av .ea{width:80px;height:80px;border-radius:50%;background:var(--apricot-soft);display:flex;align-items:center;justify-content:center;font-size:42px;box-shadow:var(--shadow-sm)}
+  .edit-av .eal{font-size:12px;color:var(--muted)}
+  .avpick{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;padding:6px 16px 14px}
+  .er-card{background:#fff;border-radius:16px;overflow:hidden;box-shadow:var(--shadow-sm);margin:8px 0}
+  .er{display:flex;align-items:center;gap:12px;padding:15px 16px;border-bottom:1px solid var(--line)}
+  .er:last-child{border-bottom:none}
+  .er .erl{font-size:14.5px;font-weight:600;color:var(--ink);width:80px;flex-shrink:0}
+  .er .eri{flex:1;border:none;background:transparent;font-size:14.5px;font-family:inherit;color:var(--ink);text-align:right}
+  .er .eri:focus{outline:none}
+  .er .eri::placeholder{color:var(--faint)}
+  .save-head{font-size:14px;font-weight:800;color:var(--apricot);cursor:pointer;margin-left:auto;padding:2px 4px}
+  /* 附近养宠人 */
+  .nbr{display:flex;gap:11px;align-items:center;background:#fff;border-radius:16px;padding:13px;box-shadow:var(--shadow-sm);margin-bottom:11px}
+  .nbr-av{width:46px;height:46px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:23px;flex-shrink:0;cursor:pointer}
+  .nbr-i{flex:1;min-width:0;cursor:pointer}
+  .nbr-n{font-size:14.5px;font-weight:700;display:flex;align-items:center;gap:6px}
+  .nbr-m{font-size:11.5px;color:var(--muted);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .nbr-t{font-size:11.5px;color:var(--faint);margin-top:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .nbr-btns{display:flex;flex-direction:column;gap:6px;flex-shrink:0}
+  .nbr-follow{background:var(--apricot);color:#fff;border:none;border-radius:16px;padding:6px 13px;font-size:12px;font-weight:700;cursor:pointer}
+  .nbr-follow.following{background:#f0ece2;color:var(--muted)}
+  .nbr-dm{background:#fff;color:var(--apricot);border:none;box-shadow:inset 0 0 0 1.5px var(--apricot);border-radius:16px;padding:6px 13px;font-size:12px;font-weight:700;cursor:pointer}
+  .same-area{font-size:10px;font-weight:700;color:#2f6b5c;background:var(--mint-soft);padding:1px 7px;border-radius:8px}
   .chat-more{font-size:20px;color:var(--ink);cursor:pointer;width:26px;text-align:right}
   .chat-ctx{background:#fff;border-radius:14px;margin:10px 16px 2px;padding:10px 12px;display:flex;gap:10px;align-items:center;box-shadow:var(--shadow-sm);flex-shrink:0;cursor:pointer}
   .cp-thumb{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
@@ -248,6 +295,13 @@
   .chips .ch.on{border-color:var(--apricot);background:var(--apricot-soft);color:var(--apricot)}
   .sheet textarea{width:100%;border:1.5px solid var(--line);background:#fff;border-radius:14px;padding:13px;font-size:14.5px;font-family:inherit;color:var(--ink);min-height:96px;resize:none}
   .sheet textarea:focus{outline:none;border-color:var(--apricot)}
+  .sheet input.sheet-input{width:100%;border:1.5px solid var(--line);background:#fff;border-radius:13px;padding:12px 14px;font-size:14.5px;font-family:inherit;color:var(--ink)}
+  .sheet input.sheet-input:focus{outline:none;border-color:var(--apricot)}
+  .lab{font-size:12.5px;font-weight:700;color:#6b6354;margin:2px 0 8px}
+  .set-line{display:flex;align-items:center;gap:12px;padding:14px 4px;border-bottom:1px solid var(--line);font-size:14.5px;cursor:pointer}
+  .set-line:last-child{border-bottom:none}.set-line .si2{width:24px;text-align:center}.set-line .sl2{flex:1}.set-line .sv2{font-size:13px;color:var(--muted)}
+  .sw{width:42px;height:24px;border-radius:30px;background:var(--apricot);position:relative;transition:.2s;flex-shrink:0}
+  .sw.off{background:#dcd6c9}.sw::after{content:"";position:absolute;top:3px;left:21px;width:18px;height:18px;border-radius:50%;background:#fff;transition:.2s;box-shadow:0 1px 3px rgba(0,0,0,.2)}.sw.off::after{left:3px}
   .addmedia{display:flex;gap:10px;margin:13px 0}.addmedia .mb{flex:1;border:1.5px dashed var(--faint);border-radius:13px;padding:13px;text-align:center;font-size:13px;color:var(--muted);font-weight:600;cursor:pointer}
   .save-btn{width:100%;background:var(--apricot);color:#fff;border:none;border-radius:15px;padding:14px;font-size:15px;font-weight:800;cursor:pointer}
   .kn p{font-size:13px;color:#6b6354;line-height:1.8;margin-bottom:10px}.kn .li{font-size:13px;color:#6b6354;line-height:1.7;padding-left:18px;position:relative;margin-bottom:7px}.kn .li::before{content:"·";position:absolute;left:6px;color:var(--apricot);font-weight:800}
@@ -281,6 +335,10 @@
       <div class="screen" id="s-nearby">
         <div class="plainhead"><h1>附近</h1><p>大理本地的宠物医院、遛狗、爱心喂养、宠物去处</p></div>
         <div class="scroll"><div class="nb">
+          <div class="hub-card" onclick="switchScreen('neighbors')">
+            <div class="hic" style="background:#E6F4EF">🐾</div>
+            <div class="ht"><div class="a">附近养宠人</div><div class="b">找同城养宠搭子 · 让狗子也有朋友</div></div>
+            <div class="hgo">›</div></div>
           <div class="hub-card" onclick="switchScreen('hosp')">
             <div class="hic" style="background:var(--apricot-soft)">🏥</div>
             <div class="ht"><div class="a">医院口碑</div><div class="b">本地养宠人真实评价 · 不刷不买</div></div>
@@ -324,6 +382,15 @@
         </div></div>
       </div>
 
+      <!-- 附近养宠人 -->
+      <div class="screen" id="s-neighbors">
+        <div class="plainhead"><span class="back" onclick="switchScreen('nearby')">‹ 附近</span><h1>附近养宠人</h1><p>大理本地养宠人 · 找个同城搭子，让 ta 也有朋友 🐾</p></div>
+        <div class="scroll"><div class="nb">
+          <div id="nbrList"></div>
+          <div class="note">同城遛弯、互助、约饭都更近 · 真实养宠邻居，不是网红 🐾</div>
+        </div></div>
+      </div>
+
       <!-- 爱心喂养 · 流浪猫 -->
       <div class="screen" id="s-feedcat">
         <div class="plainhead"><span class="back" onclick="switchScreen('nearby')">‹ 附近</span><h1>爱心喂养</h1><p>大理街角的流浪猫，有人在默默照顾 🐾</p></div>
@@ -349,82 +416,31 @@
       <!-- 消息 · 仿寻宠 -->
       <div class="screen" id="s-msg">
         <div class="plainhead"><h1>消息</h1></div>
-        <div class="mp-tabs">
-          <div class="mp-tab active" id="mt-all" onclick="switchMsgTab('all')">全部</div>
-          <div class="mp-tab" id="mt-int" onclick="switchMsgTab('int')">互动</div>
-          <div class="mp-tab" id="mt-dm" onclick="switchMsgTab('dm')">私信</div>
-        </div>
-        <div class="scroll" style="padding-top:2px">
-          <div class="msg-list" id="mp-all">
-            <div class="msg-row" onclick="openSheet('notice')">
-              <div class="msg-avatar mp">📣</div>
-              <div class="msg-body"><div class="msg-row-head"><span class="msg-name">邻宠 · 大理<span class="msg-mp-tag">服务号</span></span><span class="msg-time">18:02</span></div>
-                <div class="msg-preview">📍 本周六古城宠物市集开始报名啦 · 有领养 + 免费义诊</div><div class="msg-context">同城活动</div></div>
-              <div class="msg-unread">1</div></div>
-            <div class="msg-row" onclick="openPost(0)">
-              <div class="msg-avatar ph-orange">🐕</div>
-              <div class="msg-body"><div class="msg-row-head"><span class="msg-name">才村的橘座</span><span class="msg-time">17:24</span></div>
-                <div class="msg-preview"><span class="msg-prefix">ta：</span>海舌傍晚 6 点我也常去～约起来呀</div><div class="msg-context reply">回复了你的「遛狗约伴」</div></div>
-              <div class="msg-unread">1</div></div>
-            <div class="msg-row" onclick="openPost(3)">
-              <div class="msg-avatar ph-blue">🐶</div>
-              <div class="msg-body"><div class="msg-row-head"><span class="msg-name">大理小张 等 3 人</span><span class="msg-time">16:38</span></div>
-                <div class="msg-preview">赞了你的帖子「煤球第一次见雪」</div><div class="msg-context reply">你的「晒娃」帖</div></div></div>
-            <div class="msg-row" onclick="openChat('wang')">
-              <div class="msg-avatar ph-cream">🐱</div>
-              <div class="msg-body"><div class="msg-row-head"><span class="msg-name">古城王姐</span><span class="msg-time">15:10</span></div>
-                <div class="msg-preview"><span class="msg-prefix">ta：</span>小奶猫还在吗？我想领养一只橘色的</div><div class="msg-context">关于 · 小奶猫领养</div></div>
-              <div class="msg-unread">2</div></div>
-            <div class="msg-row" onclick="openChat('hei')">
-              <div class="msg-avatar ph-mint">🐶</div>
-              <div class="msg-body"><div class="msg-row-head"><span class="msg-name">喜洲阿黑</span><span class="msg-time">昨天</span></div>
-                <div class="msg-preview"><span class="msg-prefix">我：</span>好的，那周末海舌见～</div><div class="msg-context">关于 · 遛狗约伴</div></div></div>
-          </div>
-
-          <div class="msg-list" id="mp-int" style="display:none">
-            <div class="msg-row" onclick="openPost(0)">
-              <div class="msg-avatar ph-orange">🐕</div>
-              <div class="msg-body"><div class="msg-row-head"><span class="msg-name">才村的橘座</span><span class="msg-time">17:24</span></div>
-                <div class="msg-preview"><span class="msg-prefix">ta：</span>海舌傍晚 6 点我也常去～约起来呀</div><div class="msg-context reply">回复了你的「遛狗约伴」</div></div>
-              <div class="msg-unread">1</div></div>
-            <div class="msg-row" onclick="openPost(3)">
-              <div class="msg-avatar ph-blue">🐶</div>
-              <div class="msg-body"><div class="msg-row-head"><span class="msg-name">大理小张 等 3 人</span><span class="msg-time">16:38</span></div>
-                <div class="msg-preview">赞了你的帖子「煤球第一次见雪」</div><div class="msg-context reply">你的「晒娃」帖</div></div></div>
-          </div>
-
-          <div class="msg-list" id="mp-dm" style="display:none">
-            <div class="msg-row" onclick="openChat('wang')">
-              <div class="msg-avatar ph-cream">🐱</div>
-              <div class="msg-body"><div class="msg-row-head"><span class="msg-name">古城王姐</span><span class="msg-time">15:10</span></div>
-                <div class="msg-preview"><span class="msg-prefix">ta：</span>小奶猫还在吗？我想领养一只橘色的</div><div class="msg-context">关于 · 小奶猫领养</div></div>
-              <div class="msg-unread">2</div></div>
-            <div class="msg-row" onclick="openChat('hei')">
-              <div class="msg-avatar ph-mint">🐶</div>
-              <div class="msg-body"><div class="msg-row-head"><span class="msg-name">喜洲阿黑</span><span class="msg-time">昨天</span></div>
-                <div class="msg-preview"><span class="msg-prefix">我：</span>好的，那周末海舌见～</div><div class="msg-context">关于 · 遛狗约伴</div></div></div>
-          </div>
+        <div class="scroll" style="padding-top:6px">
+          <div class="msg-cats" id="msgCats"></div>
+          <div class="dm-h">私信</div>
+          <div class="msg-list" id="mp-dm"></div>
           <div class="note">只跟<b>同城</b>的人产生联系——见面、遛弯、互助都更容易。</div>
         </div>
       </div>
 
       <!-- 我的 -->
       <div class="screen" id="s-mine">
-        <div class="plainhead"><h1>我的</h1></div>
+        <div class="plainhead" style="display:flex;justify-content:space-between;align-items:center"><h1>我的</h1><span onclick="openSheet('settings')" style="font-size:21px;cursor:pointer;padding:2px 4px">⚙️</span></div>
         <div class="scroll" style="padding:6px 16px 20px">
-          <div class="mine-hero"><div class="ma">🙂</div><div><div class="mn">才村的橘座</div><div class="ms">📍 大理才村 · 养宠 2 年 · 一猫一狗</div></div></div>
-          <div class="mstat"><div class="st"><div class="n">12</div><div class="l">发帖</div></div><div class="st"><div class="n">24</div><div class="l">同城好友</div></div></div>
+          <div class="mine-hero" onclick="openEditMe()"><div class="ma" id="meAv">🙂</div><div style="flex:1"><div class="mn" id="meName">才村的橘座</div><div class="ms" id="meSub">📍 大理才村 · 养宠 2 年 · 一猫一狗</div></div><div style="font-size:12px;font-weight:700;background:rgba(255,255,255,.22);padding:5px 11px;border-radius:20px;align-self:flex-start">编辑 ›</div></div>
+          <div class="mstat"><div class="st"><div class="n" id="msPosts">0</div><div class="l">发帖</div></div><div class="st" style="cursor:pointer" onclick="openFollowing()"><div class="n" id="msFollowing">0</div><div class="l">关注</div></div><div class="st"><div class="n" id="msFans">0</div><div class="l">粉丝</div></div></div>
           <div class="nb-sec" style="margin-left:6px">🐾 我的宠物矩阵</div>
           <div class="matrix">
             <div class="mxr" onclick="gotoMatrix('护宠')"><div class="mi" style="background:var(--apricot)">🛡️</div><div class="mtt"><div class="a">护宠 · 守护健康</div><div class="b">奶糖的体外驱虫还有 2 天到期 ›</div></div><div class="go">›</div></div>
             <div class="mxr" onclick="gotoMatrix('寻宠')"><div class="mi" style="background:#E0584C">📍</div><div class="mtt"><div class="a">寻宠 · 找回走失</div><div class="b">帮邻居一起找，也守护自己的 ta ›</div></div><div class="go">›</div></div>
           </div>
-          <div style="margin-bottom:16px">
-            <div class="setrow" onclick="openMyPosts()"><div class="si">📝</div><div class="sl">我的发帖</div><div class="sv" id="myPostCount">›</div></div>
-            <div class="setrow" onclick="openFavs()"><div class="si">⭐</div><div class="sl">我的收藏</div><div class="sv">本地医院/遛狗点 ›</div></div>
-            <div class="setrow" onclick="openSheet('about')"><div class="si">🏘️</div><div class="sl">关于邻宠</div><div class="sv">›</div></div>
+          <div class="mp-tabs" style="padding:16px 0 12px">
+            <div class="mp-tab active" id="mtab-note" onclick="switchMineTab('note')">笔记</div>
+            <div class="mp-tab" id="mtab-fav" onclick="switchMineTab('fav')">收藏</div>
           </div>
-          <div class="note">邻宠 · 大理宠物矩阵的一员<br>寻宠 找 · 护宠 守 · <b>邻宠 聚</b></div>
+          <div class="note-grid" id="mineGrid"></div>
+          <div class="note" style="margin-top:18px"><span onclick="openSheet('about')" style="cursor:pointer;text-decoration:underline">关于邻宠</span> · 大理宠物矩阵的一员 · 寻宠 找 · 护宠 守 · <b>邻宠 聚</b></div>
         </div>
       </div>
     </div>
@@ -501,6 +517,21 @@
       <div class="ohead"><span class="oback" onclick="closeOv('ov-favs')">‹</span><span class="otitle">我的收藏</span></div>
       <div class="oscroll" id="favsBody"></div>
     </div>
+    <!-- 我关注的 -->
+    <div class="overlay" id="ov-following">
+      <div class="ohead"><span class="oback" onclick="closeOv('ov-following')">‹</span><span class="otitle">我的关注</span></div>
+      <div class="oscroll" id="followingBody"></div>
+    </div>
+    <!-- 消息提示列表 -->
+    <div class="overlay" id="ov-notif">
+      <div class="ohead"><span class="oback" onclick="closeOv('ov-notif')">‹</span><span class="otitle" id="notifTitle">提示</span></div>
+      <div class="oscroll" id="notifBody"></div>
+    </div>
+    <!-- 编辑资料整页 -->
+    <div class="overlay" id="ov-editme">
+      <div class="ohead"><span class="oback" onclick="closeOv('ov-editme')">‹</span><span class="otitle">编辑资料</span><span class="save-head" onclick="saveMe2()">保存</span></div>
+      <div class="oscroll" id="editmeBody"></div>
+    </div>
 
     <div class="sheet-mask" id="mask" onclick="closeSheet()"></div>
     <div class="sheet" id="sheet"></div>
@@ -523,10 +554,10 @@
       cmts:[{av:'🦮',nm:'古城豆豆爸',area:'古城',txt:'摊位怎么报名呀？',lk:1,liked:false}]},
   ];
   const CHATS={
-    wang:{nm:'古城王姐',av:'🐱',avbg:'#FFF6E0',ctx:{thumb:'🐱',tbg:'#FFF6E0',name:'三只小奶猫找领养',meta:'古城 · 同城自取',status:'领养'},msgs:[
+    wang:{nm:'古城王姐',av:'🐱',avbg:'#FFF6E0',unread:2,time:'15:10',ctx:{thumb:'🐱',tbg:'#FFF6E0',name:'三只小奶猫找领养',meta:'古城 · 同城自取',status:'领养'},msgs:[
       {them:1,txt:'你好，看到你发的<b>小奶猫领养</b>帖～'},{them:1,txt:'小猫还在吗？我想领一只橘色的 🐱'},
       {me:1,txt:'在的在的，还有两只橘的'},{them:1,txt:'太好了！我周末能过去看看吗？大概几点方便？'}]},
-    hei:{nm:'喜洲阿黑',av:'🐶',avbg:'#FFEAE0',ctx:{thumb:'🐕',tbg:'#FFEAE0',name:'海舌公园遛狗约伴',meta:'才村 · 傍晚',status:'遛狗'},msgs:[
+    hei:{nm:'喜洲阿黑',av:'🐶',avbg:'#FFEAE0',unread:0,time:'昨天',ctx:{thumb:'🐕',tbg:'#FFEAE0',name:'海舌公园遛狗约伴',meta:'才村 · 傍晚',status:'遛狗'},msgs:[
       {them:1,txt:'你也常去海舌遛狗呀？我家狗也需要朋友 🐶'},{me:1,txt:'是呀，傍晚 6 点左右，狗友挺多的'},
       {them:1,txt:'那周末一起？我带煤球过去'},{me:1,txt:'好的，那周末海舌见～'}]}
   };
@@ -537,10 +568,10 @@
     document.querySelectorAll('.screen').forEach(s=>s.classList.remove('on'));
     document.getElementById('s-'+name).classList.add('on');
     document.querySelectorAll('.tab[data-s]').forEach(t=>t.classList.remove('on'));
-    const tabName={hosp:'nearby',walk:'nearby',feedcat:'nearby',petspot:'nearby'}[name]||name;
+    const tabName={hosp:'nearby',walk:'nearby',feedcat:'nearby',petspot:'nearby',neighbors:'nearby'}[name]||name;
     const tabEl=(el&&el.dataset.s)?el:document.querySelector('.tab[data-s="'+tabName+'"]');
     if(tabEl)tabEl.classList.add('on');
-    ({hosp:renderHosp,walk:renderWalk,feedcat:renderFeedcat,petspot:renderPetspot}[name]||function(){})();
+    ({hosp:renderHosp,walk:renderWalk,feedcat:renderFeedcat,petspot:renderPetspot,neighbors:renderNeighbors,mine:updateMineStats,msg:renderMsgs}[name]||function(){})();
     const sc=document.getElementById('s-'+name).querySelector('.scroll');
     if(sc){const t=anchor&&document.getElementById(anchor);
       sc.scrollTop = t ? (t.getBoundingClientRect().top - sc.getBoundingClientRect().top + sc.scrollTop - 8) : 0;}
@@ -571,13 +602,14 @@
   }
   function postCard(p,i){return `<div class="post" onclick="openPost(${i})">
     <div class="ph"><div class="av clk" onclick="event.stopPropagation();openUser('${p.nm}')" style="background:${p.avbg}">${p.av}</div>
-      <div class="who"><div class="nm clk" onclick="event.stopPropagation();openUser('${p.nm}')">${p.nm}</div><div class="meta"><span class="geo">📍${p.area} · ${p.dist}</span></div></div>
+      <div class="who"><div class="nm clk" onclick="event.stopPropagation();openUser('${p.nm}')">${p.nm}</div><div class="meta"><span class="geo">📍${p.area} · ${p.dist}</span>${p.area===MEINFO.area?'<span class="same-area" style="margin-left:6px">同片区</span>':''}</div></div>
       <div class="cat cat-${p.cat}">${CATLABEL[p.cat]}</div></div>
     <div class="txt">${p.txt}</div>
     ${p.img.length?`<div class="imgs">${p.img.map(e=>`<div class="im" style="background:${bg(e)}">${e}</div>`).join('')}</div>`:''}
     <div class="acts">
       <div class="act ${p.liked?'liked':''}" onclick="event.stopPropagation();toggleLike(${i})"><span class="i">${p.liked?'❤️':'🤍'}</span> ${p.likes}</div>
       <div class="act" onclick="event.stopPropagation();openPost(${i})"><span class="i">💬</span> ${p.cmts.length}</div>
+      <div class="act ${POST_FAVS.indexOf(p)>=0?'faved':''}" onclick="event.stopPropagation();togglePostFav(${i})"><span class="i">${POST_FAVS.indexOf(p)>=0?'⭐':'☆'}</span> 收藏</div>
       <div class="act" onclick="event.stopPropagation();toast('已生成同城分享卡 ↗')"><span class="i">↗</span> 分享</div>
     </div></div>`;}
   function toggleLike(i){const p=POSTS[i];p.liked=!p.liked;p.likes+=p.liked?1:-1;renderFeed();if(document.getElementById('ov-post').classList.contains('on')&&curPost===i)renderPostBody();}
@@ -596,6 +628,7 @@
         <div class="acts">
           <div class="act ${p.liked?'liked':''}" onclick="toggleLike(${curPost})"><span class="i">${p.liked?'❤️':'🤍'}</span> ${p.likes}</div>
           <div class="act"><span class="i">💬</span> ${p.cmts.length}</div>
+          <div class="act ${POST_FAVS.indexOf(p)>=0?'faved':''}" onclick="togglePostFav(${curPost})"><span class="i">${POST_FAVS.indexOf(p)>=0?'⭐':'☆'}</span> 收藏</div>
           <div class="act" onclick="toast('已生成同城分享卡 ↗')"><span class="i">↗</span> 分享</div></div>
       </div>
       <div class="cmt-h">同城回复 · ${p.cmts.length}</div>
@@ -612,17 +645,62 @@
     const sc=document.getElementById('postBody');sc.scrollTop=sc.scrollHeight;
   }
 
-  /* 消息 tab */
-  function switchMsgTab(t){['all','int','dm'].forEach(k=>{document.getElementById('mp-'+k).style.display=k===t?'':'none';document.getElementById('mt-'+k).classList.toggle('active',k===t);});}
+  /* 消息页（小红书式：提示入口 + 私信，数据驱动）*/
+  const NEW_FANS=[{nm:'大理小张',time:'2 小时前'},{nm:'下关丸子',time:'昨天'},{nm:'古城豆豆爸',time:'3 天前'}];
+  const LIKES=[{nm:'大理小张 等 3 人',title:'煤球第一次见雪',time:'16:38',postIdx:3},{nm:'古城王姐',title:'遛狗约伴',time:'昨天',postIdx:0}];
+  const COMMENTS=[{nm:'才村的橘座',text:'海舌傍晚 6 点我也常去～约起来呀',title:'遛狗约伴',time:'17:24',postIdx:0}];
+  function chatPreview(c){
+    if(!c.msgs.length)return '<span class="msg-prefix">打个招呼吧～</span>';
+    const m=c.msgs[c.msgs.length-1], who=m.me?'<span class="msg-prefix">我：</span>':'<span class="msg-prefix">ta：</span>';
+    return who+(m.img?'[图片]':m.loc?('📍 '+m.loc):m.txt);
+  }
+  function msgRow(o){
+    return `<div class="msg-row" onclick="${o.onclick}">
+      <div class="msg-avatar ${o.cls||''}" ${o.bg?`style="background:${o.bg}"`:''}>${o.av}</div>
+      <div class="msg-body"><div class="msg-row-head"><span class="msg-name">${o.nm}${o.tag?`<span class="msg-mp-tag">${o.tag}</span>`:''}</span>${o.time?`<span class="msg-time">${o.time}</span>`:''}</div>
+        <div class="msg-preview">${o.preview}</div>${o.ctx?`<div class="msg-context ${o.ctxCls||''}">${o.ctx}</div>`:''}</div>
+      ${o.unread?`<div class="msg-unread">${o.unread}</div>`:''}</div>`;
+  }
+  function dmRows(){
+    return Object.keys(CHATS).map(id=>{const c=CHATS[id];return msgRow({av:c.av,bg:c.avbg,nm:c.nm,time:c.time||'刚刚',preview:chatPreview(c),ctx:'关于 · '+c.ctx.name,unread:c.unread||0,onclick:`openChat('${id}')`});}).join('')
+      || `<div style="text-align:center;color:var(--faint);padding:30px 0;font-size:12.5px">还没有私信 · 去同城帖点头像私信邻居 🐾</div>`;
+  }
+  function catCol(c){
+    return `<div class="cat-col" onclick="openNotif('${c.key}')">
+      <div class="cat-ic" style="background:${c.bg}">${c.ic}</div>${c.n?`<div class="cat-dot">${c.n}</div>`:''}
+      <div class="cat-l">${c.title}</div></div>`;
+  }
+  function renderMsgs(){
+    const cats=[
+      {key:'likes',ic:'💗',bg:'linear-gradient(135deg,#FF8FA3,#FF5C7A)',title:'赞和收藏',n:LIKES.length},
+      {key:'fans',ic:'➕',bg:'linear-gradient(135deg,#FF8552,#E66A38)',title:'新增关注',n:NEW_FANS.length},
+      {key:'comments',ic:'💬',bg:'linear-gradient(135deg,#5BB89F,#3FA98C)',title:'评论和@',n:COMMENTS.length},
+      {key:'notice',ic:'📣',bg:'linear-gradient(135deg,var(--apricot-light),var(--apricot))',title:'邻宠通知',n:1}
+    ];
+    document.getElementById('msgCats').innerHTML=cats.map(catCol).join('');
+    document.getElementById('mp-dm').innerHTML=dmRows();
+  }
+  function notifEmpty(t){return `<div style="text-align:center;color:var(--faint);padding:40px 0;font-size:13px">${t} 🐾</div>`;}
+  function openNotif(key){
+    let title='',h='';
+    if(key==='fans'){title='新增关注';h=NEW_FANS.length?NEW_FANS.map(f=>{const u=userProfile(f.nm);return msgRow({av:u.av,bg:u.avbg,nm:f.nm,time:f.time,preview:'关注了你',ctx:'📍 '+u.area+' · '+u.posts.length+' 条同城帖',onclick:`closeOv('ov-notif');openUser('${f.nm}')`});}).join(''):notifEmpty('还没有新粉丝');}
+    else if(key==='likes'){title='赞和收藏';h=LIKES.length?LIKES.map(l=>msgRow({av:'💗',bg:'#FFE3EA',nm:l.nm,time:l.time,preview:`赞了你的「${l.title}」`,onclick:`closeOv('ov-notif');openPost(${l.postIdx})`})).join(''):notifEmpty('还没有赞和收藏');}
+    else if(key==='comments'){title='评论和@';h=COMMENTS.length?COMMENTS.map(c=>msgRow({av:'💬',bg:'#DDF1EA',nm:c.nm,time:c.time,preview:c.text,ctx:'你的「'+c.title+'」',ctxCls:'reply',onclick:`closeOv('ov-notif');openPost(${c.postIdx})`})).join(''):notifEmpty('还没有评论');}
+    else{title='邻宠通知';h=msgRow({av:'📣',cls:'mp',nm:'邻宠 · 大理',tag:'服务号',time:'18:02',preview:'📍 本周六古城宠物市集开始报名啦 · 有领养 + 免费义诊',ctx:'同城活动',onclick:"openSheet('notice')"});}
+    document.getElementById('notifTitle').textContent=title;
+    document.getElementById('notifBody').innerHTML=h;
+    openOv('ov-notif');document.getElementById('notifBody').scrollTop=0;
+  }
 
   /* chat · 仿寻宠 */
   function openChat(id){
     curChat=id;const c=CHATS[id];
+    c.unread=0;
     document.getElementById('chatTitle').textContent=c.nm;
     document.getElementById('chatCtx').innerHTML=`<div class="cp-thumb" style="background:${c.ctx.tbg}">${c.ctx.thumb}</div><div style="flex:1"><div class="cp-name">${c.ctx.name}</div><div class="cp-meta">${c.ctx.meta}</div></div><div class="cp-status">${c.ctx.status}</div>`;
     document.getElementById('meetHint').classList.add('show');
     document.getElementById('qr').classList.remove('open');document.getElementById('qrToggle').classList.remove('active');
-    renderChat();openOv('ov-chat');
+    renderChat();openOv('ov-chat');renderMsgs();
   }
   function chatBub(m){
     if(m.img)return `<div class="chat-bubble" style="padding:4px"><div style="width:118px;height:88px;border-radius:10px;background:linear-gradient(135deg,#FFE2D0,#FFCBB8);display:flex;align-items:center;justify-content:center;font-size:30px">🐾</div></div>`;
@@ -637,7 +715,7 @@
     document.getElementById('chatBody').innerHTML=h;
     const b=document.getElementById('chatBody');setTimeout(()=>b.scrollTop=b.scrollHeight,30);
   }
-  function sendChat(){const inp=document.getElementById('chatInput');const v=inp.value.trim();if(!v)return;CHATS[curChat].msgs.push({me:1,txt:v});inp.value='';renderChat();}
+  function sendChat(){const inp=document.getElementById('chatInput');const v=inp.value.trim();if(!v)return;CHATS[curChat].msgs.push({me:1,txt:v});CHATS[curChat].time='刚刚';inp.value='';renderChat();}
   function toggleQuickReplies(){document.getElementById('qr').classList.toggle('open');document.getElementById('qrToggle').classList.toggle('active');}
   function setQuickReply(t){document.getElementById('chatInput').value=t;document.getElementById('qr').classList.remove('open');document.getElementById('qrToggle').classList.remove('active');}
 
@@ -646,14 +724,124 @@
     '才村的橘座':{pet:'一只金毛 · 橘座',bio:'才村养狗 2 年，傍晚常去海舌遛弯，欢迎同城狗友约遛 🐶',joined:'2 年',friends:24},
     '古城王姐':{pet:'三只猫 · 也在救助流浪猫',bio:'古城开客栈，顺手救助流浪猫，常有小猫找领养，欢迎来看 🐾',joined:'3 年',friends:58},
     '喜洲阿黑':{pet:'一只田园犬 · 煤球',bio:'喜洲本地人，带煤球到处跑，爱晒娃 ❄️',joined:'1 年',friends:17},
-    '洱海边的Lucky妈':{pet:'一只英短 · Lucky',bio:'下关上班族，养猫新手，常在同城求助问答 🙏',joined:'8 个月',friends:12}
+    '洱海边的Lucky妈':{pet:'一只英短 · Lucky',bio:'下关上班族，养猫新手，常在同城求助问答 🙏',joined:'8 个月',friends:12},
+    '才村小鹿':{av:'🐈',avbg:'#FFF6E0',area:'才村',pet:'一只布偶 · 小鹿',bio:'自由职业刚搬来大理，人生地不熟，想认识才村养宠的邻居 🐱',joined:'刚来',friends:3},
+    '古城豆豆爸':{av:'🦮',avbg:'#E6F4EF',area:'古城',pet:'一只金毛 · 豆豆',bio:'数字游民·在大理远程办公，求遛狗搭子，豆豆需要朋友 🐶',joined:'3 个月',friends:8},
+    '下关丸子':{av:'🐕',avbg:'#E8EEF5',area:'下关',pet:'一只柯基 · 丸子',bio:'下关上班族，周末想找人一起遛狗 🐾',joined:'1 年',friends:14}
   };
   function userProfile(nm){
     const posts=POSTS.filter(p=>p.nm===nm), base=posts[0]||{};
     const u=USERS[nm]||{};
-    return {nm,av:base.av||'🙂',avbg:base.avbg||'var(--apricot-soft)',area:base.area||'大理',
+    return {nm,av:u.av||base.av||'🙂',avbg:u.avbg||base.avbg||'var(--apricot-soft)',area:u.area||base.area||'大理',
       pet:u.pet||'大理养宠人',bio:u.bio||'大理本地养宠人 · 同城常来常往 🐾',
-      joined:u.joined||'新邻居',friends:(u.friends!=null?u.friends:0),posts};
+      joined:u.joined||'新邻居',friends:(u.friends!=null?u.friends:0),fans:fansOf(nm),following:isFollowing(nm),posts};
+  }
+  /* 附近养宠人（people discovery · 切「同城关系/孤独」痛点）*/
+  const NEIGHBORS=[
+    {nm:'才村小鹿',dist:'0.4 km'},{nm:'古城豆豆爸',dist:'1.5 km'},{nm:'古城王姐',dist:'1.2 km'},
+    {nm:'下关丸子',dist:'4.8 km'},{nm:'喜洲阿黑',dist:'3.0 km'},{nm:'洱海边的Lucky妈',dist:'5.3 km'}
+  ];
+  function renderNeighbors(){
+    const box=document.getElementById('nbrList'); if(!box)return;
+    box.innerHTML=NEIGHBORS.map(n=>{
+      const u=userProfile(n.nm), same=u.area===MEINFO.area, f=isFollowing(n.nm);
+      return `<div class="nbr">
+        <div class="nbr-av clk" style="background:${u.avbg}" onclick="openUser('${n.nm}')">${u.av}</div>
+        <div class="nbr-i" onclick="openUser('${n.nm}')"><div class="nbr-n">${n.nm}${same?'<span class="same-area">同片区</span>':''}</div>
+          <div class="nbr-m">📍${u.area} · ${n.dist} · ${u.pet}</div><div class="nbr-t">${u.bio}</div></div>
+        <div class="nbr-btns"><button class="nbr-follow ${f?'following':''}" onclick="event.stopPropagation();toggleFollow('${n.nm}',this)">${f?'已关注':'+ 关注'}</button>
+          <button class="nbr-dm" onclick="event.stopPropagation();dmUser('${n.nm}')">私信</button></div></div>`;
+    }).join('');
+  }
+  /* 关注 / 粉丝 / 帖子收藏 */
+  const ME='才村的橘座';
+  const FANS={'才村的橘座':24,'古城王姐':58,'喜洲阿黑':17,'洱海边的Lucky妈':12};
+  let FOLLOWING=[], POST_FAVS=[];
+  function fansOf(n){if(FANS[n]==null)FANS[n]=0;return FANS[n];}
+  function isFollowing(n){return FOLLOWING.indexOf(n)>=0;}
+  function toggleFollow(n,btn){
+    const i=FOLLOWING.indexOf(n);
+    if(i<0){FOLLOWING.push(n);FANS[n]=fansOf(n)+1;}else{FOLLOWING.splice(i,1);FANS[n]=fansOf(n)-1;}
+    const f=isFollowing(n);
+    if(btn){btn.textContent=f?'已关注 ✓':'关注';btn.classList.toggle('following',f);}
+    toast(f?'已关注 '+n+' 🐾':'已取消关注');
+  }
+  function togglePostFav(i){
+    const p=POSTS[i],k=POST_FAVS.indexOf(p);
+    if(k<0){POST_FAVS.push(p);toast('已收藏帖子 ★');}else{POST_FAVS.splice(k,1);toast('已取消收藏');}
+    renderFeed();
+    if(document.getElementById('ov-post').classList.contains('on')&&curPost===i)renderPostBody();
+  }
+  const MEINFO={av:'🙂',name:'才村的橘座',area:'才村',extra:'养宠 2 年 · 一猫一狗',bio:'才村养狗 2 年，傍晚常去海舌遛弯，欢迎同城狗友约遛 🐶'};
+  function renderMineHero(){
+    const g=id=>document.getElementById(id);
+    if(g('meAv'))g('meAv').textContent=MEINFO.av;
+    if(g('meName'))g('meName').textContent=MEINFO.name;
+    if(g('meSub'))g('meSub').textContent='📍 大理'+MEINFO.area+' · '+MEINFO.extra;
+  }
+  const AVATARS=['🙂','🐕','🐱','🐰','🧑','👩','🐶','🐈','🦊','🐹'];
+  function openEditMe(){
+    pick={};
+    document.getElementById('editmeBody').innerHTML=`
+      <div class="edit-av" onclick="toggleAvPick()"><div class="ea" id="eaAv">${MEINFO.av}</div><div class="eal">点击更换头像 ›</div></div>
+      <div class="avpick" id="avPick" style="display:none">${AVATARS.map(e=>`<div class="ch ${MEINFO.av===e?'on':''}" onclick="pickChip(this,'av','${e}');document.getElementById('eaAv').textContent='${e}'">${e}</div>`).join('')}</div>
+      <div class="er-card">
+        <div class="er"><div class="erl">昵称</div><input class="eri" id="edName" value="${MEINFO.name}" placeholder="给自己起个名"></div>
+        <div class="er"><div class="erl">养宠</div><input class="eri" id="edPets" value="${MEINFO.extra}" placeholder="例如：一猫一狗"></div>
+        <div class="er"><div class="erl">个性签名</div><input class="eri" id="edBio" value="${MEINFO.bio}" placeholder="介绍一下你和 ta"></div>
+      </div>
+      <div class="lab" style="margin:16px 6px 8px">你在大理哪一片</div>
+      <div class="chips" style="padding:0 4px">${['才村','古城','下关','喜洲'].map(a=>`<div class="ch ${MEINFO.area===a?'on':''}" onclick="pickChip(this,'area','${a}')">📍${a}</div>`).join('')}</div>
+      <div class="note" style="margin-top:20px">资料只用于让同城邻居认识你 · 不公开手机号等隐私 🐾</div>`;
+    openOv('ov-editme');document.getElementById('editmeBody').scrollTop=0;
+  }
+  function toggleAvPick(){const p=document.getElementById('avPick');p.style.display=p.style.display==='none'?'flex':'none';}
+  function saveMe2(){
+    if(pick.av)MEINFO.av=pick.av; if(pick.area)MEINFO.area=pick.area;
+    const nm=(document.getElementById('edName').value||'').trim(); if(nm)MEINFO.name=nm;
+    const pets=(document.getElementById('edPets').value||'').trim(); if(pets)MEINFO.extra=pets;
+    MEINFO.bio=(document.getElementById('edBio').value||'').trim()||MEINFO.bio;
+    if(USERS[ME])USERS[ME].bio=MEINFO.bio;
+    renderMineHero(); closeOv('ov-editme'); toast('资料已保存 🐾');
+  }
+  function updateMineStats(){
+    const g=id=>document.getElementById(id);
+    if(g('msPosts'))g('msPosts').textContent=POSTS.filter(p=>p.nm===ME).length;
+    if(g('msFollowing'))g('msFollowing').textContent=FOLLOWING.length;
+    if(g('msFans'))g('msFans').textContent=fansOf(ME);
+    renderMineHero();renderMineGrid();
+  }
+  /* 小红书式笔记网格卡 */
+  function noteCard(p,i){
+    const cover=p.img&&p.img.length
+      ? `<div class="nc-cover" style="background:${bg(p.img[0])}">${p.img.join(' ')}</div>`
+      : `<div class="nc-cover nc-text" style="background:${p.avbg||'var(--apricot-soft)'}">${p.txt}</div>`;
+    return `<div class="note-card" onclick="openPost(${i})">${cover}
+      <div class="nc-body"><div class="nc-title">${p.txt}</div>
+        <div class="nc-foot"><span class="nc-who"><span class="nc-av" style="background:${p.avbg}">${p.av}</span>${p.nm}</span><span class="nc-like">${p.liked?'❤️':'🤍'} ${p.likes}</span></div></div></div>`;
+  }
+  function placeNoteCard(p){
+    const cbg={walk:'#E6F4EF',feedcat:'#FFF1E8',petspot:'var(--honey-soft)',hospital:'var(--apricot-soft)'}[p.kind]||'var(--apricot-soft)';
+    return `<div class="note-card" onclick="openPlace('${p.id}')"><div class="nc-cover" style="background:${cbg}">${p.e}</div>
+      <div class="nc-body"><div class="nc-title">${p.nm}</div>
+        <div class="nc-foot"><span class="nc-who">📍${p.area}</span>${p.star?`<span class="nc-like">★ ${p.star}</span>`:''}</div></div></div>`;
+  }
+  let mineTab='note';
+  function switchMineTab(t){mineTab=t;['note','fav'].forEach(k=>document.getElementById('mtab-'+k).classList.toggle('active',k===t));renderMineGrid();}
+  function renderMineGrid(){
+    const box=document.getElementById('mineGrid'); if(!box)return;
+    if(mineTab==='note'){
+      const mine=POSTS.filter(p=>p.nm===ME);
+      box.innerHTML=mine.length?mine.map(p=>noteCard(p,POSTS.indexOf(p))).join(''):`<div class="grid-empty">还没发过笔记 · 去发第一条 🐾</div>`;
+    }else{
+      const places=FAVS.map(id=>PLACES.find(p=>p.id===id)).filter(Boolean);
+      const h=POST_FAVS.map(p=>noteCard(p,POSTS.indexOf(p))).join('')+places.map(placeNoteCard).join('');
+      box.innerHTML=h||`<div class="grid-empty">还没收藏 · 帖子点☆、地点点收藏 🐾</div>`;
+    }
+  }
+  function openFollowing(){
+    document.getElementById('followingBody').innerHTML=`<div class="nb-sec" style="margin:2px 6px 12px">我关注的 · ${FOLLOWING.length}</div>`+(FOLLOWING.length?FOLLOWING.map(n=>userSearchRow(n,'ov-following')).join(''):`<div style="text-align:center;color:var(--faint);padding:40px 0;font-size:13px">还没关注谁<br>去同城帖点头像、进主页点「关注」🐾</div>`);
+    openOv('ov-following');document.getElementById('followingBody').scrollTop=0;
   }
   function openUser(nm){
     const u=userProfile(nm);
@@ -661,16 +849,16 @@
       <div class="u-hero"><div class="uav" style="background:rgba(255,255,255,.25)">${u.av}</div>
         <div class="un">${u.nm}</div><div class="ureg">📍 大理 · ${u.area}</div></div>
       <div class="u-bio"><div class="pet">🐾 ${u.pet}</div>${u.bio}</div>
-      <div class="mstat" style="margin-top:12px"><div class="st"><div class="n">${u.posts.length}</div><div class="l">同城帖</div></div><div class="st"><div class="n">${u.friends}</div><div class="l">同城好友</div></div><div class="st"><div class="n">${u.joined}</div><div class="l">在大理</div></div></div>
-      <div class="u-acts"><button class="u-dm" onclick="dmUser('${u.nm}')">💬 私信 ta</button><button class="u-fr" onclick="addFriend(this)">加为同城好友</button></div>
-      <div class="nb-sec" style="margin:18px 6px 10px">📮 ta 的同城帖</div>
-      ${u.posts.length?u.posts.map(p=>postCard(p,POSTS.indexOf(p))).join(''):`<div style="text-align:center;color:var(--faint);padding:26px 0;font-size:12.5px">还没有公开的同城帖</div>`}
+      <div class="mstat" style="margin-top:12px"><div class="st"><div class="n">${u.posts.length}</div><div class="l">同城帖</div></div><div class="st"><div class="n" id="uFans">${u.fans}</div><div class="l">粉丝</div></div><div class="st"><div class="n">${u.joined}</div><div class="l">在大理</div></div></div>
+      <div class="u-acts"><button class="u-dm" onclick="dmUser('${u.nm}')">💬 私信 ta</button><button class="u-fr ${u.following?'following':''}" onclick="toggleFollow('${u.nm}',this);document.getElementById('uFans').textContent=fansOf('${u.nm}')">${u.following?'已关注 ✓':'关注'}</button></div>
+      <div class="nb-sec" style="margin:18px 6px 10px">📮 ta 的笔记 · ${u.posts.length}</div>
+      ${u.posts.length?`<div class="note-grid">${u.posts.map(p=>noteCard(p,POSTS.indexOf(p))).join('')}</div>`:`<div class="grid-empty">还没有公开的同城帖</div>`}
       <div class="note">同城邻居 · 真实养宠人，见面遛弯互助都更近 🐾</div>`;
     openOv('ov-user');document.getElementById('userBody').scrollTop=0;
   }
   function dmUser(nm){
     let id=Object.keys(CHATS).find(k=>CHATS[k].nm===nm);
-    if(!id){const u=userProfile(nm);id='u_'+nm;CHATS[id]={nm,av:u.av,avbg:u.avbg,ctx:{thumb:u.av,tbg:u.avbg,name:'来自 ta 的主页',meta:u.area+' · 同城',status:'同城'},msgs:[]};}
+    if(!id){const u=userProfile(nm);id='u_'+nm;CHATS[id]={nm,av:u.av,avbg:u.avbg,unread:0,time:'刚刚',ctx:{thumb:u.av,tbg:u.avbg,name:'来自 ta 的主页',meta:u.area+' · 同城',status:'同城'},msgs:[]};}
     closeOv('ov-user');openChat(id);
   }
 
@@ -728,15 +916,18 @@
     openOv('ov-place');document.getElementById('placeBody').scrollTop=0;
   }
   function signupEvent(el){if(evtJoined)return;evtJoined=true;const s=el.querySelector('.evt-state');if(s)s.textContent='已报名 ✓';toast('已报名古城宠物市集 🎪');}
-  function addFriend(btn){btn.textContent='已是同城好友 ✓';btn.style.opacity='.7';btn.onclick=null;toast('已加为同城好友 🐾');}
   function openMyPosts(){
     const mine=POSTS.filter(p=>p.nm==='才村的橘座');
     document.getElementById('myPostsBody').innerHTML=`<div class="nb-sec" style="margin:2px 6px 12px">我发布的 · ${mine.length}</div>`+(mine.length?mine.map(p=>postCard(p,POSTS.indexOf(p))).join(''):`<div style="text-align:center;color:var(--faint);padding:40px 0">还没发过帖 · 去发第一条 🐾</div>`);
     openOv('ov-myposts');document.getElementById('myPostsBody').scrollTop=0;
   }
   function openFavs(){
-    const items=FAVS.map(id=>PLACES.find(p=>p.id===id)).filter(Boolean);
-    document.getElementById('favsBody').innerHTML=`<div class="nb-sec" style="margin:2px 6px 12px">我收藏的 · ${items.length}</div>`+(items.length?items.map(p=>`<div class="place" style="margin-bottom:11px" onclick="closeOv('ov-favs');openPlace('${p.id}')"><div class="pe">${p.e}</div><div class="pt"><div class="a">${p.nm}</div><div class="b">${p.desc}</div></div><div class="pr">${p.star?`<div class="star">★ ${p.star}</div>`:''}<div class="dist">${p.dist}</div></div></div>`).join(''):`<div style="text-align:center;color:var(--faint);padding:40px 0;font-size:13px">还没有收藏<br>在医院 / 遛狗点 / 喂养点 / 去处里点「收藏」试试 🐾</div>`);
+    const places=FAVS.map(id=>PLACES.find(p=>p.id===id)).filter(Boolean);
+    let h=`<div class="nb-sec" style="margin:2px 6px 10px">收藏的帖子 · ${POST_FAVS.length}</div>`;
+    h+=POST_FAVS.length?POST_FAVS.map(p=>postCard(p,POSTS.indexOf(p))).join(''):`<div style="text-align:center;color:var(--faint);padding:22px 0;font-size:12.5px">还没收藏帖子 · 帖子下点「☆收藏」</div>`;
+    h+=`<div class="nb-sec" style="margin:18px 6px 10px">收藏的地点 · ${places.length}</div>`;
+    h+=places.length?places.map(p=>`<div class="place" style="margin-bottom:11px" onclick="closeOv('ov-favs');openPlace('${p.id}')"><div class="pe">${p.e}</div><div class="pt"><div class="a">${p.nm}</div><div class="b">${p.desc}</div></div><div class="pr">${p.star?`<div class="star">★ ${p.star}</div>`:''}<div class="dist">${p.dist}</div></div></div>`).join(''):`<div style="text-align:center;color:var(--faint);padding:22px 0;font-size:12.5px">还没收藏地点 · 医院/遛狗点/喂养点/去处里点「收藏」</div>`;
+    document.getElementById('favsBody').innerHTML=h;
     openOv('ov-favs');document.getElementById('favsBody').scrollTop=0;
   }
   function viewRelated(){const map={wang:2,hei:0};const idx=map[curChat];if(idx==null){toast('这条对话来自 ta 的主页 · 暂无关联帖');return;}closeOv('ov-chat');openPost(idx);}
@@ -748,17 +939,31 @@
   function submitRecspot(){const txt=(document.getElementById('rsTxt').value||'').trim(),kind=pick.kind||'宠物友好店';const emo={'猫咖':'🐱','狗咖':'🐶','爬宠/异宠':'🦎','宠物友好店':'☕'}[kind]||'☕';const tag={'猫咖':['猫咖'],'狗咖':['狗咖'],'爬宠/异宠':['爬宠/异宠'],'宠物友好店':['宠物友好']}[kind]||['宠物友好'];PLACES.push({id:'rs'+(++placeSeq),kind:'petspot',e:emo,nm:'新推荐 · '+kind,area:'大理',dist:'刚推荐',desc:kind+' · '+(txt||'待补充'),tags:tag,star:null,revs:[{nm:'才村的橘座',area:'才村',txt:txt||'同城推荐'}]});renderPetspot();closeSheet();toast('已推荐 · 谢谢你帮同城养宠人 🐾');}
 
   /* search */
+  function placeSearchRow(p){return `<div class="place" style="margin-bottom:10px" onclick="closeOv('ov-search');openPlace('${p.id}')"><div class="pe">${p.e}</div><div class="pt"><div class="a">${p.nm}</div><div class="b">${p.desc}</div></div><div class="pr">${p.star?`<div class="star">★ ${p.star}</div>`:''}<div class="dist">${p.dist}</div></div></div>`;}
+  function userSearchRow(n,ovId){const u=userProfile(n);return `<div class="place" style="margin-bottom:10px" onclick="closeOv('${ovId||'ov-search'}');openUser('${n}')"><div class="pe" style="border-radius:50%;background:${u.avbg}">${u.av}</div><div class="pt"><div class="a">${n}</div><div class="b">📍 ${u.area} · ${u.posts.length} 条同城帖 · ${u.fans} 粉丝</div></div><div class="pr"><div class="dist">›</div></div></div>`;}
   function renderSearch(){
     const q=document.getElementById('searchInput').value.trim();
     const body=document.getElementById('searchBody');
-    if(!q){body.innerHTML=`<div class="sres-h">大家在搜</div>${['苍山宠物医院','海舌遛狗','小奶猫领养','驱虫'].map(t=>`<div class="topic" style="display:inline-block;margin:0 8px 8px 0" onclick="document.getElementById('searchInput').value='${t}';renderSearch()">${t}</div>`).join('')}`;return;}
-    const res=POSTS.map((p,i)=>({p,i})).filter(({p})=>p.txt.includes(q)||p.nm.includes(q)||p.area.includes(q)||CATLABEL[p.cat].includes(q));
-    body.innerHTML=res.length?`<div class="sres-h">找到 ${res.length} 条同城结果</div>`+res.map(({p,i})=>postCard(p,i)).join(''):`<div style="text-align:center;color:var(--muted);padding:40px 0">没找到「${q}」相关的同城内容</div>`;
+    if(!q){body.innerHTML=`<div class="sres-h">大家在搜</div>${['遛狗','领养','苍山宠物医院','海舌','猫咖'].map(t=>`<div class="topic" style="display:inline-block;margin:0 8px 8px 0" onclick="document.getElementById('searchInput').value='${t}';renderSearch()">${t}</div>`).join('')}`;return;}
+    const posts=POSTS.map((p,i)=>({p,i})).filter(({p})=>p.txt.includes(q)||p.nm.includes(q)||p.area.includes(q)||CATLABEL[p.cat].includes(q));
+    const places=PLACES.filter(p=>p.nm.includes(q)||(p.desc||'').includes(q)||p.area.includes(q)||(p.tags||[]).some(t=>t.includes(q)));
+    const names=Array.from(new Set(Object.keys(USERS).concat(POSTS.map(p=>p.nm)))).filter(n=>n.includes(q));
+    let h='';
+    if(places.length)h+=`<div class="sres-h">地点 · ${places.length}</div>`+places.map(placeSearchRow).join('');
+    if(names.length)h+=`<div class="sres-h">养宠人 · ${names.length}</div>`+names.map(userSearchRow).join('');
+    if(posts.length)h+=`<div class="sres-h">同城帖 · ${posts.length}</div>`+posts.map(({p,i})=>postCard(p,i)).join('');
+    body.innerHTML=h||`<div style="text-align:center;color:var(--muted);padding:40px 0">没找到「${q}」相关的同城内容</div>`;
   }
 
   /* overlays */
-  function openOv(id){document.getElementById(id).classList.add('on');}
-  function closeOv(id){document.getElementById(id).classList.remove('on');}
+  function openOv(id){
+    const el=document.getElementById(id);
+    let max=100;
+    document.querySelectorAll('.overlay.on').forEach(o=>{const z=parseInt(o.style.zIndex||'100',10);if(z>max)max=z;});
+    el.style.zIndex=Math.min(max+1,109); // 后开的盖在前面之上，但仍低于 sheet(110/120)
+    el.classList.add('on');
+  }
+  function closeOv(id){const el=document.getElementById(id);el.classList.remove('on');el.style.zIndex='';}
 
   /* sheet */
   let pick={};
@@ -780,6 +985,14 @@
     } else if(type==='area'){
       h+=`<h2>看哪一片的同城</h2><div class="sub">大理本地 · 选你关心的区域</div>
       <div class="chips" style="margin-bottom:4px">${AREAS.map(([k,l])=>`<div class="ch ${k===curArea?'on':''}" onclick="pickArea('${k}')">${l}</div>`).join('')}</div>`;
+    } else if(type==='settings'){
+      h+=`<h2>设置</h2><div class="sub">邻宠 · 大理同城</div>
+      <div class="set-line" onclick="event.stopPropagation()"><span class="si2">🔔</span><span class="sl2">消息通知</span><span class="sw" onclick="this.classList.toggle('off')"></span></div>
+      <div class="set-line" onclick="event.stopPropagation()"><span class="si2">📍</span><span class="sl2">同城定位</span><span class="sw" onclick="this.classList.toggle('off')"></span></div>
+      <div class="set-line" onclick="toast('谁能私信我：所有同城人（演示）')"><span class="si2">🔒</span><span class="sl2">谁能私信我</span><span class="sv2">所有同城人 ›</span></div>
+      <div class="set-line" onclick="toast('黑名单 · 空空如也 🐾')"><span class="si2">🚫</span><span class="sl2">黑名单</span><span class="sv2">›</span></div>
+      <div class="set-line" onclick="closeSheet();openSheet('about')"><span class="si2">🏘️</span><span class="sl2">关于邻宠</span><span class="sv2">›</span></div>
+      <div class="set-line" style="color:#c0473c;font-weight:600;justify-content:center" onclick="closeSheet();toast('已退出登录（演示）')">退出登录</div>`;
     } else if(type==='chatmore'){
       h+=`<h2>${CHATS[curChat]?CHATS[curChat].nm:'对话'}</h2><div class="sub">同城相处，互相尊重</div>
       <div onclick="closeSheet();toast('已举报 · 我们会尽快核实 🙏')" style="padding:15px 6px;border-bottom:1px solid var(--line);font-size:15px;cursor:pointer">🚩 举报这个人</div>
