@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>念宠 · 纪念与告别原型 v1</title>
+<style>
+  :root{
+    --cream:#F2ECDF; --card:#FFFFFF;
+    --ink:#3D362E; --muted:#8A8175; --faint:#B6AE9F; --line:#E7DECB;
+    --gold:#C99A4E; --gold-soft:#F6EAD2;
+    --sage:#7E9B82; --sage-soft:#E4ECE3;
+    --shadow:0 8px 22px rgba(61,54,46,.07); --shadow-sm:0 1px 2px rgba(61,54,46,.04),0 4px 12px rgba(61,54,46,.05);
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;margin:0;padding:0}
+  body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Segoe UI",sans-serif;background:#E6DECF;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:26px 0;color:var(--ink)}
+  .stage-label{font-size:13px;color:#8a8270;margin-bottom:13px;letter-spacing:.03em}
+  .stage-label b{color:#6b6354}
+  .phone{width:390px;height:806px;background:var(--cream);border-radius:46px;box-shadow:0 30px 70px rgba(80,60,40,.28),0 0 0 11px #1c1a17,0 0 0 13px #34302a;overflow:hidden;position:relative;display:flex;flex-direction:column}
+  .notch{position:absolute;top:0;left:50%;transform:translateX(-50%);width:148px;height:30px;background:#1c1a17;border-radius:0 0 18px 18px;z-index:60}
+  .ph-tag{position:absolute;top:54px;right:-1px;background:var(--ink);color:#fff;font-size:10px;padding:4px 9px;border-radius:9px 0 0 9px;letter-spacing:.05em;opacity:.8;z-index:55}
+  .statusbar{height:48px;flex-shrink:0;display:flex;align-items:flex-end;justify-content:space-between;padding:0 26px 6px;font-size:13px;font-weight:600}
+  .app{flex:1;position:relative;overflow:hidden}
+  .screen{position:absolute;inset:0;display:none;flex-direction:column}
+  .screen.on{display:flex}
+  .scroll{flex:1;overflow-y:auto;padding:4px 18px 26px}.scroll::-webkit-scrollbar{display:none}
+  .appbar{padding:8px 22px 8px;flex-shrink:0}
+  .appbar h1{font-size:23px;font-weight:800;letter-spacing:.01em}
+  .appbar p{font-size:12.5px;color:var(--muted);margin-top:4px;line-height:1.6}
+  .plainhead{padding:10px 22px 6px;flex-shrink:0}
+  .plainhead h1{font-size:21px;font-weight:800}
+  .plainhead .back{display:inline-flex;align-items:center;gap:5px;font-size:14px;color:var(--muted);font-weight:600;cursor:pointer;margin-bottom:4px}
+  .plainhead p{font-size:12.5px;color:var(--muted);margin-top:4px}
+
+  /* acute grief card */
+  .grief{display:flex;gap:13px;align-items:center;background:linear-gradient(135deg,var(--sage-soft),#eef3ec);border:1px solid #d8e4d6;border-radius:20px;padding:16px 17px;margin:6px 2px 18px;cursor:pointer}
+  .grief .ge{font-size:26px;flex-shrink:0}
+  .grief .gt .a{font-size:14.5px;font-weight:800;color:#4d6b51}
+  .grief .gt .b{font-size:12px;color:#6f8a72;margin-top:3px;line-height:1.5}
+
+  .entry{display:flex;gap:14px;align-items:center;background:#fff;border-radius:20px;padding:18px 17px;box-shadow:var(--shadow-sm);margin-bottom:13px;cursor:pointer;transition:transform .15s}
+  .entry:active{transform:scale(.99)}
+  .entry .ei{width:52px;height:52px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0}
+  .entry .et{flex:1}.entry .et .a{font-size:16px;font-weight:800}.entry .et .b{font-size:12px;color:var(--muted);margin-top:3px;line-height:1.5}
+  .entry .eg{color:var(--faint);font-size:20px}
+
+  .sec{font-size:14px;font-weight:800;margin:20px 6px 12px}
+  .mem-card{display:flex;gap:13px;align-items:center;background:#fff;border-radius:18px;padding:14px;box-shadow:var(--shadow-sm);margin-bottom:11px;cursor:pointer}
+  .mem-card .mav{width:50px;height:50px;border-radius:15px;display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0}
+  .mem-card .mt{flex:1}.mem-card .mt .a{font-size:15.5px;font-weight:700}.mem-card .mt .b{font-size:12px;color:var(--muted);margin-top:3px}
+  .mem-card .ml{font-size:18px}
+  .add-line{display:flex;align-items:center;justify-content:center;gap:7px;border:1.5px dashed var(--faint);border-radius:16px;padding:14px;color:var(--muted);font-size:13.5px;font-weight:600;cursor:pointer;margin-top:2px}
+  .add-line:active{background:#fff}
+  .note{text-align:center;font-size:11.5px;color:var(--faint);line-height:1.8;margin:20px 6px 6px}.note b{color:var(--muted)}
+
+  /* memorial detail */
+  .m-hero{background:linear-gradient(165deg,#E8C98B,#C99A4E);border-radius:24px;padding:26px 20px;color:#fff;text-align:center;margin:6px 0 16px;box-shadow:0 14px 30px rgba(201,154,78,.3);position:relative;overflow:hidden}
+  .m-hero .glow{position:absolute;width:240px;height:240px;border-radius:50%;background:rgba(255,255,255,.14);top:-90px;left:50%;transform:translateX(-50%)}
+  .m-hero .mphoto{width:84px;height:84px;border-radius:24px;background:rgba(255,255,255,.25);display:flex;align-items:center;justify-content:center;font-size:46px;margin:0 auto 12px;position:relative}
+  .m-hero .mname{font-size:23px;font-weight:800;position:relative}
+  .m-hero .mdate{font-size:13px;opacity:.95;margin-top:6px;position:relative}
+  .m-hero .mtog{font-size:12.5px;opacity:.9;margin-top:4px;position:relative}
+
+  .candle-row{display:flex;flex-direction:column;align-items:center;gap:10px;background:#fff;border-radius:20px;padding:22px;box-shadow:var(--shadow-sm);margin-bottom:14px}
+  .candle{font-size:46px;cursor:pointer;transition:.3s;filter:grayscale(.6) opacity(.75)}
+  .candle.lit{filter:none;animation:flick 2.4s ease-in-out infinite}
+  @keyframes flick{0%,100%{transform:scale(1);filter:drop-shadow(0 0 6px rgba(201,154,78,.5))}50%{transform:scale(1.05);filter:drop-shadow(0 0 14px rgba(232,180,90,.85))}}
+  .candle-t{font-size:13px;color:var(--muted);text-align:center;line-height:1.6}
+  .candle-btn{background:var(--gold);color:#fff;border:none;border-radius:22px;padding:10px 22px;font-size:13.5px;font-weight:700;cursor:pointer;margin-top:2px}
+  .candle-btn.done{background:var(--gold-soft);color:var(--gold)}
+
+  .card{background:#fff;border-radius:18px;box-shadow:var(--shadow-sm);padding:16px;margin-bottom:14px}
+  .card-h{font-size:14px;font-weight:800;margin-bottom:12px;display:flex;align-items:center;gap:7px}
+  .word{display:flex;gap:11px;padding:11px 0;border-bottom:1px solid var(--line)}
+  .word:last-child{border-bottom:none}
+  .word .wav{width:32px;height:32px;border-radius:50%;background:var(--gold-soft);display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
+  .word .wb .wn{font-size:12.5px;font-weight:700;color:#6b6354}
+  .word .wb .wt{font-size:13px;color:var(--ink);line-height:1.6;margin-top:3px}
+  .word-add{display:flex;gap:8px;margin-top:12px}
+  .word-add input{flex:1;border:1.5px solid var(--line);border-radius:13px;padding:10px 13px;font-size:13.5px;font-family:inherit;color:var(--ink)}
+  .word-add input:focus{outline:none;border-color:var(--gold)}
+  .word-add button{background:var(--gold);color:#fff;border:none;border-radius:13px;padding:0 16px;font-size:13.5px;font-weight:700;cursor:pointer}
+
+  .tl{display:flex;gap:12px;padding:12px 0;border-bottom:1px solid var(--line)}.tl:last-child{border-bottom:none}
+  .tl .dot{width:11px;height:11px;border-radius:50%;background:var(--gold);margin-top:4px;flex-shrink:0}
+  .tl .tt .a{font-size:14px;font-weight:700}.tl .tt .b{font-size:12px;color:var(--muted);margin-top:2px;line-height:1.5}
+
+  /* service */
+  .svc{background:#fff;border-radius:18px;box-shadow:var(--shadow-sm);padding:16px;margin-bottom:13px}
+  .svc .sh{display:flex;align-items:center;gap:12px}
+  .svc .se{width:46px;height:46px;border-radius:14px;background:var(--sage-soft);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+  .svc .st{flex:1}.svc .st .a{font-size:15.5px;font-weight:700}.svc .st .b{font-size:11.5px;color:var(--muted);margin-top:2px}
+  .svc .star{font-size:12.5px;font-weight:800;color:var(--gold)}
+  .price{display:flex;flex-wrap:wrap;gap:8px;margin:13px 0 4px}
+  .price .p{background:var(--gold-soft);border-radius:11px;padding:7px 11px;font-size:11.5px;color:#8a6a2e;font-weight:600}
+  .rev{font-size:11.5px;color:#7c7568;background:var(--cream);border-radius:11px;padding:9px 11px;margin-top:11px;line-height:1.55}.rev b{color:#5b554a}
+  .svc-btn{display:block;width:100%;text-align:center;margin-top:12px;background:var(--sage);color:#fff;border:none;border-radius:13px;padding:11px;font-size:13.5px;font-weight:700;cursor:pointer}
+  .svc-note{font-size:11px;color:var(--faint);line-height:1.6;margin:2px 6px 0}
+
+  .tabbar{height:64px;flex-shrink:0;background:#fff;border-top:1px solid var(--line);display:flex;padding-bottom:6px}
+  .tab{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:10.5px;color:var(--faint);cursor:pointer}
+  .tab .ti{font-size:19px;opacity:.55}.tab.on{color:var(--gold)}.tab.on .ti{opacity:1}
+
+  .mask{position:absolute;inset:0;background:rgba(40,34,28,.42);opacity:0;pointer-events:none;transition:.25s;z-index:70}
+  .mask.show{opacity:1;pointer-events:auto}
+  .sheet{position:absolute;left:0;right:0;bottom:0;background:var(--cream);border-radius:26px 26px 0 0;padding:8px 20px 26px;transform:translateY(100%);transition:.3s cubic-bezier(.3,.9,.3,1);z-index:80;max-height:88%;overflow-y:auto}
+  .sheet::-webkit-scrollbar{display:none}.sheet.show{transform:none}
+  .grip{width:40px;height:4px;border-radius:3px;background:#ded8cb;margin:8px auto 14px}
+  .sheet h2{font-size:18px;font-weight:800;margin-bottom:4px}.sheet .sub{font-size:12.5px;color:var(--muted);margin-bottom:16px;line-height:1.6}
+  .lab{font-size:12.5px;font-weight:700;color:#6b6354;margin:2px 0 8px}
+  .sheet input.f,.sheet textarea.f{width:100%;border:1.5px solid var(--line);background:#fff;border-radius:13px;padding:12px 14px;font-size:14px;font-family:inherit;color:var(--ink)}
+  .sheet textarea.f{min-height:80px;resize:none}
+  .sheet input.f:focus,.sheet textarea.f:focus{outline:none;border-color:var(--gold)}
+  .chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+  .chips .ch{padding:9px 14px;border-radius:30px;background:#fff;border:1.5px solid var(--line);font-size:13px;font-weight:600;cursor:pointer}
+  .chips .ch.on{border-color:var(--gold);background:var(--gold-soft);color:#8a6a2e}
+  .save-btn{width:100%;background:var(--gold);color:#fff;border:none;border-radius:15px;padding:14px;font-size:15px;font-weight:800;cursor:pointer;margin-top:6px}
+  .kn p{font-size:13px;color:#6b6354;line-height:1.85;margin-bottom:10px}
+  .kn .li{font-size:13px;color:#6b6354;line-height:1.7;padding-left:18px;position:relative;margin-bottom:9px}
+  .kn .li::before{content:"·";position:absolute;left:6px;color:var(--gold);font-weight:800}
+  .toast{position:absolute;bottom:92px;left:50%;transform:translateX(-50%) translateY(8px);background:rgba(40,34,28,.92);color:#fff;font-size:13px;padding:10px 18px;border-radius:22px;opacity:0;transition:.25s;z-index:200;pointer-events:none;white-space:nowrap;text-align:center}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+  .splash{position:absolute;inset:0;z-index:200;background:linear-gradient(165deg,#E8C98B,#C99A4E);display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff;animation:so .7s ease 2s forwards}
+  @keyframes so{to{opacity:0;visibility:hidden;pointer-events:none}}
+  .splash .sc{font-size:50px;animation:cp .7s cubic-bezier(.2,1.3,.4,1) both}
+  @keyframes cp{from{transform:scale(.5);opacity:0}to{transform:scale(1);opacity:1}}
+  .splash .sw{font-size:30px;font-weight:900;letter-spacing:.08em;margin-top:18px}
+  .splash .ss{font-size:13.5px;opacity:.95;margin-top:10px;letter-spacing:.03em}
+  .splash .sf{position:absolute;bottom:44px;font-size:11.5px;opacity:.82;text-align:center;line-height:1.6}
+</style>
+</head>
+<body>
+  <div class="stage-label"><b>念宠</b> · 纪念与告别原型 v1 &nbsp;|&nbsp; 矩阵第4块（情感层·后置变现）· 克制 / 不催单 / 纪念不数据化</div>
+  <div class="phone">
+    <div class="notch"></div><div class="ph-tag">原型</div>
+
+    <div class="splash">
+      <div class="sc">🕯️</div>
+      <div class="sw">念宠</div>
+      <div class="ss">陪 ta 走好最后一程</div>
+      <div class="sf">大理宠物 · 与寻宠 护宠 邻宠 同行<br>不打扰 · 不催促 · 把想念交给时间</div>
+    </div>
+
+    <div class="statusbar"><span>9:41</span><span>📶 5G ▮</span></div>
+
+    <div class="app">
+      <!-- 首页 -->
+      <div class="screen on" id="s-home">
+        <div class="appbar"><h1>念宠</h1><p>有些告别说不出口，但 ta 值得被好好记得。</p></div>
+        <div class="scroll">
+          <div class="grief" onclick="openSheet('grief')">
+            <div class="ge">🤍</div>
+            <div class="gt"><div class="a">ta 刚刚离开？</div><div class="b">先别慌，也别急着做决定 —— 点这里，我陪你走接下来几步</div></div>
+          </div>
+          <div class="entry" onclick="go('memorial')">
+            <div class="ei" style="background:var(--gold-soft)">🕯️</div>
+            <div class="et"><div class="a">为 ta 建一个纪念</div><div class="b">照片、相伴的日子、想对 ta 说的话 —— 一个安静的地方想念 ta</div></div>
+            <div class="eg">›</div>
+          </div>
+          <div class="entry" onclick="go('service')">
+            <div class="ei" style="background:var(--sage-soft)">🌿</div>
+            <div class="et"><div class="a">体面的告别服务</div><div class="b">大理本地 · 上门接送、单独火化、纪念品 · 价格透明、真实口碑</div></div>
+            <div class="eg">›</div>
+          </div>
+          <div class="sec">🕯️ 此刻有人在想念</div>
+          <div id="homeMems"></div>
+          <div class="note">念宠不会提醒你「该思念了」。<br>它只是<b>一直在这里</b> —— 你想 ta 的时候，随时来看看。</div>
+        </div>
+      </div>
+
+      <!-- 纪念列表 -->
+      <div class="screen" id="s-mlist">
+        <div class="plainhead"><h1>纪念</h1><p>为离开的 ta，留一个想念的地方</p></div>
+        <div class="scroll">
+          <div id="memList"></div>
+          <div class="add-line" onclick="openSheet('build')">＋ 为 ta 建一个纪念</div>
+          <div class="note">纪念是给活着的人的 —— 慢慢来，想 ta 的时候就回来 🤍</div>
+        </div>
+      </div>
+
+      <!-- 纪念详情 -->
+      <div class="screen" id="s-memorial">
+        <div class="plainhead"><span class="back" onclick="go('mlist')">‹ 返回</span></div>
+        <div class="scroll" id="memBody"></div>
+      </div>
+
+      <!-- 告别服务 -->
+      <div class="screen" id="s-service">
+        <div class="plainhead"><h1>告别服务</h1><p>大理本地 · 让最后一程，也有尊严和温度</p></div>
+        <div class="scroll" id="svcBody"></div>
+      </div>
+
+      <!-- 我的 -->
+      <div class="screen" id="s-mine">
+        <div class="plainhead"><h1>我的</h1></div>
+        <div class="scroll">
+          <div class="sec" style="margin-top:4px">🕯️ 我的纪念</div>
+          <div id="mineMems"></div>
+          <div class="card" style="margin-top:8px">
+            <div class="card-h">🐾 念宠 · 大理宠物矩阵的一员</div>
+            <div style="font-size:12.5px;color:var(--muted);line-height:1.8">找回走失（寻宠）· 守护健康（护宠）· 同城相伴（邻宠）· 好好告别（念宠）。<br>陪 ta 的一生，从相遇到再见。</div>
+          </div>
+          <div class="note">我们相信，体面的告别不该消费悲伤。<br>这里<b>没有排行、没有「思念天数」</b> —— 想念是你和 ta 的事。</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tabbar">
+      <div class="tab on" data-s="home" onclick="go('home',this)"><span class="ti">🏠</span>首页</div>
+      <div class="tab" data-s="mlist" onclick="go('mlist',this)"><span class="ti">🕯️</span>纪念</div>
+      <div class="tab" data-s="service" onclick="go('service',this)"><span class="ti">🌿</span>告别</div>
+      <div class="tab" data-s="mine" onclick="go('mine',this)"><span class="ti">👤</span>我的</div>
+    </div>
+
+    <div class="mask" id="mask" onclick="closeSheet()"></div>
+    <div class="sheet" id="sheet"></div>
+    <div class="toast" id="toast"></div>
+  </div>
+
+<script>
+  const MEMS=[
+    {id:'m1',name:'奶糖',emoji:'🐱',bg:'var(--gold-soft)',date:'2010 — 2022',tog:'相伴 12 年 · 永远的小太阳',lit:true,litToday:false,
+      words:[{nm:'我',av:'🙂',txt:'谢谢你陪我走过 12 年，从北方到大理。想你，每一天。'},{nm:'妈妈',av:'👩',txt:'乖奶糖，那边有很多阳光，要好好的。'}],
+      tl:[{a:'来到家里',b:'2010 春 · 一只躲在纸箱里的小奶猫'},{a:'最爱的窗台',b:'每天追着太阳挪位置的家伙'},{a:'陪我搬来大理',b:'2019 · 在洱海边晒了三年太阳'},{a:'最后的日子',b:'2022 冬 · 在我怀里安静睡着，没有疼'}]},
+    {id:'m2',name:'豆豆',emoji:'🐶',bg:'var(--sage-soft)',date:'2015 — 2024',tog:'相伴 9 年 · 最忠实的伙伴',lit:true,litToday:false,
+      words:[{nm:'我',av:'🙂',txt:'每天等我下班的身影，再也没有了。但我记得。'}],
+      tl:[{a:'第一次见面',b:'2015 · 救助站里最先跑过来的那只'},{a:'走遍苍山',b:'最爱爬山，体力比我还好'},{a:'再见',b:'2024 秋 · 老去得很安详'}]}
+  ];
+  let curMem=null;
+
+  function go(name,el){
+    document.querySelectorAll('.screen').forEach(s=>s.classList.remove('on'));
+    document.getElementById('s-'+name).classList.add('on');
+    document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));
+    const tab=(el&&el.dataset.s)?el:document.querySelector('.tab[data-s="'+name+'"]');
+    if(tab)tab.classList.add('on');
+    const sc=document.getElementById('s-'+name).querySelector('.scroll'); if(sc)sc.scrollTop=0;
+    if(name==='home')renderHome();
+    if(name==='mlist')renderMemList();
+    if(name==='service')renderService();
+    if(name==='mine')renderMine();
+  }
+
+  function memCard(m,onclick){return `<div class="mem-card" onclick="${onclick}"><div class="mav" style="background:${m.bg}">${m.emoji}</div><div class="mt"><div class="a">${m.name}</div><div class="b">${m.date} · ${m.tog}</div></div><div class="ml">${m.lit?'🕯️':'🤍'}</div></div>`;}
+  function renderHome(){document.getElementById('homeMems').innerHTML=MEMS.map(m=>memCard(m,`openMem('${m.id}')`)).join('');}
+  function renderMemList(){document.getElementById('memList').innerHTML=MEMS.map(m=>memCard(m,`openMem('${m.id}')`)).join('');}
+  function renderMine(){document.getElementById('mineMems').innerHTML=MEMS.map(m=>memCard(m,`openMem('${m.id}')`)).join('')+`<div class="add-line" style="margin-top:2px" onclick="openSheet('build')">＋ 再建一个纪念</div>`;}
+
+  function openMem(id){
+    curMem=id; const m=MEMS.find(x=>x.id===id);
+    document.getElementById('memBody').innerHTML=`
+      <div class="m-hero"><div class="glow"></div>
+        <div class="mphoto">${m.emoji}</div><div class="mname">${m.name}</div>
+        <div class="mdate">🤍 ${m.date}</div><div class="mtog">${m.tog}</div></div>
+      <div class="candle-row">
+        <div class="candle ${m.lit?'lit':''}" id="memCandle" onclick="lightCandle()">🕯️</div>
+        <div class="candle-t" id="candleTxt">${m.litToday?'今天，你为 ta 点了一盏灯':m.lit?'轻触，为 ta 点一盏灯':'还没有点灯 · 轻触，陪 ta 一会儿'}</div>
+        <button class="candle-btn ${m.litToday?'done':''}" onclick="lightCandle()">${m.litToday?'灯已亮 🕯️':'点一盏灯'}</button>
+      </div>
+      <div class="card">
+        <div class="card-h">💬 想对 ta 说的话</div>
+        <div id="memWords">${m.words.map(w=>`<div class="word"><div class="wav">${w.av}</div><div class="wb"><div class="wn">${w.nm}</div><div class="wt">${w.txt}</div></div></div>`).join('')}</div>
+        <div class="word-add"><input id="wordInput" placeholder="写一句想对 ${m.name} 说的话…" onkeydown="if(event.key==='Enter')addWord()"><button onclick="addWord()">写下</button></div>
+      </div>
+      <div class="card">
+        <div class="card-h">🐾 我们一起的日子</div>
+        ${m.tl.map(t=>`<div class="tl"><div class="dot"></div><div class="tt"><div class="a">${t.a}</div><div class="b">${t.b}</div></div></div>`).join('')}
+      </div>
+      <div class="add-line" onclick="toast('已生成 ta 的纪念卡 · 发给家人，一起记得 ta 🤍')">🤍 把 ta 的纪念，分享给想念 ta 的人</div>
+      <div class="note">ta 来过，爱过，被好好记得 —— 这就够了 🤍</div>`;
+    go('memorial');
+  }
+  function lightCandle(){
+    const m=MEMS.find(x=>x.id===curMem); m.lit=true; m.litToday=true;
+    document.getElementById('memCandle').classList.add('lit');
+    document.getElementById('candleTxt').textContent='今天，你为 ta 点了一盏灯';
+    const b=document.querySelector('#s-memorial .candle-btn'); b.classList.add('done'); b.textContent='灯已亮 🕯️';
+    toast('🕯️ 灯亮了 · 陪 ta 静静待一会儿');
+  }
+  function addWord(){
+    const inp=document.getElementById('wordInput'); const v=inp.value.trim(); if(!v)return;
+    const m=MEMS.find(x=>x.id===curMem); m.words.push({nm:'我',av:'🙂',txt:v});
+    document.getElementById('memWords').innerHTML=m.words.map(w=>`<div class="word"><div class="wav">${w.av}</div><div class="wb"><div class="wn">${w.nm}</div><div class="wt">${w.txt}</div></div></div>`).join('');
+    inp.value=''; toast('写下了 · ta 会听见的 🤍');
+  }
+
+  const SVCS=[
+    {e:'🌿',nm:'苍山宠物安养中心',meta:'古城 · 上门接送 · 单独火化 · 可观礼',star:'★ 4.9',price:['上门接送','单独火化 ¥600 起','集体火化 ¥200 起','可全程陪同'],rev:'<b>洱海边的Lucky妈</b>：从接 ta 到火化全程很温柔，让我们好好说了再见，没有被催。'},
+    {e:'🤲',nm:'念念 · 纪念品工坊',meta:'下关 · 爪印 · 骨灰项链 · 纪念相册',star:'★ 4.8',price:['爪印泥 ¥88','骨灰晶石/项链','纪念相册','一缕毛发留存'],rev:'<b>古城王姐</b>：做了一个爪印挂在门口，每天回家像 ta 还在迎接我。'}
+  ];
+  function renderService(){
+    document.getElementById('svcBody').innerHTML=
+      `<div class="card" style="background:var(--sage-soft);box-shadow:none;border:1px solid #d8e4d6"><div style="font-size:13px;color:#4d6b51;line-height:1.75">告别的方式没有对错。<b>土葬、火化、海葬、做成纪念品</b>都可以 —— 选你心里觉得「这样 ta 会安心」的那种。下面是大理本地、口碑真实的几家，价格我们要求透明、不在你最难过时加价。</div></div>`
+      + SVCS.map((s,i)=>`<div class="svc"><div class="sh"><div class="se">${s.e}</div><div class="st"><div class="a">${s.nm}</div><div class="b">${s.meta}</div></div><div class="star">${s.star}</div></div>
+        <div class="price">${s.price.map(p=>`<span class="p">${p}</span>`).join('')}</div>
+        <div class="rev">💬 ${s.rev}</div>
+        <button class="svc-btn" onclick="openSheet('consult',${i})">温和咨询 · 先问问不勉强</button></div>`).join('')
+      + `<div class="svc-note">价格为示意区间，以服务方实际报价为准 · 念宠不替你决定，只帮你找到靠谱的人。</div>`;
+  }
+
+  let pick={};
+  function openSheet(type,arg){
+    pick={}; const sh=document.getElementById('sheet'); let h='<div class="grip"></div>';
+    if(type==='grief'){
+      h+=`<h2>ta 刚刚离开</h2><div class="sub">深呼吸。你现在的难受，是因为你很爱 ta。慢慢来，下面这些不急着全做。</div><div class="kn">
+      <div class="li">先<b>陪 ta 待一会儿</b> —— 不用马上做任何决定。</div>
+      <div class="li">天热的话，把 ta 用干净的布包好、放阴凉处（或垫上冰袋），能多留一段时间。</div>
+      <div class="li">想好告别方式再联系服务，<b>多数可以上门接</b>，不用你抱着 ta 跑。</div>
+      <div class="li">如果想留个念想：现在可以拓一个<b>爪印</b>、剪一缕毛、拍张照。</div>
+      <div class="li">告诉家里人，尤其孩子 —— 一起好好说再见。</div>
+      <div class="li">之后的难过会反复，这很正常。你可以随时来念宠为 ta 点灯。</div></div>
+      <button class="save-btn" onclick="closeSheet();go('service')">看看告别服务</button>`;
+    } else if(type==='build'){
+      h+=`<h2>为 ta 建一个纪念</h2><div class="sub">不用填很多 —— 名字和一句想说的话，就够开始了。</div>
+      <div class="lab">ta 是</div>
+      <div class="chips">${['🐱','🐶','🐰','🐹','🐦','🐢'].map(e=>`<div class="ch ${e==='🐱'?'on':''}" onclick="pickChip(this,'emoji','${e}')">${e}</div>`).join('')}</div>
+      <div class="lab">名字</div><input class="f" id="bName" placeholder="ta 叫什么">
+      <div class="lab" style="margin-top:14px">相伴的日子（可留空）</div><input class="f" id="bDate" placeholder="例如：2012 — 2024 · 相伴 12 年">
+      <div class="lab" style="margin-top:14px">想先写下的一句话</div><textarea class="f" id="bWord" placeholder="想对 ta 说的、或想记住的一个瞬间…"></textarea>
+      <button class="save-btn" onclick="buildMem()" style="margin-top:14px">建立纪念 🕯️</button>`;
+    } else if(type==='consult'){
+      const s=SVCS[arg];
+      h+=`<h2>温和咨询</h2><div class="sub">${s.nm} · 先问清楚，完全不勉强。</div><div class="kn">
+      <div class="li">可以先<b>电话/微信问</b>：流程、价格、能不能上门、多久。</div>
+      <div class="li">想观礼/全程陪同，提前说一声一般都可以。</div>
+      <div class="li">不舒服、被催、被加价 —— 随时可以不选，回来告诉我们。</div></div>
+      <button class="save-btn" onclick="closeSheet();toast('已为你转达 · ta 们会温和联系你 🤍')">让 ta 们联系我</button>`;
+    }
+    sh.innerHTML=h; document.getElementById('mask').classList.add('show'); sh.classList.add('show');
+  }
+  function pickChip(el,f,v){el.parentElement.querySelectorAll('.ch').forEach(c=>c.classList.remove('on'));el.classList.add('on');pick[f]=v;}
+  function closeSheet(){document.getElementById('mask').classList.remove('show');document.getElementById('sheet').classList.remove('show');}
+  function buildMem(){
+    const nm=(document.getElementById('bName').value||'').trim()||'我的小朋友';
+    const date=(document.getElementById('bDate').value||'').trim()||'相伴的每一天';
+    const word=(document.getElementById('bWord').value||'').trim();
+    const m={id:'m'+(MEMS.length+1),name:nm,emoji:pick.emoji||'🐱',bg:'var(--gold-soft)',date:date,tog:'被好好记得',lit:true,litToday:true,
+      words:word?[{nm:'我',av:'🙂',txt:word}]:[],tl:[{a:'建立纪念',b:'今天 · 在念宠为 ta 留一个想念的地方'}]};
+    MEMS.unshift(m); closeSheet(); openMem(m.id); toast('🕯️ 纪念建好了 · 灯为 ta 亮着');
+  }
+
+  let toastT;
+  function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('show'),2000);}
+
+  renderHome();
+</script>
+</body>
+</html>
