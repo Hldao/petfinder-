@@ -6,15 +6,16 @@
 <title>护宠 · 健康原型 v3</title>
 <style>
   :root{
-    --apricot:#E8743B; --apricot-light:#FFB088; --apricot-soft:#FFF1E8;
-    --mint:#4FAE96; --mint-soft:#E6F4EF;
-    --cream:#FBF7F0; --card:#FFFFFF;
-    --ink:#3A352E; --muted:#A8A294; --faint:#C7C1B4;
-    --honey:#E0A21A; --honey-soft:#FFF6E0;
+    /* 大理宠物矩阵 · 统一设计 token（基准 = 寻宠 v10）*/
+    --apricot:#E66A38; --apricot-light:#FF8552; --apricot-soft:#FFE9DD;
+    --mint:#5BB89F; --mint-soft:#DDF1EA;
+    --cream:#F0E9D8; --card:#FFFFFF;
+    --ink:#1F1F1F; --muted:#7A7A7A; --faint:#B0AC9E;
+    --honey:#F0AC32; --honey-soft:#FFF3D6;
     --urgent:#E0584C; --urgent-soft:#FCEDEB;
-    --line:#EFEAE0;
-    --shadow:0 10px 30px rgba(120,100,70,.10);
-    --shadow-sm:0 2px 10px rgba(120,100,70,.06);
+    --line:#E0D6BD;
+    --shadow:0 8px 20px rgba(31,31,31,.06);
+    --shadow-sm:0 1px 2px rgba(31,31,31,.04),0 4px 12px rgba(31,31,31,.05);
   }
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;margin:0;padding:0}
   body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Segoe UI",sans-serif;background:#E9E2D6;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:26px 0;color:var(--ink)}
@@ -182,6 +183,8 @@
   .splash .ssl{font-size:14px;opacity:.94;margin-top:9px;z-index:2;letter-spacing:.04em}
   .splash .sfoot{position:absolute;bottom:42px;font-size:11.5px;opacity:.82;text-align:center;z-index:2;line-height:1.65}
   .splash .sfoot b{font-weight:700}
+  .toast{position:absolute;bottom:96px;left:50%;transform:translateX(-50%) translateY(8px);background:rgba(31,31,31,.9);color:#fff;font-size:13px;padding:10px 18px;border-radius:22px;opacity:0;transition:.25s;z-index:300;pointer-events:none;white-space:nowrap}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 </style>
 </head>
 <body>
@@ -263,7 +266,7 @@
         <div class="plainhead"><h1>我的</h1></div>
         <div class="scroll">
           <div class="mine-hero"><div class="mav">🙂</div>
-            <div><div class="mn">大理 · 养宠人</div><div class="ms" id="mineSub">照顾着 2 只小朋友</div></div></div>
+            <div><div class="mn">才村的橘座</div><div class="ms" id="mineSub">照顾着 2 只小朋友</div></div></div>
           <div class="sec-h"><span class="t">提醒设置</span><span class="c">克制是默认值</span></div>
           <div class="setlist">
             <div class="setrow" onclick="openSheet('time')"><div class="si">⏰</div><div class="sl">提醒时间</div><div class="sv" id="svTime">上午 9:00 ›</div></div>
@@ -273,6 +276,11 @@
           <div class="setlist">
             <div class="setrow" onclick="openSheet('knowledge')"><div class="si">📖</div><div class="sl">健康知识来源</div><div class="sv">›</div></div>
             <div class="setrow" onclick="openSheet('about')"><div class="si">🐾</div><div class="sl">关于护宠</div><div class="sv">›</div></div>
+          </div>
+          <div class="sec-h"><span class="t">宠物矩阵</span><span class="c">一个账号，三件事</span></div>
+          <div class="setlist" style="margin-bottom:16px">
+            <div class="setrow" onclick="openMatrix('寻宠','https://raw.githack.com/Hldao/petfinder-/dadao/prototypes/app-prototype-v10.html')"><div class="si" style="background:var(--apricot-soft)">📍</div><div class="sl">寻宠 · 找回走失</div><div class="sv">›</div></div>
+            <div class="setrow" onclick="openMatrix('邻宠','https://raw.githack.com/Hldao/petfinder-/linchong-preview/index.html')"><div class="si" style="background:var(--mint-soft)">🏘️</div><div class="sl">邻宠 · 大理同城</div><div class="sv">›</div></div>
           </div>
           <div class="creed"><div class="ce">🌿</div>
             <p>我们相信，好的健康工具<br>该在要紧时提醒你，然后安静地退到一边。<br>所以这里没有打卡、没有排行、没有积分——<br>把时间还给你和 ta。</p></div>
@@ -290,6 +298,7 @@
 
     <div class="mask" id="mask" onclick="closeSheet()"></div>
     <div class="sheet" id="sheet"></div>
+    <div class="toast" id="toast"></div>
   </div>
 
 <script>
@@ -411,7 +420,7 @@
   function renderMine(){
     document.getElementById('svTime').textContent=SET.time+' ›';
     document.getElementById('svAdv').textContent=SET.adv+' ›';
-    document.getElementById('mineSub').textContent='照顾着 '+ORDER.length+' 只小朋友';
+    document.getElementById('mineSub').textContent='📍 大理才村 · 养宠 2 年 · 照顾着 '+ORDER.length+' 只小朋友';
   }
 
   /* ---- sheet ---- */
@@ -480,6 +489,8 @@
   }
   function pickChip(el,f,v){el.parentElement.querySelectorAll('.ch').forEach(c=>c.classList.remove('on'));el.classList.add('on');pick[f]=v;}
   function closeSheet(){document.getElementById('mask').classList.remove('show');document.getElementById('sheet').classList.remove('show');}
+  let toastT;function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('show'),1700);}
+  function openMatrix(app,link){window.open(link,'_blank');toast('正在打开 '+app+' …');}
 
   function saveReminder(){
     const raw=document.getElementById('rName').value.trim();
