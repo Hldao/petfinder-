@@ -610,7 +610,7 @@
       <div class="act ${p.liked?'liked':''}" onclick="event.stopPropagation();toggleLike(${i})"><span class="i">${p.liked?'❤️':'🤍'}</span> ${p.likes}</div>
       <div class="act" onclick="event.stopPropagation();openPost(${i})"><span class="i">💬</span> ${p.cmts.length}</div>
       <div class="act ${POST_FAVS.indexOf(p)>=0?'faved':''}" onclick="event.stopPropagation();togglePostFav(${i})"><span class="i">${POST_FAVS.indexOf(p)>=0?'⭐':'☆'}</span> 收藏</div>
-      <div class="act" onclick="event.stopPropagation();toast('已生成同城分享卡 ↗')"><span class="i">↗</span> 分享</div>
+      <div class="act" onclick="event.stopPropagation();sharePost(${i})"><span class="i">↗</span> 分享</div>
     </div></div>`;}
   function toggleLike(i){const p=POSTS[i];p.liked=!p.liked;p.likes+=p.liked?1:-1;renderFeed();if(document.getElementById('ov-post').classList.contains('on')&&curPost===i)renderPostBody();}
 
@@ -629,7 +629,7 @@
           <div class="act ${p.liked?'liked':''}" onclick="toggleLike(${curPost})"><span class="i">${p.liked?'❤️':'🤍'}</span> ${p.likes}</div>
           <div class="act"><span class="i">💬</span> ${p.cmts.length}</div>
           <div class="act ${POST_FAVS.indexOf(p)>=0?'faved':''}" onclick="togglePostFav(${curPost})"><span class="i">${POST_FAVS.indexOf(p)>=0?'⭐':'☆'}</span> 收藏</div>
-          <div class="act" onclick="toast('已生成同城分享卡 ↗')"><span class="i">↗</span> 分享</div></div>
+          <div class="act" onclick="sharePost(curPost)"><span class="i">↗</span> 分享</div></div>
       </div>
       <div class="cmt-h">同城回复 · ${p.cmts.length}</div>
       ${p.cmts.map((c,ci)=>`<div class="cmt"><div class="av ca clk" onclick="openUser('${c.nm}')" style="background:${c.avbg||'var(--apricot-soft)'}">${c.av}</div>
@@ -772,7 +772,13 @@
     renderFeed();
     if(document.getElementById('ov-post').classList.contains('on')&&curPost===i)renderPostBody();
   }
-  const MEINFO={av:'🙂',name:'才村的橘座',area:'才村',extra:'养宠 2 年 · 一猫一狗',bio:'才村养狗 2 年，傍晚常去海舌遛弯，欢迎同城狗友约遛 🐶'};
+  const MEINFO={av:'🙂',name:'才村的橘座',area:'才村',extra:'养宠 2 年 · 一猫一狗',bio:'才村养狗 2 年，傍晚常去海舌遛弯，欢迎同城狗友约遛 🐶',dmPerm:'所有同城人'};
+  let BLOCKED=[], sharePostIdx=0;
+  function sharePost(i){sharePostIdx=i;openSheet('sharepost');}
+  function copyPostLink(){try{if(navigator.clipboard)navigator.clipboard.writeText('https://linchong.app/p/'+sharePostIdx);}catch(e){}closeSheet();toast('帖子链接已复制 · 发给邻居吧 🐾');}
+  function copyAddr(area,nm){try{if(navigator.clipboard)navigator.clipboard.writeText('大理 · '+area+' · '+nm);}catch(e){}closeSheet();toast('地址已复制 📍');}
+  function unblock(n){const i=BLOCKED.indexOf(n);if(i>=0)BLOCKED.splice(i,1);openSheet('blocklist');toast('已解除 · '+n);}
+  function openMatrixApp(app){const m=MX[app];if(m&&m.link){window.open(m.link,'_blank');toast('正在打开 '+app+' …');}else toast('打开 '+app);}
   function renderMineHero(){
     const g=id=>document.getElementById(id);
     if(g('meAv'))g('meAv').textContent=MEINFO.av;
@@ -910,7 +916,7 @@
     document.getElementById('placeBody').innerHTML=`
       <div class="u-hero" style="text-align:left;display:flex;align-items:center;gap:14px"><div class="uav" style="width:58px;height:58px;font-size:30px;margin:0">${p.e}</div><div><div class="un">${p.nm}</div><div class="ureg">📍 大理 · ${p.area} · ${p.dist}</div></div></div>
       <div class="u-bio">${p.desc}${p.star?`<div style="margin-top:8px;color:var(--honey);font-weight:800">★ ${p.star} <span style="color:var(--faint);font-weight:500;font-size:12px">· 本地养宠人评价</span></div>`:''}</div>
-      <div class="u-acts"><button class="u-dm" onclick="toast('已打开地图导航（演示）')">🗺 导航去这儿</button><button class="u-fr" onclick="toggleFav('${p.id}',this)">${fav?'已收藏 ★':'收藏'}</button></div>
+      <div class="u-acts"><button class="u-dm" onclick="openSheet('nav','${p.id}')">🗺 导航去这儿</button><button class="u-fr" onclick="toggleFav('${p.id}',this)">${fav?'已收藏 ★':'收藏'}</button></div>
       ${extra}
       <div class="note">${p.kind==='feedcat'?'谢谢你愿意照顾街角的它们 🐾':'真实信息来自本地养宠人 🐾'}</div>`;
     openOv('ov-place');document.getElementById('placeBody').scrollTop=0;
@@ -933,7 +939,7 @@
   function viewRelated(){const map={wang:2,hei:0};const idx=map[curChat];if(idx==null){toast('这条对话来自 ta 的主页 · 暂无关联帖');return;}closeOv('ov-chat');openPost(idx);}
   function sendPhoto(){if(!curChat)return;CHATS[curChat].msgs.push({me:1,img:1});renderChat();}
   function sendLoc(){if(!curChat)return;CHATS[curChat].msgs.push({me:1,loc:'才村 · 大理（演示位置）'});renderChat();}
-  function blockChat(){closeSheet();closeOv('ov-chat');toast('已拉黑 · ta 不会再打扰你');}
+  function blockChat(){const c=CHATS[curChat];if(c&&BLOCKED.indexOf(c.nm)<0)BLOCKED.push(c.nm);closeSheet();closeOv('ov-chat');toast('已拉黑 · ta 不会再打扰你');}
   function submitRev(){const nm=pick.hosp,txt=(document.getElementById('rvTxt').value||'').trim()||'（口碑示例）';const p=PLACES.find(x=>x.kind==='hospital'&&x.nm===nm);if(p){p.revs.unshift({nm:'才村的橘座',area:'才村',txt});renderHosp();}closeSheet();toast('口碑已提交 · 谢谢你帮同城养宠人 🐾');}
   function submitFeedspot(){const txt=(document.getElementById('fsTxt').value||'').trim(),area=pick.area||'才村';PLACES.push({id:'fs'+(++placeSeq),kind:'feedcat',e:'🐈',nm:area+' · 新喂养点',area,dist:'刚标记',desc:txt||'新标记的喂养点 · 待补充',who:'你标记的 · 等爱心人接力',whoIcon:'🍚',act:'我来接力',done:'已接力 ✓',toastJoin:'已认领接力 🐾',joined:false});renderFeedcat();closeSheet();toast('喂养点已标记 · 谢谢你的爱心 🐾');}
   function submitRecspot(){const txt=(document.getElementById('rsTxt').value||'').trim(),kind=pick.kind||'宠物友好店';const emo={'猫咖':'🐱','狗咖':'🐶','爬宠/异宠':'🦎','宠物友好店':'☕'}[kind]||'☕';const tag={'猫咖':['猫咖'],'狗咖':['狗咖'],'爬宠/异宠':['爬宠/异宠'],'宠物友好店':['宠物友好']}[kind]||['宠物友好'];PLACES.push({id:'rs'+(++placeSeq),kind:'petspot',e:emo,nm:'新推荐 · '+kind,area:'大理',dist:'刚推荐',desc:kind+' · '+(txt||'待补充'),tags:tag,star:null,revs:[{nm:'才村的橘座',area:'才村',txt:txt||'同城推荐'}]});renderPetspot();closeSheet();toast('已推荐 · 谢谢你帮同城养宠人 🐾');}
@@ -989,10 +995,30 @@
       h+=`<h2>设置</h2><div class="sub">邻宠 · 大理同城</div>
       <div class="set-line" onclick="event.stopPropagation()"><span class="si2">🔔</span><span class="sl2">消息通知</span><span class="sw" onclick="this.classList.toggle('off')"></span></div>
       <div class="set-line" onclick="event.stopPropagation()"><span class="si2">📍</span><span class="sl2">同城定位</span><span class="sw" onclick="this.classList.toggle('off')"></span></div>
-      <div class="set-line" onclick="toast('谁能私信我：所有同城人（演示）')"><span class="si2">🔒</span><span class="sl2">谁能私信我</span><span class="sv2">所有同城人 ›</span></div>
-      <div class="set-line" onclick="toast('黑名单 · 空空如也 🐾')"><span class="si2">🚫</span><span class="sl2">黑名单</span><span class="sv2">›</span></div>
+      <div class="set-line" onclick="openSheet('dmperm')"><span class="si2">🔒</span><span class="sl2">谁能私信我</span><span class="sv2">${MEINFO.dmPerm||'所有同城人'} ›</span></div>
+      <div class="set-line" onclick="openSheet('blocklist')"><span class="si2">🚫</span><span class="sl2">黑名单</span><span class="sv2">${(BLOCKED&&BLOCKED.length)||''} ›</span></div>
       <div class="set-line" onclick="closeSheet();openSheet('about')"><span class="si2">🏘️</span><span class="sl2">关于邻宠</span><span class="sv2">›</span></div>
       <div class="set-line" style="color:#c0473c;font-weight:600;justify-content:center" onclick="closeSheet();toast('已退出登录（演示）')">退出登录</div>`;
+    } else if(type==='dmperm'){
+      h+=`<h2>谁能私信我</h2><div class="sub">同城相处，分寸自己定</div>
+      ${['所有同城人','只我关注的人','只同城好友'].map(o=>`<div class="set-line" onclick="MEINFO.dmPerm='${o}';openSheet('settings')"><span class="sl2">${o}</span><span class="sv2">${(MEINFO.dmPerm||'所有同城人')===o?'✓':''}</span></div>`).join('')}`;
+    } else if(type==='blocklist'){
+      h+=`<h2>黑名单</h2><div class="sub">被你拉黑的人，不会再打扰你</div>`;
+      h+=(BLOCKED.length?BLOCKED.map(n=>`<div class="set-line"><span class="si2">🚫</span><span class="sl2">${n}</span><span class="sv2" style="color:var(--apricot);cursor:pointer" onclick="unblock('${n}')">解除</span></div>`).join(''):`<div style="text-align:center;color:var(--faint);padding:40px 0;font-size:13px">一片清净 · 还没拉黑谁 🐾</div>`);
+    } else if(type==='sharepost'){
+      const p=POSTS[sharePostIdx];
+      h+=`<h2>分享这条同城帖</h2><div class="sub">发给可能帮得上、或感兴趣的同城邻居</div>
+      <div style="background:#fff;border-radius:16px;padding:15px;box-shadow:var(--shadow-sm);margin-bottom:16px">
+        <div style="display:flex;gap:10px;align-items:center"><div style="width:38px;height:38px;border-radius:50%;background:${p.avbg};display:flex;align-items:center;justify-content:center;font-size:19px">${p.av}</div><div><div style="font-size:13.5px;font-weight:700">${p.nm}</div><div style="font-size:11px;color:var(--muted)">📍${p.area} · ${p.dist}</div></div></div>
+        <div style="font-size:13px;color:var(--ink);line-height:1.6;margin-top:10px">${p.txt}</div></div>
+      <button class="save-btn" onclick="copyPostLink()">复制帖子链接</button>
+      <button class="save-btn" style="background:var(--mint);margin-top:10px" onclick="closeSheet();toast('已生成同城分享卡 ↗')">生成分享卡片</button>`;
+    } else if(type==='nav'){
+      const p=PLACES.find(x=>x.id===arg);
+      h+=`<h2>${p.nm}</h2><div class="sub">📍 大理 · ${p.area} · 距你约 ${p.dist}</div>
+      <div style="height:120px;border-radius:14px;background:linear-gradient(135deg,#e6efe8,#dfeae0);display:flex;align-items:center;justify-content:center;font-size:38px;margin-bottom:14px">🗺️</div>
+      <button class="save-btn" onclick="copyAddr('${p.area}',\`${p.nm}\`)">复制地址</button>
+      <button class="save-btn" style="background:var(--mint);margin-top:10px" onclick="closeSheet();toast('正在用地图 App 打开（演示）')">用高德 / 腾讯地图打开</button>`;
     } else if(type==='chatmore'){
       h+=`<h2>${CHATS[curChat]?CHATS[curChat].nm:'对话'}</h2><div class="sub">同城相处，互相尊重</div>
       <div onclick="closeSheet();toast('已举报 · 我们会尽快核实 🙏')" style="padding:15px 6px;border-bottom:1px solid var(--line);font-size:15px;cursor:pointer">🚩 举报这个人</div>
@@ -1049,8 +1075,8 @@
   }
   /* 矩阵接力 handoff */
   const MX={
-    '寻宠':{icon:'📍',tag:'找回走失',color:'#E0584C',grad:'linear-gradient(160deg,#F0857A,#E0584C)',net:'找回网络'},
-    '护宠':{icon:'🛡️',tag:'守护健康',color:'#E66A38',grad:'linear-gradient(160deg,#FF8552,#E66A38)',net:'健康守护'}
+    '寻宠':{icon:'📍',tag:'找回走失',color:'#E0584C',grad:'linear-gradient(160deg,#F0857A,#E0584C)',net:'找回网络',link:'https://raw.githack.com/Hldao/petfinder-/dadao/prototypes/app-prototype-v10.html'},
+    '护宠':{icon:'🛡️',tag:'守护健康',color:'#E66A38',grad:'linear-gradient(160deg,#FF8552,#E66A38)',net:'健康守护',link:'https://raw.githack.com/Hldao/petfinder-/huchong-preview/health-v3.html'}
   };
   let hfTimer;
   function gotoMatrix(app,fromLost){
@@ -1080,7 +1106,7 @@
       ${lis.map(t=>`<div class="hf-li"><span class="ck" style="color:${m.color}">✓</span>${t}</div>`).join('')}
       ${tip}
       <div class="hf-btns"><button class="hf-back" onclick="document.getElementById('ov-handoff').classList.remove('on')">返回</button>
-        <button class="hf-open" style="background:${m.grad}" onclick="toast('打开 ${app}（演示）')">打开 ${app}</button></div></div>`;
+        <button class="hf-open" style="background:${m.grad}" onclick="openMatrixApp('${app}')">打开 ${app}</button></div></div>`;
   }
   function walkPost(){
     const txt=(document.getElementById('wkTxt').value||'').trim()||'傍晚海舌遛狗，求同城狗友一起～';
