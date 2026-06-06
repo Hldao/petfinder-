@@ -1,0 +1,885 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>邻宠 · 大理同城社区原型 v2（做活）</title>
+<style>
+  :root{
+    /* 大理宠物矩阵 · 统一设计 token（基准 = 寻宠 v10）*/
+    --apricot:#E66A38; --apricot-light:#FF8552; --apricot-soft:#FFE9DD;
+    --mint:#5BB89F; --mint-soft:#DDF1EA;
+    --cream:#F0E9D8; --card:#FFFFFF;
+    --ink:#1F1F1F; --muted:#7A7A7A; --faint:#B0AC9E;
+    --honey:#F0AC32; --honey-soft:#FFF3D6;
+    --line:#E0D6BD;
+    --shadow:0 8px 20px rgba(31,31,31,.06); --shadow-sm:0 1px 2px rgba(31,31,31,.04),0 4px 12px rgba(31,31,31,.05);
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;margin:0;padding:0}
+  body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Segoe UI",sans-serif;background:#E9E2D6;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:26px 0;color:var(--ink)}
+  .stage-label{font-size:13px;color:#8a8270;margin-bottom:13px;letter-spacing:.03em}.stage-label b{color:#6b6354}
+
+  .phone{width:390px;height:806px;background:var(--cream);border-radius:46px;box-shadow:0 30px 70px rgba(80,60,40,.28),0 0 0 11px #1c1a17,0 0 0 13px #34302a;overflow:hidden;position:relative;display:flex;flex-direction:column}
+  .notch{position:absolute;top:0;left:50%;transform:translateX(-50%);width:148px;height:30px;background:#1c1a17;border-radius:0 0 18px 18px;z-index:60}
+  .ph-tag{position:absolute;top:54px;right:-1px;background:var(--ink);color:#fff;font-size:10px;padding:4px 9px;border-radius:9px 0 0 9px;letter-spacing:.05em;opacity:.8;z-index:55}
+  .statusbar{height:48px;flex-shrink:0;display:flex;align-items:flex-end;justify-content:space-between;padding:0 26px 6px;font-size:13px;font-weight:600}
+  .statusbar .right{display:flex;gap:6px;align-items:center;font-size:12px}
+
+  .app{flex:1;position:relative;overflow:hidden}
+  .screen{position:absolute;inset:0;display:flex;flex-direction:column;opacity:0;transform:translateX(12px);pointer-events:none;transition:.28s}
+  .screen.on{opacity:1;transform:none;pointer-events:auto}
+  .scroll{flex:1;overflow-y:auto}.scroll::-webkit-scrollbar{display:none}
+
+  .topbar{padding:8px 20px 4px;flex-shrink:0}
+  .topbar .row1{display:flex;align-items:center;justify-content:space-between}
+  .brand{font-size:21px;font-weight:900;letter-spacing:-.01em}
+  .brand .city{font-size:12px;font-weight:700;color:var(--apricot);background:var(--apricot-soft);padding:3px 10px;border-radius:20px;margin-left:8px;vertical-align:middle;cursor:pointer;transition:.15s}
+  .brand .city:active{transform:scale(.96)}
+  .greet-line{font-size:12px;color:var(--muted);margin-top:5px}
+  .search{width:36px;height:36px;border-radius:50%;background:#fff;box-shadow:var(--shadow-sm);display:flex;align-items:center;justify-content:center;font-size:16px;cursor:pointer}
+
+  .quick{display:flex;justify-content:space-between;padding:14px 20px 6px;flex-shrink:0}
+  .qi{display:flex;flex-direction:column;align-items:center;gap:7px;cursor:pointer;flex:1}
+  .qi .qc{width:52px;height:52px;border-radius:17px;display:flex;align-items:center;justify-content:center;font-size:24px}
+  .qi .ql{font-size:11.5px;color:#6b6354;font-weight:600}
+  .qc.a{background:#FFEAE0}.qc.b{background:var(--mint-soft)}.qc.c{background:var(--honey-soft)}.qc.d{background:#EFEAF7}
+
+  .topics{display:flex;gap:9px;overflow-x:auto;padding:8px 20px 12px;flex-shrink:0}.topics::-webkit-scrollbar{display:none}
+  .topic{flex-shrink:0;font-size:13.5px;font-weight:700;color:var(--muted);padding:7px 14px;border-radius:20px;background:#fff;box-shadow:var(--shadow-sm);cursor:pointer;transition:.15s}
+  .topic.on{background:var(--apricot);color:#fff}
+  .feed-empty{text-align:center;padding:46px 20px}
+  .feed-empty .fe-t{font-size:15px;font-weight:800;margin-top:8px}
+  .feed-empty .fe-b{font-size:12.5px;color:var(--muted);margin-top:6px;line-height:1.6}
+  .feed-empty .fe-btn{margin-top:16px;background:var(--apricot);color:#fff;border:none;border-radius:22px;padding:11px 20px;font-size:13px;font-weight:700;cursor:pointer}
+
+  .feed{padding:0 16px 20px}
+  .post{background:#fff;border-radius:20px;padding:15px 16px;box-shadow:var(--shadow-sm);margin-bottom:13px;cursor:pointer}
+  .post .ph{display:flex;align-items:center;gap:11px;margin-bottom:11px}
+  .av{border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  .post .av{width:40px;height:40px;font-size:20px}
+  .post .who{flex:1;min-width:0}.post .who .nm{font-size:14px;font-weight:700}
+  .post .who .meta{font-size:11.5px;color:var(--muted);margin-top:2px}
+  .geo{color:var(--apricot);font-weight:600}
+  .cat{font-size:11px;font-weight:700;padding:3px 9px;border-radius:20px;flex-shrink:0}
+  .cat-walk{background:var(--mint-soft);color:#2f6b5c}.cat-help{background:#FCEDEB;color:#c0473c}.cat-adopt{background:var(--honey-soft);color:#9a7212}.cat-show{background:var(--apricot-soft);color:var(--apricot)}.cat-event{background:#EFEAF7;color:#7a5fb0}
+  .post .txt{font-size:14.5px;line-height:1.6;color:#43403a}
+  .imgs{display:flex;gap:7px;margin-top:11px}
+  .imgs .im{flex:1;height:96px;border-radius:13px;display:flex;align-items:center;justify-content:center;font-size:34px}
+  .acts{display:flex;gap:22px;margin-top:13px;padding-top:12px;border-top:1px solid var(--line)}
+  .act{display:flex;align-items:center;gap:6px;font-size:12.5px;color:var(--muted);font-weight:600;cursor:pointer}
+  .act.liked{color:var(--apricot)}.act .i{font-size:15px}
+
+  .feed-note,.note{text-align:center;font-size:11.5px;color:var(--faint);line-height:1.7}
+  .feed-note{padding:6px 20px 0}.feed-note b,.note b{color:var(--muted)}.note{margin:18px 6px 6px}
+
+  .plainhead{padding:10px 20px 6px;flex-shrink:0}
+  .plainhead h1{font-size:22px;font-weight:800}.plainhead p{font-size:12.5px;color:var(--muted);margin-top:4px}
+  .nb{padding:6px 16px 20px}
+  .nb-sec{font-size:14px;font-weight:800;margin:16px 6px 10px;display:flex;align-items:center;gap:7px}
+  .place{display:flex;gap:13px;background:#fff;border-radius:17px;padding:14px;box-shadow:var(--shadow-sm);margin-bottom:11px;align-items:center;cursor:pointer}
+  .place .pe{width:46px;height:46px;border-radius:13px;background:var(--apricot-soft);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+  .place .pt{flex:1;min-width:0}.place .pt .a{font-size:14.5px;font-weight:700}.place .pt .b{font-size:11.5px;color:var(--muted);margin-top:3px;line-height:1.5}
+  .place .pr{text-align:right;flex-shrink:0}.place .pr .star{font-size:13px;font-weight:800;color:var(--honey)}.place .pr .dist{font-size:11px;color:var(--muted);margin-top:3px}
+  .rev{font-size:11.5px;color:#7c7568;background:var(--cream);border-radius:10px;padding:8px 11px;margin-top:9px;line-height:1.5}.rev b{color:#5b554a}
+  .back{display:inline-flex;align-items:center;gap:4px;font-size:14px;color:var(--muted);font-weight:600;cursor:pointer;margin-bottom:4px}
+  .add-line{display:flex;align-items:center;justify-content:center;gap:7px;border:1.5px dashed var(--faint);border-radius:15px;padding:13px;color:var(--muted);font-size:13.5px;font-weight:600;cursor:pointer;margin-top:2px}
+  .add-line:active{background:#fff}
+  .hub-card{display:flex;gap:14px;align-items:center;background:#fff;border-radius:18px;padding:17px 16px;box-shadow:var(--shadow-sm);margin-bottom:12px;cursor:pointer;transition:.15s}
+  .hub-card:active{transform:scale(.99)}
+  .hub-card .hic{width:50px;height:50px;border-radius:15px;display:flex;align-items:center;justify-content:center;font-size:25px;flex-shrink:0}
+  .hub-card .ht{flex:1}.hub-card .ht .a{font-size:16px;font-weight:800}.hub-card .ht .b{font-size:12px;color:var(--muted);margin-top:3px;line-height:1.4}
+  .hub-card .hgo{color:var(--faint);font-size:20px}
+  .meet{display:flex;align-items:center;gap:8px;margin-top:-2px;margin-bottom:11px;background:var(--mint-soft);border-radius:0 0 13px 13px;padding:9px 12px;font-size:12px;color:#2f6b5c}
+  .meet .who{flex:1;font-weight:600}
+  .meet .join{background:var(--mint);color:#fff;border:none;border-radius:20px;padding:6px 14px;font-size:12px;font-weight:700;cursor:pointer;flex-shrink:0}
+  .tip-care{font-size:11.5px;line-height:1.6;color:#2f6b5c;background:var(--mint-soft);border:1px solid #dceee8;border-radius:13px;padding:11px 13px;margin-top:14px}.tip-care b{font-weight:800}
+
+  .mrow{display:flex;gap:13px;align-items:center;background:#fff;border-radius:16px;padding:13px 15px;box-shadow:var(--shadow-sm);margin-bottom:10px;cursor:pointer}
+  .mrow .ma{width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:19px;flex-shrink:0}
+  .mrow .mt{flex:1}.mrow .mt .a{font-size:14px;font-weight:700}.mrow .mt .b{font-size:12px;color:var(--muted);margin-top:2px}
+  .mrow .mtime{font-size:11px;color:var(--faint)}
+
+  .mine-hero{display:flex;align-items:center;gap:15px;background:linear-gradient(135deg,var(--apricot-light),var(--apricot));border-radius:22px;padding:20px;color:#fff;margin-bottom:16px;box-shadow:0 12px 26px rgba(232,116,59,.26)}
+  .mine-hero .ma{width:58px;height:58px;border-radius:50%;background:rgba(255,255,255,.25);display:flex;align-items:center;justify-content:center;font-size:28px}
+  .mine-hero .mn{font-size:18px;font-weight:800}.mine-hero .ms{font-size:12.5px;opacity:.92;margin-top:4px}
+  .mstat{display:flex;background:#fff;border-radius:16px;box-shadow:var(--shadow-sm);margin-bottom:16px}
+  .mstat .st{flex:1;text-align:center;padding:14px 0}.mstat .st .n{font-size:18px;font-weight:800}.mstat .st .l{font-size:11px;color:var(--muted);margin-top:2px}.mstat .st+.st{border-left:1px solid var(--line)}
+  .matrix{background:#fff;border-radius:18px;box-shadow:var(--shadow-sm);overflow:hidden;margin-bottom:16px}
+  .mxr{display:flex;align-items:center;gap:13px;padding:15px 16px;border-bottom:1px solid var(--line);cursor:pointer}.mxr:last-child{border-bottom:none}
+  .mxr .mi{width:38px;height:38px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:18px;color:#fff}
+  .mxr .mtt{flex:1}.mxr .mtt .a{font-size:14.5px;font-weight:700}.mxr .mtt .b{font-size:11.5px;color:var(--muted);margin-top:2px}.mxr .go{color:var(--faint);font-size:18px}
+  .setrow{display:flex;align-items:center;gap:13px;padding:15px 16px;border-bottom:1px solid var(--line);cursor:pointer;background:#fff}
+  .setrow:first-child{border-radius:18px 18px 0 0}.setrow:last-child{border-radius:0 0 18px 18px;border-bottom:none}
+  .setrow .si{width:34px;height:34px;border-radius:10px;background:var(--apricot-soft);display:flex;align-items:center;justify-content:center;font-size:16px}
+  .setrow .sl{flex:1;font-size:14.5px;font-weight:600}.setrow .sv{font-size:13px;color:var(--muted)}
+
+  .tabbar{height:66px;flex-shrink:0;background:#fff;border-top:1px solid var(--line);display:flex;padding-bottom:6px;position:relative}
+  .tab{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:10.5px;color:var(--faint);cursor:pointer}
+  .tab .ti{font-size:20px;opacity:.55}.tab.on{color:var(--apricot)}.tab.on .ti{opacity:1}
+  .fab{position:absolute;top:-18px;left:50%;transform:translateX(-50%);width:54px;height:54px;border-radius:50%;background:linear-gradient(150deg,var(--apricot-light),var(--apricot));box-shadow:0 8px 20px rgba(232,116,59,.4),0 0 0 5px #fff;display:flex;align-items:center;justify-content:center;color:#fff;font-size:28px;cursor:pointer;font-weight:300}
+
+  /* overlay (post detail / chat / search) */
+  .overlay{position:absolute;inset:0;z-index:100;background:var(--cream);display:flex;flex-direction:column;transform:translateX(100%);transition:.3s cubic-bezier(.3,.9,.3,1)}
+  .overlay.on{transform:none}
+  .ohead{flex-shrink:0;display:flex;align-items:center;gap:10px;padding:48px 16px 10px;background:#fff;border-bottom:1px solid var(--line)}
+  .oback{font-size:24px;color:var(--ink);cursor:pointer;width:26px;line-height:1}
+  .otitle{font-size:16px;font-weight:800;flex:1}
+  .oscroll{flex:1;overflow-y:auto;padding:14px 16px 16px}.oscroll::-webkit-scrollbar{display:none}
+  .handoff{position:absolute;inset:0;z-index:130;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:30px;text-align:center;color:#fff;opacity:0;pointer-events:none;transition:.3s}
+  .handoff.on{opacity:1;pointer-events:auto}
+  .hf-bridge{display:flex;align-items:center;gap:6px}
+  .hf-logo{width:74px;height:74px;border-radius:22px;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-size:38px;flex-shrink:0}
+  .hf-logo.small{width:60px;height:60px;font-size:30px;background:rgba(255,255,255,.16)}
+  .hf-dots{display:flex;gap:6px;padding:0 4px}
+  .hf-dots span{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.9);animation:hfDot 1s infinite}
+  .hf-dots span:nth-child(2){animation-delay:.18s}.hf-dots span:nth-child(3){animation-delay:.36s}
+  @keyframes hfDot{0%,100%{opacity:.25;transform:translateY(0)}50%{opacity:1;transform:translateY(-5px)}}
+  .hf-bt{font-size:15.5px;font-weight:800;margin-top:26px}.hf-bs{font-size:12.5px;margin-top:9px;opacity:.88;line-height:1.6}
+  .hf-card{background:#fff;border-radius:24px;padding:24px 20px;color:var(--ink);width:100%;max-width:320px;box-shadow:0 20px 50px rgba(0,0,0,.25);animation:hfPop .4s cubic-bezier(.2,1.2,.4,1) both}
+  @keyframes hfPop{from{transform:scale(.9) translateY(10px);opacity:0}to{transform:none;opacity:1}}
+  .hf-mark{width:64px;height:64px;border-radius:19px;display:flex;align-items:center;justify-content:center;font-size:32px;margin:0 auto 12px;color:#fff}
+  .hf-h{font-size:19px;font-weight:800}.hf-sub{font-size:12.5px;color:var(--muted);margin-top:5px}
+  .hf-li{font-size:13px;color:#6b6354;line-height:1.55;text-align:left;padding-left:24px;position:relative;margin-top:11px}
+  .hf-li .ck{position:absolute;left:0;top:0;font-weight:800}
+  .hf-tip{font-size:12px;line-height:1.6;border-radius:13px;padding:11px 13px;margin-top:16px;text-align:left}.hf-tip b{font-weight:800}
+  .hf-btns{display:flex;gap:10px;margin-top:18px}
+  .hf-open{flex:1;color:#fff;border:none;border-radius:14px;padding:13px;font-size:14px;font-weight:800;cursor:pointer}
+  .hf-back{flex:0 0 88px;background:#f4f0e8;color:#8a8270;border:none;border-radius:14px;padding:13px;font-size:14px;font-weight:700;cursor:pointer}
+  .u-hero{background:linear-gradient(135deg,var(--apricot-light),var(--apricot));border-radius:22px;padding:22px 18px;color:#fff;text-align:center;box-shadow:0 12px 26px rgba(232,116,59,.24)}
+  .u-hero .uav{width:72px;height:72px;border-radius:22px;display:flex;align-items:center;justify-content:center;font-size:38px;margin:0 auto 10px;background:rgba(255,255,255,.25)}
+  .u-hero .un{font-size:19px;font-weight:800}
+  .u-hero .ureg{display:inline-block;font-size:12px;background:rgba(255,255,255,.22);padding:3px 11px;border-radius:20px;margin-top:8px}
+  .u-bio{font-size:13px;color:#6b6354;line-height:1.65;background:#fff;border-radius:16px;padding:14px 15px;box-shadow:var(--shadow-sm);margin-top:12px}
+  .u-bio .pet{font-size:12px;color:var(--apricot);font-weight:700;margin-bottom:6px}
+  .u-acts{display:flex;gap:10px;margin-top:12px}
+  .u-acts button{flex:1;border:none;border-radius:14px;padding:12px;font-size:14px;font-weight:800;cursor:pointer}
+  .u-acts .u-dm{background:var(--apricot);color:#fff}
+  .u-acts .u-fr{flex:0 0 120px;background:#fff;color:var(--apricot);box-shadow:inset 0 0 0 1.5px var(--apricot)}
+  .clk{cursor:pointer}
+  .nm.clk{display:inline-block}
+  .composer{flex-shrink:0;display:flex;gap:9px;padding:11px 14px;background:#fff;border-top:1px solid var(--line)}
+  .composer input{flex:1;border:1.5px solid var(--line);border-radius:22px;padding:10px 15px;font-size:14px;font-family:inherit;color:var(--ink)}
+  .composer input:focus{outline:none;border-color:var(--apricot)}
+  .composer button{background:var(--apricot);color:#fff;border:none;border-radius:22px;padding:0 17px;font-weight:700;font-size:14px;cursor:pointer}
+
+  /* comments */
+  .d-post{background:#fff;border-radius:18px;padding:16px;box-shadow:var(--shadow-sm);margin-bottom:14px}
+  .cmt-h{font-size:13.5px;font-weight:800;margin:4px 4px 6px;color:#6b6354}
+  .cmt{display:flex;gap:10px;padding:13px 2px;border-bottom:1px solid var(--line)}
+  .cmt:last-child{border-bottom:none}
+  .cmt .ca{width:34px;height:34px;font-size:17px}
+  .cmt .cb{flex:1}
+  .cmt .cn{font-size:12.5px;font-weight:700}.cmt .cn .cg{color:var(--apricot);font-weight:600;margin-left:6px;font-size:11px}
+  .cmt .ctx{font-size:14px;line-height:1.55;margin-top:4px;color:#43403a}
+  .cmt .cf{font-size:11px;color:var(--faint);margin-top:7px;display:flex;gap:16px}
+  .cmt .cf span{cursor:pointer}.cmt .cf .lk.on{color:var(--apricot);font-weight:700}
+
+  /* chat */
+  #chatBody{display:flex;flex-direction:column}
+  .day{align-self:center;font-size:11px;color:var(--faint);margin:4px 0 12px}
+  .cbub{max-width:74%;padding:10px 13px;border-radius:16px;font-size:14px;line-height:1.45;margin-bottom:10px}
+  .cbub.them{background:#fff;align-self:flex-start;border-top-left-radius:5px;box-shadow:var(--shadow-sm)}
+  .cbub.me{background:var(--apricot);color:#fff;align-self:flex-end;border-top-right-radius:5px}
+
+  /* search */
+  .searchbox{flex:1;border:1.5px solid var(--line);background:#fff;border-radius:22px;padding:9px 15px;font-size:14px;font-family:inherit;color:var(--ink)}
+  .searchbox:focus{outline:none;border-color:var(--apricot)}
+  .sres-h{font-size:12px;color:var(--muted);font-weight:700;margin:6px 4px 10px}
+
+  /* === 消息 / 聊天 · 仿寻宠 UI === */
+  .mp-tabs{display:flex;padding:4px 16px 12px;gap:6px;flex-shrink:0}
+  .mp-tab{padding:6px 14px;border-radius:20px;font-size:12.5px;font-weight:600;background:#fff;color:var(--muted);cursor:pointer;box-shadow:var(--shadow-sm)}
+  .mp-tab.active{background:#E66A38;color:#fff;font-weight:700;box-shadow:none}
+  .msg-list{padding:0 16px 4px}
+  .msg-row{display:flex;gap:12px;align-items:center;background:#fff;border-radius:18px;box-shadow:var(--shadow-sm);padding:13px 14px;margin-bottom:11px;cursor:pointer;position:relative;transition:transform .15s}
+  .msg-row:active{transform:scale(.99)}
+  .msg-avatar{width:42px;height:42px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:20px}
+  .msg-avatar.mp{background:linear-gradient(135deg,var(--apricot-light),var(--apricot));color:#fff;font-size:18px}
+  .ph-orange{background:#FFEAE0}.ph-blue{background:#E8EEF5}.ph-mint{background:#E6F4EF}.ph-cream{background:#FFF6E0}
+  .msg-body{flex:1;min-width:0}
+  .msg-row-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:2px}
+  .msg-name{font-size:14px;font-weight:700}
+  .msg-mp-tag{font-size:10px;font-weight:700;color:var(--apricot);background:var(--apricot-soft);padding:1px 6px;border-radius:8px;margin-left:6px}
+  .msg-time{font-size:10.5px;color:var(--faint);font-weight:600}
+  .msg-preview{font-size:12px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;line-height:1.5;padding-right:28px}
+  .msg-prefix{font-size:12px;color:var(--faint);font-weight:500}
+  .msg-context{font-size:10.5px;color:#E66A38;margin-top:3px;font-weight:500;display:inline-block}
+  .msg-context.reply{color:#2f6b5c}
+  .msg-unread{position:absolute;top:50%;right:14px;transform:translateY(-50%);min-width:18px;height:18px;padding:0 5px;background:var(--apricot);color:#fff;border-radius:9px;font-size:10.5px;font-weight:700;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 5px rgba(232,116,59,.4)}
+  .chat-more{font-size:20px;color:var(--ink);cursor:pointer;width:26px;text-align:right}
+  .chat-ctx{background:#fff;border-radius:14px;margin:10px 16px 2px;padding:10px 12px;display:flex;gap:10px;align-items:center;box-shadow:var(--shadow-sm);flex-shrink:0;cursor:pointer}
+  .cp-thumb{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+  .cp-name{font-size:13px;font-weight:700}.cp-meta{font-size:11px;color:var(--muted);margin-top:1px}
+  .cp-status{font-size:10.5px;padding:3px 9px;background:var(--mint);color:#fff;border-radius:20px;font-weight:700}
+  .chat-audit-bar{padding:7px 13px;background:var(--honey-soft);font-size:10.5px;color:#9a7212;text-align:center;font-weight:600;border-radius:12px;margin-bottom:12px}
+  .chat-time{text-align:center;font-size:10.5px;color:var(--faint);margin:8px 0;font-weight:600}
+  .chat-msg{margin-bottom:12px;display:flex;gap:8px}
+  .chat-msg.me{flex-direction:row-reverse}
+  .chat-avatar{width:32px;height:32px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:15px}
+  .chat-bubble{max-width:70%;padding:9px 13px;font-size:14px;line-height:1.55}
+  .chat-msg.me .chat-bubble{background:var(--apricot);color:#fff;border-radius:16px 16px 4px 16px}
+  .chat-msg.them .chat-bubble{background:#fff;color:var(--ink);border-radius:16px 16px 16px 4px;box-shadow:var(--shadow-sm)}
+  .chat-bubble b{font-weight:700}
+  .meet-hint{flex-shrink:0;display:flex;align-items:center;gap:9px;margin:0 14px 8px;padding:10px 13px;background:var(--apricot-soft);border-radius:14px;transform:translateY(6px);opacity:0;max-height:0;overflow:hidden;transition:.25s;pointer-events:none}
+  .meet-hint.show{transform:none;opacity:1;max-height:64px;pointer-events:auto}
+  .meet-hint-text{flex:1;font-size:12px;color:#E66A38;font-weight:600;line-height:1.4}
+  .meet-hint-btn{font-size:11.5px;font-weight:700;color:#fff;background:var(--apricot);padding:5px 11px;border-radius:20px;white-space:nowrap;cursor:pointer;flex-shrink:0}
+  .meet-hint-close{font-size:13px;color:#E66A38;opacity:.5;cursor:pointer;flex-shrink:0}
+  .quick-replies{flex-shrink:0;display:flex;align-items:center;gap:7px;overflow-x:auto;max-height:0;opacity:0;transition:.25s;padding:0 14px}
+  .quick-replies::-webkit-scrollbar{display:none}
+  .quick-replies.open{max-height:54px;opacity:1;padding:2px 14px 10px}
+  .qr-label{font-size:11px;color:var(--faint);font-weight:700;flex-shrink:0}
+  .qr-chip{flex-shrink:0;font-size:12.5px;font-weight:600;color:var(--ink);background:#fff;border:1.5px solid var(--line);padding:6px 12px;border-radius:20px;cursor:pointer;white-space:nowrap}
+  .qr-chip.primary{border-color:var(--apricot);background:var(--apricot-soft);color:var(--apricot)}
+  .chat-input-bar{flex-shrink:0;background:#fff;border-top:1px solid var(--line);padding:10px 13px 14px;display:flex;gap:7px;align-items:center}
+  .chat-attach{width:36px;height:36px;background:var(--cream);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;cursor:pointer;flex-shrink:0}
+  .chat-attach.qr-toggle.active{color:var(--apricot);background:var(--apricot-soft)}
+  .chat-attach.chat-send{background:var(--apricot);color:#fff;font-weight:700}
+  .chat-input{flex:1;border:1.5px solid var(--line);border-radius:20px;padding:9px 14px;font-size:14px;font-family:inherit;color:var(--ink)}
+  .chat-input:focus{outline:none;border-color:var(--apricot)}
+
+  .sheet-mask{position:absolute;inset:0;background:rgba(40,34,28,.42);opacity:0;pointer-events:none;transition:.25s;z-index:110}.sheet-mask.show{opacity:1;pointer-events:auto}
+  .sheet{position:absolute;left:0;right:0;bottom:0;background:var(--cream);border-radius:26px 26px 0 0;padding:8px 20px 26px;transform:translateY(100%);transition:.3s cubic-bezier(.3,.9,.3,1);z-index:120;max-height:90%;overflow-y:auto}
+  .sheet::-webkit-scrollbar{display:none}.sheet.show{transform:none}
+  .grip{width:40px;height:4px;border-radius:3px;background:#ded8cb;margin:8px auto 14px}
+  .sheet h2{font-size:18px;font-weight:800;margin-bottom:4px}.sheet .sub{font-size:12.5px;color:var(--muted);margin-bottom:16px}
+  .chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:15px}
+  .chips .ch{padding:9px 14px;border-radius:30px;background:#fff;border:1.5px solid var(--line);font-size:13px;font-weight:600;cursor:pointer}
+  .chips .ch.on{border-color:var(--apricot);background:var(--apricot-soft);color:var(--apricot)}
+  .sheet textarea{width:100%;border:1.5px solid var(--line);background:#fff;border-radius:14px;padding:13px;font-size:14.5px;font-family:inherit;color:var(--ink);min-height:96px;resize:none}
+  .sheet textarea:focus{outline:none;border-color:var(--apricot)}
+  .addmedia{display:flex;gap:10px;margin:13px 0}.addmedia .mb{flex:1;border:1.5px dashed var(--faint);border-radius:13px;padding:13px;text-align:center;font-size:13px;color:var(--muted);font-weight:600;cursor:pointer}
+  .save-btn{width:100%;background:var(--apricot);color:#fff;border:none;border-radius:15px;padding:14px;font-size:15px;font-weight:800;cursor:pointer}
+  .kn p{font-size:13px;color:#6b6354;line-height:1.8;margin-bottom:10px}.kn .li{font-size:13px;color:#6b6354;line-height:1.7;padding-left:18px;position:relative;margin-bottom:7px}.kn .li::before{content:"·";position:absolute;left:6px;color:var(--apricot);font-weight:800}
+
+  .toast{position:absolute;bottom:96px;left:50%;transform:translateX(-50%) translateY(8px);background:rgba(40,34,28,.92);color:#fff;font-size:13px;padding:10px 18px;border-radius:22px;opacity:0;transition:.25s;z-index:200;pointer-events:none;white-space:nowrap}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+  <div class="stage-label"><b>邻宠</b> v2 做活 &nbsp;|&nbsp; 帖子详情+评论区 · 私信聊天 · 搜索 · 发帖 · 一切可互动</div>
+
+  <div class="phone">
+    <div class="notch"></div><div class="ph-tag">原型</div>
+    <div class="statusbar"><span>9:41</span><span class="right">📶 5G <span style="display:inline-block;width:22px;height:11px;border:1px solid var(--ink);border-radius:3px;position:relative;top:1px"><span style="position:absolute;inset:1.5px;right:5px;background:var(--ink);border-radius:1px"></span></span></span></div>
+
+    <div class="app">
+      <!-- 同城广场 -->
+      <div class="screen on" id="s-feed">
+        <div class="topbar"><div class="row1"><div class="brand">邻宠<span class="city" id="cityChip" onclick="openSheet('area')">📍 大理 ▾</span></div><div class="search" onclick="openOv('ov-search');setTimeout(()=>document.getElementById('searchInput').focus(),300)">🔍</div></div><div class="greet-line" id="greetLine"></div></div>
+        <div class="quick">
+          <div class="qi" onclick="switchScreen('hosp')"><div class="qc a">🏥</div><div class="ql">医院口碑</div></div>
+          <div class="qi" onclick="switchScreen('walk')"><div class="qc b">🐾</div><div class="ql">遛狗约伴</div></div>
+          <div class="qi" onclick="filterTo('adopt')"><div class="qc c">🏠</div><div class="ql">同城领养</div></div>
+          <div class="qi" onclick="openSheet('lost')"><div class="qc d">🔍</div><div class="ql">走失互助</div></div>
+        </div>
+        <div class="topics" id="topics"></div>
+        <div class="scroll"><div class="feed" id="feed"></div><div class="feed-note">这里只有<b>大理本地</b>的养宠人。<br>同城的事，才聊得到一块去 🐾</div></div>
+      </div>
+
+      <!-- 附近 · 目录 -->
+      <div class="screen" id="s-nearby">
+        <div class="plainhead"><h1>附近</h1><p>大理本地的宠物医院、遛狗、爱心喂养、宠物去处</p></div>
+        <div class="scroll"><div class="nb">
+          <div class="hub-card" onclick="switchScreen('hosp')">
+            <div class="hic" style="background:var(--apricot-soft)">🏥</div>
+            <div class="ht"><div class="a">医院口碑</div><div class="b">本地养宠人真实评价 · 不刷不买</div></div>
+            <div class="hgo">›</div></div>
+          <div class="hub-card" onclick="switchScreen('walk')">
+            <div class="hic" style="background:var(--mint-soft)">🐾</div>
+            <div class="ht"><div class="a">遛狗约伴</div><div class="b">附近遛狗点 · 找个同城狗友一起遛</div></div>
+            <div class="hgo">›</div></div>
+          <div class="hub-card" onclick="switchScreen('feedcat')">
+            <div class="hic" style="background:#FFF1E8">🐈</div>
+            <div class="ht"><div class="a">爱心喂养</div><div class="b">流浪猫喂养点 · 接力投喂 · TNR 绝育</div></div>
+            <div class="hgo">›</div></div>
+          <div class="hub-card" onclick="switchScreen('petspot')">
+            <div class="hic" style="background:var(--honey-soft)">☕</div>
+            <div class="ht"><div class="a">宠物去处</div><div class="b">猫咖 / 狗咖 / 宠物友好店 · 真实口碑</div></div>
+            <div class="hgo">›</div></div>
+          <div class="nb-sec">📅 同城活动</div>
+          <div class="place" onclick="signupEvent(this)"><div class="pe">🎪</div><div class="pt"><div class="a">古城宠物市集</div><div class="b">本周六 · 古城洋人街 · 摆摊/领养/义诊</div></div><div class="pr"><div class="dist evt-state">报名 ›</div></div></div>
+          <div class="note">同城的事，都在身边发生 🐾</div>
+        </div></div>
+      </div>
+
+      <!-- 医院口碑 -->
+      <div class="screen" id="s-hosp">
+        <div class="plainhead"><span class="back" onclick="switchScreen('nearby')">‹ 附近</span><h1>医院口碑</h1><p>本地养宠人的真实评价，不刷不买</p></div>
+        <div class="scroll"><div class="nb">
+          <div class="chips" id="hospFilter"></div>
+          <div id="hospList"></div>
+          <div class="add-line" style="margin-top:14px" onclick="openSheet('writerev')">✍️ 写个口碑 · 帮帮同城养宠人</div>
+          <div class="note">口碑和评分来自本地养宠人的真实评价，不刷不买。</div>
+        </div></div>
+      </div>
+
+      <!-- 遛狗约伴 -->
+      <div class="screen" id="s-walk">
+        <div class="plainhead"><span class="back" onclick="switchScreen('nearby')">‹ 附近</span><h1>遛狗约伴</h1><p>附近遛狗点 · 找个同城狗友一起遛</p></div>
+        <div class="scroll"><div class="nb">
+          <div id="walkList"></div>
+          <div class="add-line" style="margin-top:4px" onclick="openSheet('walkpost')">＋ 发个遛狗约伴 · 找同城搭子</div>
+          <div class="note">和同城的人一起遛，狗子有朋友，你也有 🐾</div>
+        </div></div>
+      </div>
+
+      <!-- 爱心喂养 · 流浪猫 -->
+      <div class="screen" id="s-feedcat">
+        <div class="plainhead"><span class="back" onclick="switchScreen('nearby')">‹ 附近</span><h1>爱心喂养</h1><p>大理街角的流浪猫，有人在默默照顾 🐾</p></div>
+        <div class="scroll"><div class="nb">
+          <div id="feedcatList"></div>
+          <div class="add-line" style="margin-top:4px" onclick="openSheet('feedspot')">＋ 标记一个喂养点</div>
+          <div class="tip-care">🌱 <b>文明喂养</b>：定点定时、喂完清理、坚持 <b>TNR</b>（绝育后放归）——只喂不绝育，猫群会越来越大，反而是负担。</div>
+          <div class="note">街角的它们，因为有你，多了一份暖 🐾</div>
+        </div></div>
+      </div>
+
+      <!-- 宠物去处 · 猫咖狗咖 -->
+      <div class="screen" id="s-petspot">
+        <div class="plainhead"><span class="back" onclick="switchScreen('nearby')">‹ 附近</span><h1>宠物去处</h1><p>能带毛孩子去的本地店 · 真实口碑不刷不买</p></div>
+        <div class="scroll"><div class="nb">
+          <div class="chips" id="petFilter"></div>
+          <div id="petspotList"></div>
+          <div class="add-line" style="margin-top:14px" onclick="openSheet('recspot')">✍️ 推荐一家 · 帮同城养宠人</div>
+          <div class="note">真实评价来自本地养宠人，不刷不买。</div>
+        </div></div>
+      </div>
+
+      <!-- 消息 · 仿寻宠 -->
+      <div class="screen" id="s-msg">
+        <div class="plainhead"><h1>消息</h1></div>
+        <div class="mp-tabs">
+          <div class="mp-tab active" id="mt-all" onclick="switchMsgTab('all')">全部</div>
+          <div class="mp-tab" id="mt-int" onclick="switchMsgTab('int')">互动</div>
+          <div class="mp-tab" id="mt-dm" onclick="switchMsgTab('dm')">私信</div>
+        </div>
+        <div class="scroll" style="padding-top:2px">
+          <div class="msg-list" id="mp-all">
+            <div class="msg-row" onclick="openSheet('notice')">
+              <div class="msg-avatar mp">📣</div>
+              <div class="msg-body"><div class="msg-row-head"><span class="msg-name">邻宠 · 大理<span class="msg-mp-tag">服务号</span></span><span class="msg-time">18:02</span></div>
+                <div class="msg-preview">📍 本周六古城宠物市集开始报名啦 · 有领养 + 免费义诊</div><div class="msg-context">同城活动</div></div>
+              <div class="msg-unread">1</div></div>
+            <div class="msg-row" onclick="openPost(0)">
+              <div class="msg-avatar ph-orange">🐕</div>
+              <div class="msg-body"><div class="msg-row-head"><span class="msg-name">才村的橘座</span><span class="msg-time">17:24</span></div>
+                <div class="msg-preview"><span class="msg-prefix">ta：</span>海舌傍晚 6 点我也常去～约起来呀</div><div class="msg-context reply">回复了你的「遛狗约伴」</div></div>
+              <div class="msg-unread">1</div></div>
+            <div class="msg-row" onclick="openPost(3)">
+              <div class="msg-avatar ph-blue">🐶</div>
+              <div class="msg-body"><div class="msg-row-head"><span class="msg-name">大理小张 等 3 人</span><span class="msg-time">16:38</span></div>
+                <div class="msg-preview">赞了你的帖子「煤球第一次见雪」</div><div class="msg-context reply">你的「晒娃」帖</div></div></div>
+            <div class="msg-row" onclick="openChat('wang')">
+              <div class="msg-avatar ph-cream">🐱</div>
+              <div class="msg-body"><div class="msg-row-head"><span class="msg-name">古城王姐</span><span class="msg-time">15:10</span></div>
+                <div class="msg-preview"><span class="msg-prefix">ta：</span>小奶猫还在吗？我想领养一只橘色的</div><div class="msg-context">关于 · 小奶猫领养</div></div>
+              <div class="msg-unread">2</div></div>
+            <div class="msg-row" onclick="openChat('hei')">
+              <div class="msg-avatar ph-mint">🐶</div>
+              <div class="msg-body"><div class="msg-row-head"><span class="msg-name">喜洲阿黑</span><span class="msg-time">昨天</span></div>
+                <div class="msg-preview"><span class="msg-prefix">我：</span>好的，那周末海舌见～</div><div class="msg-context">关于 · 遛狗约伴</div></div></div>
+          </div>
+
+          <div class="msg-list" id="mp-int" style="display:none">
+            <div class="msg-row" onclick="openPost(0)">
+              <div class="msg-avatar ph-orange">🐕</div>
+              <div class="msg-body"><div class="msg-row-head"><span class="msg-name">才村的橘座</span><span class="msg-time">17:24</span></div>
+                <div class="msg-preview"><span class="msg-prefix">ta：</span>海舌傍晚 6 点我也常去～约起来呀</div><div class="msg-context reply">回复了你的「遛狗约伴」</div></div>
+              <div class="msg-unread">1</div></div>
+            <div class="msg-row" onclick="openPost(3)">
+              <div class="msg-avatar ph-blue">🐶</div>
+              <div class="msg-body"><div class="msg-row-head"><span class="msg-name">大理小张 等 3 人</span><span class="msg-time">16:38</span></div>
+                <div class="msg-preview">赞了你的帖子「煤球第一次见雪」</div><div class="msg-context reply">你的「晒娃」帖</div></div></div>
+          </div>
+
+          <div class="msg-list" id="mp-dm" style="display:none">
+            <div class="msg-row" onclick="openChat('wang')">
+              <div class="msg-avatar ph-cream">🐱</div>
+              <div class="msg-body"><div class="msg-row-head"><span class="msg-name">古城王姐</span><span class="msg-time">15:10</span></div>
+                <div class="msg-preview"><span class="msg-prefix">ta：</span>小奶猫还在吗？我想领养一只橘色的</div><div class="msg-context">关于 · 小奶猫领养</div></div>
+              <div class="msg-unread">2</div></div>
+            <div class="msg-row" onclick="openChat('hei')">
+              <div class="msg-avatar ph-mint">🐶</div>
+              <div class="msg-body"><div class="msg-row-head"><span class="msg-name">喜洲阿黑</span><span class="msg-time">昨天</span></div>
+                <div class="msg-preview"><span class="msg-prefix">我：</span>好的，那周末海舌见～</div><div class="msg-context">关于 · 遛狗约伴</div></div></div>
+          </div>
+          <div class="note">只跟<b>同城</b>的人产生联系——见面、遛弯、互助都更容易。</div>
+        </div>
+      </div>
+
+      <!-- 我的 -->
+      <div class="screen" id="s-mine">
+        <div class="plainhead"><h1>我的</h1></div>
+        <div class="scroll" style="padding:6px 16px 20px">
+          <div class="mine-hero"><div class="ma">🙂</div><div><div class="mn">才村的橘座</div><div class="ms">📍 大理才村 · 养宠 2 年 · 一猫一狗</div></div></div>
+          <div class="mstat"><div class="st"><div class="n">12</div><div class="l">发帖</div></div><div class="st"><div class="n">24</div><div class="l">同城好友</div></div></div>
+          <div class="nb-sec" style="margin-left:6px">🐾 我的宠物矩阵</div>
+          <div class="matrix">
+            <div class="mxr" onclick="gotoMatrix('护宠')"><div class="mi" style="background:var(--apricot)">🛡️</div><div class="mtt"><div class="a">护宠 · 守护健康</div><div class="b">奶糖的体外驱虫还有 2 天到期 ›</div></div><div class="go">›</div></div>
+            <div class="mxr" onclick="gotoMatrix('寻宠')"><div class="mi" style="background:#E0584C">📍</div><div class="mtt"><div class="a">寻宠 · 找回走失</div><div class="b">帮邻居一起找，也守护自己的 ta ›</div></div><div class="go">›</div></div>
+          </div>
+          <div style="margin-bottom:16px">
+            <div class="setrow" onclick="openMyPosts()"><div class="si">📝</div><div class="sl">我的发帖</div><div class="sv" id="myPostCount">›</div></div>
+            <div class="setrow" onclick="openFavs()"><div class="si">⭐</div><div class="sl">我的收藏</div><div class="sv">本地医院/遛狗点 ›</div></div>
+            <div class="setrow" onclick="openSheet('about')"><div class="si">🏘️</div><div class="sl">关于邻宠</div><div class="sv">›</div></div>
+          </div>
+          <div class="note">邻宠 · 大理宠物矩阵的一员<br>寻宠 找 · 护宠 守 · <b>邻宠 聚</b></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tabbar">
+      <div class="tab on" data-s="feed" onclick="switchScreen('feed',this)"><span class="ti">🏘️</span>同城</div>
+      <div class="tab" data-s="nearby" onclick="switchScreen('nearby',this)"><span class="ti">📍</span>附近</div>
+      <div class="tab" style="visibility:hidden">＋</div>
+      <div class="fab" onclick="openSheet('publish')">＋</div>
+      <div class="tab" data-s="msg" onclick="switchScreen('msg',this)"><span class="ti">💬</span>消息</div>
+      <div class="tab" data-s="mine" onclick="switchScreen('mine',this)"><span class="ti">👤</span>我的</div>
+    </div>
+
+    <!-- post detail -->
+    <div class="overlay" id="ov-post">
+      <div class="ohead"><span class="oback" onclick="closeOv('ov-post')">‹</span><span class="otitle">帖子</span></div>
+      <div class="oscroll" id="postBody"></div>
+      <div class="composer"><input id="cInput" placeholder="说点同城的话…（友善）" onkeydown="if(event.key==='Enter')addComment()"><button onclick="addComment()">发送</button></div>
+    </div>
+    <!-- chat · 仿寻宠 -->
+    <div class="overlay" id="ov-chat">
+      <div class="ohead"><span class="oback" onclick="closeOv('ov-chat')">‹</span><span class="otitle" id="chatTitle">聊天</span><span class="chat-more" onclick="openSheet('chatmore')">⋮</span></div>
+      <div class="chat-ctx" id="chatCtx" onclick="viewRelated()"></div>
+      <div class="oscroll" id="chatBody"></div>
+      <div class="meet-hint show" id="meetHint">
+        <span style="flex-shrink:0;font-size:16px">📍</span>
+        <div class="meet-hint-text">要见面了？大理安全见面点 + 核对建议</div>
+        <div class="meet-hint-btn" onclick="openSheet('meettips')">查看建议</div>
+        <div class="meet-hint-close" onclick="document.getElementById('meetHint').classList.remove('show')">✕</div>
+      </div>
+      <div class="quick-replies" id="qr">
+        <span class="qr-label">快捷</span>
+        <span class="qr-chip primary" onclick="setQuickReply('我也常在附近，方便约个时间见见～')">📍 我也在附近</span>
+        <span class="qr-chip" onclick="setQuickReply('可以先看看 ta 吗？🐾')">🐾 想看看 ta</span>
+        <span class="qr-chip" onclick="setQuickReply('方便发张照片吗？我想先确认下 🙏')">📷 想看张照片</span>
+        <span class="qr-chip" onclick="setQuickReply('我们约个时间见个面呗？')">🤝 约个时间</span>
+        <span class="qr-chip" onclick="setQuickReply('谢谢你！🐾')">🙏 谢谢</span>
+      </div>
+      <div class="chat-input-bar">
+        <div class="chat-attach qr-toggle active" id="qrToggle" onclick="toggleQuickReplies()">⚡</div>
+        <div class="chat-attach" onclick="sendPhoto()">📷</div>
+        <div class="chat-attach" onclick="sendLoc()">📍</div>
+        <input type="text" class="chat-input" id="chatInput" placeholder="输入消息…" onkeydown="if(event.key==='Enter')sendChat()">
+        <div class="chat-attach chat-send" onclick="sendChat()">↑</div>
+      </div>
+    </div>
+    <!-- search -->
+    <div class="overlay" id="ov-search">
+      <div class="ohead"><span class="oback" onclick="closeOv('ov-search')">‹</span><input id="searchInput" class="searchbox" placeholder="搜同城帖子、养宠人、地点…" oninput="renderSearch()"></div>
+      <div class="oscroll" id="searchBody"></div>
+    </div>
+
+    <!-- 矩阵接力 handoff -->
+    <div class="handoff" id="ov-handoff"><div id="handoffBody"></div></div>
+
+    <!-- 同城养宠人 个人主页 -->
+    <div class="overlay" id="ov-user">
+      <div class="ohead"><span class="oback" onclick="closeOv('ov-user')">‹</span><span class="otitle">同城养宠人</span></div>
+      <div class="oscroll" id="userBody"></div>
+    </div>
+
+    <!-- 地点详情 -->
+    <div class="overlay" id="ov-place">
+      <div class="ohead"><span class="oback" onclick="closeOv('ov-place')">‹</span><span class="otitle">地点</span></div>
+      <div class="oscroll" id="placeBody"></div>
+    </div>
+    <!-- 我的发帖 -->
+    <div class="overlay" id="ov-myposts">
+      <div class="ohead"><span class="oback" onclick="closeOv('ov-myposts')">‹</span><span class="otitle">我的发帖</span></div>
+      <div class="oscroll" id="myPostsBody"></div>
+    </div>
+    <!-- 我的收藏 -->
+    <div class="overlay" id="ov-favs">
+      <div class="ohead"><span class="oback" onclick="closeOv('ov-favs')">‹</span><span class="otitle">我的收藏</span></div>
+      <div class="oscroll" id="favsBody"></div>
+    </div>
+
+    <div class="sheet-mask" id="mask" onclick="closeSheet()"></div>
+    <div class="sheet" id="sheet"></div>
+    <div class="toast" id="toast"></div>
+  </div>
+
+<script>
+  const TOPICS=[['all','全部'],['walk','遛狗'],['help','求助'],['adopt','领养'],['show','晒娃'],['event','活动']];
+  const CATLABEL={walk:'遛狗',help:'求助',adopt:'领养',show:'晒娃',event:'活动'};
+  let POSTS=[
+    {av:'🐕',avbg:'#FFEAE0',nm:'才村的橘座',area:'才村',dist:'2.1km',cat:'walk',txt:'傍晚去海舌公园遛狗，好多金毛和柯基！有没有住附近的，约个固定时间一起遛？狗子需要朋友 🐶',img:['🌳','🐕'],likes:18,liked:false,
+      cmts:[{av:'🐩',nm:'下关丸子',area:'下关',txt:'我也想约！下关有点远，周末可以专门过去',lk:3,liked:false},{av:'🦮',nm:'古城豆豆爸',area:'古城',txt:'金毛+1，海舌傍晚确实热闹',lk:1,liked:false}]},
+    {av:'🙍‍♀️',avbg:'var(--mint-soft)',nm:'洱海边的Lucky妈',area:'下关',dist:'5.3km',cat:'help',txt:'我家猫这两天不太吃东西，精神也蔫蔫的，大理哪个宠物医院靠谱一点？最好是看猫细心的 🙏',img:[],likes:9,liked:false,
+      cmts:[{av:'🐕',nm:'才村的橘座',area:'才村',txt:'苍山宠物医院看猫挺细心，还是 24h 的，急的话可以去',lk:6,liked:false},{av:'🐱',nm:'古城王姐',area:'古城',txt:'两天不吃要重视，先别拖，去验个血吧',lk:4,liked:false}]},
+    {av:'🐱',avbg:'var(--honey-soft)',nm:'古城王姐',area:'古城',dist:'1.2km',cat:'adopt',txt:'三只小奶猫找好心人领养，已驱虫，大理同城自取，希望给 ta 们一个家。可以先来看看 🐾',img:['🐱','🐈','🐈‍⬛'],likes:42,liked:false,
+      cmts:[{av:'🐶',nm:'喜洲阿黑',area:'喜洲',txt:'还有吗？想领一只橘的',lk:2,liked:false},{av:'🐩',nm:'下关丸子',area:'下关',txt:'太可爱了，帮顶 🥰',lk:5,liked:false}]},
+    {av:'🐶',avbg:'var(--apricot-soft)',nm:'喜洲阿黑',area:'喜洲',dist:'18km',cat:'show',txt:'带煤球去苍山，ta 第一次见到雪，整个狗都傻了哈哈哈 ❄️',img:['🏔️'],likes:67,liked:false,
+      cmts:[{av:'🐕',nm:'才村的橘座',area:'才村',txt:'哈哈哈这表情绝了',lk:8,liked:false}]},
+    {av:'🎪',avbg:'#EFEAF7',nm:'大理宠物市集',area:'古城',dist:'1.5km',cat:'event',txt:'本周六古城洋人街宠物市集！有摊位招募、流浪猫狗领养、免费义诊。带上你家毛孩来玩～',img:['🎪'],likes:31,liked:false,
+      cmts:[{av:'🦮',nm:'古城豆豆爸',area:'古城',txt:'摊位怎么报名呀？',lk:1,liked:false}]},
+  ];
+  const CHATS={
+    wang:{nm:'古城王姐',av:'🐱',avbg:'#FFF6E0',ctx:{thumb:'🐱',tbg:'#FFF6E0',name:'三只小奶猫找领养',meta:'古城 · 同城自取',status:'领养'},msgs:[
+      {them:1,txt:'你好，看到你发的<b>小奶猫领养</b>帖～'},{them:1,txt:'小猫还在吗？我想领一只橘色的 🐱'},
+      {me:1,txt:'在的在的，还有两只橘的'},{them:1,txt:'太好了！我周末能过去看看吗？大概几点方便？'}]},
+    hei:{nm:'喜洲阿黑',av:'🐶',avbg:'#FFEAE0',ctx:{thumb:'🐕',tbg:'#FFEAE0',name:'海舌公园遛狗约伴',meta:'才村 · 傍晚',status:'遛狗'},msgs:[
+      {them:1,txt:'你也常去海舌遛狗呀？我家狗也需要朋友 🐶'},{me:1,txt:'是呀，傍晚 6 点左右，狗友挺多的'},
+      {them:1,txt:'那周末一起？我带煤球过去'},{me:1,txt:'好的，那周末海舌见～'}]}
+  };
+  const AREAS=[['all','📍 全大理'],['才村','才村'],['古城','古城'],['下关','下关'],['喜洲','喜洲']];
+  let curTopic='all', curArea='all', curPost=0, curChat=null;
+
+  function switchScreen(name,el,anchor){
+    document.querySelectorAll('.screen').forEach(s=>s.classList.remove('on'));
+    document.getElementById('s-'+name).classList.add('on');
+    document.querySelectorAll('.tab[data-s]').forEach(t=>t.classList.remove('on'));
+    const tabName={hosp:'nearby',walk:'nearby',feedcat:'nearby',petspot:'nearby'}[name]||name;
+    const tabEl=(el&&el.dataset.s)?el:document.querySelector('.tab[data-s="'+tabName+'"]');
+    if(tabEl)tabEl.classList.add('on');
+    ({hosp:renderHosp,walk:renderWalk,feedcat:renderFeedcat,petspot:renderPetspot}[name]||function(){})();
+    const sc=document.getElementById('s-'+name).querySelector('.scroll');
+    if(sc){const t=anchor&&document.getElementById(anchor);
+      sc.scrollTop = t ? (t.getBoundingClientRect().top - sc.getBoundingClientRect().top + sc.scrollTop - 8) : 0;}
+  }
+  function filterTo(cat){switchScreen('feed');curTopic=cat;renderTopics();renderFeed();}
+
+  function renderTopics(){document.getElementById('topics').innerHTML=TOPICS.map(([k,l])=>`<div class="topic ${k===curTopic?'on':''}" onclick="curTopic='${k}';renderTopics();renderFeed()">${l}</div>`).join('');}
+  function updateCity(){
+    const chip=document.getElementById('cityChip'),gl=document.getElementById('greetLine');
+    if(chip)chip.textContent='📍 '+(curArea==='all'?'大理':curArea)+' ▾';
+    if(gl)gl.textContent=curArea==='all'?'大理本地养宠人，都在这儿 🐾':'正在看 '+curArea+' 及附近 · 点位置可切换';
+  }
+  function pickArea(k){curArea=k;updateCity();renderFeed();closeSheet();}
+  function bg(e){const m={'🌳':'#E6F4EF','🏔️':'#E8EEF5','🐱':'#FFF1E8','🐈':'#FFF6E0','🐈‍⬛':'#EFEAE0','🐕':'#FFEAE0','🎪':'#EFEAF7'};return m[e]||'var(--apricot-soft)';}
+  function feedEmpty(){
+    const filtered=curArea!=='all'||curTopic!=='all';
+    const where=curArea!=='all'?curArea:(curTopic!=='all'?'这个板块':'同城');
+    return `<div class="feed-empty"><div style="font-size:34px">🐾</div>
+      <div class="fe-t">${where}现在还很安静</div>
+      <div class="fe-b">${filtered?'换个筛选，或来发第一条':'同城邻居还不多——先看看身边实用的'}</div>
+      ${filtered
+        ?`<button class="fe-btn" onclick="curArea='all';curTopic='all';updateCity();renderTopics();renderFeed()">看全部同城</button>`
+        :`<button class="fe-btn" onclick="switchScreen('nearby')">逛逛附近 · 医院口碑 / 遛狗点 →</button>`}</div>`;
+  }
+  function renderFeed(){
+    const list=POSTS.filter(p=>(curTopic==='all'||p.cat===curTopic)&&(curArea==='all'||p.area===curArea));
+    document.getElementById('feed').innerHTML=list.map(p=>postCard(p,POSTS.indexOf(p))).join('') || feedEmpty();
+  }
+  function postCard(p,i){return `<div class="post" onclick="openPost(${i})">
+    <div class="ph"><div class="av clk" onclick="event.stopPropagation();openUser('${p.nm}')" style="background:${p.avbg}">${p.av}</div>
+      <div class="who"><div class="nm clk" onclick="event.stopPropagation();openUser('${p.nm}')">${p.nm}</div><div class="meta"><span class="geo">📍${p.area} · ${p.dist}</span></div></div>
+      <div class="cat cat-${p.cat}">${CATLABEL[p.cat]}</div></div>
+    <div class="txt">${p.txt}</div>
+    ${p.img.length?`<div class="imgs">${p.img.map(e=>`<div class="im" style="background:${bg(e)}">${e}</div>`).join('')}</div>`:''}
+    <div class="acts">
+      <div class="act ${p.liked?'liked':''}" onclick="event.stopPropagation();toggleLike(${i})"><span class="i">${p.liked?'❤️':'🤍'}</span> ${p.likes}</div>
+      <div class="act" onclick="event.stopPropagation();openPost(${i})"><span class="i">💬</span> ${p.cmts.length}</div>
+      <div class="act" onclick="event.stopPropagation();toast('已生成同城分享卡 ↗')"><span class="i">↗</span> 分享</div>
+    </div></div>`;}
+  function toggleLike(i){const p=POSTS[i];p.liked=!p.liked;p.likes+=p.liked?1:-1;renderFeed();if(document.getElementById('ov-post').classList.contains('on')&&curPost===i)renderPostBody();}
+
+  /* post detail */
+  function openPost(i){curPost=i;renderPostBody();openOv('ov-post');document.getElementById('postBody').scrollTop=0;}
+  function renderPostBody(){
+    const p=POSTS[curPost];
+    document.getElementById('postBody').innerHTML=`
+      <div class="d-post">
+        <div class="ph"><div class="av clk" onclick="openUser('${p.nm}')" style="background:${p.avbg};width:40px;height:40px;font-size:20px">${p.av}</div>
+          <div class="who"><div class="nm clk" onclick="openUser('${p.nm}')">${p.nm}</div><div class="meta"><span class="geo">📍${p.area} · ${p.dist}</span></div></div>
+          <div class="cat cat-${p.cat}">${CATLABEL[p.cat]}</div></div>
+        <div class="txt" style="margin-top:4px">${p.txt}</div>
+        ${p.img.length?`<div class="imgs">${p.img.map(e=>`<div class="im" style="background:${bg(e)}">${e}</div>`).join('')}</div>`:''}
+        <div class="acts">
+          <div class="act ${p.liked?'liked':''}" onclick="toggleLike(${curPost})"><span class="i">${p.liked?'❤️':'🤍'}</span> ${p.likes}</div>
+          <div class="act"><span class="i">💬</span> ${p.cmts.length}</div>
+          <div class="act" onclick="toast('已生成同城分享卡 ↗')"><span class="i">↗</span> 分享</div></div>
+      </div>
+      <div class="cmt-h">同城回复 · ${p.cmts.length}</div>
+      ${p.cmts.map((c,ci)=>`<div class="cmt"><div class="av ca clk" onclick="openUser('${c.nm}')" style="background:${c.avbg||'var(--apricot-soft)'}">${c.av}</div>
+        <div class="cb"><div class="cn"><span class="clk" onclick="openUser('${c.nm}')">${c.nm}</span><span class="cg">📍${c.area}</span></div><div class="ctx">${c.txt}</div>
+        <div class="cf"><span>刚刚</span><span class="lk ${c.liked?'on':''}" onclick="likeCmt(${ci})">${c.liked?'❤️ ':'👍 '}${c.lk}</span><span onclick="replyTo('${c.nm}')">回复</span></div></div></div>`).join('')}`;
+  }
+  function likeCmt(ci){const c=POSTS[curPost].cmts[ci];c.liked=!c.liked;c.lk+=c.liked?1:-1;renderPostBody();}
+  function replyTo(nm){const inp=document.getElementById('cInput');inp.value='回复 '+nm+'：';inp.focus();}
+  function addComment(){
+    const inp=document.getElementById('cInput');const v=inp.value.trim();if(!v)return;
+    POSTS[curPost].cmts.push({av:'🙂',avbg:'var(--apricot-soft)',nm:'才村的橘座',area:'才村',txt:v,lk:0,liked:false});
+    inp.value='';renderPostBody();renderFeed();
+    const sc=document.getElementById('postBody');sc.scrollTop=sc.scrollHeight;
+  }
+
+  /* 消息 tab */
+  function switchMsgTab(t){['all','int','dm'].forEach(k=>{document.getElementById('mp-'+k).style.display=k===t?'':'none';document.getElementById('mt-'+k).classList.toggle('active',k===t);});}
+
+  /* chat · 仿寻宠 */
+  function openChat(id){
+    curChat=id;const c=CHATS[id];
+    document.getElementById('chatTitle').textContent=c.nm;
+    document.getElementById('chatCtx').innerHTML=`<div class="cp-thumb" style="background:${c.ctx.tbg}">${c.ctx.thumb}</div><div style="flex:1"><div class="cp-name">${c.ctx.name}</div><div class="cp-meta">${c.ctx.meta}</div></div><div class="cp-status">${c.ctx.status}</div>`;
+    document.getElementById('meetHint').classList.add('show');
+    document.getElementById('qr').classList.remove('open');document.getElementById('qrToggle').classList.remove('active');
+    renderChat();openOv('ov-chat');
+  }
+  function chatBub(m){
+    if(m.img)return `<div class="chat-bubble" style="padding:4px"><div style="width:118px;height:88px;border-radius:10px;background:linear-gradient(135deg,#FFE2D0,#FFCBB8);display:flex;align-items:center;justify-content:center;font-size:30px">🐾</div></div>`;
+    if(m.loc)return `<div class="chat-bubble">📍 ${m.loc}</div>`;
+    return `<div class="chat-bubble">${m.txt}</div>`;
+  }
+  function renderChat(){const c=CHATS[curChat];
+    let h=`<div class="chat-audit-bar">🛡️ 消息经安全审核送达 · 涉及联系方式请谨慎，约见优先公共场所</div><div class="chat-time">今天</div>`;
+    h+=c.msgs.map(m=>m.me
+      ?`<div class="chat-msg me"><div class="chat-avatar" style="background:var(--apricot-soft)">🙂</div>${chatBub(m)}</div>`
+      :`<div class="chat-msg them"><div class="chat-avatar" style="background:${c.avbg}">${c.av}</div>${chatBub(m)}</div>`).join('');
+    document.getElementById('chatBody').innerHTML=h;
+    const b=document.getElementById('chatBody');setTimeout(()=>b.scrollTop=b.scrollHeight,30);
+  }
+  function sendChat(){const inp=document.getElementById('chatInput');const v=inp.value.trim();if(!v)return;CHATS[curChat].msgs.push({me:1,txt:v});inp.value='';renderChat();}
+  function toggleQuickReplies(){document.getElementById('qr').classList.toggle('open');document.getElementById('qrToggle').classList.toggle('active');}
+  function setQuickReply(t){document.getElementById('chatInput').value=t;document.getElementById('qr').classList.remove('open');document.getElementById('qrToggle').classList.remove('active');}
+
+  /* 同城养宠人 个人主页 */
+  const USERS={
+    '才村的橘座':{pet:'一只金毛 · 橘座',bio:'才村养狗 2 年，傍晚常去海舌遛弯，欢迎同城狗友约遛 🐶',joined:'2 年',friends:24},
+    '古城王姐':{pet:'三只猫 · 也在救助流浪猫',bio:'古城开客栈，顺手救助流浪猫，常有小猫找领养，欢迎来看 🐾',joined:'3 年',friends:58},
+    '喜洲阿黑':{pet:'一只田园犬 · 煤球',bio:'喜洲本地人，带煤球到处跑，爱晒娃 ❄️',joined:'1 年',friends:17},
+    '洱海边的Lucky妈':{pet:'一只英短 · Lucky',bio:'下关上班族，养猫新手，常在同城求助问答 🙏',joined:'8 个月',friends:12}
+  };
+  function userProfile(nm){
+    const posts=POSTS.filter(p=>p.nm===nm), base=posts[0]||{};
+    const u=USERS[nm]||{};
+    return {nm,av:base.av||'🙂',avbg:base.avbg||'var(--apricot-soft)',area:base.area||'大理',
+      pet:u.pet||'大理养宠人',bio:u.bio||'大理本地养宠人 · 同城常来常往 🐾',
+      joined:u.joined||'新邻居',friends:(u.friends!=null?u.friends:0),posts};
+  }
+  function openUser(nm){
+    const u=userProfile(nm);
+    document.getElementById('userBody').innerHTML=`
+      <div class="u-hero"><div class="uav" style="background:rgba(255,255,255,.25)">${u.av}</div>
+        <div class="un">${u.nm}</div><div class="ureg">📍 大理 · ${u.area}</div></div>
+      <div class="u-bio"><div class="pet">🐾 ${u.pet}</div>${u.bio}</div>
+      <div class="mstat" style="margin-top:12px"><div class="st"><div class="n">${u.posts.length}</div><div class="l">同城帖</div></div><div class="st"><div class="n">${u.friends}</div><div class="l">同城好友</div></div><div class="st"><div class="n">${u.joined}</div><div class="l">在大理</div></div></div>
+      <div class="u-acts"><button class="u-dm" onclick="dmUser('${u.nm}')">💬 私信 ta</button><button class="u-fr" onclick="addFriend(this)">加为同城好友</button></div>
+      <div class="nb-sec" style="margin:18px 6px 10px">📮 ta 的同城帖</div>
+      ${u.posts.length?u.posts.map(p=>postCard(p,POSTS.indexOf(p))).join(''):`<div style="text-align:center;color:var(--faint);padding:26px 0;font-size:12.5px">还没有公开的同城帖</div>`}
+      <div class="note">同城邻居 · 真实养宠人，见面遛弯互助都更近 🐾</div>`;
+    openOv('ov-user');document.getElementById('userBody').scrollTop=0;
+  }
+  function dmUser(nm){
+    let id=Object.keys(CHATS).find(k=>CHATS[k].nm===nm);
+    if(!id){const u=userProfile(nm);id='u_'+nm;CHATS[id]={nm,av:u.av,avbg:u.avbg,ctx:{thumb:u.av,tbg:u.avbg,name:'来自 ta 的主页',meta:u.area+' · 同城',status:'同城'},msgs:[]};}
+    closeOv('ov-user');openChat(id);
+  }
+
+  /* 附近 · 地点（数据驱动）*/
+  let placeSeq=0, evtJoined=false, FAVS=[];
+  let PLACES=[
+    {id:'w1',kind:'walk',e:'🌳',nm:'海舌生态公园',area:'才村',dist:'2.4 km',desc:'才村 · 草坪开阔，傍晚 6 点左右狗友最多',who:'3 位同城狗友本周去过',whoIcon:'🐶',act:'约一起遛',done:'已约遛 ✓',toastJoin:'已发起约遛 · 等狗友响应 🐾',joined:false},
+    {id:'w2',kind:'walk',e:'🏞️',nm:'洱海生态廊道',area:'下关',dist:'3.0 km',desc:'环洱海 · 适合长距离遛，记得牵绳',who:'1 位同城狗友常来',whoIcon:'🐶',act:'约一起遛',done:'已约遛 ✓',toastJoin:'已发起约遛 · 等狗友响应 🐾',joined:false},
+    {id:'c1',kind:'feedcat',e:'🐈',nm:'古城南门 · 城墙根猫群',area:'古城',dist:'1.0 km',desc:'约 5 只 · 多数已 TNR 绝育 · 亲人',who:'王姐每天傍晚喂 · 猫粮快见底了',whoIcon:'🍚',act:'我来接力',done:'已接力 ✓',toastJoin:'已认领接力 · 王姐会联系你 🐾',joined:false},
+    {id:'c2',kind:'feedcat',e:'🐈‍⬛',nm:'才村码头 · 海边猫群',area:'才村',dist:'2.3 km',desc:'约 3 只 · 有 1 只待绝育 · 较怕生',who:'需要帮忙带去做 TNR 绝育',whoIcon:'🏥',act:'我能帮忙',done:'已报名 ✓',toastJoin:'已报名帮忙 TNR 🐾',joined:false},
+    {id:'p1',kind:'petspot',e:'🐱',nm:'古城 · 慢猫咖啡',area:'古城',dist:'1.3 km',desc:'猫咖 · 店猫均领养自流浪 · 可撸可不撸',tags:['猫咖'],star:4.7,revs:[{nm:'古城豆豆爸',area:'古城',txt:'店猫都很放松，不舒服老板就让猫休息、不强迫互动，很舒服。'}]},
+    {id:'p2',kind:'petspot',e:'🐶',nm:'才村 · 海边狗友咖啡',area:'才村',dist:'2.0 km',desc:'狗友好 · 露台可带娃 · 备饮水碗',tags:['狗咖','宠物友好'],star:4.6,revs:[{nm:'才村的橘座',area:'才村',txt:'能带狗上露台，还给狗准备了水碗，金毛玩疯了。'}]},
+    {id:'p3',kind:'petspot',e:'🦎',nm:'古城 · 苍山爬宠咖啡',area:'古城',dist:'1.6 km',desc:'爬宠/异宠 · 守宫·陆龟·角蛙 · 隔箱观赏',tags:['爬宠/异宠'],star:4.5,revs:[{nm:'大理小张',area:'古城',txt:'店主很懂养，温控湿度到位，鼓励隔着箱看、不硬上手撸，对小动物友好。'}]},
+    {id:'h1',kind:'hospital',e:'🏥',nm:'苍山宠物医院',area:'古城',dist:'2.1 km',desc:'古城 · 24h 急诊 · 可手术',tags:['24h急诊','可手术'],star:4.8,revs:[{nm:'洱海边的Lucky妈',area:'下关',txt:'半夜狗狗呕吐去的，医生很耐心，没乱开药。'}]},
+    {id:'h2',kind:'hospital',e:'🏥',nm:'下关爱宠诊所',area:'下关',dist:'5.3 km',desc:'下关 · 内科/驱虫/疫苗',tags:['驱虫疫苗'],star:4.5,revs:[{nm:'大理小张',area:'下关',txt:'常规疫苗驱虫很方便，价格透明。'}]}
+  ];
+  const HOSP_F=['全部','24h急诊','可手术','驱虫疫苗'], PET_F=['全部','猫咖','狗咖','爬宠/异宠','宠物友好'];
+  let hospFilter='全部', petFilter='全部';
+  function placeRow(p,i){
+    if(p.kind==='walk'||p.kind==='feedcat'){
+      return `<div class="place" style="margin-bottom:0;border-radius:17px 17px 0 0${i>0?';margin-top:11px':''}" onclick="openPlace('${p.id}')"><div class="pe">${p.e}</div><div class="pt"><div class="a">${p.nm}</div><div class="b">${p.desc}</div></div><div class="pr"><div class="dist">${p.dist}</div></div></div>`+
+        `<div class="meet"><span class="who">${p.whoIcon} ${p.who}</span><button class="join" onclick="event.stopPropagation();joinPlace('${p.id}')">${p.joined?p.done:p.act}</button></div>`;
+    }
+    return `<div class="place" style="${i>0?'margin-top:13px':''}" onclick="openPlace('${p.id}')"><div class="pe">${p.e}</div><div class="pt"><div class="a">${p.nm}</div><div class="b">${p.desc}</div></div><div class="pr">${p.star?`<div class="star">★ ${p.star}</div>`:''}<div class="dist">${p.dist}</div></div></div>`+
+      (p.revs&&p.revs[0]?`<div class="rev">💬 <b>${p.revs[0].nm}</b>：${p.revs[0].txt}</div>`:'');
+  }
+  function renderWalk(){document.getElementById('walkList').innerHTML=PLACES.filter(p=>p.kind==='walk').map((p,i)=>placeRow(p,i)).join('');}
+  function renderFeedcat(){document.getElementById('feedcatList').innerHTML=PLACES.filter(p=>p.kind==='feedcat').map((p,i)=>placeRow(p,i)).join('');}
+  function renderHosp(){
+    document.getElementById('hospFilter').innerHTML=HOSP_F.map(t=>`<div class="ch ${t===hospFilter?'on':''}" onclick="hospFilter='${t}';renderHosp()">${t}</div>`).join('');
+    const list=PLACES.filter(p=>p.kind==='hospital'&&(hospFilter==='全部'||(p.tags||[]).includes(hospFilter)));
+    document.getElementById('hospList').innerHTML=list.map((p,i)=>placeRow(p,i)).join('')||`<div style="text-align:center;color:var(--faint);padding:30px 0;font-size:12.5px">暂无符合的医院</div>`;
+  }
+  function renderPetspot(){
+    document.getElementById('petFilter').innerHTML=PET_F.map(t=>`<div class="ch ${t===petFilter?'on':''}" onclick="petFilter='${t}';renderPetspot()">${t}</div>`).join('');
+    const list=PLACES.filter(p=>p.kind==='petspot'&&(petFilter==='全部'||(p.tags||[]).includes(petFilter)));
+    document.getElementById('petspotList').innerHTML=list.map((p,i)=>placeRow(p,i)).join('')||`<div style="text-align:center;color:var(--faint);padding:30px 0;font-size:12.5px">这个分类还没有 · 来推荐一家 🐾</div>`;
+  }
+  function joinPlace(id){const p=PLACES.find(x=>x.id===id);if(!p||p.joined)return;p.joined=true;({walk:renderWalk,feedcat:renderFeedcat}[p.kind])();if(document.getElementById('ov-place').classList.contains('on'))openPlace(id);toast(p.toastJoin);}
+  function toggleFav(id,btn){const i=FAVS.indexOf(id);if(i<0){FAVS.push(id);if(btn)btn.textContent='已收藏 ★';toast('已收藏 ★');}else{FAVS.splice(i,1);if(btn)btn.textContent='收藏';toast('已取消收藏');}}
+  function openPlace(id){
+    const p=PLACES.find(x=>x.id===id),fav=FAVS.includes(id);let extra='';
+    if(p.kind==='walk'||p.kind==='feedcat'){
+      extra=`<div class="meet" style="border-radius:13px;margin-top:14px"><span class="who">${p.whoIcon} ${p.who}</span><button class="join" onclick="joinPlace('${p.id}')">${p.joined?p.done:p.act}</button></div>`;
+      if(p.kind==='feedcat')extra+=`<div class="tip-care">🌱 <b>文明喂养</b>：定点定时、喂完清理、坚持 <b>TNR</b>。</div>`;
+    }else{
+      extra=`<div class="nb-sec" style="margin:16px 6px 10px">💬 同城口碑 · ${p.revs.length}</div>${p.revs.map(r=>`<div class="rev" style="margin-top:8px">💬 <b>${r.nm}</b><span style="color:var(--faint)"> · ${r.area}</span>：${r.txt}</div>`).join('')}<div class="add-line" style="margin-top:12px" onclick="openSheet('${p.kind==='hospital'?'writerev':'recspot'}')">✍️ 写个口碑</div>`;
+    }
+    document.getElementById('placeBody').innerHTML=`
+      <div class="u-hero" style="text-align:left;display:flex;align-items:center;gap:14px"><div class="uav" style="width:58px;height:58px;font-size:30px;margin:0">${p.e}</div><div><div class="un">${p.nm}</div><div class="ureg">📍 大理 · ${p.area} · ${p.dist}</div></div></div>
+      <div class="u-bio">${p.desc}${p.star?`<div style="margin-top:8px;color:var(--honey);font-weight:800">★ ${p.star} <span style="color:var(--faint);font-weight:500;font-size:12px">· 本地养宠人评价</span></div>`:''}</div>
+      <div class="u-acts"><button class="u-dm" onclick="toast('已打开地图导航（演示）')">🗺 导航去这儿</button><button class="u-fr" onclick="toggleFav('${p.id}',this)">${fav?'已收藏 ★':'收藏'}</button></div>
+      ${extra}
+      <div class="note">${p.kind==='feedcat'?'谢谢你愿意照顾街角的它们 🐾':'真实信息来自本地养宠人 🐾'}</div>`;
+    openOv('ov-place');document.getElementById('placeBody').scrollTop=0;
+  }
+  function signupEvent(el){if(evtJoined)return;evtJoined=true;const s=el.querySelector('.evt-state');if(s)s.textContent='已报名 ✓';toast('已报名古城宠物市集 🎪');}
+  function addFriend(btn){btn.textContent='已是同城好友 ✓';btn.style.opacity='.7';btn.onclick=null;toast('已加为同城好友 🐾');}
+  function openMyPosts(){
+    const mine=POSTS.filter(p=>p.nm==='才村的橘座');
+    document.getElementById('myPostsBody').innerHTML=`<div class="nb-sec" style="margin:2px 6px 12px">我发布的 · ${mine.length}</div>`+(mine.length?mine.map(p=>postCard(p,POSTS.indexOf(p))).join(''):`<div style="text-align:center;color:var(--faint);padding:40px 0">还没发过帖 · 去发第一条 🐾</div>`);
+    openOv('ov-myposts');document.getElementById('myPostsBody').scrollTop=0;
+  }
+  function openFavs(){
+    const items=FAVS.map(id=>PLACES.find(p=>p.id===id)).filter(Boolean);
+    document.getElementById('favsBody').innerHTML=`<div class="nb-sec" style="margin:2px 6px 12px">我收藏的 · ${items.length}</div>`+(items.length?items.map(p=>`<div class="place" style="margin-bottom:11px" onclick="closeOv('ov-favs');openPlace('${p.id}')"><div class="pe">${p.e}</div><div class="pt"><div class="a">${p.nm}</div><div class="b">${p.desc}</div></div><div class="pr">${p.star?`<div class="star">★ ${p.star}</div>`:''}<div class="dist">${p.dist}</div></div></div>`).join(''):`<div style="text-align:center;color:var(--faint);padding:40px 0;font-size:13px">还没有收藏<br>在医院 / 遛狗点 / 喂养点 / 去处里点「收藏」试试 🐾</div>`);
+    openOv('ov-favs');document.getElementById('favsBody').scrollTop=0;
+  }
+  function viewRelated(){const map={wang:2,hei:0};const idx=map[curChat];if(idx==null){toast('这条对话来自 ta 的主页 · 暂无关联帖');return;}closeOv('ov-chat');openPost(idx);}
+  function sendPhoto(){if(!curChat)return;CHATS[curChat].msgs.push({me:1,img:1});renderChat();}
+  function sendLoc(){if(!curChat)return;CHATS[curChat].msgs.push({me:1,loc:'才村 · 大理（演示位置）'});renderChat();}
+  function blockChat(){closeSheet();closeOv('ov-chat');toast('已拉黑 · ta 不会再打扰你');}
+  function submitRev(){const nm=pick.hosp,txt=(document.getElementById('rvTxt').value||'').trim()||'（口碑示例）';const p=PLACES.find(x=>x.kind==='hospital'&&x.nm===nm);if(p){p.revs.unshift({nm:'才村的橘座',area:'才村',txt});renderHosp();}closeSheet();toast('口碑已提交 · 谢谢你帮同城养宠人 🐾');}
+  function submitFeedspot(){const txt=(document.getElementById('fsTxt').value||'').trim(),area=pick.area||'才村';PLACES.push({id:'fs'+(++placeSeq),kind:'feedcat',e:'🐈',nm:area+' · 新喂养点',area,dist:'刚标记',desc:txt||'新标记的喂养点 · 待补充',who:'你标记的 · 等爱心人接力',whoIcon:'🍚',act:'我来接力',done:'已接力 ✓',toastJoin:'已认领接力 🐾',joined:false});renderFeedcat();closeSheet();toast('喂养点已标记 · 谢谢你的爱心 🐾');}
+  function submitRecspot(){const txt=(document.getElementById('rsTxt').value||'').trim(),kind=pick.kind||'宠物友好店';const emo={'猫咖':'🐱','狗咖':'🐶','爬宠/异宠':'🦎','宠物友好店':'☕'}[kind]||'☕';const tag={'猫咖':['猫咖'],'狗咖':['狗咖'],'爬宠/异宠':['爬宠/异宠'],'宠物友好店':['宠物友好']}[kind]||['宠物友好'];PLACES.push({id:'rs'+(++placeSeq),kind:'petspot',e:emo,nm:'新推荐 · '+kind,area:'大理',dist:'刚推荐',desc:kind+' · '+(txt||'待补充'),tags:tag,star:null,revs:[{nm:'才村的橘座',area:'才村',txt:txt||'同城推荐'}]});renderPetspot();closeSheet();toast('已推荐 · 谢谢你帮同城养宠人 🐾');}
+
+  /* search */
+  function renderSearch(){
+    const q=document.getElementById('searchInput').value.trim();
+    const body=document.getElementById('searchBody');
+    if(!q){body.innerHTML=`<div class="sres-h">大家在搜</div>${['苍山宠物医院','海舌遛狗','小奶猫领养','驱虫'].map(t=>`<div class="topic" style="display:inline-block;margin:0 8px 8px 0" onclick="document.getElementById('searchInput').value='${t}';renderSearch()">${t}</div>`).join('')}`;return;}
+    const res=POSTS.map((p,i)=>({p,i})).filter(({p})=>p.txt.includes(q)||p.nm.includes(q)||p.area.includes(q)||CATLABEL[p.cat].includes(q));
+    body.innerHTML=res.length?`<div class="sres-h">找到 ${res.length} 条同城结果</div>`+res.map(({p,i})=>postCard(p,i)).join(''):`<div style="text-align:center;color:var(--muted);padding:40px 0">没找到「${q}」相关的同城内容</div>`;
+  }
+
+  /* overlays */
+  function openOv(id){document.getElementById(id).classList.add('on');}
+  function closeOv(id){document.getElementById(id).classList.remove('on');}
+
+  /* sheet */
+  let pick={};
+  function openSheet(type,arg){
+    pick={};const sheet=document.getElementById('sheet');let h='<div class="grip"></div>';
+    if(type==='publish'){
+      h+=`<h2>发个同城帖</h2><div class="sub">只发给大理本地的养宠人</div>
+      <div class="chips">${TOPICS.slice(1).map(([k,l])=>`<div class="ch" onclick="pickChip(this,'cat','${k}')">${l}</div>`).join('')}</div>
+      <textarea id="pTxt" placeholder="遛狗约伴、求助问答、晒娃、送养……同城的事尽管说"></textarea>
+      <div class="lab" style="font-size:12.5px;font-weight:700;color:#6b6354;margin:2px 0 8px">你在大理哪一片</div>
+      <div class="chips">${AREAS.slice(1).map(([k,l])=>`<div class="ch ${k==='才村'?'on':''}" onclick="pickChip(this,'area','${k}')">📍${l}</div>`).join('')}</div>
+      <div class="addmedia"><div class="mb">📷 加图片</div></div>
+      <button class="save-btn" onclick="publish()">发布到同城</button>`;
+    } else if(type==='lost'){
+      h+=`<h2>🔍 走失互助</h2><div class="sub">宠物走失，是和时间赛跑的事</div><div class="kn">
+      <p>邻宠的走失互助，直接连到矩阵里的 <b>寻宠</b>——专门为找回走失做的：附近热心人接力、地图标记、私聊撮合。</p>
+      <div class="li">在这里发出走失，同城邻居第一时间能看到；</div><div class="li">捡到流浪/走失宠物，也在寻宠登记招领；</div><div class="li">同城 + 真实热心人，是找回最大的希望。</div></div>
+      <button class="save-btn" onclick="gotoMatrix('寻宠',true)">前往寻宠发布走失</button>`;
+    } else if(type==='area'){
+      h+=`<h2>看哪一片的同城</h2><div class="sub">大理本地 · 选你关心的区域</div>
+      <div class="chips" style="margin-bottom:4px">${AREAS.map(([k,l])=>`<div class="ch ${k===curArea?'on':''}" onclick="pickArea('${k}')">${l}</div>`).join('')}</div>`;
+    } else if(type==='chatmore'){
+      h+=`<h2>${CHATS[curChat]?CHATS[curChat].nm:'对话'}</h2><div class="sub">同城相处，互相尊重</div>
+      <div onclick="closeSheet();toast('已举报 · 我们会尽快核实 🙏')" style="padding:15px 6px;border-bottom:1px solid var(--line);font-size:15px;cursor:pointer">🚩 举报这个人</div>
+      <div onclick="blockChat()" style="padding:15px 6px;font-size:15px;cursor:pointer;color:#c0473c;font-weight:600">🚫 拉黑 · 不再接收消息</div>`;
+    } else if(type==='meettips'){
+      h+=`<h2>📍 大理安全见面建议</h2><div class="sub">同城见面，安心一点</div><div class="kn">
+      <div class="li">约在<b>公共场所</b>：人民路、洱海生态廊道、宠物医院门口都行；</div>
+      <div class="li">第一次尽量<b>白天 + 可带朋友</b>同行；</div>
+      <div class="li">领养/送养<b>当面看 ta 状态</b>，核对疫苗/绝育；</div>
+      <div class="li">钱物当面验，别提前转账；</div>
+      <div class="li">沟通尽量留在<b>站内</b>，留个记录更安心。</div></div>
+      <button class="save-btn" onclick="closeSheet()">我知道了</button>`;
+    } else if(type==='notice'){
+      h+=`<h2>📣 邻宠服务通知</h2><div class="sub">同城活动 · 18:02</div><div class="kn">
+      <p>📍 <b>本周六古城宠物市集</b>开始报名啦——古城洋人街，有摊位招募、流浪猫狗领养、免费义诊。带上你家毛孩来玩～</p></div>
+      <button class="save-btn" onclick="closeSheet();toast('已报名古城宠物市集 🎪')">报名参加</button>`;
+    } else if(type==='feedspot'){
+      h+=`<h2>标记一个喂养点</h2><div class="sub">让附近的爱心人一起照顾 · 只为流浪猫</div>
+      <div class="lab" style="font-size:12.5px;font-weight:700;color:#6b6354;margin:2px 0 8px">在大理哪一片</div>
+      <div class="chips">${AREAS.slice(1).map(([k,l])=>`<div class="ch ${k==='才村'?'on':''}" onclick="pickChip(this,'area','${k}')">📍${l}</div>`).join('')}</div>
+      <textarea id="fsTxt" placeholder="大概位置、有几只猫、是否绝育、需要什么帮助……"></textarea>
+      <div class="tip-care" style="margin-top:0">🌱 请坚持<b>文明喂养</b>与 <b>TNR 绝育</b>，别让猫群无序增长。</div>
+      <button class="save-btn" onclick="submitFeedspot()">标记喂养点</button>`;
+    } else if(type==='recspot'){
+      h+=`<h2>推荐一家宠物去处</h2><div class="sub">猫咖 / 狗咖 / 能带毛孩的店 · 真实就好</div>
+      <div class="chips">${['猫咖','狗咖','爬宠/异宠','宠物友好店'].map(t=>`<div class="ch" onclick="pickChip(this,'kind','${t}')">${t}</div>`).join('')}</div>
+      <textarea id="rsTxt" placeholder="店名、在哪、为什么推荐：动物状态好不好、温控/不硬撸、能不能带宠……"></textarea>
+      <button class="save-btn" onclick="submitRecspot()">提交推荐</button>`;
+    } else if(type==='about'){
+      h+=`<h2>关于邻宠</h2><div class="sub">大理同城宠物社区</div><div class="kn">
+      <p>邻宠只做 <b>大理本地</b>。同城遛狗搭子、医院口碑、走失互助、领养送养——这些<b>地理绑定</b>的事，是大平台做不了、也是我们真正有用的地方。</p>
+      <div class="li">每条帖都带区域和距离，聊的都是身边事；</div><div class="li">口碑评价来自真实本地人，不刷不买；</div><div class="li">和寻宠、护宠是一家：找 · 守 · 聚。</div></div>`;
+    } else if(type==='writerev'){
+      h+=`<h2>写个口碑</h2><div class="sub">帮帮其他大理养宠人 · 真实就好，不刷不买</div>
+      <div class="chips">${['苍山宠物医院','下关爱宠诊所','其他医院'].map(n=>`<div class="ch" onclick="pickChip(this,'hosp','${n}')">${n}</div>`).join('')}</div>
+      <textarea id="rvTxt" placeholder="说说真实的就诊体验：医生是否耐心、有没有乱开药、价格透明吗……"></textarea>
+      <button class="save-btn" onclick="submitRev()">提交口碑</button>`;
+    } else if(type==='walkpost'){
+      h+=`<h2>发个遛狗约伴</h2><div class="sub">找个同城狗友，固定时间一起遛</div>
+      <div class="chips">${['海舌生态公园','洱海生态廊道','苍山脚下','其他'].map(n=>`<div class="ch" onclick="pickChip(this,'spot','${n}')">${n}</div>`).join('')}</div>
+      <textarea id="wkTxt" placeholder="例如：傍晚 6 点海舌见，金毛公一只，求同城狗友一起遛～"></textarea>
+      <div class="lab" style="font-size:12.5px;font-weight:700;color:#6b6354;margin:2px 0 8px">你在大理哪一片</div>
+      <div class="chips">${AREAS.slice(1).map(([k,l])=>`<div class="ch ${k==='才村'?'on':''}" onclick="pickChip(this,'area','${k}')">📍${l}</div>`).join('')}</div>
+      <button class="save-btn" onclick="walkPost()">发布约伴</button>`;
+    }
+    sheet.innerHTML=h;document.getElementById('mask').classList.add('show');sheet.classList.add('show');
+  }
+  function pickChip(el,f,v){el.parentElement.querySelectorAll('.ch').forEach(c=>c.classList.remove('on'));el.classList.add('on');pick[f]=v;}
+  function closeSheet(){document.getElementById('mask').classList.remove('show');document.getElementById('sheet').classList.remove('show');}
+  function publish(){
+    const txt=(document.getElementById('pTxt').value||'').trim()||'（同城帖示例）';
+    POSTS.unshift({av:'🙂',avbg:'var(--apricot-soft)',nm:'才村的橘座',area:pick.area||'才村',dist:'刚刚',cat:pick.cat||'show',txt,img:[],likes:0,liked:false,cmts:[]});
+    curTopic='all';curArea='all';closeSheet();switchScreen('feed');updateCity();renderTopics();renderFeed();document.querySelector('#s-feed .scroll').scrollTop=0;toast('已发布到大理同城 🐾');
+  }
+  /* 矩阵接力 handoff */
+  const MX={
+    '寻宠':{icon:'📍',tag:'找回走失',color:'#E0584C',grad:'linear-gradient(160deg,#F0857A,#E0584C)',net:'找回网络'},
+    '护宠':{icon:'🛡️',tag:'守护健康',color:'#E66A38',grad:'linear-gradient(160deg,#FF8552,#E66A38)',net:'健康守护'}
+  };
+  let hfTimer;
+  function gotoMatrix(app,fromLost){
+    closeSheet();
+    const m=MX[app],ov=document.getElementById('ov-handoff');
+    ov.style.background=m.grad;
+    document.getElementById('handoffBody').innerHTML=`<div class="hf-bridge">
+        <div class="hf-logo small">🏘️</div><div class="hf-dots"><span></span><span></span><span></span></div><div class="hf-logo">${m.icon}</div></div>
+      <div class="hf-bt">正在接力到${app}的${m.net}…</div>
+      <div class="hf-bs">邻宠 · 护宠 · 寻宠 是同一批大理养宠人</div>`;
+    ov.classList.add('on');
+    clearTimeout(hfTimer);hfTimer=setTimeout(()=>renderHandoff(app,fromLost),1300);
+  }
+  function renderHandoff(app,fromLost){
+    const m=MX[app];let lis,tip;
+    if(app==='寻宠'){
+      lis=['附近热心人一起帮你找','地图标记最后出现的地点','找到的人直接私聊撮合'];
+      tip=`<div class="hf-tip" style="background:#FCEDEB;color:#c0473c">🔗 ${fromLost?'你在<b>邻宠</b>发起的走失，已接力到<b>寻宠</b>':'在寻宠发出走失'}——同城邻居第一时间就能看到。</div>`;
+    }else{
+      lis=['疫苗 / 驱虫 / 体检到点提醒','平时安静，不打卡不打扰','一份档案，照顾好每只 ta'];
+      tip=`<div class="hf-tip" style="background:var(--apricot-soft);color:#9a4a1f">🔗 和<b>邻宠</b>同一个账号——你的小朋友，三个场景一起照应。</div>`;
+    }
+    document.getElementById('handoffBody').innerHTML=`<div class="hf-card">
+      <div class="hf-mark" style="background:${m.grad}">${m.icon}</div>
+      <div class="hf-h">${app} · ${m.tag}</div>
+      <div class="hf-sub">大理宠物矩阵 · 寻宠 找 · 护宠 守 · 邻宠 聚</div>
+      ${lis.map(t=>`<div class="hf-li"><span class="ck" style="color:${m.color}">✓</span>${t}</div>`).join('')}
+      ${tip}
+      <div class="hf-btns"><button class="hf-back" onclick="document.getElementById('ov-handoff').classList.remove('on')">返回</button>
+        <button class="hf-open" style="background:${m.grad}" onclick="toast('打开 ${app}（演示）')">打开 ${app}</button></div></div>`;
+  }
+  function walkPost(){
+    const txt=(document.getElementById('wkTxt').value||'').trim()||'傍晚海舌遛狗，求同城狗友一起～';
+    const spot=pick.spot?('📍'+pick.spot+' · '):'';
+    POSTS.unshift({av:'🙂',avbg:'var(--apricot-soft)',nm:'才村的橘座',area:pick.area||'才村',dist:'刚刚',cat:'walk',txt:spot+txt,img:[],likes:0,liked:false,cmts:[]});
+    curTopic='walk';curArea='all';closeSheet();switchScreen('feed');updateCity();renderTopics();renderFeed();document.querySelector('#s-feed .scroll').scrollTop=0;toast('约伴已发到同城 · 等狗友响应 🐾');
+  }
+
+  let toastT;
+  function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('show'),1800);}
+
+  updateCity();renderTopics();renderFeed();
+</script>
+</body>
+</html>
